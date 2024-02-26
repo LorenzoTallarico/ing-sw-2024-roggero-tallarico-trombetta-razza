@@ -11,9 +11,9 @@
 - ogni giocatore pesca 2 CARTE OBIETTIVO SEGRETAMENTE, non le mostra, ne sceglie 1 che diverrà il suo OBIETTIVO SEGRETO e rimette l'altra nel fondo del mazzo
 
 ## PANORAMICA RAPIDA
+Il gioco procede a turni alterni dei giocatori, iniziando da un giocatore scelto casualmente e proseguendo poi in senso orario (il giocatore successivo sarà quello a sx).
 Un giocatore ottiene punti immediati posizionando carte oppure relizzando gli obiettivi in comune o l'obiettivo in segreto.
 Quando un giocatore raggiunge 20 punti si termina il gioco, permettendo però che tutti facciano lo stesso numero di turni, dopodichè si effettua il conteggio finale dei punti.
-Il gioco procede a turni alterni dei giocatori, iniziando da un giocatore scelto casualmente e proseguendo poi in senso orario (il giocatore successivo sarà quello a sx).
 
 ## SVOLGIMENTO ROUND DI GIOCO
 - la prima azione è giocare una carta dalla propria mano
