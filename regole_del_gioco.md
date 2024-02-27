@@ -35,7 +35,7 @@ una carta oro viene posizionata in modo analogo alle carte risorsa ma può esser
 - ogni volta che si ottiene un punto si avanza il proprio segnalino sul tabellone
 - la carta iniziale non da punti ovvimente, anche questa si sceglie da che lato posizionarla
 - le carte risorsa danno punti immediatamente per il semplice fatto di essere state posizionate _(*però solo nel caso in cui la carta che ho giocato abbia indicato un simbolino in alto al centro con un valore numerico, credo solo considerando il lato che decido di rendere visibile*)_
-- le carte oro invece presentano un requisito che moltiplica i punti indicati per il numero di volte che viene soddisfatto nel momento in cui vengono posizionati _(solo al posizionamento *Come indicato sopra*)_
+- le carte oro invece presentano un requisito che moltiplica i punti indicati per il numero di volte che viene soddisfatto nel momento in cui vengono posizionati _(solo al posizionamento *come indicato sopra*)_
 - dopo il termine del gioco si calcolano i punti promessi dagli obiettivi, essi sono cumulativi e vengono moltiplicati nel caso un obiettivo venga soddisfatto più volte
 - per i punti dati dalle carte obbiettivo che riguardano il loro posizionamento bisogna rispettare anche il colore delle carte oltre che il posizionamento indicato dalla carta obbiettivo.
 - è importante ricordare che, per uno stesso obbiettivo, ogni carta risorsa o oro nell'area di gioco può essere contata una sola volta
