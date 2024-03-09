@@ -1,11 +1,11 @@
-Game: Player[] players, ResourceCard[] resourceDeck, ResourceCard[] commonResource, GoldCard[] goldDeck, GoldCard[] commonGold, AchievementCard[] achievementDeck, AchievementCard[] commonAchievement, boolean started, int currentPlayer
+Game: Player[] players, ResourceCard[] resourceDeck, ResourceCard[] commonResource, GoldCard[] goldDeck, GoldCard[] commonGold, AchievementCard[] achievementDeck, AchievementCard[] commonAchievement, boolean started, int currentPlayer, int playersNumber
 Player: String name, boolean winner, int points, Color color, Card[] hand, Playground area
 Card: boolean front, int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, boolean checked
 ResourceCard: 
 GoldCard: int[4] reqResources, Item reqItem, ReqPoint reqPoints
 StarterCard: Resource secondResource, Resource thirdResource
 AchievementCard: AchievementType achievement
-Corner: CornerType cornerType, Resource res, Item item, boolean visible
+Corner: CornerType type, Resource res, Item item, boolean visible
 Playground: Card table[81][81], int[4] resources, int[3] items
 
 Enum Color{red, blue, green, yellow}
