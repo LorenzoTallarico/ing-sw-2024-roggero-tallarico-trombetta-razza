@@ -1,6 +1,6 @@
 Game: Player[] players, ResourceCard[] resourceDeck, ResourceCard[] commonResource, GoldCard[] goldDeck, GoldCard[] commonGold, AchievementCard[] achievementDeck, AchievementCard[] commonAchievement, boolean started, int currentPlayer
 Player: String name, boolean winner, int points, Color color, Card[] hand, Playground area
-Card: boolean front, int points, Resource resource, Corner[] frontCorners, Corner[] backCorners
+Card: boolean front, int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, boolean checked
 ResourceCard: 
 GoldCard: int[4] reqResources, Item reqItem, ReqPoint reqPoints
 StarterCard: Resource secondResource, Resource thirdResource
@@ -13,4 +13,4 @@ Enum Resource{mushroom, wolf, butterfly, leaf}
 Enum Item{jar, scroll, plume}
 Enum ReqPoint{item, corner}
 Enum CornerType{resource, item, free, dead}
-Enum AchievementType{l_form, diagonal, color, jar, scroll, plume, all} 
+Enum AchievementType{l_shape, diagonal_shape, color, jar, scroll, plume, mixed} 
