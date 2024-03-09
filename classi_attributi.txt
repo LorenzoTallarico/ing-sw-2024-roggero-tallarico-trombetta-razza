@@ -4,7 +4,7 @@ Card: boolean front, int points, Resource resource, Corner[] frontCorners, Corne
 ResourceCard: 
 GoldCard: int[4] reqResources, Item reqItem, ReqPoint reqPoints
 StarterCard: Resource secondResource, Resource thirdResource
-AchievementCard: AchievementType achType
+AchievementCard: AchievementType achievement
 Corner: CornerType cornerType, Resource res, Item item, boolean visible
 Playground: Card table[81][81], int[4] resources, int[3] items
 
