@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public class Card {
+public abstract class Card {
     boolean front;
     int points;
     Resource resource;

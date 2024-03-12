@@ -4,7 +4,7 @@ public class Player {
     String name;
     boolean winner;
     int points;
-    ArrayList<Card> hand = new ArrayList<Card>;
+    ArrayList<Card> hand = new ArrayList<Card>();
     Playground area;
     Color color;
     AchievementCard secretAchievement;
@@ -65,13 +65,7 @@ public class Player {
         return secretAchievement;
     }
 
-    public Card draw(){
 
-    }
-
-    public void place (){
-
-    }
 
 
 }
