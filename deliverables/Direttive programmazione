@@ -1,0 +1,124 @@
+/*
+
+REGOLAMENTO JAVADOC COMMENTI BAZZI E RAZZI
+
+(Per le funzioni)
+1. @param - Descrizione di parametri
+2. @return - Descrizione di cosa ritorna la funzione, mettere 'void' in caso di descrizione vuota
+3. {@summary} - Riassunto (tra più righe con le graffe)
+4. @throws NomeEccezione Descrizione - Obbligatori per le eccezioni (catch...)
+5. @see - Linkare documentazione esterna che è stata utilizzata
+
+
+
+
+
+************************************** ESEMPIO LIBRO JAVA **************************************
+
+public class SquareNum {
+ /**
+ * This method returns the square of num.
+ * This is a multiline description. You can use
+ * as many lines as you like.
+ * @param num The value to be squared.
+ * @return num squared.
+ */
+ public double square(double num) {
+ return num * num;
+ }
+ /**
+ * This method inputs a number from the user.
+ * @return The value input as a double.
+ * @throws IOException On input error.
+ * @see IOException
+ */
+ public double getNumber() throws IOException {
+ // create a BufferedReader using System.in
+ InputStreamReader isr = new InputStreamReader(System.in);
+ BufferedReader inData = new BufferedReader(isr);
+ String str;
+ str = inData.readLine();
+ return (new Double(str)).doubleValue();
+ }
+ /**
+ * This method demonstrates square().
+ * @param args Unused.
+ * @throws IOException On input error.
+ * @see IOException
+ */
+ public static void main(String[] args)
+ throws IOException
+ {
+ SquareNum ob = new SquareNum();
+ double val;
+ System.out.println("Enter value to be squared: ");
+ val = ob.getNumber();
+ val = ob.square(val);
+ System.out.println("Squared value is " + val);
+ }
+}
+
+********************************************************************************************
+
+
+
+
+
+
+Nostro vocabolario:
+
+- checked: Funzione già controllata in maniera generale
+- tested - NomeFileTest: funzione effettivamente testata e nome del file di test corrispondente
+- remake - DescrizioneProblema: funzione con problemi, va rifatta/rigestita, spiegare problema in breve
+-
+
+
+
+
+
+Regole formattazione codice:
+
+1. La prima graffa va sulla stessa riga della funzione con lo spazio, la seconda va a capo.
+
+2. Tra operandi e variabili ci va uno spazio
+
+3. Tra una parentesi tonda e una parola non ci sono spazi
+
+4. Tab sono scontati, sempre indentare con un tab
+
+5. Buonsenso per i commenti (qualsiasi lingua)
+
+6.
+
+
+Esempio:
+
+public double getNumber() {
+    // create a BufferedReader using System.in
+    InputStreamReader isr = new InputStreamReader(System.in);
+    BufferedReader inData = new BufferedReader(isr);
+    String str;
+    str = inData.readLine();
+    return (new Double(str)).doubleValue();
+    if(a == 3) {
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
+
+
