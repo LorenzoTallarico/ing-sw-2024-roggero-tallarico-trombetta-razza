@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class Playground {
-int[][] table = new Space[81][81];
+Space[][] table = new Space[81][81];
 int[] resources = new int[4];
 int[] items=  new int[3];
 int northBound;
@@ -9,7 +9,7 @@ int eastBound;
 int westBound;
 int southBound;
 
-    public Playground(int[][] table, int[] resources, int[] items) {
+    public Playground(Space[][] table, int[] resources, int[] items) {
         this.table = table;
         this.resources = resources;
         this.items = items;
