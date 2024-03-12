@@ -5,6 +5,7 @@ target/
 
 ###
 GC06/
+.idea/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
