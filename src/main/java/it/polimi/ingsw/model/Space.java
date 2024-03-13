@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model;
 
 public class Space {
-    Card card;
-    boolean free;
-    boolean dead;
-    boolean checked;
+    private Card card;
+    private boolean free;
+    private boolean dead;
+    private boolean checked;
 
     public Space(Card card, boolean free, boolean dead, boolean checked) {
         this.card = card;

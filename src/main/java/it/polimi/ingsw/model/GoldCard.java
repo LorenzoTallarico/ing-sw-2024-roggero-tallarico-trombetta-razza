@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model;
 
 public class GoldCard extends Card {
-    int[] reqResources = new int[4];
-    Item reqItem;
-    ReqPoint reqPoints;
-    GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners,int[] reqResources, Item reqItem, ReqPoint reqPoints) {
+    private int[] reqResources = new int[4];
+    private Item reqItem;
+    private ReqPoint reqPoints;
+    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners,int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
         this.resource = resource;
         for(int i = 0; i < frontCorners.length; i++) {

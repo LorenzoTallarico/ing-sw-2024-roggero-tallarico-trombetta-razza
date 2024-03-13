@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
 public abstract class Card {
-    boolean front;
-    int points;
-    Resource resource;
-    Corner[] frontCorners = new Corner[4];
-    Corner[] backCorners = new Corner[4];
+    protected boolean front;
+    protected int points;
+    protected Resource resource;
+    protected Corner[] frontCorners = new Corner[4];
+    protected Corner[] backCorners = new Corner[4];
 
 //GETTER
 

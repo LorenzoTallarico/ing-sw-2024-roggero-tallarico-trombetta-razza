@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model;
 
 public class Corner {
-    CornerType type;
-    Resource resource;
-    Item item;
-    boolean visible;
+    private CornerType type;
+    private Resource resource;
+    private Item item;
+    private boolean visible;
 
     public Corner(CornerType type, Resource resource, Item item, boolean visible) {
         this.type = type;

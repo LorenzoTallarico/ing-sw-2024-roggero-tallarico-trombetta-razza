@@ -1,13 +1,14 @@
 package it.polimi.ingsw.model;
+import java.util.ArrayList;
 
 public class Player {
-    String name;
-    boolean winner;
-    int points;
-    ArrayList<Card> hand = new ArrayList<Card>();
-    Playground area;
-    Color color;
-    AchievementCard secretAchievement;
+    private String name;
+    private boolean winner;
+    private int points;
+    private ArrayList<Card> hand = new ArrayList<Card>();
+    private Playground area;
+    private Color color;
+    private AchievementCard secretAchievement;
 
     public Player(String name, boolean winner, int points, ArrayList<Card> hand, Color color, AchievementCard secretAchievement) {
         this.name = name;

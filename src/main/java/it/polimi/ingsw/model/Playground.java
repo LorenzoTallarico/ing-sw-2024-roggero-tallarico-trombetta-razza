@@ -1,13 +1,13 @@
 package it.polimi.ingsw.model;
 
 public class Playground {
-Space[][] table = new Space[81][81];
-int[] resources = new int[4];
-int[] items=  new int[3];
-int northBound;
-int eastBound;
-int westBound;
-int southBound;
+private Space[][] table = new Space[81][81];
+private int[] resources = new int[4];
+private int[] items=  new int[3];
+private int northBound;
+private int eastBound;
+private int westBound;
+private int southBound;
 
     public Playground(Space[][] table, int[] resources, int[] items) {
         this.table = table;
