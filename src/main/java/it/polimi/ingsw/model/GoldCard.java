@@ -6,7 +6,7 @@ public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources = new HashMap<>();
     private Item reqItem;
     private ReqPoint reqPoints;
-    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, Map<Resource,Integer> reqResources, Item reqItem, ReqPoint reqPoints) {
+    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
         this.resource = resource;
         for(int i = 0; i < frontCorners.length; i++) {
@@ -15,11 +15,11 @@ public class GoldCard extends Card {
         for(int i = 0; i < backCorners.length; i++) {
             this.backCorners[i] = backCorners[i];
         }
-        for(int i = 0; i < reqResources.size(); i++) {
-            reqResources.put(resource.WOLF,0);
-            reqResources.put(resource.BUTTERFLY,0);
-            reqResources.put(resource.LEAF,0);
-            reqResources.put(resource.MUSHROOM,0);
+        for(int i = 0; i < this.reqResources.size(); i++) {
+            this.reqResources.put(resource.WOLF,reqResources[0]);
+            this.reqResources.put(resource.BUTTERFLY,reqResources[1]);
+            this.reqResources.put(resource.LEAF,reqResources[2]);
+            this.reqResources.put(resource.MUSHROOM,reqResources[3]);
         }
         this.reqItem = reqItem;
         this.reqPoints = reqPoints;
