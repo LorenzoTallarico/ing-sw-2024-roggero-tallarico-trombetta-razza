@@ -16,10 +16,10 @@ public class GoldCard extends Card {
             this.backCorners[i] = backCorners[i];
         }
         for(int i = 0; i < this.reqResources.size(); i++) {
-            this.reqResources.put(resource.WOLF,reqResources[0]);
-            this.reqResources.put(resource.BUTTERFLY,reqResources[1]);
-            this.reqResources.put(resource.LEAF,reqResources[2]);
-            this.reqResources.put(resource.MUSHROOM,reqResources[3]);
+            this.reqResources.put(resource.WOLF, reqResources[0]);
+            this.reqResources.put(resource.BUTTERFLY, reqResources[1]);
+            this.reqResources.put(resource.LEAF, reqResources[2]);
+            this.reqResources.put(resource.MUSHROOM, reqResources[3]);
         }
         this.reqItem = reqItem;
         this.reqPoints = reqPoints;

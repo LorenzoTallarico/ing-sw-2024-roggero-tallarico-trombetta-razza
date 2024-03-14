@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 import java.util.ArrayList;
 
+import java.util.ArrayList;
+
 public class Game {
     private ArrayList<Player> players = new ArrayList<Player>();
     private ArrayList<ResourceCard> resourceDeck= new ArrayList<ResourceCard>();
