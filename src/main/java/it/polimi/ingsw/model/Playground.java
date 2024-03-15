@@ -2,7 +2,6 @@ package it.polimi.ingsw.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import it.polimi.ingsw.model.Resource;
 
 public class Playground {
 private Space[][] table;
@@ -15,6 +14,14 @@ private int southBound;
 
     public Playground() {
         table = new Space[81][81];
+        for(int x = 0; x < 81; x++) {
+            for(int y = 0; y < 81; y++) {
+                if((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1))
+                    table[x][y] = new Space(true, true);
+                else
+                    table[x][y] = new Space(false, false);
+            }
+        }
         this.resources = new HashMap<>();
         this.resources.put(Resource.WOLF, 0);
         this.resources.put(Resource.BUTTERFLY, 0);

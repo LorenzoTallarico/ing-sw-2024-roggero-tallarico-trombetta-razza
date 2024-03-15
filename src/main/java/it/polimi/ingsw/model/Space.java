@@ -6,11 +6,10 @@ public class Space {
     private boolean dead;
     private boolean checked;
 
-    public Space(Card card, boolean free, boolean dead, boolean checked) {
-        this.card = card;
+    public Space(boolean free, boolean dead) {
         this.free = free;
         this.dead = dead;
-        this.checked = checked;
+        checked = false;
     }
 
 //GETTER
