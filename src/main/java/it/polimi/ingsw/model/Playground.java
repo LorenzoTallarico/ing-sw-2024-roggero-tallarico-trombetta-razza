@@ -16,7 +16,7 @@ private int southBound;
         table = new Space[81][81];
         for(int x = 0; x < 81; x++) {
             for(int y = 0; y < 81; y++) {
-                if((x % 2 == 0 && y % 2 == 0) || (x % 2 == 1 && y % 2 == 1))
+                if(x % 2 == y % 2)
                     table[x][y] = new Space(true, true);
                 else
                     table[x][y] = new Space(false, false);
@@ -37,7 +37,54 @@ private int southBound;
         this.southBound = 40;
     }
 
-    public Space getSpace(int x, int y){
+//GETTER AND SETTERS
+
+    public void setSpace(Card card, int x, int y) {
+        table[x][y].setCard(card);
+        table[x][y].setFree(false);
+        if(y < northBound)
+            northBound = y;
+        else if(y > southBound)
+            southBound = y;
+        if(x < westBound)
+            westBound = x;
+        else if(x > eastBound)
+            eastBound = x;
+    }
+
+    public Space getSpace(int x, int y) {
         return table[x][y];
+    }
+
+    public int getNorthBound() {
+        return northBound;
+    }
+
+    public void setNorthBound(int northBound) {
+        this.northBound = northBound;
+    }
+
+    public int getEastBound() {
+        return eastBound;
+    }
+
+    public void setEastBound(int eastBound) {
+        this.eastBound = eastBound;
+    }
+
+    public int getWestBound() {
+        return westBound;
+    }
+
+    public void setWestBound(int westBound) {
+        this.westBound = westBound;
+    }
+
+    public int getSouthBound() {
+        return southBound;
+    }
+
+    public void setSouthBound(int southBound) {
+        this.southBound = southBound;
     }
 }

@@ -6,6 +6,7 @@ public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
     private ReqPoint reqPoints;
+
     public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
         this.resource = resource;
@@ -27,9 +28,11 @@ public class GoldCard extends Card {
     public int countResource(Resource res){
         return reqResources.get(res);
     }
+
     public ReqPoint getPointsType() {
         return reqPoints;
     }
+
     public Item getItem(){
         return reqItem;
     }

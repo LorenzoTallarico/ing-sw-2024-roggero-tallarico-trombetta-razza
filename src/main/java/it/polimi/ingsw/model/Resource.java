@@ -5,5 +5,4 @@ public enum Resource {
     BUTTERFLY,
     LEAF,
     MUSHROOM
-
 }

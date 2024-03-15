@@ -5,18 +5,17 @@ public class Player {
     private String name;
     private boolean winner;
     private int points;
-    private ArrayList<Card> hand = new ArrayList<Card>();
+    private ArrayList<Card> hand;
     private Playground area;
     private Color color;
     private AchievementCard secretAchievement;
 
-    public Player(String name, boolean winner, int points, ArrayList<Card> hand, Color color, AchievementCard secretAchievement) {
+    public Player(String name, Color color) {
         this.name = name;
-        this.winner = winner;
-        this.points = points;
-        this.hand = hand;
         this.color = color;
-        this.secretAchievement = secretAchievement;
+        winner = false;
+        area = new Playground();
+        points = 0;
     }
     // GETTER
     public String getName() {
@@ -43,14 +42,17 @@ public class Player {
         return color;
     }
 
+    public AchievementCard getSecretAchievement() {
+        return secretAchievement;
+    }
     //SETTER
 
     public void setWinner(boolean winner) {
         this.winner = winner;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void addPoints(int points) {
+        this.points += points;
     }
 
     public void setHand(ArrayList<Card> hand) {
@@ -61,10 +63,7 @@ public class Player {
         this.secretAchievement = secretAchievement;
     }
 
-    //Functions
-    public AchievementCard getSecretAchievement() {
-        return secretAchievement;
-    }
+
 
 
 

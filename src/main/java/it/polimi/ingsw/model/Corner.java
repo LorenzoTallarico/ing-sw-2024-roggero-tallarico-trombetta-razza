@@ -6,11 +6,11 @@ public class Corner {
     private Item item;
     private boolean visible;
 
-    public Corner(CornerType type, Resource resource, Item item, boolean visible) {
+    public Corner(CornerType type, Resource resource, Item item) {
         this.type = type;
         this.resource = resource;
         this.item = item;
-        this.visible = visible;
+        visible = true;
     }
 
     public CornerType getType() {
@@ -27,5 +27,9 @@ public class Corner {
 
     public boolean isVisible() {
         return visible;
+    }
+
+    public void cover() {
+        visible = false;
     }
 }
