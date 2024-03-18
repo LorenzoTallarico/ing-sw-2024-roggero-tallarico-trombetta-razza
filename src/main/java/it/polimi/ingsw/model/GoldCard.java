@@ -14,8 +14,8 @@ public class GoldCard extends Card {
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
      * @param reqResources Array of int counting the number of each resource required to place the card (?)
-     * @param reqItem Item required to place the card(????)
-     * @param reqPoints ???????
+     * @param reqItem Item required to place the card if reqPoints is equal to Item
+     * @param reqPoints The type of requirement needed to obtain the points
      */
     public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
