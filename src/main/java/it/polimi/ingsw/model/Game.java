@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import com.google.gson.*;
 
 
 public class Game {
@@ -15,13 +19,13 @@ public class Game {
     private ArrayList<AchievementCard> commonAchievement;
     private int playersNumber;
 
-    public Game(ArrayList<ResourceCard> resourceDeck, ArrayList<GoldCard> goldDeck, ArrayList<AchievementCard> achievementDeck, ArrayList<ResourceCard> commonResource, ArrayList<GoldCard> commonGold, ArrayList<AchievementCard> commonAchievement, ArrayList<Player> players) {
-        this.resourceDeck = resourceDeck;
-        this.goldDeck = goldDeck;
-        this.achievementDeck = achievementDeck;
-        this.commonResource = commonResource;
-        this.commonGold = commonGold;
-        this.commonAchievement = commonAchievement;
+    public Game(ArrayList<Player> players) {
+        createGoldDeck();
+        //TO DO
+        //createResourceDeck(), achievement, starter
+        // STARTERCARD CLASS DOES NOT EXIST!!!
+        //TO DO
+        //Something to figure out for common gold, common resource, common...
         this.players = players;
         playersNumber = players.size();
         started = false;
@@ -42,6 +46,16 @@ public class Game {
         ended = true;
     }
 
-
+    private void createGoldDeck(){
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+            GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
+            goldDeck = new ArrayList<GoldCard>();
+            for(int i = 0; i < tempGold.length; i++)
+                goldDeck.add(tempGold[i]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }
