@@ -11,6 +11,7 @@ public class Game {
     private ArrayList<ResourceCard> resourceDeck;
     private ArrayList<GoldCard> goldDeck;
     private ArrayList<AchievementCard> achievementDeck;
+    private ArrayList<StarterCard> starterDeck;
     private boolean started;
     private boolean ended;
     private int currPlayer;
@@ -48,7 +49,7 @@ public class Game {
 
     private void createGoldDeck(){
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
             goldDeck = new ArrayList<GoldCard>();
             for(int i = 0; i < tempGold.length; i++)
@@ -57,5 +58,44 @@ public class Game {
             e.printStackTrace();
         }
     }
+
+    private void createResourceDeck(){
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+            ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
+            resourceDeck = new ArrayList<ResourceCard>();
+            for(int i = 0; i < tempResource.length; i++)
+                resourceDeck.add(tempResource[i]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createAchievementDeck(){
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+            AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
+            achievementDeck = new ArrayList<AchievementCard>();
+            for(int i = 0; i < tempAchievement.length; i++)
+                achievementDeck.add(tempAchievement[i]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createStarterDeck(){
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
+            StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
+            starterDeck = new ArrayList<StarterCard>();
+            for(int i = 0; i < tempStarter.length; i++)
+                starterDeck.add(tempStarter[i]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 }
