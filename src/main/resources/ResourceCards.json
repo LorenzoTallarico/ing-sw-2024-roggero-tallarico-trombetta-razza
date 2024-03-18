@@ -1,0 +1,57 @@
+{
+  "front": false,
+  "points": 1,
+  "resource": "WOLF",
+  "frontCorners": [
+    {
+      "type": "RESOURCE",
+      "resource": "LEAF",
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "FREE",
+      "resource": null,
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "DEAD",
+      "resource": null,
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "ITEM",
+      "resource": null,
+      "item": "SCROLL",
+      "visible": true
+    }
+  ],
+  "backCorners": [
+    {
+      "type": "FREE",
+      "resource": null,
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "FREE",
+      "resource": null,
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "FREE",
+      "resource": null,
+      "item": null,
+      "visible": true
+    },
+    {
+      "type": "FREE",
+      "resource": null,
+      "item": null,
+      "visible": true
+    }
+  ]
+}
