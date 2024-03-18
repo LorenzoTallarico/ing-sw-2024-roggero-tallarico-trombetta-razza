@@ -42,14 +42,14 @@ private int southBound;
     public void setSpace(Card card, int x, int y) {
         table[x][y].setCard(card);
         table[x][y].setFree(false);
-        if(y < northBound)
-            northBound = y;
-        else if(y > southBound)
-            southBound = y;
-        if(x < westBound)
-            westBound = x;
-        else if(x > eastBound)
-            eastBound = x;
+        if(x < northBound)
+            northBound = x;
+        else if(x > southBound)
+            southBound = x;
+        if(y < westBound)
+            westBound = y;
+        else if(y > eastBound)
+            eastBound = y;
     }
 
     public Space getSpace(int x, int y) {

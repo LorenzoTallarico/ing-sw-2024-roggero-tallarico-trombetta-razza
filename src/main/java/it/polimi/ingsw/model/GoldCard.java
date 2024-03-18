@@ -7,6 +7,16 @@ public class GoldCard extends Card {
     private Item reqItem;
     private ReqPoint reqPoints;
 
+    /**
+     * Constructor of the class, initializes the gold cards with the given parameters
+     * @param points integer representing the points the card gives if the requirements are fulfilled
+     * @param resource The type of resource of the card
+     * @param frontCorners Corners of the front side of the card
+     * @param backCorners Corners of the back side of the card
+     * @param reqResources Array of int counting the number of each resource required to place the card (?)
+     * @param reqItem Item required to place the card(????)
+     * @param reqPoints ???????
+     */
     public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
         this.resource = resource;
