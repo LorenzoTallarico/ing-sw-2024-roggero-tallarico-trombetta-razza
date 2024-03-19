@@ -9,7 +9,8 @@ import com.google.gson.*;
 
 
 public class Game {
-    private ArrayList<Player> players;
+    private static Game istance;
+    private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
     private ArrayList<GoldCard> goldDeck;
     private ArrayList<AchievementCard> achievementDeck;
@@ -22,17 +23,22 @@ public class Game {
     private ArrayList<AchievementCard> commonAchievement;
     private int playersNumber;
 
-    public Game(ArrayList<Player> players) {
+    private Game(ArrayList<Player> players) {
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
         createStarterDeck();
-        //TO DO
-        //Something to figure out for common gold, common resource, common...
         this.players = players;
         playersNumber = players.size();
         started = false;
         ended = false;
+    }
+
+    public static Game getIstance(){
+        if(istance == null){
+            istance = new Game(players);
+        }
+        return istance;
     }
 
     public void start(){
