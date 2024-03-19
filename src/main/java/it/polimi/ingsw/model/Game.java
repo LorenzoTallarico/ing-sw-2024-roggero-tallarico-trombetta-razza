@@ -116,6 +116,33 @@ public class Game {
         Collections.shuffle(starterDeck);
     }
 
+    /**
+     *{@summary this function creates an array list named hand with
+     * a pseudo-pop and add the new hand to player, for each player in game
+     * use it only after create and shuffle gold and resource decks}
+     * 2 resource and 1 gold in hand + 2 secretAchievement;
+     **/
+    private void createHands(){
+
+        for(int i=0; i<playersNumber; i++) {
+            ArrayList<Card> hand = new ArrayList<Card>();
+            ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();
+
+            hand.add(resourceDeck.get(0));
+            resourceDeck.remove(0);
+            hand.add(resourceDeck.get(0));
+            resourceDeck.remove(0);
+            hand.add(goldDeck.get(0));
+            goldDeck.remove(0);
+            players.get(i).setHand(hand);
+
+            secretAchievement.add(achievementDeck.get(0));
+            achievementDeck.remove(0);
+            secretAchievement.add(achievementDeck.get(0));
+            achievementDeck.remove(0);
+            players.get(i).setSecretAchievement(secretAchievement);
+        }
+    }
 
 
 
