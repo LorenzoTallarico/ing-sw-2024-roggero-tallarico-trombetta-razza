@@ -1,0 +1,11 @@
+Completare Model:
+- Strategy Pattern
+- Metodi (N.B. da scrivere commenti iniziali e gestire già le varie eccezioni dell'input, pure le casistiche più improbabili)
+- Chat
+- Testing
+- Aggiornamento UML e file spiegazione
+
+Controller:
+- Inizio
+ -changeTurn () -- controllo anche se arrivato a 20 punti prima di cambiarlo
+ -draw()
