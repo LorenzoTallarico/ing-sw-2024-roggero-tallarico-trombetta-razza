@@ -52,6 +52,14 @@ private int southBound;
             eastBound = column;
     }
 
+    public int countResource(Resource res){
+        return resources.get(res);
+    }
+
+    public int countItems(Item it){
+        return items.get(it);
+    }
+
     public Space getSpace(int x, int y) {
         return table[x][y];
     }
