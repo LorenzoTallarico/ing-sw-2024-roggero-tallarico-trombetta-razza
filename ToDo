@@ -9,3 +9,5 @@ Controller:
 - Inizio
  -changeTurn () -- controllo anche se arrivato a 20 punti prima di cambiarlo
  -draw()
+
+
