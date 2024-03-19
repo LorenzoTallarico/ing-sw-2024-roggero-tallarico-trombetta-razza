@@ -39,17 +39,17 @@ private int southBound;
 
 //GETTER AND SETTERS
 
-    public void setSpace(Card card, int x, int y) {
-        table[x][y].setCard(card);
-        table[x][y].setFree(false);
-        if(x < northBound)
-            northBound = x;
-        else if(x > southBound)
-            southBound = x;
-        if(y < westBound)
-            westBound = y;
-        else if(y > eastBound)
-            eastBound = y;
+    public void setSpace(Card card, int row, int column) {
+        table[row][column].setCard(card);
+        table[row][column].setFree(false);
+        if(row < northBound)
+            northBound = row;
+        else if(row > southBound)
+            southBound = row;
+        if(column < westBound)
+            westBound = column;
+        else if(column > eastBound)
+            eastBound = column;
     }
 
     public Space getSpace(int x, int y) {
