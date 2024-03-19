@@ -18,14 +18,6 @@ public abstract class Card {
     }
 
     /**
-     * Method that returns the card's points
-     * @return an integer that represents the card's points
-     */
-    public int getPoints() {
-        return points;
-    }
-
-    /**
      * Method that returns the card's resource type
      * @return the card's resource type
      */
