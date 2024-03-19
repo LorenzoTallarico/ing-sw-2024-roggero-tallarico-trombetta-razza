@@ -5,7 +5,7 @@ import  java.util.HashMap;
 public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
-    private Strategy strategy;
+    private Strategy strategy;//bla
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters

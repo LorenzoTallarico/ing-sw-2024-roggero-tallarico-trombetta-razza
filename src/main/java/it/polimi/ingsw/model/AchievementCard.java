@@ -32,6 +32,6 @@ public class AchievementCard extends Card{
 
 
     public int getPoints(){
-        return strategy.execute();
+        return strategy.execute(); //bla bla
     }
 }
