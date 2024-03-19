@@ -8,7 +8,7 @@ public class Player {
     private ArrayList<Card> hand;
     private final Playground area;
     private final Color color;
-    private /*final*/ AchievementCard secretAchievement;
+    private /*final*/ ArrayList<AchievementCard> secretAchievement;
 
     /**
      * Constructor of the class, Initializes a new player with a 'name' and a 'color',
@@ -77,7 +77,7 @@ public class Player {
      * Method that returns the secret achievement of the player
      * @return AchievementCard representing the secret achievement the player chose
      */
-    public AchievementCard getSecretAchievement() {
+    public ArrayList<AchievementCard> getSecretAchievement() {
         return secretAchievement;
     }
     //SETTER
@@ -110,11 +110,38 @@ public class Player {
      * Method that sets the secret achievement of the player
      * @param secretAchievement AchievementCard representing the secret achievement of the player
      */
-    public void setSecretAchievement(AchievementCard secretAchievement) {
+    public void setSecretAchievement(ArrayList<AchievementCard> secretAchievement) {
         this.secretAchievement = secretAchievement;
     }
 
+    /**
+     * Method that adds a card to the player hand
+     * @param card Card added to the player hand
+     */
+    public void addCard(Card card) {
+        this.hand.add(card);
+    }
 
+    public boolean place(Card card, int row, int column){
+        boolean check = placeable(card, row, column);
+        if(check) {
+            this.hand.remove(card);
+            //carta va aggiunta allo space indicato
+            return true;
+        }
+        else {
+            return check;
+        }
+    }
+
+    public boolean placeable(Card card, int row, int column){
+        //angolo libero
+        //deve spigolare un bound
+        //
+
+        //se free ok può proseguire
+        getArea().getSpace(row, column).isFree();
+    }
 
 
 

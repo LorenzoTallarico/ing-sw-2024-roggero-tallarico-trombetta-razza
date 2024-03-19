@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 import sun.util.resources.Bundles;
 
 public class AchievementCard extends Card{
-    private Strategy strategy;
+    private final Strategy strategy;
 
     /**
      * Constructor of the class, initializes a new achievement card.
