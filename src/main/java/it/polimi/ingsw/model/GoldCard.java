@@ -5,7 +5,7 @@ import  java.util.HashMap;
 public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
-    private Strategy strategy;//bla
+    private Strategy strategy;
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters
@@ -43,6 +43,6 @@ public class GoldCard extends Card {
     }
 
     public int getPoints(){
-        return strategy.execute();
+        return points+strategy.execute();
     }
 }
