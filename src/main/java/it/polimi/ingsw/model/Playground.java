@@ -17,9 +17,9 @@ private int southBound;
         for(int x = 0; x < 81; x++) {
             for(int y = 0; y < 81; y++) {
                 if(x % 2 == y % 2)
-                    table[x][y] = new Space(true, true);
+                    table[x][y] = new Space(true, false);
                 else
-                    table[x][y] = new Space(false, false);
+                    table[x][y] = new Space(false, true);
             }
         }
         this.resources = new HashMap<>();
@@ -39,9 +39,18 @@ private int southBound;
 
 //GETTER AND SETTERS
 
+    /**
+     * Method that given a card and a position, places the card in the right space, covering adjacents corners
+     * and updating values
+     * @param card The card to place
+     * @param row The integer representing the row index
+     * @param column The integer representing the column index
+     */
     public void setSpace(Card card, int row, int column) {
         table[row][column].setCard(card);
         table[row][column].setFree(false);
+
+        //update bounds
         if(row < northBound)
             northBound = row;
         else if(row > southBound)
@@ -50,6 +59,69 @@ private int southBound;
             westBound = column;
         else if(column > eastBound)
             eastBound = column;
+
+        //check corners to add items and sources to the playground counter
+        Corner[] corners;
+        if(card.isFront())
+            corners = card.getFrontCorners();
+        else
+            corners = card.getBackCorners();
+        for(Corner corn : corners) {
+            if(corn.getType().equals(CornerType.ITEM)) {
+                items.put(corn.getItem(), items.get(corn.getItem()) + 1);
+            } else if(corn.getType().equals(CornerType.RESOURCE)) {
+                resources.put(corn.getResource(), resources.get(corn.getResource()) + 1);            }
+        }
+
+        //cover adjacent cards' corners and subtract their items and resource from the playground counter
+        //--- top left corner
+        if(row > 0 && column > 0 && table[row-1][column-1] != null && !table[row-1][column-1].isFree() && !table[row-1][column-1].isDead()) {
+            if(table[row-1][column-1].getCard().isFront()) { //the adjacent card is upside
+                table[row - 1][column - 1].getCard().getFrontCorners()[1].cover();
+                if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.ITEM))
+                    items.put(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem(), items.get(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem()) - 1);
+                if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.RESOURCE))
+                    resources.put(table[row - 1][column - 1].getCard().getFrontCorners()[1].getResource(), resources.get(table[row - 1][column - 1].getCard().getFrontCorners()[1].getResource()) - 1);
+            } else { //the adjacent card is downside
+                table[row - 1][column - 1].getCard().getBackCorners()[1].cover();
+            }
+        }
+        //--- top right corner
+        if(row > 0 && column < 80 && table[row-1][column+1] != null && !table[row-1][column+1].isFree() && !table[row-1][column+1].isDead()) {
+            if(table[row-1][column+1].getCard().isFront()) { //the adjacent card is upside
+                table[row - 1][column + 1].getCard().getFrontCorners()[2].cover();
+                if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.ITEM))
+                    items.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem(), items.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getItem()) - 1);
+                if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.RESOURCE))
+                    resources.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getResource(), resources.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getResource()) - 1);
+            } else { //the adjacent card is downside
+                table[row - 1][column + 1].getCard().getBackCorners()[2].cover();
+            }
+        }
+        //--- bottom right corner
+        if(row < 80 && column < 80 && table[row+1][column+1] != null && !table[row+1][column+1].isFree() && !table[row+1][column+1].isDead()) {
+            if(table[row+1][column+1].getCard().isFront()) { //the adjacent card is upside
+                table[row + 1][column + 1].getCard().getFrontCorners()[3].cover();
+                if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.ITEM))
+                    items.put(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem(), items.get(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem()) - 1);
+                if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.RESOURCE))
+                    resources.put(table[row + 1][column + 1].getCard().getFrontCorners()[3].getResource(), resources.get(table[row + 1][column + 1].getCard().getFrontCorners()[3].getResource()) - 1);
+            } else { //the adjacent card is downside
+                table[row + 1][column + 1].getCard().getBackCorners()[3].cover();
+            }
+        }
+        //--- bottom left corner
+        if(row < 80 && column > 0 && table[row+1][column-1] != null && !table[row+1][column-1].isFree() && !table[row+1][column-1].isDead()) {
+            if(table[row+1][column-1].getCard().isFront()) { //the adjacent card is upside
+                table[row + 1][column - 1].getCard().getFrontCorners()[0].cover();
+                if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.ITEM))
+                    items.put(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem(), items.get(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem()) - 1);
+                if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.RESOURCE))
+                    resources.put(table[row + 1][column - 1].getCard().getFrontCorners()[0].getResource(), resources.get(table[row + 1][column - 1].getCard().getFrontCorners()[0].getResource()) - 1);
+            } else { //the adjacent card is downside
+                table[row + 1][column - 1].getCard().getBackCorners()[0].cover();
+            }
+        }
     }
 
     public int countResource(Resource res){
