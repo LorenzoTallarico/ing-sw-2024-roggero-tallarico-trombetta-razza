@@ -5,7 +5,7 @@ import  java.util.HashMap;
 public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
-    private ReqPoint reqPoints;
+    private Strategy strategy;
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters
@@ -15,9 +15,8 @@ public class GoldCard extends Card {
      * @param backCorners Corners of the back side of the card
      * @param reqResources Array of int counting the number of each resource required to place the card (?)
      * @param reqItem Item required to place the card(????)
-     * @param reqPoints ???????
      */
-    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
+    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, Strategy strategy) {
         this.points = points;
         this.resource = resource;
         for(int i = 0; i < frontCorners.length; i++) {
@@ -32,18 +31,18 @@ public class GoldCard extends Card {
         this.reqResources.put(Resource.LEAF, reqResources[2]);
         this.reqResources.put(Resource.MUSHROOM, reqResources[3]);
         this.reqItem = reqItem;
-        this.reqPoints = reqPoints;
+        this.strategy = strategy;
     }
 
     public int countResource(Resource res){
         return reqResources.get(res);
     }
 
-    public ReqPoint getPointsType() {
-        return reqPoints;
-    }
-
     public Item getItem(){
         return reqItem;
+    }
+
+    public int getPoints(){
+        return strategy.execute();
     }
 }
