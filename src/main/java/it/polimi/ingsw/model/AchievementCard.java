@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class AchievementCard extends Card{
-    private AchievementType achievement;
+    private final AchievementType achievement;
 
     /**
      * Constructor of the class, initializes a new achievement card.

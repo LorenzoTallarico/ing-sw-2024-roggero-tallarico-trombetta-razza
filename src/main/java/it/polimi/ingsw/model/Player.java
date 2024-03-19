@@ -2,13 +2,13 @@ package it.polimi.ingsw.model;
 import java.util.ArrayList;
 
 public class Player {
-    private String name;
+    private final String name;
     private boolean winner;
     private int points;
     private ArrayList<Card> hand;
-    private Playground area;
-    private Color color;
-    private AchievementCard secretAchievement;
+    private final Playground area;
+    private final Color color;
+    private /*final*/ AchievementCard secretAchievement;
 
     /**
      * Constructor of the class, Initializes a new player with a 'name' and a 'color',

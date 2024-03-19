@@ -3,9 +3,9 @@ import  java.util.Map;
 import  java.util.HashMap;
 
 public class GoldCard extends Card {
-    private Map<Resource, Integer> reqResources;
-    private Item reqItem;
-    private ReqPoint reqPoints;
+    private final Map<Resource, Integer> reqResources;
+    private final Item reqItem;
+    private final ReqPoint reqPoints;
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters

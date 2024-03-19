@@ -3,6 +3,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Collections;
+
 import com.google.gson.*;
 
 
@@ -22,9 +24,9 @@ public class Game {
 
     public Game(ArrayList<Player> players) {
         createGoldDeck();
-        //TO DO
-        //createResourceDeck(), achievement, starter
-        // STARTERCARD CLASS DOES NOT EXIST!!!
+        createAchievementDeck();
+        createResourceDeck();
+        createStarterDeck();
         //TO DO
         //Something to figure out for common gold, common resource, common...
         this.players = players;
@@ -57,6 +59,12 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Collections.shuffle(goldDeck);
+        commonGold = new ArrayList<GoldCard>();
+        for(int i = 0; i < 2; i++) {
+            commonGold.add(goldDeck.get(0));
+            goldDeck.remove(0);
+        }
     }
 
     private void createResourceDeck(){
@@ -68,6 +76,12 @@ public class Game {
                 resourceDeck.add(tempResource[i]);
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        Collections.shuffle(resourceDeck);
+        commonResource = new ArrayList<ResourceCard>();
+        for(int i = 0; i < 2; i++) {
+            commonResource.add(resourceDeck.get(0));
+            resourceDeck.remove(0);
         }
     }
 
@@ -81,6 +95,12 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Collections.shuffle(achievementDeck);
+        commonAchievement = new ArrayList<AchievementCard>();
+        for(int i = 0; i < 2; i++) {
+            commonAchievement.add(achievementDeck.get(0));
+            achievementDeck.remove(0);
+        }
     }
 
     private void createStarterDeck(){
@@ -93,6 +113,7 @@ public class Game {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Collections.shuffle(starterDeck);
     }
 
 

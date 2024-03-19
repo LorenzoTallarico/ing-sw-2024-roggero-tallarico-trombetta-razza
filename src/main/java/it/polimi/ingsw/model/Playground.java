@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Playground {
-private Space[][] table;
+private final Space[][] table;
 private Map<Resource, Integer> resources;
 private Map<Item, Integer> items;
 private int northBound;

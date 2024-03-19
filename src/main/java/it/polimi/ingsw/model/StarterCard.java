@@ -1,8 +1,8 @@
 package it.polimi.ingsw.model;
 
 public class StarterCard extends Card{
-    private Resource secondResource;
-    private Resource thirdResource;
+    private final Resource secondResource;
+    private final Resource thirdResource;
 
     /**
      * Constructor of the class, initializes the resource cards with the given parameters
