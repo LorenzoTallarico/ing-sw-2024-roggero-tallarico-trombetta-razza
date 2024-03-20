@@ -3,7 +3,7 @@ package it.polimi.ingsw.model;
 public class ConcreteStrategyLshape implements Strategy {
     private int row;
     private int column;
-    private int cardPoints = 0;
+    private int cardPoints = 0; //suca
 
     public int execute(Resource resource, Player player) {
         for (column = player.getArea().getWestBound(); column <= player.getArea().getEastBound(); column++) {
