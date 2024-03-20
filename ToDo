@@ -4,6 +4,8 @@ Completare Model:
 - Chat
 - Testing
 - Aggiornamento UML e file spiegazione
+- Gestione eccezioni
+- Limitazione mosse player
 
 Controller:
 - Inizio
