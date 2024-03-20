@@ -9,7 +9,7 @@ import com.google.gson.*;
 
 
 public class Game {
-    private static Game istance;
+    private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
     private ArrayList<GoldCard> goldDeck;
@@ -34,11 +34,11 @@ public class Game {
         ended = false;
     }
 
-    public static Game getIstance(){
-        if(istance == null){
-            istance = new Game(players);
+    public static Game getInstance(){
+        if(instance == null){
+            instance = new Game(players);
         }
-        return istance;
+        return instance;
     }
 
     public void start(){
