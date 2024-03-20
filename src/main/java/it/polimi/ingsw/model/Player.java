@@ -6,9 +6,9 @@ public class Player {
     private boolean winner;
     private int points;
     private ArrayList<Card> hand;
-    public Playground area;
+    private Playground area;
     private final Color color;
-    private /*final*/ ArrayList<AchievementCard> secretAchievement;
+    private AchievementCard secretAchievement;
 
     /**
      * Constructor of the class, Initializes a new player with a 'name' and a 'color',
@@ -77,7 +77,7 @@ public class Player {
      * Method that returns the secret achievement of the player
      * @return AchievementCard representing the secret achievement the player chose
      */
-    public ArrayList<AchievementCard> getSecretAchievement() {
+    public AchievementCard getSecretAchievement() {
         return secretAchievement;
     }
     //SETTER
@@ -110,7 +110,7 @@ public class Player {
      * Method that sets the secret achievement of the player
      * @param secretAchievement AchievementCard representing the secret achievement of the player
      */
-    public void setSecretAchievement(ArrayList<AchievementCard> secretAchievement) {
+    public void setSecretAchievement(AchievementCard secretAchievement) {
         this.secretAchievement = secretAchievement;
     }
 

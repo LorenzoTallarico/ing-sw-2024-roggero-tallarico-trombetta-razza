@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Playground {
-public Space[][] table;
+private Space[][] table;
 private Map<Resource, Integer> resources;
 private Map<Item, Integer> items;
-public int northBound;
-public int eastBound;
-public int westBound;
-public int southBound;
+private int northBound;
+private int eastBound;
+private int westBound;
+private int southBound;
 
     public Playground() {
         table = new Space[81][81];
