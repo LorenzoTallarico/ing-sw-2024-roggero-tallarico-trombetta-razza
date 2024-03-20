@@ -151,6 +151,33 @@ public class Game {
 
     }
 
-
+    /**
+     *
+     * @param index indice per selezione: convenzione 0 prima risorsa tavolo, 1 seconda risorsa tavolo, 2 mazzo risorse, 3 prima gold tavolo 4 seconda gold tavolo 5 mazzo gold
+     * @return Card or null if indexOutOfBound or position empty
+     */
+    private Card draw(int index){
+        if(index>=0 && index<=5){
+            Card drawCard;
+            if(index<3){
+                if(resourceDeck.get(index)!=null){
+                    drawCard=resourceDeck.get(index);
+                    resourceDeck.remove(index);
+                    return drawCard;
+                }
+                else return null;
+            }
+            else{
+                index-=3;
+                if(goldDeck.get(index)!=null){
+                    drawCard=goldDeck.get(index);
+                    goldDeck.remove(index);
+                    return drawCard;
+                }
+                else return null;
+            }
+        }
+        return null; //outOfBound
+    }
 
 }
