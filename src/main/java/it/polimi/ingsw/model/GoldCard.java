@@ -5,8 +5,7 @@ import  java.util.HashMap;
 public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
-    private Strategy strategy;
-    private Player player;
+    private ReqPoint reqPoints;
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters
@@ -15,9 +14,10 @@ public class GoldCard extends Card {
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
      * @param reqResources Array of int counting the number of each resource required to place the card (?)
-     * @param reqItem Item required to place the card(????)
+     * @param reqItem Item required to place the card if reqPoints is equal to Item
+     * @param reqPoints The type of requirement needed to obtain the points
      */
-    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, Strategy strategy) {
+    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
         this.points = points;
         this.resource = resource;
         for(int i = 0; i < frontCorners.length; i++) {
@@ -32,26 +32,18 @@ public class GoldCard extends Card {
         this.reqResources.put(Resource.LEAF, reqResources[2]);
         this.reqResources.put(Resource.MUSHROOM, reqResources[3]);
         this.reqItem = reqItem;
-        this.strategy = strategy;
+        this.reqPoints = reqPoints;
     }
 
     public int countResource(Resource res){
         return reqResources.get(res);
     }
 
+    public ReqPoint getPointsType() {
+        return reqPoints;
+    }
+
     public Item getItem(){
         return reqItem;
-    }
-
-    /**
-     * method that given a player, sets it as the owner of the gold card
-     * @param player indicates the player
-     */
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public int getPoints(){
-        return points+strategy.execute(resource,player);
     }
 }

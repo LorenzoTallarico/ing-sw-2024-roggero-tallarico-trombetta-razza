@@ -26,6 +26,14 @@ public abstract class Card {
     }
 
     /**
+     * Method that returns the card's points
+     * @return the card's points
+     */
+    public int getPoints() {
+        return points;
+    }
+
+    /**
      * Method that returns the corners of the front side of the card
      * @return the array of the card's front side corners
      */

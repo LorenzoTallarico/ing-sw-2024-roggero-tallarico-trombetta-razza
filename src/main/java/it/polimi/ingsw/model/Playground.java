@@ -45,39 +45,45 @@ private int southBound;
      * @param card The card to place
      * @param row The integer representing the row index
      * @param column The integer representing the column index
+     * @return The integer representing the points made by placing the card, if any
      */
-    public void setSpace(Card card, int row, int column) {
+    public int setSpace(Card card, int row, int column) {
+        int points = 0;
         table[row][column].setCard(card);
         table[row][column].setFree(false);
 
         //update bounds
-        if(row < northBound)
+        if (row < northBound)
             northBound = row;
-        else if(row > southBound)
+        else if (row > southBound)
             southBound = row;
-        if(column < westBound)
+        if (column < westBound)
             westBound = column;
-        else if(column > eastBound)
+        else if (column > eastBound)
             eastBound = column;
 
         //check corners to add items and sources to the playground counter
         Corner[] corners;
-        if(card.isFront())
+        if (card.isFront())
             corners = card.getFrontCorners();
         else
             corners = card.getBackCorners();
-        for(Corner corn : corners) {
-            if(corn.getType().equals(CornerType.ITEM)) {
+        for (Corner corn : corners) {
+            if (corn.getType().equals(CornerType.ITEM)) {
                 items.put(corn.getItem(), items.get(corn.getItem()) + 1);
-            } else if(corn.getType().equals(CornerType.RESOURCE)) {
-                resources.put(corn.getResource(), resources.get(corn.getResource()) + 1);            }
+            } else if (corn.getType().equals(CornerType.RESOURCE)) {
+                resources.put(corn.getResource(), resources.get(corn.getResource()) + 1);
+            }
         }
 
         //cover adjacent cards' corners and subtract their items and resource from the playground counter
         //--- top left corner
-        if(row > 0 && column > 0 && table[row-1][column-1] != null && !table[row-1][column-1].isFree() && !table[row-1][column-1].isDead()) {
-            if(table[row-1][column-1].getCard().isFront()) { //the adjacent card is upside
+        if (row > 0 && column > 0 && table[row - 1][column - 1] != null && !table[row - 1][column - 1].isFree() && !table[row - 1][column - 1].isDead()) {
+            if (table[row - 1][column - 1].getCard().isFront()) { //the adjacent card is upside
                 table[row - 1][column - 1].getCard().getFrontCorners()[1].cover();
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                    points += 2;
                 if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.ITEM))
                     items.put(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem(), items.get(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem()) - 1);
                 if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.RESOURCE))
@@ -87,9 +93,12 @@ private int southBound;
             }
         }
         //--- top right corner
-        if(row > 0 && column < 80 && table[row-1][column+1] != null && !table[row-1][column+1].isFree() && !table[row-1][column+1].isDead()) {
-            if(table[row-1][column+1].getCard().isFront()) { //the adjacent card is upside
+        if (row > 0 && column < 80 && table[row - 1][column + 1] != null && !table[row - 1][column + 1].isFree() && !table[row - 1][column + 1].isDead()) {
+            if (table[row - 1][column + 1].getCard().isFront()) { //the adjacent card is upside
                 table[row - 1][column + 1].getCard().getFrontCorners()[2].cover();
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                    points += 2;
                 if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.ITEM))
                     items.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem(), items.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getItem()) - 1);
                 if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.RESOURCE))
@@ -99,9 +108,12 @@ private int southBound;
             }
         }
         //--- bottom right corner
-        if(row < 80 && column < 80 && table[row+1][column+1] != null && !table[row+1][column+1].isFree() && !table[row+1][column+1].isDead()) {
-            if(table[row+1][column+1].getCard().isFront()) { //the adjacent card is upside
+        if (row < 80 && column < 80 && table[row + 1][column + 1] != null && !table[row + 1][column + 1].isFree() && !table[row + 1][column + 1].isDead()) {
+            if (table[row + 1][column + 1].getCard().isFront()) { //the adjacent card is upside
                 table[row + 1][column + 1].getCard().getFrontCorners()[3].cover();
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                    points += 2;
                 if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.ITEM))
                     items.put(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem(), items.get(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem()) - 1);
                 if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.RESOURCE))
@@ -111,9 +123,12 @@ private int southBound;
             }
         }
         //--- bottom left corner
-        if(row < 80 && column > 0 && table[row+1][column-1] != null && !table[row+1][column-1].isFree() && !table[row+1][column-1].isDead()) {
-            if(table[row+1][column-1].getCard().isFront()) { //the adjacent card is upside
+        if (row < 80 && column > 0 && table[row + 1][column - 1] != null && !table[row + 1][column - 1].isFree() && !table[row + 1][column - 1].isDead()) {
+            if (table[row + 1][column - 1].getCard().isFront()) { //the adjacent card is upside
                 table[row + 1][column - 1].getCard().getFrontCorners()[0].cover();
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                    points += 2;
                 if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.ITEM))
                     items.put(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem(), items.get(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem()) - 1);
                 if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.RESOURCE))
@@ -122,6 +137,13 @@ private int southBound;
                 table[row + 1][column - 1].getCard().getBackCorners()[0].cover();
             }
         }
+        //if the card is a goldcard with item requirement, set the points to the item availables on the area
+        if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM)) {
+            points = items.get(((GoldCard) card).getItem());
+        } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE)){
+            points = card.getPoints(); //simple gold card with no requirements
+        }
+        return points;
     }
 
     public int countResource(Resource res){
