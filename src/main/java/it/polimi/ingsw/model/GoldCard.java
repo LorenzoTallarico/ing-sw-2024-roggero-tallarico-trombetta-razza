@@ -6,6 +6,7 @@ public class GoldCard extends Card {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
     private Strategy strategy;
+    private Player player;
 
     /**
      * Constructor of the class, initializes the gold cards with the given parameters
@@ -42,7 +43,15 @@ public class GoldCard extends Card {
         return reqItem;
     }
 
+    /**
+     * method that given a player, sets it as the owner of the gold card
+     * @param player indicates the player
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
     public int getPoints(){
-        return points+strategy.execute();
+        return points+strategy.execute(resource,player);
     }
 }

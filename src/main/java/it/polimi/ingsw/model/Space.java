@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 public class Space {
-    private Card card;
+    public Card card;
     private boolean free;
     private boolean dead;
     private boolean checked;

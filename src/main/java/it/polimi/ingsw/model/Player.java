@@ -6,7 +6,7 @@ public class Player {
     private boolean winner;
     private int points;
     private ArrayList<Card> hand;
-    private final Playground area;
+    public Playground area;
     private final Color color;
     private /*final*/ ArrayList<AchievementCard> secretAchievement;
 

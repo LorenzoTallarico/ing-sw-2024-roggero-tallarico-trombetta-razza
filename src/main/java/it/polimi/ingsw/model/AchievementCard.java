@@ -3,7 +3,8 @@ package it.polimi.ingsw.model;
 import sun.util.resources.Bundles;
 
 public class AchievementCard extends Card{
-    private final Strategy strategy;
+    private Strategy strategy;
+    private Player player;
 
     /**
      * Constructor of the class, initializes a new achievement card.
@@ -26,12 +27,19 @@ public class AchievementCard extends Card{
     }
 
     /**
-     * Method that returns the card's achievement type
-     * @return the achievement type
+     * method that given a player, sets it as the owner of the achievement card
+     * @param player indicates the player
+     */
+    public void setPlayer(Player player) {
+        this.player = player;
+    }
+
+    /**
+     * Method that returns the card's related points
+     * @return number of points
      */
 
-
     public int getPoints(){
-        return points+strategy.execute();
+        return points+strategy.execute(resource,player);
     }
 }
