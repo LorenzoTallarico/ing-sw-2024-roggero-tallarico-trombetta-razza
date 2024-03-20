@@ -146,7 +146,7 @@ public class Game {
             achievementDeck.remove(0);
             secretAchievement.add(achievementDeck.get(0));
             achievementDeck.remove(0);
-            players.get(i).setSecretAchievement(secretAchievement);
+            players.get(i).setSecretAchievement(ArrayList<AchievementCard> secretAchievement);
         }
 
     }
