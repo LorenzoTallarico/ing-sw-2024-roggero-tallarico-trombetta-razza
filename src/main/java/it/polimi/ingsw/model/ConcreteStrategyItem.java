@@ -6,9 +6,6 @@ public class ConcreteStrategyItem implements Strategy {
     private int row;
     private int column;
     private int cardPoints;
-    private int jarCounter;
-    private int plumeCounter;
-    private int scrollCounter;
     private Corner[] cardCorners;
     public int execute(Resource r, Player player, Item item) {
         for (column = player.getArea().getWestBound(); column <= player.getArea().getEastBound(); column++) {
@@ -25,6 +22,6 @@ public class ConcreteStrategyItem implements Strategy {
                 }
             }
         }
-    return cardPoints/2;
+    return (cardPoints/2)*2;
     }
 }
