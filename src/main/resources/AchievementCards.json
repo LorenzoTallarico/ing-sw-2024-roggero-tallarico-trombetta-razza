@@ -1,1 +1,162 @@
-
+[
+  {
+    "front": null,
+    "points": 0,
+    "resource": "MUSHROOM",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyDiagonal",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "LEAF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyDiagonal",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "WOLF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyDiagonal",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "BUTTERFLY",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyDiagonal",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "MUSHROOM",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyLshape",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "LEAF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyLshape",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "WOLF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyLshape",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "BUTTERFLY",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyLshape",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "MUSHROOM",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyResource",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "LEAF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyResource",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "WOLF",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyResource",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": "BUTTERFLY",
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyResource",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": null,
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyMixed",
+    "player": null,
+    "item": null
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": null,
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyItem",
+    "player": null,
+    "item": "SCROLL"
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": null,
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyItem",
+    "player": null,
+    "item": "JAR"
+  },
+  {
+    "front": null,
+    "points": 0,
+    "resource": null,
+    "frontCorners": [],
+    "backCorners": [],
+    "strategy": "ConcreteStrategyItem",
+    "player": null,
+    "item": "PLUME"
+  }
+]

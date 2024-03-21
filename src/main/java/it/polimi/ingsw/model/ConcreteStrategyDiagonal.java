@@ -4,6 +4,14 @@ public class ConcreteStrategyDiagonal implements Strategy{
     private int row;
     private int column;
     private int cardPoints = 0;
+
+    /**
+     *
+     * @param resource resource the cards have to belong to in order to give points for every diagonal pattern found in the player area
+     * @param player player who owns the card
+     * @param item it's useless
+     * @return number of points added to the player due to the card
+     */
     public int execute(Resource resource,Player player, Item item) {
         for (column = player.getArea().getWestBound(); column <= player.getArea().getEastBound(); column++) {
             for (row = player.getArea().getNorthBound(); row <= player.getArea().getSouthBound(); row++) {
