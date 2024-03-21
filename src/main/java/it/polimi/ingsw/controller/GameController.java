@@ -11,7 +11,7 @@ public class GameController {
 
     public GameController() {
         //To fix, might be a problem with Game.Game attribute
-        model = new Game();
+        model = Game.getInstance();
     }
 
     
