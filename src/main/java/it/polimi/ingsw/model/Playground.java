@@ -49,8 +49,23 @@ private int southBound;
      */
     public int setSpace(Card card, int row, int column) {
         int points = 0;
-        table[row][column].setCard(card);
-        table[row][column].setFree(false);
+        if(card.getClass() == StarterCard.class){
+            table[40][40].setCard(card);
+            table[40][40].setFree(false);
+            if(card.isFront()){
+                resources.put(card.getResource(), resources.get(card.getResource()) + 1);
+                if(((StarterCard)card).getSecondResource() != null) {
+                    resources.put(((StarterCard)card).getSecondResource(), resources.get(((StarterCard)card).getSecondResource()) + 1);
+                    if(((StarterCard)card).getThirdResource() != null)
+                        resources.put(((StarterCard)card).getThirdResource(), resources.get(((StarterCard)card).getThirdResource()) + 1);
+                }
+            }
+        } else {
+            table[row][column].setCard(card);
+            table[row][column].setFree(false);
+            if(!card.isFront())
+                resources.put(card.getResource(), resources.get(card.getResource()) + 1);
+        }
 
         //update bounds
         if (row < northBound)
