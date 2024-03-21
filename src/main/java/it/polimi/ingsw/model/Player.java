@@ -7,21 +7,20 @@ import java.util.Stack;
 public class Player {
     private final String name;
     private boolean winner;
-    private int points;
+    private int points;ArrayList<Player> players
     private ArrayList<Card> hand;
     private Playground area;
-    private final Color color;
+    private Color color;
     private ArrayList<AchievementCard> secretAchievement;
 
     /**
      * Constructor of the class, Initializes a new player with a 'name' and a 'color',
      * his status 'winner' to false, the 'area' and the 'points' to 0.
      * @param name String representing the name of the player
-     * @param color Color of the game marker of the player
      */
-    public Player(String name, Color color) {
+    public Player(String name) {
         this.name = name;
-        this.color = color;
+        color = Color.NONE;
         winner = false;
         area = new Playground();
         points = 0;
@@ -84,6 +83,11 @@ public class Player {
         return secretAchievement;
     }
     //SETTER
+
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
 
     /**
      * Method that sets the player as a winner
@@ -230,7 +234,7 @@ public class Player {
                         }
                         break;
 
-                    case 1:
+                    case 1:valorizzare
                         //bottom right corner
                         if (area.getSpace(row + 1, column + 1).getCard().isFront()) {
                             //gets the card next to the space, checks if the corner is dead

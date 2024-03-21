@@ -21,14 +21,16 @@ public class Game {
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<GoldCard> commonGold;
     private ArrayList<AchievementCard> commonAchievement;
-    private int playersNumber;
+    private final int playersNumber;
 
-    private Game(ArrayList<Player> players) {
+    public Game(ArrayList<Player> players) {
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
         createStarterDeck();
-        this.players = players;
+        assignColors(players);
+        Collections.shuffle(players);
+        Game.players = players;
         playersNumber = players.size();
         started = false;
         ended = false;
@@ -47,7 +49,7 @@ public class Game {
 
     public void nextPlayer(){
         currPlayer++;
-        if(currPlayer > playersNumber)
+        if(currPlayer >= playersNumber)
             currPlayer = 0;
     }
 
@@ -60,8 +62,7 @@ public class Game {
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
             goldDeck = new ArrayList<GoldCard>();
-            for(int i = 0; i < tempGold.length; i++)
-                goldDeck.add(tempGold[i]);
+            Collections.addAll(goldDeck, tempGold);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,8 +79,7 @@ public class Game {
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
             resourceDeck = new ArrayList<ResourceCard>();
-            for(int i = 0; i < tempResource.length; i++)
-                resourceDeck.add(tempResource[i]);
+            Collections.addAll(resourceDeck, tempResource);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -96,8 +96,7 @@ public class Game {
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             achievementDeck = new ArrayList<AchievementCard>();
-            for(int i = 0; i < tempAchievement.length; i++)
-                achievementDeck.add(tempAchievement[i]);
+            Collections.addAll(achievementDeck, tempAchievement);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -114,8 +113,7 @@ public class Game {
         try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
             starterDeck = new ArrayList<StarterCard>();
-            for(int i = 0; i < tempStarter.length; i++)
-                starterDeck.add(tempStarter[i]);
+            Collections.addAll(starterDeck, tempStarter);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -179,6 +177,61 @@ public class Game {
         }
         return null; //outOfBound
 
+    }
+
+    /**
+     *
+     * @param players : ArrayList of Player
+     * {@summary Assign a random color at player that has Color.NONE as its color attribute}
+     */
+    private void assignColors(ArrayList<Player> players){
+        boolean find;
+        for(int i = 0; i < players.size(); i++) {
+            if(players.get(i).getColor().equals(Color.NONE)) {
+                find = false;
+                for(int j=0; j < players.size() && !find; j++) {
+                    if (players.get(j).getColor().equals(Color.RED)) {
+                        find = true;
+                    }
+                    if(!find) {
+                        players.get(i).setColor(Color.RED);
+                    }
+                }
+            }
+            if(players.get(i).getColor().equals(Color.NONE)) {
+                find = false;
+                for(int j=0; j < players.size() && !find; j++) {
+                    if (players.get(j).getColor().equals(Color.YELLOW)) {
+                        find = true;
+                    }
+                    if(!find) {
+                        players.get(i).setColor(Color.YELLOW);
+                    }
+                }
+            }
+            if(players.get(i).getColor().equals(Color.NONE)) {
+                find = false;
+                for(int j=0; j < players.size() && !find; j++) {
+                    if (players.get(j).getColor().equals(Color.BLUE)) {
+                        find = true;
+                    }
+                    if(!find) {
+                        players.get(i).setColor(Color.BLUE);
+                    }
+                }
+            }
+            if(players.get(i).getColor().equals(Color.NONE)) {
+                find = false;
+                for(int j=0; j < players.size() && !find; j++) {
+                    if (players.get(j).getColor().equals(Color.GREEN)) {
+                        find = true;
+                    }
+                    if(!find) {
+                        players.get(i).setColor(Color.GREEN);
+                    }
+                }
+            }
+        }
     }
 
 }

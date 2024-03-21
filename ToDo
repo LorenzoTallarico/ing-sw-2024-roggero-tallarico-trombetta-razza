@@ -16,4 +16,4 @@ Controller:
 - lastRound() -- calcolo punti achievement segreto e achievement comuni e setta vincitori
 - mega metodo turno()?
 
-
+- Sistemare Color (automatizzarne l'assegnamento tramite la classe game, assegnamento casuale tra quelli non già assegnati in modo da evitare anche controlli)
