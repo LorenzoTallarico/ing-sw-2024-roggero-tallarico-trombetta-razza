@@ -1,0 +1,344 @@
+[
+  {
+    "front": null,
+    "resource": "BUTTERFLY",
+    "frontCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "front": null,
+    "resource": "BUTTERFLY",
+    "frontCorners": [
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "front": null,
+    "resource": "LEAF",
+    "secondResource": "MUSHROOM",
+    "frontCorners": [
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "front": null,
+    "resource": "WOLF",
+    "secondResource": "BUTTERFLY",
+    "frontCorners": [
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "front": null,
+    "resource": "WOLF",
+    "secondResource": "BUTTERFLY",
+    "thirdResource": "LEAF",
+    "frontCorners": [
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "DEAD",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "DEAD",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "front": null,
+    "resource": "LEAF",
+    "secondResource": "WOLF",
+    "thirdResource": "MUSHROOM",
+    "frontCorners": [
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "DEAD",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "DEAD",
+        "resource": null,
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "FREE",
+        "resource": null,
+        "item": null,
+        "visible": true
+      }
+    ],
+    "backCorners": [
+      {
+        "type": "RESOURCE",
+        "resource": "WOLF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "BUTTERFLY",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "LEAF",
+        "item": null,
+        "visible": true
+      },
+      {
+        "type": "RESOURCE",
+        "resource": "MUSHROOM",
+        "item": null,
+        "visible": true
+      }
+    ]
+  }
+]
