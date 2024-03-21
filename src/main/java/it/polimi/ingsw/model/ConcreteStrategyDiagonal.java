@@ -4,7 +4,7 @@ public class ConcreteStrategyDiagonal implements Strategy{
     private int row;
     private int column;
     private int cardPoints = 0;
-    public int execute(Resource resource,Player player) {
+    public int execute(Resource resource,Player player, Item item) {
         for (column = player.getArea().getWestBound(); column <= player.getArea().getEastBound(); column++) {
             for (row = player.getArea().getNorthBound(); row <= player.getArea().getSouthBound(); row++) {
                 if(resource==Resource.MUSHROOM) {

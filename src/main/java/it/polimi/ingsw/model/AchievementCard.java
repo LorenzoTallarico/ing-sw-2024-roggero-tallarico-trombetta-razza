@@ -5,6 +5,7 @@ import sun.util.resources.Bundles;
 public class AchievementCard extends Card{
     private Strategy strategy;
     private Player player;
+    private Item item;
 
     /**
      * Constructor of the class, initializes a new achievement card.
@@ -14,7 +15,7 @@ public class AchievementCard extends Card{
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
      */
-    public AchievementCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, Strategy strategy){
+    public AchievementCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, Strategy strategy,Item item){
         this.points = points;
         this.resource = resource;
         for (int i = 0; i < frontCorners.length; i++) {
@@ -24,6 +25,7 @@ public class AchievementCard extends Card{
             this.backCorners[i] = backCorners[i];
         }
         this.strategy = strategy;
+        this.item = item;
     }
 
     /**
@@ -34,12 +36,13 @@ public class AchievementCard extends Card{
         this.player = player;
     }
 
+
     /**
      * Method that returns the card's related points
      * @return number of points
      */
 
     public int getPoints(){
-        return points+strategy.execute(resource,player);
+        return points+strategy.execute(resource,player,item);
     }
 }
