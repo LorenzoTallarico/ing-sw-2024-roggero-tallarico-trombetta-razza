@@ -137,8 +137,13 @@ public class Player {
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
-            area.setSpace(card, row, column);
+            int score = area.setSpace(card, row, column);
             hand.remove(card);
+            //UPDATE SCORE
+            points += score;
+            //ACHIEVEMENT POINTS FROM COMMON ACHIEVEMENT CARDS?
+            //Metodo che manda un controllo punti su tutte le tipologie di punteggio (comuni)
+
             return true;
         }
         else {
@@ -284,6 +289,13 @@ public class Player {
                             }
                         }
                         break;
+
+
+                    //DEFAULT CASE MIGHT BE ADDED
+                    /*
+                    default:
+                        ...
+                    */
                 }
 
             }
