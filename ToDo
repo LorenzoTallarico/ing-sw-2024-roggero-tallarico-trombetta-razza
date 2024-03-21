@@ -9,7 +9,11 @@ Completare Model:
 
 Controller:
 - Inizio
- -changeTurn () -- controllo anche se arrivato a 20 punti prima di cambiarlo
- -draw()
+- changeTurn () -- controllo anche se arrivato a 20 punti prima di cambiarlo
+- draw()
+- place()
+- firstRound() -- scelta achievement segreto
+- lastRound() -- calcolo punti achievement segreto e achievement comuni e setta vincitori
+- mega metodo turno()?
 
 
