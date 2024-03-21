@@ -60,7 +60,7 @@ private int southBound;
                         resources.put(((StarterCard)card).getThirdResource(), resources.get(((StarterCard)card).getThirdResource()) + 1);
                 }
             }
-        } else {
+        } else { //add permanent resource
             table[row][column].setCard(card);
             table[row][column].setFree(false);
             if(!card.isFront())
