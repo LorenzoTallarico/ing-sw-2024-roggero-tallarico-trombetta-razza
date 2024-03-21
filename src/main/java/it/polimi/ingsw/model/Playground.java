@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Playground {
-private Space[][] table;
-private Map<Resource, Integer> resources;
-private Map<Item, Integer> items;
+private final Space[][] table;
+private final Map<Resource, Integer> resources;
+private final Map<Item, Integer> items;
 private int northBound;
 private int eastBound;
 private int westBound;
@@ -40,7 +40,7 @@ private int southBound;
 //GETTER AND SETTERS
 
     /**
-     * Method that given a card and a position, places the card in the right space, covering adjacents corners
+     * Method that given a card and a position, places the card in the right space, covering adjacent corners
      * and updating values
      * @param card The card to place
      * @param row The integer representing the row index
@@ -152,7 +152,7 @@ private int southBound;
                 table[row + 1][column - 1].getCard().getBackCorners()[0].cover();
             }
         }
-        //if the card is a goldcard with item requirement, set the points to the item availables on the area
+        //if the card is a gold card with item requirement, set the points to the available items on the area
         if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM)) {
             points = items.get(((GoldCard) card).getItem());
         } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE)){
@@ -161,47 +161,66 @@ private int southBound;
         return points;
     }
 
-    public int countResource(Resource res){
+    //getters
+
+    /**
+     * Method that returns the amount available on the playground of a specified resource
+     * @param res The resource type we want to know the number
+     * @return The integer representing the number of the available specified resource
+     */
+    public int countResources(Resource res){
         return resources.get(res);
     }
 
+    /**
+     * Method that returns the amount available on the playground of a specified item
+     * @param it The item type we want to know the number
+     * @return The integer representing the number of the available specified item
+     */
     public int countItems(Item it){
         return items.get(it);
     }
 
-    public Space getSpace(int x, int y) {
-        return table[x][y];
+    /**
+     * Method that returns the space in a specified position on the playground
+     * @param row The row where my space is
+     * @param column The column where my space is
+     * @return The space in the specified position
+     */
+    public Space getSpace(int row, int column) {
+        return table[row][column];
     }
 
+    /**
+     * Method that lowest row with at least one card, the northernmost one on the playground
+     * @return The integer representing the index of the northernmost row with a card
+     */
     public int getNorthBound() {
         return northBound;
     }
 
-    public void setNorthBound(int northBound) {
-        this.northBound = northBound;
-    }
-
+    /**
+     * Method that greatest column with at least one card, the easternmost one on the playground
+     * @return The integer representing the index of the easternmost row with a card
+     */
     public int getEastBound() {
         return eastBound;
     }
 
-    public void setEastBound(int eastBound) {
-        this.eastBound = eastBound;
-    }
-
+    /**
+     * Method that lowest column with at least one card, the westernmost one on the playground
+     * @return The integer representing the index of the westernmost row with a card
+     */
     public int getWestBound() {
         return westBound;
     }
 
-    public void setWestBound(int westBound) {
-        this.westBound = westBound;
-    }
-
+    /**
+     * Method that greater row with at least one card, the southernmost one on the playground
+     * @return The integer representing the index of the southernmost row with a card
+     */
     public int getSouthBound() {
         return southBound;
     }
 
-    public void setSouthBound(int southBound) {
-        this.southBound = southBound;
-    }
 }
