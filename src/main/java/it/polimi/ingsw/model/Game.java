@@ -154,29 +154,27 @@ public class Game {
      * @param index indice per selezione: convenzione 0 prima risorsa tavolo, 1 seconda risorsa tavolo, 2 mazzo risorse, 3 prima gold tavolo 4 seconda gold tavolo 5 mazzo gold
      * @return Card or null if indexOutOfBound or position empty
      */
-    private Card draw(int index){
-        if(index>=0 && index<=5){
+    private Card draw(int index) {
+        if(index>=0 && index<=5) {
             Card drawCard;
-            if(index<3){
-                if(resourceDeck.get(index)!=null){
+            if(index<3) {
+                if(resourceDeck.get(index)!=null) {
                     drawCard=resourceDeck.get(index);
                     resourceDeck.remove(index);
                     return drawCard;
-                }
-                else return null;
-            }
-            else{
-                index-=3;
-                if(goldDeck.get(index)!=null){
-                    drawCard=goldDeck.get(index);
+                } else
+                    return null;
+            } else {
+                index -= 3;
+                if(goldDeck.get(index) != null) {
+                    drawCard = goldDeck.get(index);
                     goldDeck.remove(index);
                     return drawCard;
-                }
-                else return null;
+                } else
+                    return null;
             }
         }
         return null; //outOfBound
-
     }
 
     /**
@@ -184,12 +182,12 @@ public class Game {
      * @param players : ArrayList of Player
      * {@summary Assign a random color at player that has Color.NONE as its color attribute}
      */
-    private void assignColors(ArrayList<Player> players){
+    private void assignColors(ArrayList<Player> players) {
         boolean find;
         for(int i = 0; i < players.size(); i++) {
             if(players.get(i).getColor().equals(Color.NONE)) {
                 find = false;
-                for(int j=0; j < players.size() && !find; j++) {
+                for(int j = 0; j < players.size() && !find; j++) {
                     if (players.get(j).getColor().equals(Color.RED)) {
                         find = true;
                     }
@@ -200,8 +198,8 @@ public class Game {
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
                 find = false;
-                for(int j=0; j < players.size() && !find; j++) {
-                    if (players.get(j).getColor().equals(Color.YELLOW)) {
+                for(int j = 0; j < players.size() && !find; j++) {
+                    if(players.get(j).getColor().equals(Color.YELLOW)) {
                         find = true;
                     }
                     if(!find) {
@@ -211,8 +209,8 @@ public class Game {
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
                 find = false;
-                for(int j=0; j < players.size() && !find; j++) {
-                    if (players.get(j).getColor().equals(Color.BLUE)) {
+                for(int j = 0; j < players.size() && !find; j++) {
+                    if(players.get(j).getColor().equals(Color.BLUE)) {
                         find = true;
                     }
                     if(!find) {
@@ -222,8 +220,8 @@ public class Game {
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
                 find = false;
-                for(int j=0; j < players.size() && !find; j++) {
-                    if (players.get(j).getColor().equals(Color.GREEN)) {
+                for(int j = 0; j < players.size() && !find; j++) {
+                    if(players.get(j).getColor().equals(Color.GREEN)) {
                         find = true;
                     }
                     if(!find) {
