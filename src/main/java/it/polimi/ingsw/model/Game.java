@@ -8,7 +8,7 @@ import java.util.Collections;
 import com.google.gson.*;
 
 
-public class Game {
+private class Game {
     private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
