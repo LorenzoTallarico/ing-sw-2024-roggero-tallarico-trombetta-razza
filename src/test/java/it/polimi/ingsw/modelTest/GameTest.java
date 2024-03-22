@@ -10,7 +10,8 @@ import java.util.ArrayList;
 
 public class GameTest {
 
-    void IntegrityTestGame(){
+    @Test
+    void IntegrityTest(){
         ArrayList<Player> players= new ArrayList<Player>();
 
         Player fake1= new Player("Marco");
@@ -21,28 +22,23 @@ public class GameTest {
         players.add(fake3);
         Player fake4= new Player("Paolo");
         players.add(fake4);
-        Game testGame= new Game(players);
-        boolean check;
-        if(testGame.getInstance().players.get(0).getColor()!=testGame.getInstance().players.get(1).getColor() &&
-                testGame.getInstance().players.get(0).getColor()!=testGame.getInstance().players.get(2).getColor() &&
-                testGame.getInstance().players.get(0).getColor()!=testGame.getInstance().players.get(3).getColor()){
-            check=true;
+        Game testGame= Game.getInstance(players);
+        // Verifica che ogni giocatore abbia un colore assegnato
+        for (Player player : testGame.getPlayers()) {
+            assertNotEquals(Color.NONE, player.getColor(), "Il colore del giocatore non è stato assegnato correttamente");
         }
-        check=false;
-        if(testGame.getInstance().players.get(1).getColor()!=testGame.getInstance().players.get(2).getColor() &&
-                testGame.getInstance().players.get(1).getColor()!=testGame.getInstance().players.get(3).getColor()){
-            check=true;
-        }
-        check=false;
-        if(testGame.getInstance().players.get(2).getColor()!=testGame.getInstance().players.get(3).getColor()){
-            check=true;
-        }
-        check=false;
 
-        for(int i=0; i<testGame.getInstance().playersNumber)
+        // Verifica che i colori dei giocatori siano diversi
+        for (int i = 0; i < testGame.getPlayersNumber(); i++) {
+            for (int j = i + 1; j < testGame.getPlayersNumber(); j++) {
+                assertNotEquals(testGame.getPlayers().get(i).getColor(), testGame.getPlayers().get(j).getColor(), "I colori dei giocatori non sono diversi");
+            }
+        }
     }
 
-    void testStart(){
-
     }
+
+    /*void testStart(){
+
+    }*/
 }

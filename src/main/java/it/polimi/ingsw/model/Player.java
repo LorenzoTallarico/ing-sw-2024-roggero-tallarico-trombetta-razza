@@ -7,7 +7,7 @@ import java.util.Stack;
 public class Player {
     private final String name;
     private boolean winner;
-    private int points;ArrayList<Player> players
+    private int points;ArrayList<Player> players;
     private ArrayList<Card> hand;
     private Playground area;
     private Color color;
@@ -234,7 +234,7 @@ public class Player {
                         }
                         break;
 
-                    case 1:valorizzare
+                    case 1://valorizzare
                         //bottom right corner
                         if (area.getSpace(row + 1, column + 1).getCard().isFront()) {
                             //gets the card next to the space, checks if the corner is dead

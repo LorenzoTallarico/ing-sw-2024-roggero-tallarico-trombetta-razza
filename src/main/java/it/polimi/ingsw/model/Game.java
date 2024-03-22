@@ -8,7 +8,7 @@ import java.util.Collections;
 import com.google.gson.*;
 
 
-private class Game {
+public class Game {
     private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
@@ -23,7 +23,7 @@ private class Game {
     private ArrayList<AchievementCard> commonAchievement;
     private final int playersNumber;
 
-    public Game(ArrayList<Player> players) {
+    private Game(ArrayList<Player> players) {
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
@@ -36,28 +36,65 @@ private class Game {
         ended = false;
     }
 
-    public static Game getInstance(){
-        if(instance == null){
+    //GETTER
+
+    /**
+     *
+     * @return Game.instance
+     */
+    public static Game getInstance() {
+        return instance;
+    }
+
+    /**
+     * //Overloading
+     * @param players
+     * @return Game.instance
+     */
+    public static Game getInstance(ArrayList<Player> players) {
+        if(instance == null) {
             instance = new Game(players);
         }
         return instance;
     }
 
-    public void start(){
+    public static ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public boolean isEnded() {
+        return ended;
+    }
+
+    public int getCurrPlayer() {
+        return currPlayer;
+    }
+
+    public int getPlayersNumber() {
+        return playersNumber;
+    }
+
+    //METHODS
+
+    public void start() {
         started = true;
     }
 
-    public void nextPlayer(){
+    public void nextPlayer() {
         currPlayer++;
         if(currPlayer >= playersNumber)
             currPlayer = 0;
     }
 
-    public void end(){
+    public void end() {
         ended = true;
     }
 
-    private void createGoldDeck(){
+    private void createGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
@@ -74,7 +111,7 @@ private class Game {
         }
     }
 
-    private void createResourceDeck(){
+    private void createResourceDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
@@ -91,7 +128,7 @@ private class Game {
         }
     }
 
-    private void createAchievementDeck(){
+    private void createAchievementDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
@@ -108,7 +145,7 @@ private class Game {
         }
     }
 
-    private void createStarterDeck(){
+    private void createStarterDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
@@ -126,7 +163,7 @@ private class Game {
      * use it only after create and shuffle gold and resource decks}
      * 2 resource and 1 gold in hand + 2 secretAchievement;
      **/
-    private void createHands(){
+    private void createHands() {
 
         for(int i=0; i<playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<Card>();
