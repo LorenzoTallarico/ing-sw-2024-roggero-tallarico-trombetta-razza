@@ -7,7 +7,8 @@ import java.util.Stack;
 public class Player {
     private final String name;
     private boolean winner;
-    private int points;ArrayList<Player> players;
+    private int points;
+    ArrayList<Player> players;
     private ArrayList<Card> hand;
     private Playground area;
     private Color color;
@@ -136,17 +137,13 @@ public class Player {
      * @param column integer indicating the column of the playground where the card would be placed
      * @return boolean 'true' if the card was placed correctly, 'false' otherwise
      */
-    //EXCEPTION MUST BE ADDED
     public boolean place(Card card, int row, int column){
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
             int score = area.setSpace(card, row, column);
             hand.remove(card);
-            //UPDATE SCORE
             points += score;
-            //ACHIEVEMENT POINTS FROM COMMON ACHIEVEMENT CARDS?
-            //Metodo che manda un controllo punti su tutte le tipologie di punteggio (comuni)
 
             return true;
         }
@@ -155,14 +152,12 @@ public class Player {
         }
     }
 
-    //EXECPTION MUST BE ADDED - CODE MUST BE CLEARED
-    //EXCEPTIONS:  AGGIUNGE UN ELEMENTO NEL HASHSET GIA' PRESENTE
-    public boolean placeable(Card card, int row, int column) {
 
+    public boolean placeable(Card card, int row, int column) {
         //collection in which we find the possible corners of the card that will cover another card
-        Stack<Integer> Corn = new Stack<Integer>();
+        Stack<Integer> corn = new Stack<Integer>();
         //Collection that allows only unique elements (helps checking that the corner's number is always different for the same card)
-        HashSet<Integer> Counter = new HashSet<Integer>();
+        HashSet<Integer> counter = new HashSet<Integer>();
         Corner[] corners;
         boolean stop = false;
 
@@ -180,39 +175,35 @@ public class Player {
         //within bounds, space is free and not dead (down here is not necessary to check also if space is dead, might be removed)
         //topRight = 0
         if (!area.getSpace(row - 1, column + 1).isFree() && !area.getSpace(row - 1, column + 1).isDead()) {
-            Corn.push(0);
+            corn.push(0);
         }
         //bottomRight = 1
         if (!area.getSpace(row + 1, column + 1).isFree() && !area.getSpace(row + 1, column + 1).isDead()) {
-            Corn.push(1);
+            corn.push(1);
         }
 
         //bottomLeft = 2
         if (!area.getSpace(row + 1, column - 1).isFree() && !area.getSpace(row + 1, column - 1).isDead()) {
-            Corn.push(2);
+            corn.push(2);
         }
 
         //topLeft = 3
         if (!area.getSpace(row - 1, column - 1).isFree() && !area.getSpace(row - 1, column - 1).isDead()) {
-            Corn.push(3);
+            corn.push(3);
         }
 
 
         //Opposite corners:  0 <--> 2    ||    1 <---> 3
         //Corner of the card is still visibile, the adjacent card's corner must be covered
 
-        if (Corn.isEmpty()) {
-            //no card is adjacent to the space indicated
-            stop = false;
-        }
-        else if (/*Corn.size() >= 1 &&*/ Corn.size() <= 5) {
+        if (!corn.isEmpty() && corn.size() <= 5) {
             //the card will cover at least 1 corner
 
             //this helps checking that the number of corners accepted equals the number of corners that need to be checked
-            int checker = Corn.size();
+            int checker = corn.size();
 
             for (int i = 0; i < checker; i++) {
-                int c1 = Corn.pop();
+                int c1 = corn.pop();
                 switch (c1) {
                     case 0:
                         //top right corner
@@ -222,19 +213,19 @@ public class Player {
                             corners = area.getSpace(row - 1, column + 1).getCard().getFrontCorners();
                             if (!corners[2].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(0);
+                                counter.add(0);
                             }
                         } else {
                             //Card is on the back side
                             corners = area.getSpace(row - 1, column + 1).getCard().getBackCorners();
                             if (!corners[2].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(0);
+                                counter.add(0);
                             }
                         }
                         break;
 
-                    case 1://valorizzare
+                    case 1:
                         //bottom right corner
                         if (area.getSpace(row + 1, column + 1).getCard().isFront()) {
                             //gets the card next to the space, checks if the corner is dead
@@ -242,14 +233,14 @@ public class Player {
                             corners = area.getSpace(row + 1, column + 1).getCard().getFrontCorners();
                             if (!corners[3].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(1);
+                                counter.add(1);
                             }
                         } else {
                             //Card is on the back side
                             corners = area.getSpace(row + 1, column + 1).getCard().getBackCorners();
                             if (!corners[3].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(1);
+                                counter.add(1);
                             }
                         }
                         break;
@@ -262,14 +253,14 @@ public class Player {
                             corners = area.getSpace(row + 1, column - 1).getCard().getFrontCorners();
                             if (!corners[0].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(2);
+                                counter.add(2);
                             }
                         } else {
                             //Card is on the back side
                             corners = area.getSpace(row + 1, column - 1).getCard().getBackCorners();
                             if (!corners[0].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(2);
+                                counter.add(2);
                             }
                         }
                         break;
@@ -282,30 +273,26 @@ public class Player {
                             corners = area.getSpace(row - 1, column - 1).getCard().getFrontCorners();
                             if (!corners[1].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(3);
+                                counter.add(3);
                             }
                         } else {
                             //Card is on the back side
                             corners = area.getSpace(row - 1, column - 1).getCard().getBackCorners();
                             if (!corners[1].getType().equals(CornerType.DEAD)) {
                                 //add element to HashSet
-                                Counter.add(3);
+                                counter.add(3);
                             }
                         }
                         break;
 
-
-                    //DEFAULT CASE MIGHT BE ADDED
-                    /*
                     default:
-                        ...
-                    */
+                        break;
                 }
 
             }
 
-            //if correct, every corner form the adjacent cards is eligible to be covered (not DEAD)
-            if(checker == Counter.size()) {
+            //if correct, every corner from the adjacent cards is eligible to be covered (not DEAD)
+            if(checker == counter.size()) {
                 stop = true;
             }
         }

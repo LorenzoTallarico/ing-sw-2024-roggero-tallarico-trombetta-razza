@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import sun.util.resources.Bundles;
+//import sun.util.resources.Bundles;
 
 public class AchievementCard extends Card{
     private Strategy strategy;
