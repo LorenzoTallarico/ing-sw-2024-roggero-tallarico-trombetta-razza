@@ -36,7 +36,6 @@ public class GameTest {
         }
     }
 
-    }
 
     /*void testStart(){
 
