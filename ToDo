@@ -6,6 +6,12 @@ Completare Model:
 - Aggiornamento UML e file spiegazione
 - Gestione eccezioni
 - Limitazione mosse player
+- Sistemare secret achievement attributo in player (da arraylist a singolo attributo)
+- Aggiungere chat nel game (effettivamente), controllare spunti
+- (Teo) finire controllo piazzamento carta oro in Player - placeable
+- Fare json delle gold card
+- Aggiungere final ai class del singleton
+
 
 Controller:
 - Inizio
