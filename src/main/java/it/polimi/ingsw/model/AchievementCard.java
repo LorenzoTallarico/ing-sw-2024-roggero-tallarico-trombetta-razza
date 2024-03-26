@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-//import sun.util.resources.Bundles;
-
 public class AchievementCard extends Card{
     private Strategy strategy;
     private Player player;
@@ -41,7 +39,7 @@ public class AchievementCard extends Card{
      * Method that returns the card's related points
      * @return number of points
      */
-
+    @Override
     public int getPoints(){
         return points+strategy.execute(resource,player,item);
     }
