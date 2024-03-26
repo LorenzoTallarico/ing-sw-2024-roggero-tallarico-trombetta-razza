@@ -172,6 +172,11 @@ public class Player {
                 (!area.getSpace(row, column).isFree()))
             return false;
 
+        if(card.getClass() == GoldCard.class){
+            if(!checkGold((GoldCard) card))
+                return false;
+        }
+
         //within bounds, space is free and not dead (down here is not necessary to check also if space is dead, might be removed)
         //topRight = 0
         if (!area.getSpace(row - 1, column + 1).isFree() && !area.getSpace(row - 1, column + 1).isDead()) {
@@ -298,6 +303,29 @@ public class Player {
         }
 
         return stop;
+    }
+
+
+    public boolean checkGold(GoldCard card){
+        boolean result=true;
+        if(card.countResource(Resource.LEAF) > area.countResources(Resource.LEAF)){
+            result = false;
+            return result;
+        }
+        if(card.countResource(Resource.WOLF) > area.countResources(Resource.WOLF)){
+            result = false;
+            return result;
+        }
+        if(card.countResource(Resource.BUTTERFLY) > area.countResources(Resource.BUTTERFLY)){
+            result = false;
+            return result;
+        }
+        if(card.countResource(Resource.MUSHROOM) > area.countResources(Resource.MUSHROOM)){
+            result = false;
+            return result;
+        }
+
+        return result;
     }
 
     
