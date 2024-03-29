@@ -8,6 +8,7 @@ public class Player {
     private final String name;
     private boolean winner;
     private int points;
+    private int chosenSecretAchievement;
     ArrayList<Player> players;
     private ArrayList<Card> hand;
     private Playground area;
@@ -28,6 +29,16 @@ public class Player {
     }
 
     // GETTER
+
+    /**
+     * method that returns "0" or "1" depending on the choice of the player regarding the two achievement cards given to him during the first round
+      * @return a number representing the chosen card
+     */
+
+    public int getChosenSecretAchievement(){
+        return chosenSecretAchievement;
+    }
+
     /**
      * Method that returns the name of the player
      * @return a String representing the name of the player
@@ -83,8 +94,24 @@ public class Player {
     public ArrayList<AchievementCard> getSecretAchievement() {
         return secretAchievement;
     }
+
     //SETTER
 
+    /**
+     * method that sets the value of chosenSecretAchievement
+     * @param chosenSecretAchievement represents the chosen achievementCard by the player
+     */
+    public void setChosenSecretAchievement(int chosenSecretAchievement){
+        this.chosenSecretAchievement = chosenSecretAchievement;
+    }
+
+    /**
+     * Method that sets the secret achievement of the player
+     * @param secretAchievement AchievementCard representing the secret achievement of the player
+     */
+    public void setSecretAchievement(ArrayList<AchievementCard> secretAchievement) {
+        this.secretAchievement = secretAchievement;
+    }
 
     public void setColor(Color color) {
         this.color = color;
@@ -112,14 +139,6 @@ public class Player {
      */
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
-    }
-
-    /**
-     * Method that sets the secret achievement of the player
-     * @param secretAchievement AchievementCard representing the secret achievement of the player
-     */
-    public void setSecretAchievement(ArrayList<AchievementCard> secretAchievement) {
-        this.secretAchievement = secretAchievement;
     }
 
     /**
