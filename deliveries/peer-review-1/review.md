@@ -1,11 +1,10 @@
 # Peer-Review 1: UML
 
-[Nome 1], [Nome 2], [Nome 3]
+Pietro Roggero, Lorenzo Tallarico, Matteo Trombetta, Tommaso Raza
 
-Gruppo [numero del vostro gruppo]
+Gruppo GC06
 
-Valutazione del diagramma UML delle classi del gruppo [numero dell’altro
-gruppo].
+Valutazione del diagramma UML delle classi del gruppo GC53.
 
 ## Lati positivi
 
