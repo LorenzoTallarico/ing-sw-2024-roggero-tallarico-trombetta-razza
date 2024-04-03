@@ -11,6 +11,7 @@ Completare Model:
 - (Teo) finire controllo piazzamento carta oro in Player - placeable
 - Fare json delle gold card
 - Aggiungere final ai class del singleton
+- Gestire caso fine partita se le carte da pescare terminano
 
 
 Controller:
