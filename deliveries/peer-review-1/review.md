@@ -9,7 +9,7 @@ Abbiamo individuato due aspetti positivi in particolare che meritano attenzione.
 ### 1.1 Update risorse e oggetti in Player Area
 Ottima scelta quella di aggiornare delle variabili di conteggio risorse e oggetti per semplificare il controllo dei requisiti di carte oro e/o carte obiettivo, evitando anche possibili calcoli ridondanti. Sul tipo dato utilizzato abbiamo però lasciato una considerazione sotto _(2.1)_.
 ### 1.2 Parametri adeguati per metodi di pesca delle carte
-In Table e GameController i metodi per scegliere le carte dalla mano o dal tavolo utilizzano delle enum come parametri, ciò riduce i rischi di errore dati dall'utilizzo di semplici int e quindi evita problemi di gestione di indici.
+In _Table_ e _GameController_ i metodi per scegliere le carte dalla mano o dal tavolo utilizzano delle enum come parametri, ciò riduce i rischi di errore dati dall'utilizzo di semplici int e quindi evita problemi di gestione di indici.
 
 ## 2 Lati negativi
 Leggendo il diagramma e successivamente provando a simulare una partita abbiamo individuato i seguenti punti critici che potrebbero essere migliorati.
