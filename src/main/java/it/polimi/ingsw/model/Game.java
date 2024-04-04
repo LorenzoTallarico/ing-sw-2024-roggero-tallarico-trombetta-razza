@@ -21,43 +21,133 @@ public class Game {
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<GoldCard> commonGold;
     private ArrayList<AchievementCard> commonAchievement;
-    private final int playersNumber;
+    private int playersNumber;
 
-    private Game(ArrayList<Player> players) {
+    private Game() {
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
         createStarterDeck();
-        assignColors(players);
-        Collections.shuffle(players);
-        Game.players = players;
-        playersNumber = players.size();
         started = false;
         ended = false;
     }
 
     //GETTER
 
+    public AchievementCard popAchievementCard() {
+        AchievementCard secretAchievement = null;
+        try {
+            secretAchievement = achievementDeck.get(0);
+            achievementDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            // Gestione dell'eccezione: l'indice non esiste
+            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
+        }
+        return secretAchievement;
+    }
+
+    public AchievementCard popAchievementCard(int i) {
+        AchievementCard secretAchievement = null;
+        try {
+            secretAchievement = achievementDeck.get(i);
+            achievementDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
+        }
+        return secretAchievement;
+    }
+
+    public ResourceCard popResourceCard() {
+        ResourceCard resource = null;
+        try {
+            resource = resourceDeck.get(0);
+            resourceDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto.");
+        }
+        return resource;
+    }
+
+    public ResourceCard popResourceCard(int i) {
+        ResourceCard resource = null;
+        try {
+            resource = resourceDeck.get(i);
+            resourceDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto o indice non valido.");
+        }
+        return resource;
+    }
+
+    public StarterCard popStarterCard() {
+        StarterCard starter = null;
+        try {
+            starter = starterDeck.get(0);
+            starterDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto.");
+        }
+        return starter;
+    }
+
+    public StarterCard popStarterCard(int i) {
+        StarterCard starter = null;
+        try {
+            starter = starterDeck.get(i);
+            starterDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto o indice non valido.");
+        }
+        return starter;
+    }
+
+    public GoldCard popGoldCard() {
+        GoldCard card = null;
+        try {
+            card = goldDeck.get(0);
+            goldDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto.");
+        }
+        return card;
+    }
+
+    public GoldCard popGoldCard(int i) {
+        GoldCard card = null;
+        try {
+            card = goldDeck.get(i);
+            goldDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto o indice non valido.");
+        }
+        return card;
+    }
+
+
     /**
      *
      * @return Game.instance
      */
     public static Game getInstance() {
+        if(instance == null) {
+            instance = new Game();
+        }
         return instance;
     }
 
     /**
+     *
      * //Overloading
      * @param players
      * @return Game.instance
      */
-    public static Game getInstance(ArrayList<Player> players) {
+   /* public static Game getInstance(ArrayList<Player> players) {
         if(instance == null) {
             instance = new Game(players);
         }
         return instance;
     }
-
+*/
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -212,6 +302,25 @@ public class Game {
             }
         }
         return null; //outOfBound
+    }
+
+    public void addPlayer(ArrayList<Player> players) {
+        if(Game.players.isEmpty()){
+            for(int i=0; i<players.size(); i++){
+                Game.players.add(players.get(i));
+            }
+            assignColors(players);
+            Collections.shuffle(players);
+            this.playersNumber = players.size();
+        }
+        else{
+            for(int i=0; i<players.size(); i++){
+                Game.players.add(players.get(i));
+            }
+            assignColors(players);
+            Collections.shuffle(players);
+            this.playersNumber += players.size();
+        }
     }
 
     /**

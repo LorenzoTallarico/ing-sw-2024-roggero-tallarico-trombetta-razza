@@ -6,9 +6,9 @@ import java.util.Stack;
 
 public class Player {
     private final String name;
+    private final boolean gui;
     private boolean winner;
     private int points;
-    private int chosenSecretAchievement;
     ArrayList<Player> players;
     private ArrayList<Card> hand;
     private Playground area;
@@ -20,24 +20,17 @@ public class Player {
      * his status 'winner' to false, the 'area' and the 'points' to 0.
      * @param name String representing the name of the player
      */
-    public Player(String name) {
+    public Player(String name, boolean gui) {
         this.name = name;
         color = Color.NONE;
         winner = false;
         area = new Playground();
         points = 0;
+        this.gui=gui;
     }
 
     // GETTER
 
-    /**
-     * method that returns "0" or "1" depending on the choice of the player regarding the two achievement cards given to him during the first round
-      * @return a number representing the chosen card
-     */
-
-    public int getChosenSecretAchievement(){
-        return chosenSecretAchievement;
-    }
 
     /**
      * Method that returns the name of the player
@@ -97,13 +90,6 @@ public class Player {
 
     //SETTER
 
-    /**
-     * method that sets the value of chosenSecretAchievement
-     * @param chosenSecretAchievement represents the chosen achievementCard by the player
-     */
-    public void setChosenSecretAchievement(int chosenSecretAchievement){
-        this.chosenSecretAchievement = chosenSecretAchievement;
-    }
 
     /**
      * Method that sets the secret achievement of the player

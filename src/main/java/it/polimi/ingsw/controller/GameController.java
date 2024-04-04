@@ -2,16 +2,17 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
 
+import java.util.ArrayList;
+
 
 public class GameController {
+    //Attributi ridondanti, da vedere se utili o togliere
     private Player currentPlayer;
     private int playersNumber;
     private int position, index;
-    //link to the model
     private final Game model;
 
     public GameController() {
-        //To fix, might be a problem with Game.Game attribute
         model = Game.getInstance();
     }
 
@@ -32,7 +33,27 @@ public class GameController {
 
     public void selectAchievementCard(int position){
         synchronized (this.model) {
-            model.getPlayers().get(model.getCurrPlayer()).setChosenSecretAchievement(position);
+            ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
+            goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
+            model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement( goal );
         }
     }
+
+    //**********to decide if it's necessary to synchronize***********
+    public boolean isPlayerInTurn(Player p) {
+        return model.getCurrPlayer() == model.getPlayers().indexOf(p);
+    }
+
+    public void assignStarterAchievement(Player p1){
+        synchronized (this.model) {
+            ArrayList<AchievementCard> goals = new ArrayList<AchievementCard>();
+            goals.add(model.popAchievementCard());
+            goals.add(model.popAchievementCard());
+            p1.setSecretAchievement(goals);
+        }
+    }
+
+
+
+
 }

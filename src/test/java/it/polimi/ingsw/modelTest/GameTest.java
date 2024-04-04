@@ -22,7 +22,8 @@ public class GameTest {
         players.add(fake3);
         Player fake4= new Player("Paolo");
         players.add(fake4);
-        Game testGame= Game.getInstance(players);
+        Game testGame= Game.getInstance();
+        testGame.addPlayer(players);
         // Verifica che ogni giocatore abbia un colore assegnato
         for (Player player : testGame.getPlayers()) {
             assertNotEquals(Color.NONE, player.getColor(), "Il colore del giocatore non è stato assegnato correttamente");
