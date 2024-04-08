@@ -23,6 +23,14 @@ public class Game {
     private ArrayList<AchievementCard> commonAchievement;
     private int playersNumber;
 
+
+    /* ########## INIZIO ATTRIBUTI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+    private Integer state = 0;
+    /* ########## FINE ATTRIBUTI DA RIMUOVERE ############# */
+
+
+
+
     private Game() {
         createGoldDeck();
         createAchievementDeck();
@@ -377,5 +385,20 @@ public class Game {
             }
         }
     }
+
+
+    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+    public void addState(Integer number) {
+        this.state += number;
+    }
+
+    public void reset(){
+        this.state = 0;
+    }
+
+    public Integer getState(){
+        return this.state;
+    }
+    /* ########## FINE METODI DA RIMUOVERE ############# */
 
 }

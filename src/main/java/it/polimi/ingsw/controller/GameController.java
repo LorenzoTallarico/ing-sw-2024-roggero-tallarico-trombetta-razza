@@ -41,7 +41,9 @@ public class GameController {
 
     //**********to decide if it's necessary to synchronize***********
     public boolean isPlayerInTurn(Player p) {
-        return model.getCurrPlayer() == model.getPlayers().indexOf(p);
+        synchronized (this.model){
+            return model.getCurrPlayer() == model.getPlayers().indexOf(p);
+        }
     }
 
     public void assignStarterAchievement(Player p1){
@@ -55,5 +57,31 @@ public class GameController {
 
 
 
+
+
+
+
+
+    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+    public void addState(Integer number){
+        synchronized (this.model){
+            this.model.addState(number);
+        }
+    }
+
+    public Integer getState(){
+        synchronized (this.model){
+            return this.model.getState();
+        }
+
+    }
+
+    public void reset(){
+        synchronized (this.model){
+            this.model.reset();
+        }
+
+    }
+    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
 
 }

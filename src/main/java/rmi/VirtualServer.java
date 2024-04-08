@@ -14,4 +14,12 @@ public interface VirtualServer extends Remote {
 
     void selectAchievementCard(int position) throws RemoteException;
 
+
+
+
+    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+    void addState(Integer number) throws RemoteException;
+    void reset() throws RemoteException;
+    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+
 }
