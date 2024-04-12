@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
 public class ConcreteStrategyResource implements Strategy {
+
+    public ConcreteStrategyResource() {    }
+
     /**
      *
      * @param resource this is the resource whose number is counted to determine number of points

@@ -6,7 +6,7 @@ import java.util.Stack;
 
 public class Player {
     private final String name;
-    private final boolean gui;
+    private final boolean gui = false;
     private boolean winner;
     private int points;
     ArrayList<Player> players;
@@ -14,6 +14,16 @@ public class Player {
     private Playground area;
     private Color color;
     private ArrayList<AchievementCard> secretAchievement;
+
+
+    public Player(){
+        name = null;
+        points = -1;
+        hand = null;
+        area = null;
+        color = null;
+        secretAchievement = null;
+    }
 
     /**
      * Constructor of the class, Initializes a new player with a 'name' and a 'color',
@@ -26,7 +36,7 @@ public class Player {
         winner = false;
         area = new Playground();
         points = 0;
-        this.gui=gui;
+        //this.gui=gui;
     }
 
     // GETTER

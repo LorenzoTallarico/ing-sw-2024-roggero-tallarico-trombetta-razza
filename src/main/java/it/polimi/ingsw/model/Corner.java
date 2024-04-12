@@ -6,6 +6,12 @@ public class Corner {
     private final Item item;
     private boolean visible;
 
+    public Corner(){
+        type = null;
+        resource = null;
+        item = null;
+    }
+
     /**
      * Constructor of the class, initializes the corner.
      * It initializes Corner with the given parameters, also setting 'visible' to true

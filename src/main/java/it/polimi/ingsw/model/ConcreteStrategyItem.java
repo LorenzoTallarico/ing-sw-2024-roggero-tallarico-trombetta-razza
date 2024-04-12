@@ -2,6 +2,8 @@ package it.polimi.ingsw.model;
 
 public class ConcreteStrategyItem implements Strategy {
 
+
+    public ConcreteStrategyItem() {    }
     /**
      *
      * @param resource it's useless

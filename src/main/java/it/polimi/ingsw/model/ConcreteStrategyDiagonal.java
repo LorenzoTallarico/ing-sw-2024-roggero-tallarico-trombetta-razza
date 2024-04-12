@@ -5,6 +5,9 @@ public class ConcreteStrategyDiagonal implements Strategy{
     private int column;
     private int cardPoints = 0;
 
+    public ConcreteStrategyDiagonal() {    }
+
+
     /**
      *
      * @param resource resource the cards have to belong to in order to give points for every diagonal pattern found in the player area

@@ -1,6 +1,9 @@
 package it.polimi.ingsw.model;
 
 public class ConcreteStrategyMixed implements Strategy{
+
+    public ConcreteStrategyMixed() {    }
+
     /**
      * @param resource it's useless
      * @param player the player who owns the card

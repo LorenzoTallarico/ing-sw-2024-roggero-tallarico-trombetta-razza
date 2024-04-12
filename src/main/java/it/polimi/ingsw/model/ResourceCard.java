@@ -1,6 +1,15 @@
 package it.polimi.ingsw.model;
 
 public class ResourceCard extends Card {
+
+    public ResourceCard(){
+        front = false;
+        points = -1;
+        resource = null;
+        frontCorners = null;
+        backCorners = null;
+    }
+
     /**
      * Constructor of the class, initializes the resource cards with the given parameters
      * @param points integer representing the points the card gives if the requirements are fulfilled

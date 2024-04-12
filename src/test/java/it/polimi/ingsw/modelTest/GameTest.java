@@ -14,13 +14,13 @@ public class GameTest {
     void IntegrityTest(){
         ArrayList<Player> players= new ArrayList<Player>();
 
-        Player fake1= new Player("Marco");
+        Player fake1= new Player("Marco", false);
         players.add(fake1);
-        Player fake2= new Player("Luca");
+        Player fake2= new Player("Luca", false);
         players.add(fake2);
-        Player fake3= new Player("Andrea");
+        Player fake3= new Player("Andrea", false);
         players.add(fake3);
-        Player fake4= new Player("Paolo");
+        Player fake4= new Player("Paolo", false);
         players.add(fake4);
         Game testGame= Game.getInstance();
         testGame.addPlayer(players);

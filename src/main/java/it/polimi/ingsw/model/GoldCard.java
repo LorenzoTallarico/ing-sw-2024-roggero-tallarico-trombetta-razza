@@ -7,6 +7,18 @@ public class GoldCard extends Card {
     private Item reqItem;
     private ReqPoint reqPoints;
 
+
+    public GoldCard(){
+        reqResources = null;
+        reqItem = null;
+        reqPoints = null;
+        front = false;
+        points = -1;
+        resource = null;
+        frontCorners = null;
+        backCorners = null;
+    }
+
     /**
      * Constructor of the class, initializes the gold cards with the given parameters
      * @param points integer representing the points the card gives if the requirements are fulfilled

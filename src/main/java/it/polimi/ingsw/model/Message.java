@@ -7,6 +7,12 @@ public class Message {
     private final String author;
     private final LocalTime time;
 
+    public Message(){
+        text = null;
+        author = null;
+        time = null;
+    }
+
     public Message(String text, String author){
         this.text = text;
         this.author = author;

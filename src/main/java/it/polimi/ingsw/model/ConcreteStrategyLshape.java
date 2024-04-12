@@ -3,6 +3,8 @@ package it.polimi.ingsw.model;
 public class ConcreteStrategyLshape implements Strategy {
     private int cardPoints = 0;
 
+    public ConcreteStrategyLshape() {    }
+
     /**
      *
      * @param resource resource the cards have to belong to in order to give points for every L-shaped pattern found in the player area

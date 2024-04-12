@@ -5,6 +5,12 @@ public class AchievementCard extends Card{
     private Player player;
     private Item item;
 
+    public AchievementCard(){
+        this.strategy = null;
+        this.player = null;
+        this.item = null;
+    }
+
     /**
      * Constructor of the class, initializes a new achievement card.
      * It initializes the AchievementCard using the given parameters.

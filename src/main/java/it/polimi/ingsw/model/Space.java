@@ -6,6 +6,10 @@ public class Space {
     private boolean dead;
     private boolean checked;
 
+    public Space(){
+        card = null;
+    }
+
     public Space(boolean free, boolean dead) {
         this.free = free;
         this.dead = dead;

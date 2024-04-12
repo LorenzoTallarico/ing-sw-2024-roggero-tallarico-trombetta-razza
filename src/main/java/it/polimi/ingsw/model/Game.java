@@ -2,13 +2,14 @@ package it.polimi.ingsw.model;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gson.*;
 
-
-public class Game {
+// Da capire se risulta utile per gson o per Client/Server interaction il 'Serializable'
+public class Game /*implements Serializable*/ {
     private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
@@ -29,16 +30,26 @@ public class Game {
     /* ########## FINE ATTRIBUTI DA RIMUOVERE ############# */
 
 
-
-
-    private Game() {
-        createGoldDeck();
-        createAchievementDeck();
-        createResourceDeck();
-        createStarterDeck();
-        started = false;
-        ended = false;
+    private Game(){
+        players = new ArrayList<Player>();
+        resourceDeck = new ArrayList<ResourceCard>();
+        goldDeck = new ArrayList<GoldCard>();
+        achievementDeck = new ArrayList<AchievementCard>();
+        starterDeck = new ArrayList<StarterCard>();
+        commonResource = new ArrayList<ResourceCard>();
+        commonGold = new ArrayList<GoldCard>();
+        commonAchievement = new ArrayList<AchievementCard>();
     }
+
+    //Meglio magari con un metodo che va a creare tutto il necessario(?)
+//    private Game() {
+//        createGoldDeck();
+//        createAchievementDeck();
+//        createResourceDeck();
+//        createStarterDeck();
+//        started = false;
+//        ended = false;
+//    }
 
     //GETTER
     //Gestione evoluzione delle carte sul tavolo
@@ -191,6 +202,8 @@ public class Game {
     public void end() {
         ended = true;
     }
+
+    //NB: nei metodi di creazione dei deck non stiamo effettivamente instanziando alcuna carta(?) stiamo solo prendendo informazioni dal json
 
     private void createGoldDeck() {
         Gson gson = new Gson();

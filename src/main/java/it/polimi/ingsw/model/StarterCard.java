@@ -4,6 +4,17 @@ public class StarterCard extends Card{
     private final Resource secondResource;
     private final Resource thirdResource;
 
+    public StarterCard(){
+        secondResource = null;
+        thirdResource = null;
+        front = false;
+        points = -1;
+        resource = null;
+        frontCorners = null;
+        backCorners = null;
+    }
+
+
     /**
      * Constructor of the class, initializes the resource cards with the given parameters
      * @param resource The type of resource of the card
