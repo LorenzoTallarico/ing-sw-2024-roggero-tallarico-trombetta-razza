@@ -1,6 +1,5 @@
-package rmi;
+package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.model.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -9,6 +8,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
+
+    static int PORT = 1234;
 
     final VirtualServer server;
 
@@ -40,7 +41,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
-        Registry registry = LocateRegistry.getRegistry(args[0],1234);
+        Registry registry = LocateRegistry.getRegistry(args[0],PORT);
         VirtualServer server = (VirtualServer) registry.lookup(serverName);
         new RmiClient(server).run();
     }

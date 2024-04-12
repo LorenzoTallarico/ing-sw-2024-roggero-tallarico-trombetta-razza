@@ -1,4 +1,4 @@
-package rmi;
+package it.polimi.ingsw.networking.rmi;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Card;
@@ -8,20 +8,19 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 
 //NB: qua NON è sufficiente gestire le eccezioni con throws ma si dovrà usare try-catch correttamente
 public class RmiServer implements VirtualServer {
 
+    static int PORT = 1234;
     final GameController controller;
     final ArrayList<VirtualView> clients = new ArrayList<>();
     BlockingQueue<Integer> updates = new LinkedBlockingDeque<>();
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
-    // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti
+    // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
     private void broadcastUpdateThread() throws InterruptedException, RemoteException {
         while(true){
             Integer update = updates.take();
@@ -42,7 +41,7 @@ public class RmiServer implements VirtualServer {
         final String serverName = "GameServer";
         VirtualServer server = new RmiServer(new GameController());
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
-        Registry registry = LocateRegistry.createRegistry(1234);
+        Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
         System.out.println("server bound.");
     }
@@ -95,6 +94,7 @@ public class RmiServer implements VirtualServer {
         System.err.println("add request received");
         this.controller.addState(number);
         Integer currentState = this.controller.getState();
+        // le richieste tornano subito, non aspettano che siano ricevute da tutti
         try {
             updates.put(currentState);
         } catch(InterruptedException e) {

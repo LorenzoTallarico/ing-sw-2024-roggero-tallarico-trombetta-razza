@@ -1,4 +1,4 @@
-package rmi;
+package it.polimi.ingsw.networking.rmi;
 
 import it.polimi.ingsw.model.*;
 import java.rmi.Remote;

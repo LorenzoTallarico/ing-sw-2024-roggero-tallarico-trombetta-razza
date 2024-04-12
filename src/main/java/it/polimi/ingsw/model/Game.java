@@ -41,7 +41,7 @@ public class Game {
     }
 
     //GETTER
-
+    //Gestione evoluzione delle carte sul tavolo
     public AchievementCard popAchievementCard() {
         AchievementCard secretAchievement = null;
         try {
