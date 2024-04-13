@@ -1,7 +1,7 @@
 [
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
@@ -11,7 +11,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
@@ -21,7 +21,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
@@ -31,7 +31,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
@@ -41,7 +41,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 3,
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
@@ -51,7 +51,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 3,
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
@@ -61,7 +61,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 3,
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
@@ -71,7 +71,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 3,
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
@@ -81,7 +81,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
@@ -91,7 +91,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
@@ -101,7 +101,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
@@ -111,7 +111,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
@@ -121,7 +121,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 3,
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
@@ -131,7 +131,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
@@ -141,7 +141,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
@@ -151,7 +151,7 @@
   },
   {
     "front": null,
-    "points": 0,
+    "points": 2,
     "resource": null,
     "frontCorners": [],
     "backCorners": [],

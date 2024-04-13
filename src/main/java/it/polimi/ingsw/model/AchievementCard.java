@@ -40,7 +40,13 @@ public class AchievementCard extends Card{
         this.player = player;
     }
 
+    public Strategy getStrategy() {
+        return strategy;
+    }
 
+    public Item getItem(){
+        return item;
+    }
     /**
      * Method that returns the card's related points
      * @return number of points

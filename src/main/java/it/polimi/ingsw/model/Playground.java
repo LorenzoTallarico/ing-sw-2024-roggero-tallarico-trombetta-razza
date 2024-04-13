@@ -153,11 +153,13 @@ private int southBound;
             }
         }
         //if the card is a gold card with item requirement, set the points to the available items on the area
-        if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM)) {
+        if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM)) {
             points = items.get(((GoldCard) card).getItem());
         } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE)){
             points = card.getPoints(); //simple gold card with no requirements
         }
+        if(card.getClass() == ResourceCard.class && card.getPoints() == 1)
+            points = 1;
         return points;
     }
 
