@@ -5,7 +5,7 @@
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyDiagonal",
+    "strategyType": "ConcreteStrategyDiagonal",
     "player": null,
     "item": null
   },
@@ -15,7 +15,7 @@
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyDiagonal",
+    "strategyType": "ConcreteStrategyDiagonal",
     "player": null,
     "item": null
   },
@@ -25,7 +25,7 @@
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyDiagonal",
+    "strategyType": "ConcreteStrategyDiagonal",
     "player": null,
     "item": null
   },
@@ -35,7 +35,7 @@
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyDiagonal",
+    "strategyType": "ConcreteStrategyDiagonal",
     "player": null,
     "item": null
   },
@@ -45,7 +45,7 @@
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyLshape",
+    "strategyType": "ConcreteStrategyLshape",
     "player": null,
     "item": null
   },
@@ -55,7 +55,7 @@
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyLshape",
+    "strategyType": "ConcreteStrategyLshape",
     "player": null,
     "item": null
   },
@@ -65,7 +65,7 @@
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyLshape",
+    "strategyType": "ConcreteStrategyLshape",
     "player": null,
     "item": null
   },
@@ -75,7 +75,7 @@
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyLshape",
+    "strategyType": "ConcreteStrategyLshape",
     "player": null,
     "item": null
   },
@@ -85,7 +85,7 @@
     "resource": "MUSHROOM",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyResource",
+    "strategyType": "ConcreteStrategyResource",
     "player": null,
     "item": null
   },
@@ -95,7 +95,7 @@
     "resource": "LEAF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyResource",
+    "strategyType": "ConcreteStrategyResource",
     "player": null,
     "item": null
   },
@@ -105,7 +105,7 @@
     "resource": "WOLF",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyResource",
+    "strategyType": "ConcreteStrategyResource",
     "player": null,
     "item": null
   },
@@ -115,7 +115,7 @@
     "resource": "BUTTERFLY",
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyResource",
+    "strategyType": "ConcreteStrategyResource",
     "player": null,
     "item": null
   },
@@ -125,7 +125,7 @@
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyMixed",
+    "strategyType": "ConcreteStrategyMixed",
     "player": null,
     "item": null
   },
@@ -135,7 +135,7 @@
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyItem",
+    "strategyType": "ConcreteStrategyItem",
     "player": null,
     "item": "SCROLL"
   },
@@ -145,7 +145,7 @@
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyItem",
+    "strategyType": "ConcreteStrategyItem",
     "player": null,
     "item": "JAR"
   },
@@ -155,7 +155,7 @@
     "resource": null,
     "frontCorners": [],
     "backCorners": [],
-    "strategy": "ConcreteStrategyItem",
+    "strategyType": "ConcreteStrategyItem",
     "player": null,
     "item": "PLUME"
   }

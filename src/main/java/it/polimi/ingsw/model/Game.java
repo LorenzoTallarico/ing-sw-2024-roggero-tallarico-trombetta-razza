@@ -33,22 +33,17 @@ public class Game /*implements Serializable*/ {
     private Game(){
         players = new ArrayList<Player>();
         resourceDeck = new ArrayList<ResourceCard>();
-        goldDeck = new ArrayList<GoldCard>();
-        achievementDeck = new ArrayList<AchievementCard>();
-        starterDeck = new ArrayList<StarterCard>();
-        commonResource = new ArrayList<ResourceCard>();
-        commonGold = new ArrayList<GoldCard>();
-        commonAchievement = new ArrayList<AchievementCard>();
+        createGoldDeck();
+        createAchievementDeck();
+        createResourceDeck();
+        createStarterDeck();
+        started = false;
+        ended = false;
     }
 
     //Meglio magari con un metodo che va a creare tutto il necessario(?)
 //    private Game() {
-//        createGoldDeck();
-//        createAchievementDeck();
-//        createResourceDeck();
-//        createStarterDeck();
-//        started = false;
-//        ended = false;
+
 //    }
 
     //GETTER
@@ -154,19 +149,6 @@ public class Game /*implements Serializable*/ {
         return instance;
     }
 
-    /**
-     *
-     * //Overloading
-     * @param players
-     * @return Game.instance
-     */
-   /* public static Game getInstance(ArrayList<Player> players) {
-        if(instance == null) {
-            instance = new Game(players);
-        }
-        return instance;
-    }
-*/
     public ArrayList<Player> getPlayers() {
         return players;
     }
@@ -244,7 +226,8 @@ public class Game /*implements Serializable*/ {
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             achievementDeck = new ArrayList<AchievementCard>();
-            Collections.addAll(achievementDeck, tempAchievement);
+            for(int j = 0; j < tempAchievement.length; j++)
+                achievementDeck.add(new AchievementCard(tempAchievement[j].getPoints(), tempAchievement[j].getResource(), tempAchievement[j].getStrategyType(), tempAchievement[j].getItem()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -275,7 +258,6 @@ public class Game /*implements Serializable*/ {
      * 2 resource and 1 gold in hand + 2 secretAchievement;
      **/
     private void createHands() {
-
         for(int i=0; i<playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<Card>();
             ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();

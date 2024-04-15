@@ -12,25 +12,25 @@ public class StrategyInstanceCreator implements InstanceCreator<Strategy>{
 
     //In questa maniera nel main dove verrà creato il gioco o dove necessario si dovrà chiamare passando nel costruttore esattamente il
     // nome dello strategy che si vuole usare come stringa (si può forse migliorare), per ora usiamo questi:
-//    "diagonal"
-//    "item"
-//    "lshape"
-//    "mixed"
-//    "resource"
-//
+    //    "diagonal"
+    //    "item"
+    //    "lshape"
+    //    "mixed"
+    //    "resource"
+    //
     @Override
     public Strategy createInstance(Type type){
         //confronto switch equivale a "equals"
         switch(strategyType) {
-            case "diagonal":
+            case "ConcreteStrategyDiagonal":
                 return new ConcreteStrategyDiagonal();
-            case "item":
+            case "ConcreteStrategyItem":
                 return new ConcreteStrategyItem();
-            case "lshape":
+            case "ConcreteStrategyLshape":
                 return new ConcreteStrategyLshape();
-            case "mixed":
+            case "ConcreteStrategyMixed":
                 return new ConcreteStrategyMixed();
-            case "resource":
+            case "ConcreteStrategyResource":
                 return new ConcreteStrategyResource();
             default:
                 throw new IllegalArgumentException("Tipo di strategia non supportato: " + strategyType);
