@@ -87,6 +87,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void showUpdateNames(ArrayList<String> names) throws RemoteException {
+        //synchronized ...
+        System.out.println("Stampa nicknames:");
+        for(String s : names) {
+            System.out.println("- " + s);
+        }
+    }
+
+    @Override
     public void reportError(String details) throws RemoteException {
         System.out.println("\n[ERROR]= " + "\n> ");
 
