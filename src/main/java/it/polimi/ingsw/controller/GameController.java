@@ -70,16 +70,6 @@ public class GameController {
         }
     }
 
-    public void assignStarterAchievement(Player p1){
-        synchronized (this.model) {
-            ArrayList<AchievementCard> goals = new ArrayList<AchievementCard>();
-            goals.add(model.popAchievementCard());
-            goals.add(model.popAchievementCard());
-            p1.setSecretAchievement(goals);
-        }
-    }
-
-
 
     public void getNickames(){
         synchronized (this.model){
