@@ -67,7 +67,11 @@ public class GameController {
 
 
 
+    public void getNickames(){
+        synchronized (this.model){
 
+        }
+    }
 
 
 
@@ -76,6 +80,7 @@ public class GameController {
     public void addState(Integer number){
         synchronized (this.model){
             this.model.addState(number);
+            System.out.println("Qui sono nel controller");
         }
     }
 
