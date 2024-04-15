@@ -3,10 +3,13 @@ package it.polimi.ingsw.networking.rmi;
 import it.polimi.ingsw.model.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 public interface VirtualServer extends Remote {
 
     void connect(VirtualView client) throws RemoteException;
+
+    void getNicknames() throws RemoteException;
 
     void placeCard(Card card, int row, int column) throws RemoteException;
 

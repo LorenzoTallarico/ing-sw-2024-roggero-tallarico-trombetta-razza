@@ -17,16 +17,21 @@ public class RmiServer implements VirtualServer {
     static int PORT = 1234;
     final GameController controller;
     final ArrayList<VirtualView> clients = new ArrayList<>();
-    BlockingQueue<Integer> updates = new LinkedBlockingDeque<>();
+    BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
+    BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
+
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
     // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
-    private void broadcastUpdateThread() throws InterruptedException, RemoteException {
+    public void broadcastUpdateThread() throws InterruptedException, RemoteException {
         while(true){
-            Integer update = updates.take();
+            Integer updateNum = updatesNumber.take();
+            ArrayList<String> names = updateNames.take();
             synchronized (this.clients){
                 for(VirtualView c : clients){
-                    c.showUpdate(update);
+                    c.showUpdateNumber(updateNum);
+                    c.showUpdateNames(names);
+                    System.out.println("Qui sono nel broadcast");
                 }
             }
         }
@@ -36,7 +41,7 @@ public class RmiServer implements VirtualServer {
         this.controller = controller;
     }
 
-    public static void main(String[] args) throws RemoteException{
+    public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final String serverName = "GameServer";
         VirtualServer server = new RmiServer(new GameController());
@@ -44,6 +49,13 @@ public class RmiServer implements VirtualServer {
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
         System.out.println("server bound.");
+
+        try {
+            ((RmiServer)server).broadcastUpdateThread();
+        }
+        catch (InterruptedException e){
+            System.err.println("Interrupted while waiting for updates: \n" + e.getMessage());
+        }
     }
 
     @Override
@@ -94,13 +106,27 @@ public class RmiServer implements VirtualServer {
         System.err.println("add request received");
         this.controller.addState(number);
         Integer currentState = this.controller.getState();
+        System.out.println("Qui prende getstate");
         // le richieste tornano subito, non aspettano che siano ricevute da tutti
         try {
-            updates.put(currentState);
+            updatesNumber.put(currentState);
+//            for(Integer e : updates){
+//                updates.
+//            }
         } catch(InterruptedException e) {
             throw new RuntimeException();
         }
     }
+
+    @Override
+    public void getNicknames() throws RemoteException {
+        System.out.println("Elenco di tutti i giocatori");
+        for (VirtualView v : clients){
+            v.getNickname();
+        }
+    }
+
+
     @Override
     public void reset() throws RemoteException{
         System.err.println("reset request received");
