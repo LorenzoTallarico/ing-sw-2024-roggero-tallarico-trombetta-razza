@@ -16,13 +16,12 @@ public class Game /*implements Serializable*/ {
     private ArrayList<GoldCard> goldDeck;
     private ArrayList<AchievementCard> achievementDeck;
     private ArrayList<StarterCard> starterDeck;
-    private boolean started;
-    private boolean ended;
     private int currPlayer;
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<GoldCard> commonGold;
     private ArrayList<AchievementCard> commonAchievement;
     private int playersNumber;
+    private GameState gameState;
 
 
     /* ########## INIZIO ATTRIBUTI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
@@ -37,8 +36,7 @@ public class Game /*implements Serializable*/ {
         createAchievementDeck();
         createResourceDeck();
         createStarterDeck();
-        started = false;
-        ended = false;
+        gameState=GameState.INIT;
     }
 
     //Meglio magari con un metodo che va a creare tutto il necessario(?)
@@ -153,12 +151,8 @@ public class Game /*implements Serializable*/ {
         return players;
     }
 
-    public boolean isStarted() {
-        return started;
-    }
-
-    public boolean isEnded() {
-        return ended;
+    public GameState getGameState() {
+        return gameState;
     }
 
     public int getCurrPlayer() {
@@ -169,10 +163,11 @@ public class Game /*implements Serializable*/ {
         return playersNumber;
     }
 
+
     //METHODS
 
     public void start() {
-        started = true;
+        gameState=GameState.SELECTACHIEVEMENT;
     }
 
     public void nextPlayer() {
@@ -181,8 +176,46 @@ public class Game /*implements Serializable*/ {
             currPlayer = 0;
     }
 
+    /**
+     * @overload
+     * @param nextState
+     */
+    public void nextPlayer(boolean nextState) {
+        currPlayer++;
+        if(currPlayer >= playersNumber)
+            currPlayer = 0;
+            if (nextState){
+                nextState();
+            }
+    }
+
+    public void nextState(){
+        switch(gameState){
+            case INIT:
+                gameState=GameState.READY;
+                break;
+            case READY:
+                gameState=GameState.SELECTACHIEVEMENT;
+                break;
+            case SELECTACHIEVEMENT:
+                gameState=GameState.GAME;
+                break;
+            case GAME:
+                gameState=GameState.LASTROUND;
+                break;
+            case LASTROUND:
+                gameState=GameState.FINALSCORE;
+                break;
+            case FINALSCORE:
+                gameState=GameState.END;
+                break;
+            case END:
+                break;
+        }
+    }
+
     public void end() {
-        ended = true;
+        gameState=GameState.END;
     }
 
     //NB: nei metodi di creazione dei deck non stiamo effettivamente instanziando alcuna carta(?) stiamo solo prendendo informazioni dal json
@@ -309,11 +342,9 @@ public class Game /*implements Serializable*/ {
 
     public void addPlayer(ArrayList<Player> players) {
         if(Game.players.isEmpty()){
-            for(int i=0; i<players.size(); i++){
-                Game.players.add(players.get(i));
-            }
             assignColors(players);
             Collections.shuffle(players);
+            Game.players.addAll(players);
             this.playersNumber = players.size();
         }
         else{
@@ -340,9 +371,9 @@ public class Game /*implements Serializable*/ {
                     if (players.get(j).getColor().equals(Color.RED)) {
                         find = true;
                     }
-                    if(!find) {
-                        players.get(i).setColor(Color.RED);
-                    }
+                }
+                if(!find) {
+                    players.get(i).setColor(Color.RED);
                 }
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
@@ -351,9 +382,9 @@ public class Game /*implements Serializable*/ {
                     if(players.get(j).getColor().equals(Color.YELLOW)) {
                         find = true;
                     }
-                    if(!find) {
-                        players.get(i).setColor(Color.YELLOW);
-                    }
+                }
+                if(!find) {
+                    players.get(i).setColor(Color.YELLOW);
                 }
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
@@ -362,9 +393,9 @@ public class Game /*implements Serializable*/ {
                     if(players.get(j).getColor().equals(Color.BLUE)) {
                         find = true;
                     }
-                    if(!find) {
-                        players.get(i).setColor(Color.BLUE);
-                    }
+                }
+                if(!find) {
+                    players.get(i).setColor(Color.BLUE);
                 }
             }
             if(players.get(i).getColor().equals(Color.NONE)) {
@@ -373,9 +404,9 @@ public class Game /*implements Serializable*/ {
                     if(players.get(j).getColor().equals(Color.GREEN)) {
                         find = true;
                     }
-                    if(!find) {
-                        players.get(i).setColor(Color.GREEN);
-                    }
+                }
+                if(!find) {
+                    players.get(i).setColor(Color.GREEN);
                 }
             }
         }

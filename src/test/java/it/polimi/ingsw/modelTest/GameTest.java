@@ -30,9 +30,11 @@ public class GameTest {
         }
 
         // Verifica che i colori dei giocatori siano diversi
-        for (int i = 0; i < testGame.getPlayersNumber(); i++) {
+        for (int i = 0; i < testGame.getPlayersNumber()-1; i++) {
             for (int j = i + 1; j < testGame.getPlayersNumber(); j++) {
-                assertNotEquals(testGame.getPlayers().get(i).getColor(), testGame.getPlayers().get(j).getColor(), "I colori dei giocatori non sono diversi");
+                System.out.println(testGame.getPlayers().get(i).getColor());
+                System.out.println(testGame.getPlayers().get(j).getColor());
+                assertNotEquals(testGame.getPlayers().get(i).getColor(), testGame.getPlayers().get(j).getColor(), "I colori dei giocatori sono uguali");
             }
         }
     }

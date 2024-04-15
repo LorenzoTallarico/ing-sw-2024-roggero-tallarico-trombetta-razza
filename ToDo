@@ -1,9 +1,7 @@
 Completare Model:
-- Strategy Pattern
+
 - Metodi (N.B. da scrivere commenti iniziali e gestire già le varie eccezioni dell'input, pure le casistiche più improbabili)
-- Chat
 - Testing
-- Aggiornamento UML e file spiegazione
 - Gestione eccezioni
 - Limitazione mosse player
 - Sistemare secret achievement attributo in player (da arraylist a singolo attributo)
@@ -24,3 +22,7 @@ Controller:
 - mega metodo turno()?
 
 - Sistemare Color (automatizzarne l'assegnamento tramite la classe game, assegnamento casuale tra quelli non già assegnati in modo da evitare anche controlli)
+
+
+- fare AchievementCard assegnamento a player e (scelta)
+- fare enum StatoGioco

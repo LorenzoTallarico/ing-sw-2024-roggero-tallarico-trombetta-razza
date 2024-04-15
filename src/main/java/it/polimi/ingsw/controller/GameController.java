@@ -11,9 +11,19 @@ public class GameController {
     private int playersNumber;
     private int position, index;
     private final Game model;
+    private ArrayList<Player> players;
 
     public GameController() {
         model = Game.getInstance();
+    }
+
+    public synchronized void addPlayer(Player p){
+        if(players.size()<playersNumber) {
+            players.add(p);
+            if(players.size()== playersNumber){
+                model.addPlayer(players);
+            }
+        }
     }
 
     public void placeCard(Card card, int row, int column) {
