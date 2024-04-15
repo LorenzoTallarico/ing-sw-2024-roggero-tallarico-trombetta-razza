@@ -317,27 +317,38 @@ public class Game /*implements Serializable*/ {
      * @param index indice per selezione: convenzione 0 prima risorsa tavolo, 1 seconda risorsa tavolo, 2 mazzo risorse, 3 prima gold tavolo 4 seconda gold tavolo 5 mazzo gold
      * @return Card or null if indexOutOfBound or position empty
      */
-    public Card draw(int index) {
+    public Card draw(int index) { //Da sistemare
         if(index>=0 && index<=5) {
-            Card drawCard;
-            if(index<3) {
-                if(resourceDeck.get(index)!=null) {
-                    drawCard=resourceDeck.get(index);
-                    resourceDeck.remove(index);
+            Card drawCard = null;
+            if (index < 3) {
+                if (index == 2) {
+                    return popResourceCard();
+                } else {
+                    if (commonResource.size() > index) {
+                        drawCard = commonResource.get(index);
+                        commonResource.remove(index);
+                        if (!resourceDeck.isEmpty())
+                            commonResource.add(index, popResourceCard());
+                    }
                     return drawCard;
-                } else
-                    return null;
-            } else {
-                index -= 3;
-                if(goldDeck.get(index) != null) {
-                    drawCard = goldDeck.get(index);
-                    goldDeck.remove(index);
+                }
+            }
+            else{
+                index-=3;
+                if (index == 2) {
+                    return popGoldCard();
+                } else {
+                    if (commonGold.size() > index) {
+                        drawCard = commonGold.get(index);
+                        commonGold.remove(index);
+                        if (!goldDeck.isEmpty())
+                            commonGold.add(index, popGoldCard());
+                    }
                     return drawCard;
-                } else
-                    return null;
+                }
             }
         }
-        return null; //outOfBound
+        return null;//outOfBound
     }
 
     /**
