@@ -340,21 +340,25 @@ public class Game /*implements Serializable*/ {
         return null; //outOfBound
     }
 
-    public void addPlayer(ArrayList<Player> players) {
+    /**
+     *
+     * @param players
+     */
+    public void addPlayers(ArrayList<Player> players) {
         if(Game.players.isEmpty()){
             assignColors(players);
             Collections.shuffle(players);
             Game.players.addAll(players);
             this.playersNumber = players.size();
         }
-        else{
-            for(int i=0; i<players.size(); i++){
-                Game.players.add(players.get(i));
-            }
-            assignColors(players);
-            Collections.shuffle(players);
-            this.playersNumber += players.size();
-        }
+        init();
+    }
+
+    private void init(){
+        gameState= GameState.INIT;
+        createHands();
+        currPlayer=0;
+        gameState= GameState.READY;
     }
 
     /**

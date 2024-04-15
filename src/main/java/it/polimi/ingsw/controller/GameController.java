@@ -13,39 +13,53 @@ public class GameController {
     private final Game model;
     private ArrayList<Player> players;
 
-    public GameController() {
+    public GameController(int playersNumber) {
         model = Game.getInstance();
+        this.playersNumber= playersNumber;
     }
 
-    public synchronized void addPlayer(Player p){
-        if(players.size()<playersNumber) {
-            players.add(p);
-            if(players.size()== playersNumber){
-                model.addPlayer(players);
+    public void addPlayer(Player p){
+        synchronized (players) {
+            if (players.size() < playersNumber && model.getGameState().equals(GameState.LOBBY)) {
+                players.add(p);
+                if (players.size() == playersNumber) {
+                    model.addPlayers(players);
+                }
             }
         }
     }
 
-    public void placeCard(Card card, int row, int column) {
-        synchronized (this.model) {
-            if (model.getPlayers().get(model.getCurrPlayer()).placeable(card, row, column)){
-                model.getPlayers().get(model.getCurrPlayer()).getArea().setSpace(card, row, column);
-                model.getPlayers().get(model.getCurrPlayer()).getHand().remove(card);
+    public boolean placeCard(Card card, int row, int column) {
+            synchronized (this.model) {
+                if(model.getGameState().equals(GameState.GAME)||model.getGameState().equals(GameState.LASTROUND)) {
+                    if (model.getPlayers().get(model.getCurrPlayer()).placeable(card, row, column)) {
+                        model.getPlayers().get(model.getCurrPlayer()).getArea().setSpace(card, row, column);
+                        model.getPlayers().get(model.getCurrPlayer()).getHand().remove(card);
+                        return true;
+                    } else{
+                        return false;
+                    }
+                }
+                return false;
             }
-        }
     }
 
     public void drawCard(int index){
-        synchronized (this.model){
-            model.getPlayers().get(model.getCurrPlayer()).getHand().add(model.draw(index));
+        synchronized (this.model) {
+            if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND))
+                model.getPlayers().get(model.getCurrPlayer()).getHand().add(model.draw(index));
+
         }
     }
 
     public void selectAchievementCard(int position){
         synchronized (this.model) {
-            ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
-            goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
-            model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement( goal );
+            if(model.getGameState().equals(GameState.SELECTACHIEVEMENT)) {
+                ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
+                goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
+                model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement(goal);
+            }
+            model.nextPlayer(true);
         }
     }
 
