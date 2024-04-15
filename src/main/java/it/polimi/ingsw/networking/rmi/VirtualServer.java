@@ -9,6 +9,8 @@ public interface VirtualServer extends Remote {
 
     void connect(VirtualView client) throws RemoteException;
 
+    void addPlayer(Player p) throws RemoteException;
+
     void getNicknames() throws RemoteException;
 
     void placeCard(Card card, int row, int column) throws RemoteException;

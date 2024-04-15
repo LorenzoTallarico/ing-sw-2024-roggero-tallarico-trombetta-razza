@@ -1,6 +1,9 @@
 package it.polimi.ingsw.networking.rmi;
 
+import it.polimi.ingsw.model.Player;
+
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -12,6 +15,8 @@ import java.util.StringTokenizer;
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     static int PORT = 1234;
+
+    Player p;
 
     String nickname;
 
@@ -27,14 +32,18 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         System.out.println("Inserire nickname giocatore: ");
         Scanner scan = new Scanner(System.in);
         nickname = scan.nextLine();
+        p = new Player(nickname, false);
+        server.addPlayer(p);
         this.runCli();
-
     }
 
     private void runCli() throws RemoteException{
-        System.out.println("Inserire nickname giocatore: ");
+        //*******proseguire da qui
+        //////c'è una null pointer exception che non viene ben gestita quando passo un player
+
+//        System.out.println("Inserire nickname giocatore: ");
         Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
+//        nickname = scan.nextLine();
 
         while(true){
             System.out.println("> ");
@@ -93,6 +102,19 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         for(String s : names) {
             System.out.println("- " + s);
         }
+    }
+
+    public void showUpdate(Object o) throws RemoteException {
+        //synchronized...
+        if(o.getClass().equals(Player.class)){
+            System.out.println("Player " + ((Player) o).getName() + "joined the game");
+        } else if(o.getClass().equals(String.class)){
+            System.out.println(">>> " + ((String) o));
+        }
+        else {
+            System.err.println("Non è stato passato un parametro adeguato");
+        }
+        //else if o switch....
     }
 
     @Override

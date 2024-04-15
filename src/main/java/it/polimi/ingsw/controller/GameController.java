@@ -18,8 +18,13 @@ public class GameController {
         this.playersNumber= playersNumber;
     }
 
+    //Poi vediamo se rimuoverlo, mi serve per RMI
+    public GameController(){
+        model = Game.getInstance();
+    }
+
     public void addPlayer(Player p){
-        synchronized (players) {
+        synchronized (this.model) {
             if (players.size() < playersNumber && model.getGameState().equals(GameState.LOBBY)) {
                 players.add(p);
                 if (players.size() == playersNumber) {

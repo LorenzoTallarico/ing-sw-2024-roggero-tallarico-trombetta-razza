@@ -1,10 +1,11 @@
 package it.polimi.ingsw.model;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
 
 
-public class Player {
+public class Player implements Serializable {
     private final String name;
     private final boolean gui = false;
     private boolean winner;

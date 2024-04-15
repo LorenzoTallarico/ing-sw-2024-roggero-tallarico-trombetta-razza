@@ -2,6 +2,7 @@ package it.polimi.ingsw.networking.rmi;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.model.Player;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -10,6 +11,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 
 //NB: qua NON è sufficiente gestire le eccezioni con throws ma si dovrà usare try-catch correttamente
 public class RmiServer implements VirtualServer {
@@ -17,24 +19,40 @@ public class RmiServer implements VirtualServer {
     static int PORT = 1234;
     final GameController controller;
     final ArrayList<VirtualView> clients = new ArrayList<>();
-    BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
-    BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
+    final BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
+    final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
+    final BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
 
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
     // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
     public void broadcastUpdateThread() throws InterruptedException, RemoteException {
-        while(true){
-            Integer updateNum = updatesNumber.take();
-            ArrayList<String> names = updateNames.take();
+
+        while(true) {
+            Object o = updates.take();
             synchronized (this.clients){
                 for(VirtualView c : clients){
-                    c.showUpdateNumber(updateNum);
-                    c.showUpdateNames(names);
+                    c.showUpdate(o);
                     System.out.println("Qui sono nel broadcast");
                 }
             }
         }
+
+
+
+
+
+//        while(true){
+//            Integer updateNum = updatesNumber.take();
+//            ArrayList<String> names = updateNames.take();
+//            synchronized (this.clients){
+//                for(VirtualView c : clients){
+//                    c.showUpdateNumber(updateNum);
+//                    c.showUpdateNames(names);
+//                    System.out.println("Qui sono nel broadcast");
+//                }
+//            }
+//        }
     }
 
     public RmiServer(GameController controller){
@@ -52,6 +70,7 @@ public class RmiServer implements VirtualServer {
 
         try {
             ((RmiServer)server).broadcastUpdateThread();
+
         }
         catch (InterruptedException e){
             System.err.println("Interrupted while waiting for updates: \n" + e.getMessage());
@@ -62,6 +81,21 @@ public class RmiServer implements VirtualServer {
     public void connect(VirtualView client) throws RemoteException {
         synchronized (this.clients){
             this.clients.add(client);
+        }
+    }
+
+    @Override
+    public void addPlayer(Player p) throws RemoteException{
+        synchronized (this.clients){
+            System.err.println("join request received");
+            this.controller.addPlayer(p);
+            //Player p1 = this.controller.getPlayer()....
+            // le richieste tornano subito, non aspettano che siano ricevute da tutti
+            try {
+                updates.put(p);
+            } catch(InterruptedException e) {
+                throw new RuntimeException();
+            }
         }
     }
 
