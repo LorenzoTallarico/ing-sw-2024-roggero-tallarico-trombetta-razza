@@ -16,11 +16,8 @@ import java.util.StringTokenizer;
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     static int PORT = 1234;
-
     Player p;
-
     String nickname;
-
     final VirtualServer server;
 
     public RmiClient(VirtualServer server) throws RemoteException{

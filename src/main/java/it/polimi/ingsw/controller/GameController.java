@@ -12,7 +12,6 @@ public class GameController {
     private int position, index;
     private final Game model;
     private final ArrayList<Player> players;
-
     private final Chat chat;
 
     public GameController(int playersNumber) {

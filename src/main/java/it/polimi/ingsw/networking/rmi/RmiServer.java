@@ -21,9 +21,9 @@ public class RmiServer implements VirtualServer {
     static int PORT = 1234;
     final GameController controller;
     final ArrayList<VirtualView> clients = new ArrayList<>();
-    final BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
+    //final BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
     final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
-    final BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
+    //final BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
 
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
@@ -115,6 +115,8 @@ public class RmiServer implements VirtualServer {
         }
     }
 
+
+    //da completare v
     @Override
     public void placeCard(Card card, int row, int column) throws RemoteException {
         this.controller.placeCard(card,row,column);
