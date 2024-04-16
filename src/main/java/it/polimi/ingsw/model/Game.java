@@ -186,15 +186,19 @@ public class Game implements Serializable {
      */
     public void nextPlayer(boolean nextState) {
         currPlayer++;
-        if(currPlayer >= playersNumber)
+        if(currPlayer >= playersNumber) {
             currPlayer = 0;
-            if (nextState){
+            if (nextState) {
                 nextState();
             }
+        }
     }
 
     public void nextState(){
         switch(gameState){
+            case LOBBY:
+                gameState=GameState.INIT;
+                break;
             case INIT:
                 gameState=GameState.READY;
                 break;
@@ -428,6 +432,14 @@ public class Game implements Serializable {
                     players.get(i).setColor(Color.GREEN);
                 }
             }
+        }
+    }
+
+    public void calculateEndPoints(){
+        for (Player player : players) {
+            player.addPoints(player.getSecretAchievement().get(0).calculatePoints());
+            player.addPoints(commonAchievement.get(0).calculatePoints());
+            player.addPoints(commonAchievement.get(1).calculatePoints());
         }
     }
 

@@ -69,6 +69,17 @@ public class GameController {
         }
     }
 
+    public boolean calculateEndPoints(){
+        synchronized (this.model) {
+            if(model.getGameState().equals(GameState.FINALSCORE)) {
+                model.calculateEndPoints();
+                model.nextState();
+                return true;
+            }
+        }
+        return false;
+    }
+
     //**********to decide if it's necessary to synchronize***********
     public boolean isPlayerInTurn(Player p) {
         synchronized (this.model){
