@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class ConcreteStrategyLshape implements Strategy {
+import java.io.Serializable;
+
+public class ConcreteStrategyLshape implements Strategy, Serializable {
     private int cardPoints = 0;
 
     public ConcreteStrategyLshape() {    }

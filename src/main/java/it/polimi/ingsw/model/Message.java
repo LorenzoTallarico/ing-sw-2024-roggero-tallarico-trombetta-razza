@@ -1,7 +1,8 @@
 package it.polimi.ingsw.model;
+import java.io.Serializable;
 import java.time.LocalTime;
 
-public class Message {
+public class Message implements Serializable {
 
     private final String text;
     private final String author;

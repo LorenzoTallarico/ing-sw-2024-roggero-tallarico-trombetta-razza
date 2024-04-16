@@ -1,7 +1,8 @@
 package it.polimi.ingsw.model;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Chat {
+public class Chat implements Serializable {
     private static Chat instance;
     private final ArrayList<Message> chat;
 

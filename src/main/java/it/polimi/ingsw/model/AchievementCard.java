@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class AchievementCard extends Card{
+import java.io.Serializable;
+
+public class AchievementCard extends Card implements Serializable {
     private Strategy strategy;
     private Player player;
     private Item item;
