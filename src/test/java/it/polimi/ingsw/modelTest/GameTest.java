@@ -98,7 +98,7 @@ public class GameTest {
         players.add(fake4);
         testGame.addPlayers(players);
         for(int i=2; i<vetStati.length; i++){
-            for(int j=0; j<=testGame.getPlayersNumber(); j++){
+            for(int j=0; j<testGame.getPlayersNumber(); j++){
                 assertEquals(vetStati[i], testGame.getGameState());
                 int curr= testGame.getCurrPlayer();
                 testGame.nextPlayer();
@@ -108,7 +108,7 @@ public class GameTest {
                 else
                     assertEquals(testGame.getCurrPlayer(), curr+1);
             }
-            for(int j=0; j<=testGame.getPlayersNumber(); j++){
+            for(int j=0; j<testGame.getPlayersNumber(); j++){
                 assertEquals(vetStati[i], testGame.getGameState());
                 int curr= testGame.getCurrPlayer();
                 testGame.nextPlayer(false);
@@ -118,7 +118,8 @@ public class GameTest {
                 else
                     assertEquals(testGame.getCurrPlayer(), curr+1);
             }
-            for(int j=0; j<=testGame.getPlayersNumber(); j++){
+
+            for(int j=0; j<testGame.getPlayersNumber(); j++){
                 assertEquals(vetStati[i], testGame.getGameState());
                 int curr= testGame.getCurrPlayer();
                 testGame.nextPlayer(true);
@@ -129,8 +130,6 @@ public class GameTest {
                 else
                     assertEquals(testGame.getCurrPlayer(), curr+1);
             }
-
         }
-
     }
 }
