@@ -8,11 +8,6 @@ public class Message implements Serializable {
     private final String author;
     private final LocalTime time;
 
-    public Message(){
-        text = null;
-        author = null;
-        time = null;
-    }
 
     public Message(String text, String author){
         this.text = text;
@@ -32,7 +27,8 @@ public class Message implements Serializable {
         return time.toString();
     }
 
-    public void print() {
-        System.out.println(time.toString() + " " + author + ": " + text + ".");
+    @Override
+    public String toString() {
+        return (time.toString().substring(0,5) + " " + author + ": " + text + ".");
     }
 }

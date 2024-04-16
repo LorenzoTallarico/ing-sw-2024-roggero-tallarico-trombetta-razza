@@ -11,8 +11,9 @@ public interface VirtualServer extends Remote {
 
     void addPlayer(Player p) throws RemoteException;
 
-    void getNicknames() throws RemoteException;
+    void sendChatMessage(String msg, String nickname) throws RemoteException;
 
+    void getWholeChat() throws RemoteException;
     void placeCard(Card card, int row, int column) throws RemoteException;
 
     void drawCard(int index) throws RemoteException;
