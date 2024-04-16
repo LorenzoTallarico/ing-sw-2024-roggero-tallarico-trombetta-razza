@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class Space {
+import java.io.Serializable;
+
+public class Space implements Serializable {
     private Card card;
     private boolean free;
     private boolean dead;

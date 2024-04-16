@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class ConcreteStrategyItem implements Strategy {
+import java.io.Serializable;
+
+public class ConcreteStrategyItem implements Strategy, Serializable {
 
 
     public ConcreteStrategyItem() {    }

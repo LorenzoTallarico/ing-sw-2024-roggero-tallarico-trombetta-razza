@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class ConcreteStrategyDiagonal implements Strategy{
+import java.io.Serializable;
+
+public class ConcreteStrategyDiagonal implements Strategy, Serializable {
     private int row;
     private int column;
     private int cardPoints = 0;

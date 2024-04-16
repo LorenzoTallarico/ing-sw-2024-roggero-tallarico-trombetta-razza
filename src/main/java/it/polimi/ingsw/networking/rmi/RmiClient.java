@@ -1,6 +1,9 @@
 package it.polimi.ingsw.networking.rmi;
 
+import it.polimi.ingsw.model.Player;
+
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -13,45 +16,58 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     static int PORT = 1234;
 
+    Player p;
+
     String nickname;
 
     final VirtualServer server;
 
     public RmiClient(VirtualServer server) throws RemoteException{
         this.server = server;
+        this.p = new Player();
+        this.nickname = "";
     }
 
     //run() e runCli() sono specifici all'istanza del rmiClient creato, va bene anche private il metodo tanto non lo dobbiamo esporre
     private void run() throws RemoteException {
-        this.server.connect(this);
+        if(!this.server.connect(this)) {
+            System.err.println("Connection failed, max number of players already reached.");
+            System.exit(0);
+        }
         System.out.println("Inserire nickname giocatore: ");
         Scanner scan = new Scanner(System.in);
         nickname = scan.nextLine();
+        p = new Player(nickname, false);
+        //
+        //System.out.println("CLIENT 39 - nome del player: " + p.getName() + " is null? " + (p == null));
+        server.addPlayer(p);
         this.runCli();
-
     }
 
     private void runCli() throws RemoteException{
-        System.out.println("Inserire nickname giocatore: ");
-        Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
+        //*******proseguire da qui
+        //////c'è una null pointer exception che non viene ben gestita quando passo un player
 
-        while(true){
-            System.out.println("> ");
-            String line = scan.nextLine();
-            StringTokenizer st = new StringTokenizer(line);
-            String command = st.nextToken();
-            if(command.equals("lista")) {
-                server.getNicknames();
-            } else if(command.equals("num")){
-                int num = Integer.parseInt(st.nextToken());
-                if(num == 0) {
-                    server.reset();
-                } else {
-                    server.addState(num);
-                }
-            }
-        }
+//        System.out.println("Inserire nickname giocatore: ");
+        Scanner scan = new Scanner(System.in);
+//        nickname = scan.nextLine();
+//
+//        while(true){
+//            System.out.println("> ");
+//            String line = scan.nextLine();
+//            StringTokenizer st = new StringTokenizer(line);
+//            String command = st.nextToken();
+//            if(command.equals("lista")) {
+//                server.getNicknames();
+//            } else if(command.equals("num")){
+//                int num = Integer.parseInt(st.nextToken());
+//                if(num == 0) {
+//                    server.reset();
+//                } else {
+//                    server.addState(num);
+//                }
+//            }
+//        }
 
 
 
@@ -93,6 +109,19 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         for(String s : names) {
             System.out.println("- " + s);
         }
+    }
+
+    public void showUpdate(Object o) throws RemoteException {
+        //synchronized...
+        if(o.getClass().equals(Player.class)){
+            System.out.println("Player " + ((Player) o).getName() + " joined the game");
+        } else if(o.getClass().equals(String.class)){
+            System.out.println(">>> " + ((String) o));
+        }
+        else {
+            System.err.println("Non è stato passato un parametro adeguato");
+        }
+        //else if o switch....
     }
 
     @Override

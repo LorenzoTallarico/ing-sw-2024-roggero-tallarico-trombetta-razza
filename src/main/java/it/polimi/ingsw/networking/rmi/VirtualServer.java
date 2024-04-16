@@ -7,7 +7,9 @@ import java.util.ArrayList;
 
 public interface VirtualServer extends Remote {
 
-    void connect(VirtualView client) throws RemoteException;
+    boolean connect(VirtualView client) throws RemoteException;
+
+    void addPlayer(Player p) throws RemoteException;
 
     void getNicknames() throws RemoteException;
 
@@ -20,9 +22,9 @@ public interface VirtualServer extends Remote {
 
 
 
-    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-    void addState(Integer number) throws RemoteException;
-    void reset() throws RemoteException;
-    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-
+//    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+//    void addState(Integer number) throws RemoteException;
+//    void reset() throws RemoteException;
+//    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
+//
 }

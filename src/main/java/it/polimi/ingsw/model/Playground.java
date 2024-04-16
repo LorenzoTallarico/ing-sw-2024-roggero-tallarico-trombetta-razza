@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Playground {
+public class Playground implements Serializable {
 private final Space[][] table;
 private final Map<Resource, Integer> resources;
 private final Map<Item, Integer> items;

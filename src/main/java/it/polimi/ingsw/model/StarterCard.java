@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class StarterCard extends Card{
+import java.io.Serializable;
+
+public class StarterCard extends Card implements Serializable {
     private final Resource secondResource;
     private final Resource thirdResource;
 

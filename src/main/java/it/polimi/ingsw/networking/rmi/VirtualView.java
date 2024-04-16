@@ -13,4 +13,6 @@ public interface VirtualView extends Remote {
     String getNickname() throws RemoteException;
 
     void reportError(String details) throws RemoteException;
+
+    void showUpdate(Object o) throws RemoteException;
 }

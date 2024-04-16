@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class Corner {
+import java.io.Serializable;
+
+public class Corner implements Serializable {
     private final CornerType type;
     private final Resource resource;
     private final Item item;

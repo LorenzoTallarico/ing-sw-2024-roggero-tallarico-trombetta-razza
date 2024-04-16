@@ -11,19 +11,25 @@ public class GameController {
     private int playersNumber;
     private int position, index;
     private final Game model;
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
 
     public GameController(int playersNumber) {
         model = Game.getInstance();
         this.playersNumber= playersNumber;
+        this.players = new ArrayList<>();
     }
 
-    public void addPlayer(Player p){
-        synchronized (players) {
-            if (players.size() < playersNumber && model.getGameState().equals(GameState.LOBBY)) {
+    public void addPlayer(Player p) {
+        synchronized (this.players) {
+            if (players.size() <= playersNumber && model.getGameState().equals(GameState.LOBBY)) {
                 players.add(p);
+                //System.out.println("size " + players.size());
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
+                    model.setGameState(GameState.INIT);
+                    if(model.getGameState().equals(GameState.INIT)){
+                        System.out.println("Il gioco può iniziare");
+                    }
                 }
             }
         }
@@ -80,26 +86,17 @@ public class GameController {
 
 
 
-    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-    public void addState(Integer number){
-        synchronized (this.model){
-            this.model.addState(number);
-            System.out.println("Qui sono nel controller");
+    public  int getCurrPlayersNumber() {
+        synchronized(this.players) {
+            if (!players.isEmpty())
+                return players.size();
+            else
+                return 999;
         }
     }
 
-    public Integer getState(){
-        synchronized (this.model){
-            return this.model.getState();
-        }
-
-    }
-
-    public void reset(){
-        synchronized (this.model){
-            this.model.reset();
-        }
-
+    public int getMaxPlayersNumber() {
+        return playersNumber;
     }
     /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
 

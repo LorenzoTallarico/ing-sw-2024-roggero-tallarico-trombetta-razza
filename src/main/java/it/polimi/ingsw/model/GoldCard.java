@@ -1,8 +1,10 @@
 package it.polimi.ingsw.model;
+
+import java.io.Serializable;
 import  java.util.Map;
 import  java.util.HashMap;
 
-public class GoldCard extends Card {
+public class GoldCard extends Card implements Serializable {
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
     private ReqPoint reqPoints;

@@ -9,7 +9,7 @@ import java.util.Collections;
 import com.google.gson.*;
 
 // Da capire se risulta utile per gson o per Client/Server interaction il 'Serializable'
-public class Game /*implements Serializable*/ {
+public class Game implements Serializable {
     private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
@@ -29,14 +29,14 @@ public class Game /*implements Serializable*/ {
     /* ########## FINE ATTRIBUTI DA RIMUOVERE ############# */
 
 
-    private Game(){
+    private Game() {
         players = new ArrayList<Player>();
         resourceDeck = new ArrayList<ResourceCard>();
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
         createStarterDeck();
-        gameState=GameState.INIT;
+        gameState = GameState.LOBBY;
     }
 
     //Meglio magari con un metodo che va a creare tutto il necessario(?)
@@ -153,6 +153,10 @@ public class Game /*implements Serializable*/ {
 
     public GameState getGameState() {
         return gameState;
+    }
+
+    public void setGameState(GameState gs) {
+        gameState = gs;
     }
 
     public int getCurrPlayer() {
@@ -366,7 +370,7 @@ public class Game /*implements Serializable*/ {
     }
 
     private void init(){
-        gameState= GameState.INIT;
+        gameState = GameState.INIT;
         createHands();
         currPlayer=0;
         gameState= GameState.READY;
@@ -426,21 +430,6 @@ public class Game /*implements Serializable*/ {
             }
         }
     }
-
-
-    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-    public void addState(Integer number) {
-        this.state += number;
-    }
-
-    public void reset(){
-        this.state = 0;
-    }
-
-    public Integer getState(){
-        return this.state;
-    }
-    /* ########## FINE METODI DA RIMUOVERE ############# */
 
 
 

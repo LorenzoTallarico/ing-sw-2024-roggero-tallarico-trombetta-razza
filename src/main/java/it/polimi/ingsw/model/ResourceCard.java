@@ -1,6 +1,8 @@
 package it.polimi.ingsw.model;
 
-public class ResourceCard extends Card {
+import java.io.Serializable;
+
+public class ResourceCard extends Card implements Serializable {
 
     public ResourceCard(){
         front = false;
