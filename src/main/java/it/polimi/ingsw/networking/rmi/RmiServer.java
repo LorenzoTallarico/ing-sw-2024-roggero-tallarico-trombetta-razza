@@ -2,6 +2,7 @@ package it.polimi.ingsw.networking.rmi;
 
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.model.Message;
 import it.polimi.ingsw.model.Player;
 
 import java.rmi.RemoteException;
@@ -36,22 +37,6 @@ public class RmiServer implements VirtualServer {
                 }
             }
         }
-
-
-
-
-
-//        while(true){
-//            Integer updateNum = updatesNumber.take();
-//            ArrayList<String> names = updateNames.take();
-//            synchronized (this.clients){
-//                for(VirtualView c : clients){
-//                    c.showUpdateNumber(updateNum);
-//                    c.showUpdateNames(names);
-//                    System.out.println("Qui sono nel broadcast");
-//                }
-//            }
-//        }
     }
 
     public RmiServer(GameController controller){
@@ -61,7 +46,7 @@ public class RmiServer implements VirtualServer {
     public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final String serverName = "GameServer";
-        System.out.print("Inserire numero di giocatori: ");
+        System.out.print("Enter desired players number: ");
         Scanner scan = new Scanner(System.in);
         int tempnum = scan.nextInt();
         //salvare nel parametro main dei model
@@ -98,14 +83,35 @@ public class RmiServer implements VirtualServer {
         synchronized (this.clients){
             System.err.println("join request received");
             this.controller.addPlayer(p);
-            System.out.println("Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber());
+            String textUpdate = "Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
+            System.out.println(textUpdate);
             // Player p1 = this.controller.getPlayer()....
             // le richieste tornano subito, non aspettano che siano ricevute da tutti
             try {
-                updates.put(p);
+                updates.put(textUpdate);
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
+        }
+    }
+
+    @Override
+    public void sendChatMessage(String msg, String author) throws RemoteException {
+        Message mex = new Message(msg, author);
+        mex = this.controller.sendChatMessage(mex);
+        try {
+            updates.put(mex);
+        } catch(InterruptedException e) {
+            throw new RuntimeException();
+        }
+    }
+
+    @Override
+    public void getWholeChat() throws RemoteException{
+        try {
+          updates.put(this.controller.getWholeChat());
+        } catch (InterruptedException e){
+            throw new RuntimeException();
         }
     }
 
@@ -142,44 +148,5 @@ public class RmiServer implements VirtualServer {
         }
 
     }
-
-
-//    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-//    @Override
-//    public void addState(Integer number) throws RemoteException{
-//        System.err.println("add request received");
-//        this.controller.addState(number);
-//        Integer currentState = this.controller.getState();
-//        // le richieste tornano subito, non aspettano che siano ricevute da tutti
-//        try {
-//            updatesNumber.put(currentState);
-////            for(Integer e : updates){
-////                updates.
-////            }
-//        } catch(InterruptedException e) {
-//            throw new RuntimeException();
-//        }
-//    }
-
-    @Override
-    public void getNicknames() throws RemoteException {
-        System.out.println("Elenco di tutti i giocatori");
-        for (VirtualView v : clients){
-            v.getNickname();
-        }
-    }
-
-
-//    @Override
-//    public void reset() throws RemoteException{
-//        System.err.println("reset request received");
-//        this.controller.reset();
-//        ///////////
-//    }
-//    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-//
-
-
-
 
 }

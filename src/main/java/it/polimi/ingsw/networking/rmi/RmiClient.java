@@ -1,5 +1,6 @@
 package it.polimi.ingsw.networking.rmi;
 
+import it.polimi.ingsw.model.Message;
 import it.polimi.ingsw.model.Player;
 
 import java.rmi.NotBoundException;
@@ -31,10 +32,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     //run() e runCli() sono specifici all'istanza del rmiClient creato, va bene anche private il metodo tanto non lo dobbiamo esporre
     private void run() throws RemoteException {
         if(!this.server.connect(this)) {
-            System.err.println("Connection failed, max number of players already reached.");
+            System.err.println("> Connection failed, max number of players already reached.");
             System.exit(0);
         }
-        System.out.println("Inserire nickname giocatore: ");
+        System.out.print("> Enter nickname: ");
         Scanner scan = new Scanner(System.in);
         nickname = scan.nextLine();
         p = new Player(nickname, false);
@@ -45,44 +46,24 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     private void runCli() throws RemoteException{
-        //*******proseguire da qui
-        //////c'è una null pointer exception che non viene ben gestita quando passo un player
-
-//        System.out.println("Inserire nickname giocatore: ");
         Scanner scan = new Scanner(System.in);
-//        nickname = scan.nextLine();
-//
-//        while(true){
-//            System.out.println("> ");
-//            String line = scan.nextLine();
-//            StringTokenizer st = new StringTokenizer(line);
-//            String command = st.nextToken();
-//            if(command.equals("lista")) {
-//                server.getNicknames();
-//            } else if(command.equals("num")){
-//                int num = Integer.parseInt(st.nextToken());
-//                if(num == 0) {
-//                    server.reset();
-//                } else {
-//                    server.addState(num);
-//                }
-//            }
-//        }
-
-
-
-//        Scanner scan = new Scanner(System.in);
-//        while (true){
-//            System.out.println("> ");
-//            int command = scan.nextInt();
-//
-//            if (command == 0){
-//                server.reset();
-//            } else {
-//                server.addState(command);
-//            }
-//        }
-
+        while(true){
+            String line = scan.nextLine();
+            StringTokenizer st = new StringTokenizer(line);
+            String command = st.nextToken();
+            command.toLowerCase();
+            switch(command) {
+                case "chat":
+                    if(line.length() > 5)
+                      server.sendChatMessage(line.substring(5), nickname);
+                    break;
+                case "getchat":
+                    server.getWholeChat();
+                    break;
+                default:
+                    System.out.println("Command unknown");
+            }
+        }
     }
 
 
@@ -96,30 +77,22 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     //siamo un remote object quindi possono arrivare anche invocazioni remote (qui sotto mostriamo i cambiamenti)
     //NB:   Qui vanno gestite le sincronizzazioni dei thread!
     //      Infatti se consideriamo il gioco può essere che l'utente interagisca con la view e faccia altro mentre siamo in questo metodo
-    @Override
-    public void showUpdateNumber(Integer number) throws RemoteException {
-        //synchronized ...
-        System.out.println("\n= " + number + "\n> ");
-    }
-
-    @Override
-    public void showUpdateNames(ArrayList<String> names) throws RemoteException {
-        //synchronized ...
-        System.out.println("Stampa nicknames:");
-        for(String s : names) {
-            System.out.println("- " + s);
-        }
-    }
 
     public void showUpdate(Object o) throws RemoteException {
         //synchronized...
         if(o.getClass().equals(Player.class)){
-            System.out.println("Player " + ((Player) o).getName() + " joined the game");
+            System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
         } else if(o.getClass().equals(String.class)){
-            System.out.println(">>> " + ((String) o));
-        }
-        else {
-            System.err.println("Non è stato passato un parametro adeguato");
+            System.out.println("> "+((String) o));
+        } else if(o.getClass().equals(Message.class)) {
+            System.out.println("\033[1m" + ">>> " + o.toString() + "\033[0m");
+        } else if(o.getClass().equals(ArrayList.class)) {
+            ArrayList<Message> chat = ((ArrayList<Message>) o);
+            for(Message m : chat){
+                System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
+            }
+        } else {
+            System.err.println("showUpdate error");
         }
         //else if o switch....
     }
@@ -130,8 +103,4 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     }
 
-    @Override
-    public String getNickname() throws RemoteException{
-        return this.nickname;
-    }
 }

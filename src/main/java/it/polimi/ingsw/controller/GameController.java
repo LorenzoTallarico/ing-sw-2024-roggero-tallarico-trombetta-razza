@@ -13,10 +13,13 @@ public class GameController {
     private final Game model;
     private final ArrayList<Player> players;
 
+    private final Chat chat;
+
     public GameController(int playersNumber) {
         model = Game.getInstance();
         this.playersNumber= playersNumber;
         this.players = new ArrayList<>();
+        chat = Chat.getInstance();
     }
 
     public void addPlayer(Player p) {
@@ -28,12 +31,15 @@ public class GameController {
                     model.addPlayers(players);
                     model.setGameState(GameState.INIT);
                     if(model.getGameState().equals(GameState.INIT)){
-                        System.out.println("Il gioco può iniziare");
+                        System.out.println("Game state: INIT");
                     }
                 }
             }
         }
     }
+
+
+
 
     public boolean placeCard(Card card, int row, int column) {
             synchronized (this.model) {
@@ -87,14 +93,14 @@ public class GameController {
         }
     }
 
-
-    public void getNickames(){
-        synchronized (this.model){
-
+    public void assignStarterAchievement(Player p1){
+        synchronized (this.model) {
+            ArrayList<AchievementCard> goals = new ArrayList<AchievementCard>();
+            goals.add(model.popAchievementCard());
+            goals.add(model.popAchievementCard());
+            p1.setSecretAchievement(goals);
         }
     }
-
-
 
 
     public  int getCurrPlayersNumber() {
@@ -111,4 +117,16 @@ public class GameController {
     }
     /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
 
+    public Message sendChatMessage(Message msg) {
+        synchronized (this.chat) {
+            chat.sendMessage(msg);
+            return chat.getLastMessage();
+        }
+    }
+
+    public ArrayList<Message> getWholeChat() {
+        synchronized (this.chat) {
+            return chat.getWholeChat();
+        }
+    }
 }
