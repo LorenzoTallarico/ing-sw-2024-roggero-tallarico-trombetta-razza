@@ -34,8 +34,7 @@ public class Game implements Serializable {
         gameState = GameState.LOBBY;
     }
 
-    //GETTER
-    //Gestione evoluzione delle carte sul tavolo
+
     public AchievementCard popAchievementCard() {
         AchievementCard secretAchievement = null;
         try {
@@ -349,8 +348,9 @@ public class Game implements Serializable {
     }
 
     /**
-     *
-     * @param players
+     * Method that given an arraylist of players, assign them a color,
+     * shuffle their order and add em to the game
+     * @param players arraylist of players who will play in the game
      */
     public void addPlayers(ArrayList<Player> players) {
         if(Game.players.isEmpty()) {
