@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class ResourceCard extends Card implements Serializable {
 
-    public ResourceCard(){
+    public ResourceCard() {
         front = false;
         points = -1;
         resource = null;

@@ -20,7 +20,7 @@ public class AchievementCard extends Card implements Serializable {
      * @param points integer representing the points the card gives if the requirements are fulfilled
      * @param resource The type of resource of the card
      */
-    public AchievementCard(int points, Resource resource, String strategyType, Item item){
+    public AchievementCard(int points, Resource resource, String strategyType, Item item) {
         this.points = points;
         this.resource = resource;
         StrategyInstanceCreator sic = new StrategyInstanceCreator(strategyType);

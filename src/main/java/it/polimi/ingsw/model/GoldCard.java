@@ -5,10 +5,10 @@ import  java.util.Map;
 import  java.util.HashMap;
 
 public class GoldCard extends Card implements Serializable {
+
     private Map<Resource, Integer> reqResources;
     private Item reqItem;
     private ReqPoint reqPoints;
-
 
     public GoldCard(){
         reqResources = null;

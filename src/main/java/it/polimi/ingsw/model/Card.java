@@ -57,4 +57,5 @@ public abstract class Card {
     public void setFront(boolean front) {
         this.front = front;
     }
+
 }

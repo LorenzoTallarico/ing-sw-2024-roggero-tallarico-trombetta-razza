@@ -10,6 +10,7 @@ import com.google.gson.*;
 
 // Da capire se risulta utile per gson o per Client/Server interaction il 'Serializable'
 public class Game implements Serializable {
+
     private static Game instance;
     private static ArrayList<Player> players;
     private ArrayList<ResourceCard> resourceDeck;
@@ -23,12 +24,6 @@ public class Game implements Serializable {
     private int playersNumber;
     private GameState gameState;
 
-
-    /* ########## INIZIO ATTRIBUTI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-    private Integer state = 0;
-    /* ########## FINE ATTRIBUTI DA RIMUOVERE ############# */
-
-
     private Game() {
         players = new ArrayList<Player>();
         resourceDeck = new ArrayList<ResourceCard>();
@@ -38,11 +33,6 @@ public class Game implements Serializable {
         createStarterDeck();
         gameState = GameState.LOBBY;
     }
-
-    //Meglio magari con un metodo che va a creare tutto il necessario(?)
-//    private Game() {
-
-//    }
 
     //GETTER
     //Gestione evoluzione delle carte sul tavolo
@@ -135,7 +125,6 @@ public class Game implements Serializable {
         return card;
     }
 
-
     /**
      *
      * @return Game.instance
@@ -188,7 +177,7 @@ public class Game implements Serializable {
         currPlayer++;
         if(currPlayer >= playersNumber) {
             currPlayer = 0;
-            if (nextState) {
+            if(nextState) {
                 nextState();
             }
         }
@@ -267,8 +256,8 @@ public class Game implements Serializable {
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             achievementDeck = new ArrayList<AchievementCard>();
-            for(int j = 0; j < tempAchievement.length; j++)
-                achievementDeck.add(new AchievementCard(tempAchievement[j].getPoints(), tempAchievement[j].getResource(), tempAchievement[j].getStrategyType(), tempAchievement[j].getItem()));
+            for (AchievementCard achievementCard : tempAchievement)
+                achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -299,7 +288,7 @@ public class Game implements Serializable {
      * 2 resource and 1 gold in hand + 2 secretAchievement;
      **/
     private void createHands() {
-        for(int i=0; i<playersNumber; i++) {
+        for(int i = 0; i < playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<Card>();
             ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();
 
@@ -326,7 +315,7 @@ public class Game implements Serializable {
      * @return Card or null if indexOutOfBound or position empty
      */
     public Card draw(int index) { //Da sistemare
-        if(index>=0 && index<=5) {
+        if(index >= 0 && index <= 5) {
             Card drawCard = null;
             if (index < 3) {
                 if (index == 2) {
@@ -342,7 +331,7 @@ public class Game implements Serializable {
                 }
             }
             else{
-                index-=3;
+                index -= 3;
                 if(index == 2) {
                     return popGoldCard();
                 } else {
@@ -364,7 +353,7 @@ public class Game implements Serializable {
      * @param players
      */
     public void addPlayers(ArrayList<Player> players) {
-        if(Game.players.isEmpty()){
+        if(Game.players.isEmpty()) {
             assignColors(players);
             Collections.shuffle(players);
             Game.players.addAll(players);
@@ -442,11 +431,5 @@ public class Game implements Serializable {
             player.addPoints(commonAchievement.get(1).calculatePoints());
         }
     }
-
-
-
-
-
-
 
 }

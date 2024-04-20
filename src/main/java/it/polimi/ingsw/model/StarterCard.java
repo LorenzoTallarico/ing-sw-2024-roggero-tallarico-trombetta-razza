@@ -3,10 +3,11 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 public class StarterCard extends Card implements Serializable {
+
     private final Resource secondResource;
     private final Resource thirdResource;
 
-    public StarterCard(){
+    public StarterCard() {
         secondResource = null;
         thirdResource = null;
         front = false;

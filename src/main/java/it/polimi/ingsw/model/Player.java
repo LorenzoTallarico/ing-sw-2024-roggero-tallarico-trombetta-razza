@@ -160,7 +160,6 @@ public class Player implements Serializable {
             int score = area.setSpace(card, row, column);
             hand.remove(card);
             points += score;
-
             return true;
         }
         else {

@@ -12,7 +12,7 @@ public class ConcreteStrategyMixed implements Strategy, Serializable {
      * @param item it's useless
      * @return number of points added to the player due to the achievement card
      */
-    public int execute(Resource resource,Player player, Item item){
+    public int execute(Resource resource,Player player, Item item) {
         int jarCounter = player.getArea().countItems(Item.JAR);
         int scrollCounter = player.getArea().countItems(Item.SCROLL);
         int plumeCounter = player.getArea().countItems(Item.PLUME);

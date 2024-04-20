@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class ConcreteStrategyItem implements Strategy, Serializable {
 
-
     public ConcreteStrategyItem() {    }
+
     /**
      *
      * @param resource it's useless
@@ -17,4 +17,5 @@ public class ConcreteStrategyItem implements Strategy, Serializable {
         int cardPoints = player.getArea().countItems(item);
         return (cardPoints/2)*2;
     }
+
 }

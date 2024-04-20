@@ -34,4 +34,5 @@ public class Chat implements Serializable {
         }
         return tempArr;
     }
+
 }

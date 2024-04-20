@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 public class Corner implements Serializable {
+
     private final CornerType type;
     private final Resource resource;
     private final Item item;

@@ -3,8 +3,7 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 public class ConcreteStrategyDiagonal implements Strategy, Serializable {
-    private int row;
-    private int column;
+
     private int cardPoints = 0;
 
     public ConcreteStrategyDiagonal() {    }
@@ -18,6 +17,7 @@ public class ConcreteStrategyDiagonal implements Strategy, Serializable {
      * @return number of points added to the player due to the card
      */
     public int execute(Resource resource,Player player, Item item) {
+        int row, column;
         for (column = player.getArea().getWestBound(); column <= player.getArea().getEastBound(); column++) {
             for (row = player.getArea().getNorthBound(); row <= player.getArea().getSouthBound(); row++) {
                 if(resource==Resource.MUSHROOM) {
