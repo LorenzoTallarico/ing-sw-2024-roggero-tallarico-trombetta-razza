@@ -11,7 +11,7 @@ public class Chat implements Serializable {
         chat = new ArrayList<>();
     }
 
-    public static Chat getInstance(){
+    public static Chat getInstance() {
         if(instance == null){
             instance = new Chat();
         }
@@ -27,6 +27,11 @@ public class Chat implements Serializable {
     }
 
     public ArrayList<Message> getWholeChat() {
-        return chat;
+        ArrayList<Message> tempArr = new ArrayList<>();
+        for(Message m : chat) {
+            if(m.getRecipient().isEmpty())
+                tempArr.add(m);
+        }
+        return tempArr;
     }
 }

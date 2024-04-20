@@ -1,14 +1,12 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
-
 import java.util.ArrayList;
-
 
 public class GameController {
     //Attributi ridondanti, da vedere se utili o togliere
     private Player currentPlayer;
-    private int playersNumber;
+    private final int playersNumber;
     private int position, index;
     private final Game model;
     private final ArrayList<Player> players;
@@ -16,7 +14,7 @@ public class GameController {
 
     public GameController(int playersNumber) {
         model = Game.getInstance();
-        this.playersNumber= playersNumber;
+        this.playersNumber = playersNumber;
         this.players = new ArrayList<>();
         chat = Chat.getInstance();
     }
@@ -29,7 +27,7 @@ public class GameController {
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
                     model.setGameState(GameState.INIT);
-                    if(model.getGameState().equals(GameState.INIT)){
+                    if(model.getGameState().equals(GameState.INIT)) {
                         System.out.println("Game state: INIT");
                     }
                 }
@@ -55,15 +53,14 @@ public class GameController {
             }
     }
 
-    public void drawCard(int index){
+    public void drawCard(int index) {
         synchronized (this.model) {
             if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND))
                 model.getPlayers().get(model.getCurrPlayer()).getHand().add(model.draw(index));
-
         }
     }
 
-    public void selectAchievementCard(int position){
+    public void selectAchievementCard(int position) {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.SELECTACHIEVEMENT)) {
                 ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
@@ -74,7 +71,7 @@ public class GameController {
         }
     }
 
-    public boolean calculateEndPoints(){
+    public boolean calculateEndPoints() {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.FINALSCORE)) {
                 model.calculateEndPoints();
@@ -92,7 +89,7 @@ public class GameController {
         }
     }
 
-    public void assignStarterAchievement(Player p1){
+    public void assignStarterAchievement(Player p1) {
         synchronized (this.model) {
             ArrayList<AchievementCard> goals = new ArrayList<AchievementCard>();
             goals.add(model.popAchievementCard());
@@ -114,7 +111,6 @@ public class GameController {
     public int getMaxPlayersNumber() {
         return playersNumber;
     }
-    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
 
     public Message sendChatMessage(Message msg) {
         synchronized (this.chat) {

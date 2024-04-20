@@ -12,7 +12,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 
 //NB: qua NON è sufficiente gestire le eccezioni con throws ma si dovrà usare try-catch correttamente
@@ -21,10 +20,7 @@ public class RmiServer implements VirtualServer {
     static int PORT = 1234;
     final GameController controller;
     final ArrayList<VirtualView> clients = new ArrayList<>();
-    //final BlockingQueue<Integer> updatesNumber = new LinkedBlockingDeque<>();
     final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
-    //final BlockingQueue<ArrayList<String>> updateNames = new LinkedBlockingDeque<>();
-
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
     // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
@@ -32,7 +28,7 @@ public class RmiServer implements VirtualServer {
         while(true) {
             Object o = updates.take();
             synchronized (this.clients){
-                for(VirtualView c : clients){
+                for (VirtualView c : clients) {
                     c.showUpdate(o);
                 }
             }
@@ -46,7 +42,7 @@ public class RmiServer implements VirtualServer {
     public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final String serverName = "GameServer";
-        System.out.print("Enter desired players number: ");
+        System.out.print("> Enter desired players number: ");
         Scanner scan = new Scanner(System.in);
         int tempnum = scan.nextInt();
         //salvare nel parametro main dei model
@@ -54,22 +50,20 @@ public class RmiServer implements VirtualServer {
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
-        System.out.println("server bound.");
-
+        System.out.println("> Server bound.");
         try {
             ((RmiServer)server).broadcastUpdateThread();
         }
         catch (InterruptedException e){
-            System.err.println("Interrupted while waiting for updates: \n" + e.getMessage());
+            System.err.println("> Interrupted while waiting for updates: \n" + e.getMessage());
         }
     }
 
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
-        synchronized (this.clients){
+        synchronized (this.clients) {
             if(this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
-                //EXCEPTION
-                System.out.println("Denied connection to a new client, max number of players already reached");
+                System.out.println("> Denied connection to a new client, max number of players already reached");
                 return false;
             } else {
                 this.clients.add(client);
@@ -79,14 +73,12 @@ public class RmiServer implements VirtualServer {
     }
 
     @Override
-    public void addPlayer(Player p) throws RemoteException{
+    public void addPlayer(Player p) throws RemoteException {
         synchronized (this.clients){
-            System.err.println("join request received");
+            System.err.println("> Join request received");
             this.controller.addPlayer(p);
             String textUpdate = "Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
             System.out.println(textUpdate);
-            // Player p1 = this.controller.getPlayer()....
-            // le richieste tornano subito, non aspettano che siano ricevute da tutti
             try {
                 updates.put(textUpdate);
             } catch(InterruptedException e) {
@@ -107,9 +99,21 @@ public class RmiServer implements VirtualServer {
     }
 
     @Override
-    public void getWholeChat() throws RemoteException{
+    public void sendChatWhisper(String msg, String author, String recipient) throws RemoteException {
+        Message mex = new Message(msg, author, recipient);
+        mex = this.controller.sendChatMessage(mex);
         try {
-          updates.put(this.controller.getWholeChat());
+            updates.put(mex);
+        } catch(InterruptedException e) {
+            throw new RuntimeException();
+        }
+    }
+
+
+    @Override
+    public void getWholeChat() throws RemoteException {
+        try {
+            updates.put(this.controller.getWholeChat());
         } catch (InterruptedException e){
             throw new RuntimeException();
         }
@@ -127,6 +131,7 @@ public class RmiServer implements VirtualServer {
             }
         }
     }
+
 
     @Override
     public void drawCard(int index) throws RemoteException {

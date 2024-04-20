@@ -15,15 +15,15 @@ public class GameTest {
     void IntegrityTest(){
         ArrayList<Player> players= new ArrayList<Player>();
 
-        Player fake1= new Player("Marco", false);
+        Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        Player fake2= new Player("Luca", false);
+        Player fake2 = new Player("Luca", false);
         players.add(fake2);
-        Player fake3= new Player("Andrea", false);
+        Player fake3 = new Player("Andrea", false);
         players.add(fake3);
-        Player fake4= new Player("Paolo", false);
+        Player fake4 = new Player("Paolo", false);
         players.add(fake4);
-        Game testGame= Game.getInstance();
+        Game testGame = Game.getInstance();
         testGame.addPlayers(players);
         // Verifica che ogni giocatore abbia un colore assegnato
         for (Player player : testGame.getPlayers()) {
@@ -43,17 +43,17 @@ public class GameTest {
     }
 
     @Test
-    void nextStateTest(){
-        Game testGame= Game.getInstance();
+    void nextStateTest() {
+        Game testGame = Game.getInstance();
         GameState[] vetStati = new GameState[8];
-        vetStati[0]= GameState.LOBBY ;
-        vetStati[1]= GameState.INIT ;
-        vetStati[2]= GameState.READY ;
-        vetStati[3]= GameState.SELECTACHIEVEMENT ;
-        vetStati[4]= GameState.GAME ;
-        vetStati[5]= GameState.LASTROUND ;
-        vetStati[6]= GameState.FINALSCORE ;
-        vetStati[7]= GameState.END ;
+        vetStati[0] = GameState.LOBBY ;
+        vetStati[1] = GameState.INIT ;
+        vetStati[2] = GameState.READY ;
+        vetStati[3] = GameState.SELECTACHIEVEMENT ;
+        vetStati[4] = GameState.GAME ;
+        vetStati[5] = GameState.LASTROUND ;
+        vetStati[6] = GameState.FINALSCORE ;
+        vetStati[7] = GameState.END ;
 
         assertEquals(testGame.getGameState(), vetStati[0]);
         testGame.nextState();
@@ -75,17 +75,17 @@ public class GameTest {
     }
 
     @Test
-    void nextPlayerTest(){
-        Game testGame= Game.getInstance();
+    void nextPlayerTest() {
+        Game testGame = Game.getInstance();
         GameState[] vetStati = new GameState[8];
-        vetStati[0]= GameState.LOBBY ;
-        vetStati[1]= GameState.INIT ;
-        vetStati[2]= GameState.READY ;
-        vetStati[3]= GameState.SELECTACHIEVEMENT ;
-        vetStati[4]= GameState.GAME ;
-        vetStati[5]= GameState.LASTROUND ;
-        vetStati[6]= GameState.FINALSCORE ;
-        vetStati[7]= GameState.END ;
+        vetStati[0] = GameState.LOBBY ;
+        vetStati[1] = GameState.INIT ;
+        vetStati[2] = GameState.READY ;
+        vetStati[3] = GameState.SELECTACHIEVEMENT ;
+        vetStati[4] = GameState.GAME ;
+        vetStati[5] = GameState.LASTROUND ;
+        vetStati[6] = GameState.FINALSCORE ;
+        vetStati[7] = GameState.END ;
         ArrayList<Player> players= new ArrayList<Player>();
 
         Player fake1= new Player("Marco", false);

@@ -484,6 +484,7 @@ public class Print {
                             break;
                     }
                 } else if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyMixed.class) {
+                    def = ANSI_WHITE;
                     System.out.println(",_____________" + ANSI_YELLOW + "_____" + def + "_,");
                     System.out.println("|             " + ANSI_YELLOW + "| " + card.getPoints() + " |" + def + " |");
                     System.out.println("|             " + ANSI_YELLOW + "'\\./'" + def + " |");

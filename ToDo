@@ -24,5 +24,10 @@ Controller:
 - Sistemare Color (automatizzarne l'assegnamento tramite la classe game, assegnamento casuale tra quelli non già assegnati in modo da evitare anche controlli)
 
 
+ROBE DA DIRE AL LAB 15/04
+- implementato strategy pattern, con strategy instance creator
+
+
+
 - fare AchievementCard assegnamento a player e (scelta)
 - fare enum StatoGioco

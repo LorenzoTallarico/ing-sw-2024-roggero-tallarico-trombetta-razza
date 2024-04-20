@@ -194,7 +194,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void nextState(){
+    public void nextState() {
         switch(gameState){
             case LOBBY:
                 gameState=GameState.INIT;
@@ -343,20 +343,20 @@ public class Game implements Serializable {
             }
             else{
                 index-=3;
-                if (index == 2) {
+                if(index == 2) {
                     return popGoldCard();
                 } else {
-                    if (commonGold.size() > index) {
+                    if(commonGold.size() > index) {
                         drawCard = commonGold.get(index);
                         commonGold.remove(index);
-                        if (!goldDeck.isEmpty())
+                        if(!goldDeck.isEmpty())
                             commonGold.add(index, popGoldCard());
                     }
                     return drawCard;
                 }
             }
         }
-        return null;//outOfBound
+        return null; // out of bounds
     }
 
     /**
@@ -373,7 +373,7 @@ public class Game implements Serializable {
         init();
     }
 
-    private void init(){
+    private void init() {
         gameState = GameState.INIT;
         createHands();
         currPlayer=0;
@@ -435,7 +435,7 @@ public class Game implements Serializable {
         }
     }
 
-    public void calculateEndPoints(){
+    public void calculateEndPoints() {
         for (Player player : players) {
             player.addPoints(player.getSecretAchievement().get(0).calculatePoints());
             player.addPoints(commonAchievement.get(0).calculatePoints());
