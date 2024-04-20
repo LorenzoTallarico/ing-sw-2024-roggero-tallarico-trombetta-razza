@@ -177,7 +177,16 @@ public class Game implements Serializable {
         if(currPlayer >= playersNumber) {
             currPlayer = 0;
             if(nextState) {
-                nextState();
+                if(gameState == GameState.GAME) {
+                    for(Player p : players) {
+                        if(p.getPoints() >= 20) {
+                            nextState();
+                            return;
+                        }
+                    }
+                }
+                else
+                    nextState();
             }
         }
     }

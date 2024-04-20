@@ -26,10 +26,6 @@ public class GameController {
                 //System.out.println("size " + players.size());
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
-                    model.setGameState(GameState.INIT);
-                    if(model.getGameState().equals(GameState.INIT)) {
-                        System.out.println("Game state: INIT");
-                    }
                 }
             }
         }
@@ -53,22 +49,33 @@ public class GameController {
             }
     }
 
-    public void drawCard(int index) {
+    public boolean drawCard(int index) {
         synchronized (this.model) {
-            if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND))
-                model.getPlayers().get(model.getCurrPlayer()).getHand().add(model.draw(index));
+            if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
+                Card card = model.draw(index);
+                if (model.draw(index) != null) {
+                    model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
+                    model.nextPlayer(true);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
-    public void selectAchievementCard(int position) {
+    public boolean selectAchievementCard(int position) {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.SELECTACHIEVEMENT)) {
-                ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
-                goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
-                model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement(goal);
+                if (position == 0 || position == 1) {
+                    ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
+                    goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
+                    model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement(goal);
+                    model.nextPlayer(true);
+                    return true;
+                }
             }
-            model.nextPlayer(true);
         }
+        return false;
     }
 
     public boolean calculateEndPoints() {
@@ -124,4 +131,5 @@ public class GameController {
             return chat.getWholeChat();
         }
     }
+
 }
