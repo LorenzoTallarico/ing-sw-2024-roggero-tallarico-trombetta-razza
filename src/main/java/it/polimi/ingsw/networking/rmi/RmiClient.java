@@ -36,12 +36,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         Scanner scan = new Scanner(System.in);
         nickname = scan.nextLine();
         if(!this.server.connect(this)) {
-            System.err.println("> Connection failed, max number of players already reached.");
+            System.err.println("> Connection failed, max number of players already reached or name already taken.");
             System.exit(0);
         }
-
         p = new Player(nickname, false);
-        server.addPlayer(p);
         this.runCli();
     }
 
@@ -116,6 +114,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
         VirtualServer server = (VirtualServer) registry.lookup(serverName);
         new RmiClient(server).run();
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
 }

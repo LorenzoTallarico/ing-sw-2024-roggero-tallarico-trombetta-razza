@@ -10,6 +10,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -62,11 +64,21 @@ public class RmiServer implements VirtualServer {
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         synchronized (this.clients) {
+            String nick = client.getNickname();
+            System.out.println("> Adding player " + nick + ".");
+            if(!clients.isEmpty())
+                for(VirtualView v : this.clients) {
+                    if(v.getNickname().equalsIgnoreCase(nick)) {
+                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
+                        return false;
+                    }
+                }
             if(this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
-                System.out.println("> Denied connection to a new client, max number of players already reached");
+                System.out.println("> Denied connection to a new client, max number of players already reached.");
                 return false;
             } else {
                 this.clients.add(client);
+                addPlayer(new Player(nick, false));
                 return true;
             }
         }
