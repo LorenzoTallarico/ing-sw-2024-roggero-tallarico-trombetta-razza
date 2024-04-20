@@ -257,7 +257,7 @@ public class Game implements Serializable {
             commonResource.add(resourceDeck.get(0));
             resourceDeck.remove(0);
         }
-    }
+    } 
 
     private void createAchievementDeck() {
         Gson gson = new Gson();
