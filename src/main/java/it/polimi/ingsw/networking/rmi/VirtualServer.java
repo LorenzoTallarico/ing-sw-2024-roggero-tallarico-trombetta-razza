@@ -15,8 +15,10 @@ public interface VirtualServer extends Remote {
 
     void sendChatWhisper(String msg, String nickname, String recipient) throws RemoteException;
 
-
     void getWholeChat() throws RemoteException;
+
+    ArrayList<Player> getPlayers() throws RemoteException;
+
     void placeCard(Card card, int row, int column) throws RemoteException;
 
     void drawCard(int index) throws RemoteException;

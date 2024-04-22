@@ -61,8 +61,9 @@ public class RmiServer implements VirtualServer {
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         synchronized (this.clients) {
+            System.err.println("> Join request received");
             String nick = client.getNickname();
-            System.out.println("> Adding player " + nick + ".");
+            //System.out.println("> Adding player " + nick + ".");
             if(!clients.isEmpty())
                 for(VirtualView v : this.clients) {
                     if(v.getNickname().equalsIgnoreCase(nick)) {
@@ -85,7 +86,6 @@ public class RmiServer implements VirtualServer {
     @Override
     public void addPlayer(Player p) throws RemoteException {
         synchronized (this.clients){
-            System.err.println("> Join request received");
             this.controller.addPlayer(p);
             String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
             System.out.println(textUpdate);
@@ -127,6 +127,11 @@ public class RmiServer implements VirtualServer {
         } catch (InterruptedException e){
             throw new RuntimeException();
         }
+    }
+
+    @Override
+    public ArrayList<Player> getPlayers() throws RemoteException{
+        return this.controller.getPlayers();
     }
 
 

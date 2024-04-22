@@ -118,6 +118,10 @@ public class GameController {
         return playersNumber;
     }
 
+    public ArrayList<Player> getPlayers() {
+        return model.getPlayers();
+    }
+
     public Message sendChatMessage(Message msg) {
         synchronized (this.chat) {
             chat.sendMessage(msg);

@@ -10,10 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
@@ -55,38 +52,44 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     private void runCli() throws RemoteException{
         Scanner scan = new Scanner(System.in);
-        while(true){
-            String line = scan.nextLine();
-            switch(state) {
-                case CHOICE:
-                    break;
-                case PLACE:
-                    break;
-                case DRAW:
-                    break;
-                case WAIT:
-                    StringTokenizer st = new StringTokenizer(line);
-                    String command = st.nextToken();
-                    command.toLowerCase();
-                    switch (command) {
-                        case "chat":
-                            if (line.length() > 5)
-                                server.sendChatMessage(line.substring(5), nickname);
-                            break;
-                        case "getchat":
-                            server.getWholeChat();
-                            reqChat = true;
-                            break;
-                        case "whisper":
-                            command = st.nextToken();
-                            server.sendChatWhisper(line.substring(7 + command.length() + 1), nickname, command);
-                            break;
-                        default:
-                            System.out.println("Command unknown");
-                    }
-                default:
-                    break;
+        try {
+            while(true){
+                String line = scan.nextLine();
+                if(line.isEmpty())
+                    continue;
+                switch(state) {
+                    case CHOICE:
+                        break;
+                    case PLACE:
+                        break;
+                    case DRAW:
+                        break;
+                    case WAIT:
+                        StringTokenizer st = new StringTokenizer(line);
+                        String command = st.nextToken();
+                        command.toLowerCase();
+                        switch (command) {
+                            case "chat":
+                                if (line.length() > 5)
+                                    server.sendChatMessage(line.substring(5), nickname);
+                                break;
+                            case "getchat":
+                                server.getWholeChat();
+                                reqChat = true;
+                                break;
+                            case "whisper":
+                                command = st.nextToken();
+                                server.sendChatWhisper(line.substring(7 + command.length() + 1), nickname, command);
+                                break;
+                            default:
+                                System.out.println("Command unknown");
+                        }
+                    default:
+                        break;
+                }
             }
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input");
         }
     }
 
@@ -96,7 +99,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void showUpdate(Object o) throws RemoteException {
         //synchronized...
         if(o.getClass().equals(Player.class)) {
-            p = (Player) o;
+            //p = (Player) o;
+            System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
         } else if(o.getClass().equals(String.class)){
             System.out.println("> " + ((String) o));
         } else if(o.getClass().equals(Message.class)) {
@@ -104,8 +108,19 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 System.out.println("\033[1m" + ">>> PRIVATE > "  + o.toString() + "\033[0m");
             else if(((Message) o).getRecipient().equalsIgnoreCase(""))
                 System.out.println("\033[1m" + ">>> " + o.toString() + "\033[0m");
-            else if(!((Message) o).getRecipient().isEmpty() && ((Message) o).getAuthor().equalsIgnoreCase(nickname))
-                System.out.println("\033[1m" + ">>> PRIVATE to " + ((Message) o).getRecipient() + " > "  + o.toString() + "\033[0m");
+            else if(!((Message) o).getRecipient().isEmpty() && ((Message) o).getAuthor().equalsIgnoreCase(nickname)) {
+                boolean check = false;
+                for (Player p1 : this.server.getPlayers()){
+                    if (p1.getName().equals(((Message) o).getRecipient())) {
+                        check = true;
+                        break;
+                    }
+                }
+                if(check)
+                    System.out.println("\033[1m" + ">>> PRIVATE to " + ((Message) o).getRecipient() + " > "  + o.toString() + "\033[0m");
+                else
+                    System.err.println("\033[1m" + "Player named" + ((Message) o).getRecipient() + " does not exist " + "\033[0m");
+            }
         } else if(o.getClass().equals(ArrayList.class)) {
             if(reqChat) {
                 ArrayList<Message> chat = ((ArrayList<Message>) o);
