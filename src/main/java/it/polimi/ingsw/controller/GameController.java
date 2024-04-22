@@ -19,6 +19,9 @@ public class GameController {
         chat = Chat.getInstance();
     }
 
+
+    //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
+
     public void addPlayer(Player p) {
         synchronized (this.players) {
             if (players.size() <= playersNumber && model.getGameState().equals(GameState.LOBBY)) {
@@ -88,7 +91,6 @@ public class GameController {
         return false;
     }
 
-    //**********to decide if it's necessary to synchronize***********
     public boolean isPlayerInTurn(Player p) {
         synchronized (this.model){
             return model.getCurrPlayer() == model.getPlayers().indexOf(p);
@@ -115,11 +117,15 @@ public class GameController {
     }
 
     public int getMaxPlayersNumber() {
-        return playersNumber;
+        synchronized (this.players){
+            return playersNumber;
+        }
     }
 
     public ArrayList<Player> getPlayers() {
-        return model.getPlayers();
+        synchronized(this.players){
+            return model.getPlayers();
+        }
     }
 
     public Message sendChatMessage(Message msg) {
@@ -134,5 +140,33 @@ public class GameController {
             return chat.getWholeChat();
         }
     }
+
+
+
+
+
+
+
+
+    // ******* METODI UTILI PER TESTARE SOCKET **************
+    public boolean add(Integer number) {
+        synchronized (this.model) {
+            return this.model.add(number);
+        }
+    }
+
+    public Integer getCurrent() {
+        synchronized (this.model) {
+            return this.model.get();
+        }
+    }
+
+    public boolean reset() {
+        synchronized (this.model) {
+            return this.model.add(- this.model.get());
+        }
+    }
+
+
 
 }
