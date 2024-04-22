@@ -10,8 +10,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -46,9 +44,8 @@ public class RmiServer implements VirtualServer {
         final String serverName = "GameServer";
         System.out.print("> Enter desired players number: ");
         Scanner scan = new Scanner(System.in);
-        int tempnum = scan.nextInt();
-        //salvare nel parametro main dei model
-        VirtualServer server = new RmiServer(new GameController(tempnum));
+        int playersNumber = scan.nextInt();
+        VirtualServer server = new RmiServer(new GameController(playersNumber));
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
@@ -78,6 +75,7 @@ public class RmiServer implements VirtualServer {
                 return false;
             } else {
                 this.clients.add(client);
+                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
                 addPlayer(new Player(nick, false));
                 return true;
             }
@@ -89,7 +87,7 @@ public class RmiServer implements VirtualServer {
         synchronized (this.clients){
             System.err.println("> Join request received");
             this.controller.addPlayer(p);
-            String textUpdate = "Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
+            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
             System.out.println(textUpdate);
             try {
                 updates.put(textUpdate);

@@ -23,7 +23,6 @@ public class GameController {
         synchronized (this.players) {
             if (players.size() <= playersNumber && model.getGameState().equals(GameState.LOBBY)) {
                 players.add(p);
-                //System.out.println("size " + players.size());
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
                 }

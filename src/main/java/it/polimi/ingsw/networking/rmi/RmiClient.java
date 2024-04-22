@@ -17,10 +17,19 @@ import java.util.StringTokenizer;
 
 public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
+    enum State {
+        WAIT,
+        DRAW,
+        PLACE,
+        CHOICE,
+        END
+    }
+
     static int PORT = 1234;
-    Player p;
-    String nickname;
-    final VirtualServer server;
+    private Player p;
+    private String nickname;
+    private State state;
+    private final VirtualServer server;
     private boolean reqChat;
 
     public RmiClient(VirtualServer server) throws RemoteException {
@@ -28,6 +37,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         this.p = new Player();
         this.nickname = "";
         reqChat = false;
+        state = State.WAIT;
     }
 
     //run() e runCli() sono specifici all'istanza del rmiClient creato, va bene anche private il metodo tanto non lo dobbiamo esporre
@@ -47,24 +57,35 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         Scanner scan = new Scanner(System.in);
         while(true){
             String line = scan.nextLine();
-            StringTokenizer st = new StringTokenizer(line);
-            String command = st.nextToken();
-            command.toLowerCase();
-            switch(command) {
-                case "chat":
-                    if(line.length() > 5)
-                      server.sendChatMessage(line.substring(5), nickname);
+            switch(state) {
+                case CHOICE:
                     break;
-                case "getchat":
-                    server.getWholeChat();
-                    reqChat = true;
+                case PLACE:
                     break;
-                case "whisper":
-                    command = st.nextToken();
-                    server.sendChatWhisper(line.substring(7 + command.length() + 1), nickname, command);
+                case DRAW:
                     break;
+                case WAIT:
+                    StringTokenizer st = new StringTokenizer(line);
+                    String command = st.nextToken();
+                    command.toLowerCase();
+                    switch (command) {
+                        case "chat":
+                            if (line.length() > 5)
+                                server.sendChatMessage(line.substring(5), nickname);
+                            break;
+                        case "getchat":
+                            server.getWholeChat();
+                            reqChat = true;
+                            break;
+                        case "whisper":
+                            command = st.nextToken();
+                            server.sendChatWhisper(line.substring(7 + command.length() + 1), nickname, command);
+                            break;
+                        default:
+                            System.out.println("Command unknown");
+                    }
                 default:
-                    System.out.println("Command unknown");
+                    break;
             }
         }
     }
@@ -75,7 +96,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     public void showUpdate(Object o) throws RemoteException {
         //synchronized...
         if(o.getClass().equals(Player.class)) {
-            System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
+            p = (Player) o;
         } else if(o.getClass().equals(String.class)){
             System.out.println("> " + ((String) o));
         } else if(o.getClass().equals(Message.class)) {
