@@ -26,7 +26,18 @@ public class Game implements Serializable {
 
     private Game() {
         players = new ArrayList<Player>();
-        resourceDeck = new ArrayList<ResourceCard>();
+        createGoldDeck();
+        createAchievementDeck();
+        createResourceDeck();
+        createStarterDeck();
+        gameState = GameState.LOBBY;
+    }
+
+    private void dispose(){
+        instance=null;
+        currPlayer=0;
+        playersNumber=0;
+        players = new ArrayList<Player>();
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
@@ -215,6 +226,7 @@ public class Game implements Serializable {
                 gameState=GameState.END;
                 break;
             case END:
+                dispose();
                 break;
         }
     }
@@ -257,7 +269,7 @@ public class Game implements Serializable {
             commonResource.add(resourceDeck.get(0));
             resourceDeck.remove(0);
         }
-    } 
+    }
 
     private void createAchievementDeck() {
         Gson gson = new Gson();

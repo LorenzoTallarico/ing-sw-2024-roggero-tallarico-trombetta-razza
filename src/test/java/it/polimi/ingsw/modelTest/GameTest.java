@@ -38,8 +38,16 @@ public class GameTest {
                 assertNotEquals(testGame.getPlayers().get(i).getColor(), testGame.getPlayers().get(j).getColor(), "I colori dei giocatori sono uguali");
             }
         }
-        assertEquals(testGame.getGameState(), GameState.INIT);
-
+        assertEquals(testGame.getGameState(), GameState.READY);
+        //To reset instance
+        while(!testGame.getGameState().equals(GameState.END)){
+            testGame.nextState();
+        }
+        testGame.nextState();
+        assertEquals(testGame.getGameState(), GameState.LOBBY);
+        assertTrue(testGame.getPlayers().isEmpty());
+        assertEquals(testGame.getPlayersNumber(), 0);
+        assertEquals(testGame.getCurrPlayer(), 0);
     }
 
     @Test
@@ -70,8 +78,13 @@ public class GameTest {
         assertEquals(testGame.getGameState(), vetStati[6]);
         testGame.nextState();
         assertEquals(testGame.getGameState(), vetStati[7]);
+        //Dispose GameTest
         testGame.nextState();
-        assertEquals(testGame.getGameState(), vetStati[7]);
+        assertEquals(testGame.getGameState(), vetStati[0]);
+        assertTrue(testGame.getPlayers().isEmpty());
+        assertEquals(testGame.getPlayersNumber(), 0);
+        assertEquals(testGame.getCurrPlayer(), 0);
+
     }
 
     @Test
@@ -97,6 +110,7 @@ public class GameTest {
         Player fake4 = new Player("Paolo", false);
         players.add(fake4);
         testGame.addPlayers(players);
+        testGame.getPlayers().get(0).addPoints(20);
         for(int i = 2; i < vetStati.length; i++) {
             for(int j = 0; j < testGame.getPlayersNumber(); j++) {
                 assertEquals(vetStati[i], testGame.getGameState());
@@ -122,13 +136,19 @@ public class GameTest {
             for(int j = 0; j < testGame.getPlayersNumber(); j++){
                 assertEquals(vetStati[i], testGame.getGameState());
                 int curr = testGame.getCurrPlayer();
-                testGame.nextPlayer(true);
-                if(j == testGame.getPlayersNumber()-1 && i < vetStati.length-1)
-                    assertEquals(vetStati[i+1], testGame.getGameState());
-                if(curr == testGame.getPlayersNumber()-1)
-                    assertEquals(testGame.getCurrPlayer(), 0);
-                else
-                    assertEquals(testGame.getCurrPlayer(), curr+1);
+                if(testGame.getGameState().equals(GameState.END) && j == testGame.getPlayersNumber()-1) {
+                    testGame.nextPlayer(true);
+                }
+                else {
+                    testGame.nextPlayer(true);
+                    if(j == testGame.getPlayersNumber()-1 && i < vetStati.length-1)
+                        assertEquals(vetStati[i+1], testGame.getGameState());
+                    if(curr == testGame.getPlayersNumber()-1)
+                        assertEquals(testGame.getCurrPlayer(), 0);
+                    else
+                        assertEquals(testGame.getCurrPlayer(), curr+1);
+                }
+
             }
         }
     }
