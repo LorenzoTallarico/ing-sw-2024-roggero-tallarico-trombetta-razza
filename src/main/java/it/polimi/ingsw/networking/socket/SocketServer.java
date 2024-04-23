@@ -28,9 +28,13 @@ public class SocketServer {
             OutputStreamWriter socketTx = new OutputStreamWriter(clientSocket.getOutputStream());
 
             //funziona da interfaccia con il client (svolge una funzione simile allo 'stub')
-            SocketClientHandler handler = new SocketClientHandler(this.controller, this, new BufferedReader(socketRx), new BufferedWriter(socketTx));
+            SocketClientHandler handler = new SocketClientHandler(this.controller, this, new BufferedReader(socketRx), new PrintWriter(socketTx));
 
-            clients.add(handler);
+            //aggiunto all'elenco degli handlers per comunicare con i client (come facevamo con gli stub)
+            synchronized (this.clients){
+                clients.add(handler);
+            }
+            //creo il thread effettivo (su RMI venivano creati in maniera autonoma)
             new Thread(() -> {
                 try {
                     handler.runVirtualView();
@@ -41,10 +45,11 @@ public class SocketServer {
         }
     }
 
+    //qua è meglio usare un canale differente usando un thread o altro (magari simile alla blocking queue)
     public void broadcastUpdate(Integer value) {
         synchronized (this.clients) {
-            for (var client : this.clients) {
-                client.showValue(value);
+            for (SocketClientHandler client : this.clients) {
+                client.showUpdate(value);
             }
         }
     }
@@ -55,6 +60,7 @@ public class SocketServer {
 
         ServerSocket listenSocket = new ServerSocket(PORT);
 
+        //playersNumber va implementato in maniera corretta
         new SocketServer(listenSocket, new GameController(1)).runServer();
     }
 }
