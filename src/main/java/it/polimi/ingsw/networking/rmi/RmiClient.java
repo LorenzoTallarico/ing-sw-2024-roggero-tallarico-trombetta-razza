@@ -107,7 +107,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         //synchronized...
         if(o.getClass().equals(Player.class)) {
             //p = (Player) o;
-            System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
+            //System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
         } else if(o.getClass().equals(String.class)){
             System.out.println("> " + ((String) o));
         } else if(o.getClass().equals(Message.class)) {

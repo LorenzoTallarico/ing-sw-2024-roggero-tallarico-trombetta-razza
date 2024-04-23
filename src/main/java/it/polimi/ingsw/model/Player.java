@@ -115,6 +115,14 @@ public class Player implements Serializable {
     }
 
     /**
+     * Method that sets the cards in the players hand
+     * @param hand Arraylist of cards that are in the player's hand
+     */
+    public void setHand(ArrayList<Card> hand) {
+        this.hand = hand;
+    }
+
+    /**
      * Method that sets the player as a winner
      * @param winner boolean, true if the player is a winner, false otherwise
      */
@@ -128,14 +136,6 @@ public class Player implements Serializable {
      */
     public void addPoints(int points) {
         this.points += points;
-    }
-
-    /**
-     * Method that sets the cards in the players hand
-     * @param hand Arraylist of cards that are in the player's hand
-     */
-    public void setHand(ArrayList<Card> hand) {
-        this.hand = hand;
     }
 
     /**

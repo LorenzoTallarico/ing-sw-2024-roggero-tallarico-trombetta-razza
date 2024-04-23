@@ -54,11 +54,13 @@ public class GameController {
     public boolean drawCard(int index) {
         synchronized (this.model) {
             if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
-                Card card = model.draw(index);
-                if (model.draw(index) != null) {
-                    model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
-                    model.nextPlayer(true);
-                    return true;
+                if(getPlayers().get(model.getCurrPlayer()).getHand().size() == 2){
+                    Card card = model.draw(index);
+                    if (model.draw(index) != null) {
+                        model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
+                        model.nextPlayer(true);
+                        return true;
+                    }
                 }
             }
             return false;

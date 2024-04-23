@@ -33,6 +33,7 @@ public class RmiServer implements VirtualServer {
     public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final String serverName = "GameServer";
+        /// qui non deve andare nulla di println perché non si andrà mai a leggere dal server
         System.out.print("> Enter desired players number: ");
         Scanner scan = new Scanner(System.in);
         int playersNumber = scan.nextInt();
@@ -88,6 +89,9 @@ public class RmiServer implements VirtualServer {
     @Override
     public void addPlayer(Player p) throws RemoteException {
         synchronized (this.clients){
+
+            //NB QUESTO E' SBAAGLIATO: IL METODO SUL CONTROLLER NON VA CHIAMATO QUI!!!!!!
+            // COME QUESTO TUTTI GLI ALTRI
             this.controller.addPlayer(p);
             String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
             System.out.println(textUpdate);
