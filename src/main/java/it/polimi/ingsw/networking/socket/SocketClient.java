@@ -34,7 +34,7 @@ public class SocketClient implements VirtualViewSocket {
             // Read message and perform action
             switch (line) {
                 case "update":
-                    this.showValue(Integer.parseInt(input.readLine()));
+                    this.showUpdate(Integer.parseInt(input.readLine()));
                     break;
                 case "error":
                     this.reportError(input.readLine());
@@ -67,6 +67,8 @@ public class SocketClient implements VirtualViewSocket {
         // per capire dove connetterci usiamo passiamo negli argomenti le informazioni necessarie
 
         String host = "127.0.0.1";
+
+        //gestire qui sotto con try catch
         Socket serverSocket = new Socket(host, PORT);
 
         InputStreamReader socketRx = new InputStreamReader(serverSocket.getInputStream());
@@ -78,15 +80,10 @@ public class SocketClient implements VirtualViewSocket {
 
 
 
-
-    public void showValue(Integer number) {
-        // TODO Attenzione! Questo può causare data race con il thread dell'interfaccia o un altro thread
-        System.out.print("\n= " + number + "\n> ");
-    }
-
     @Override
     public void showUpdate(Integer number) {
-
+        // TODO Attenzione! Questo può causare data race con il thread dell'interfaccia o un altro thread
+        System.out.print("\n= " + number + "\n> ");
     }
 
     public void reportError(String details) {
