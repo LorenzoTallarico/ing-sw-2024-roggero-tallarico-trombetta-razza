@@ -7,13 +7,13 @@ import java.util.Scanner;
 
 public class SocketClient implements VirtualViewSocket {
     final BufferedReader input;
-    final ServerProxy server;
+//    final ServerProxy server;
 
     final static int PORT = 1235;
 
     protected SocketClient(BufferedReader input, BufferedWriter output) {
         this.input = input;
-        this.server = new ServerProxy(output);
+//        this.server = new ServerProxy(output);
     }
 
     private void run() throws RemoteException {
@@ -52,9 +52,9 @@ public class SocketClient implements VirtualViewSocket {
             int command = scan.nextInt();
 
             if (command == 0) {
-                server.reset();
+                //server.reset();
             } else {
-                server.add(command);
+                //server.add(command);
             }
         }
     }

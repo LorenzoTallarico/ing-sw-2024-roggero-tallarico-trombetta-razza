@@ -17,7 +17,7 @@ public class SocketClientHandler implements VirtualViewSocket {
     final BufferedReader input;
     //da capire se ha senso usare Reader e Writer *BUFFERED*
     final PrintWriter output;;
-    final VirtualViewSocket view;
+    //final VirtualViewSocket view;
 
 
     //permette di leggere dal socket e comunicare cosa abbiamo ricevuto e applicare modifiche tramite controller
@@ -27,7 +27,7 @@ public class SocketClientHandler implements VirtualViewSocket {
         this.server = server;
         this.input = input;
         this.output = output;
-        this.view = new ClientProxy(output);
+        //this.view = new ClientProxy(output);
     }
 
     //
@@ -85,18 +85,21 @@ public class SocketClientHandler implements VirtualViewSocket {
 //        }
     }
 
-    @Override
-    public void connect(VirtualViewSocket client) {
+//    @Override
+//    public void connect(VirtualViewSocket client) {
+//
+//    }
+//
+//    @Override
+//    public void add(Integer number) {
+//
+//    }
+//
+//    @Override
+//    public void reset() {
+//
+//    }
 
-    }
 
-    @Override
-    public void add(Integer number) {
 
-    }
-
-    @Override
-    public void reset() {
-
-    }
 }

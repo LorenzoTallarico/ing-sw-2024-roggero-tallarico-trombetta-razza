@@ -24,16 +24,7 @@ public class RmiServer implements VirtualServer {
     // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
     // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
     // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
-    public void broadcastUpdateThread() throws InterruptedException, RemoteException {
-        while(true) {
-            Object o = updates.take();
-            synchronized (this.clients){
-                for (VirtualView c : clients) {
-                    c.showUpdate(o);
-                }
-            }
-        }
-    }
+
 
     public RmiServer(GameController controller){
         this.controller = controller;
@@ -55,6 +46,17 @@ public class RmiServer implements VirtualServer {
         }
         catch (InterruptedException e){
             System.err.println("> Interrupted while waiting for updates: \n" + e.getMessage());
+        }
+    }
+
+    public void broadcastUpdateThread() throws InterruptedException, RemoteException {
+        while(true) {
+            Object o = updates.take();
+            synchronized (this.clients){
+                for (VirtualView c : clients) {
+                    c.showUpdate(o);
+                }
+            }
         }
     }
 

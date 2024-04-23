@@ -19,6 +19,9 @@ public interface VirtualServer extends Remote {
 
     ArrayList<Player> getPlayers() throws RemoteException;
 
+
+
+
     void placeCard(Card card, int row, int column) throws RemoteException;
 
     void drawCard(int index) throws RemoteException;

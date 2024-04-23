@@ -37,6 +37,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         state = State.WAIT;
     }
 
+    public static void main(String[] args) throws RemoteException, NotBoundException {
+        final String serverName = "GameServer";
+        Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
+        VirtualServer server = (VirtualServer) registry.lookup(serverName);
+        new RmiClient(server).run();
+    }
+
     //run() e runCli() sono specifici all'istanza del rmiClient creato, va bene anche private il metodo tanto non lo dobbiamo esporre
     private void run() throws RemoteException {
         System.out.print("> Enter nickname: ");
@@ -92,10 +99,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.out.println("Invalid input");
         }
     }
-
     //siamo un remote object quindi possono arrivare anche invocazioni remote (qui sotto mostriamo i cambiamenti)
     //NB:   Qui vanno gestite le sincronizzazioni dei thread!
     //      Infatti se consideriamo il gioco può essere che l'utente interagisca con la view e faccia altro mentre siamo in questo metodo
+    @Override
     public void showUpdate(Object o) throws RemoteException {
         //synchronized...
         if(o.getClass().equals(Player.class)) {
@@ -124,7 +131,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         } else if(o.getClass().equals(ArrayList.class)) {
             if(reqChat) {
                 ArrayList<Message> chat = ((ArrayList<Message>) o);
-                if (chat.size() == 0) {
+                if (chat.isEmpty()) {
                     System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
                 } else {
                     System.out.println("\033[1m" + ">>> " + "------- PUBLIC CHAT -------" + "\033[0m");
@@ -137,7 +144,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         } else {
             System.err.println("> showUpdate error");
         }
-        //else if o switch....
     }
 
     @Override
@@ -145,13 +151,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         System.out.println("\n[ERROR]= " + "\n> ");
     }
 
-    public static void main(String[] args) throws RemoteException, NotBoundException {
-        final String serverName = "GameServer";
-        Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
-        VirtualServer server = (VirtualServer) registry.lookup(serverName);
-        new RmiClient(server).run();
-    }
-
+    @Override
     public String getNickname() {
         return nickname;
     }
