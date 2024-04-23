@@ -7,13 +7,15 @@ import java.util.Scanner;
 
 public class SocketClient implements VirtualViewSocket {
     final BufferedReader input;
-//    final ServerProxy server;
+    final ServerProxy server;
 
     final static int PORT = 1235;
 
+    //il ServerProxy quindi è stato messo 'sopra' al BufferWriter, in questo modo chiamamia i metodi
+    // sul serverProxy che poi va veramente a mandare i messaggi
     protected SocketClient(BufferedReader input, BufferedWriter output) {
         this.input = input;
-//        this.server = new ServerProxy(output);
+        this.server = new ServerProxy(output);
     }
 
     private void run() throws RemoteException {
@@ -51,10 +53,11 @@ public class SocketClient implements VirtualViewSocket {
             System.out.print("> ");
             int command = scan.nextInt();
 
+            //Qui quando vogliamo inviare i comandi usiamo il serverProxy
             if (command == 0) {
-                //server.reset();
+                server.reset();
             } else {
-                //server.add(command);
+                server.add(command);
             }
         }
     }
