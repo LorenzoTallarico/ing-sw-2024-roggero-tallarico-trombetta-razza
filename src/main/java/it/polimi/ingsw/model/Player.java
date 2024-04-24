@@ -18,12 +18,12 @@ public class Player implements Serializable {
 
 
     public Player(){
-        name = null;
-        points = -1;
-        hand = null;
-        area = null;
-        color = null;
-        secretAchievement = null;
+        name = "";
+        points = 0;
+        hand = new ArrayList<>();
+        area = new Playground();
+        color = Color.NONE;
+        secretAchievement = new ArrayList<>();
     }
 
     /**
@@ -36,7 +36,9 @@ public class Player implements Serializable {
         color = Color.NONE;
         winner = false;
         area = new Playground();
+        hand = new ArrayList<Card>();
         points = 0;
+        secretAchievement = new ArrayList<>();
         //this.gui=gui;
     }
 
@@ -143,7 +145,13 @@ public class Player implements Serializable {
      * @param card Card added to the player hand
      */
     public void addCard(Card card) {
-        this.hand.add(card);
+        //probabilmente è stato sistemato e non serve il try catch
+        try{
+            this.hand.add(card);
+        } catch (NullPointerException e){
+            //da gestire meglio
+            System.out.println("Cannot add card because Player's hand is null");
+        }
     }
 
     /**
@@ -320,7 +328,7 @@ public class Player implements Serializable {
         return stop;
     }
 
-
+    //checks if there are enough resources on the playground to place the gold card
     public boolean checkGold(GoldCard card){
         boolean result=true;
         if(card.countResource(Resource.LEAF) > area.countResources(Resource.LEAF)){

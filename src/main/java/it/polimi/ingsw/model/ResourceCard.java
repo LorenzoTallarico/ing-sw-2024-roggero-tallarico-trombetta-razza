@@ -19,7 +19,7 @@ public class ResourceCard extends Card implements Serializable {
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
      */
-    ResourceCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners) {
+    public ResourceCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners) {
         this.points = points;
         this.resource = resource;
         for (int i = 0; i < frontCorners.length; i++) {
