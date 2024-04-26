@@ -1,9 +1,6 @@
 package it.polimi.ingsw.modelTest;
 
-import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.model.GameState;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.Color;
+import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
@@ -55,7 +52,7 @@ public class GameTest {
         Game testGame = Game.getInstance();
         GameState[] vetStati = new GameState[8];
         vetStati[0] = GameState.LOBBY ;
-        vetStati[1] = GameState.INIT ;
+        vetStati[1] = GameState.INIT   ;
         vetStati[2] = GameState.READY ;
         vetStati[3] = GameState.SELECTACHIEVEMENT ;
         vetStati[4] = GameState.GAME ;
@@ -152,4 +149,45 @@ public class GameTest {
             }
         }
     }
+    @Test
+    void HandsTest() {
+        Game testGame = Game.getInstance();
+        ArrayList<Player> players= new ArrayList<Player>();
+        Player fake1 = new Player("Marco", false);
+        players.add(fake1);
+        Player fake2 = new Player("Luca", false);
+        players.add(fake2);
+        Player fake3 = new Player("Andrea", false);
+        players.add(fake3);
+        Player fake4 = new Player("Paolo", false);
+        players.add(fake4);
+        testGame.addPlayers(players);
+        // in questo for controllo che ogni giocatore abbia effettivamente due carte achievement in secretAchievement, due carte risorsa e una oro in hand
+        for(int i=0; i < testGame.getPlayersNumber(); i++) {
+            assertEquals(players.get(i).getHand().size(), 3);
+            assertEquals(players.get(i).getSecretAchievement().size(), 2);
+            assertTrue(players.get(i).getSecretAchievement().get(0) instanceof AchievementCard);
+            assertTrue(players.get(i).getSecretAchievement().get(1) instanceof AchievementCard);
+            assertTrue(players.get(i).getHand().get(0) instanceof ResourceCard);
+            assertTrue(players.get(i).getHand().get(1) instanceof ResourceCard);
+            assertTrue(players.get(i).getHand().get(2) instanceof GoldCard);
+            //in questo for controllo che non ci siano giocatori che hanno ricevuto la stessa identica carta
+            for(int j=0; j < testGame.getPlayersNumber() && j!=i; j++){
+                assertFalse(players.get(i).getSecretAchievement().get(0).equals(players.get(j).getSecretAchievement().get(0)));
+                assertFalse(players.get(i).getSecretAchievement().get(0).equals(players.get(j).getSecretAchievement().get(1)));
+                assertFalse(players.get(i).getSecretAchievement().get(1).equals(players.get(j).getSecretAchievement().get(0)));
+                assertFalse(players.get(i).getSecretAchievement().get(1).equals(players.get(j).getSecretAchievement().get(1)));
+                assertFalse(players.get(i).getHand().get(0).equals(players.get(j).getHand().get(0)));
+                assertFalse(players.get(i).getHand().get(0).equals(players.get(j).getHand().get(1)));
+                assertFalse(players.get(i).getHand().get(0).equals(players.get(j).getHand().get(2)));
+                assertFalse(players.get(i).getHand().get(1).equals(players.get(j).getHand().get(0)));
+                assertFalse(players.get(i).getHand().get(1).equals(players.get(j).getHand().get(1)));
+                assertFalse(players.get(i).getHand().get(1).equals(players.get(j).getHand().get(2)));
+                assertFalse(players.get(i).getHand().get(2).equals(players.get(j).getHand().get(0)));
+                assertFalse(players.get(i).getHand().get(2).equals(players.get(j).getHand().get(1)));
+                assertFalse(players.get(i).getHand().get(2).equals(players.get(j).getHand().get(2)));
+            }
+        }
+    }
+
 }

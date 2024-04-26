@@ -460,6 +460,7 @@ public class Game implements Serializable {
 
 
 
+
     //**********  METODI PER TESTARE SOCKET ***********
     Integer state = 0;
 

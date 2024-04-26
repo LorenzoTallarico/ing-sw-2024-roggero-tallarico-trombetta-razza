@@ -49,6 +49,18 @@ public class GoldCard extends Card implements Serializable {
         this.reqPoints = reqPoints;
     }
 
+    public boolean equals(GoldCard gol){
+        if(this.points != gol.getPoints() || this.resource != gol.getResource()){
+            return false;
+        }
+        for(int i=0; i<4; i++){
+            if(this.getFrontCorners()[i].getType() != gol.getFrontCorners()[i].getType()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public int countResource(Resource res){
         return reqResources.get(res);
     }

@@ -29,4 +29,15 @@ public class ResourceCard extends Card implements Serializable {
             this.backCorners[i] = backCorners[i];
         }
     }
+    public boolean equals(ResourceCard res){
+        if(this.points != res.getPoints() || this.resource != res.getResource()){
+            return false;
+        }
+        for(int i=0; i<4; i++){
+            if(this.getFrontCorners()[i].getType() != res.getFrontCorners()[i].getType()){
+                return false;
+            }
+        }
+        return true;
+    }
 }

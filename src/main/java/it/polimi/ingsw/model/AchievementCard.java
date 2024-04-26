@@ -33,6 +33,27 @@ public class AchievementCard extends Card implements Serializable {
      * method that given a player, sets it as the owner of the achievement card
      * @param player indicates the player
      */
+
+    public boolean equals(AchievementCard ach){
+        if (!this.strategyType.equals(ach.getStrategyType())){
+            return false;
+        }
+        if(this.getStrategyType().equals("ConcreteStrategyItem")){
+            if (this.item != ach.getItem()){
+                return false;
+            }
+        }
+        if(this.getStrategyType().equals("ConcreteStrategyMixed")){
+            return true;
+        }
+        if(this.strategyType.equals(ach.getStrategyType())){
+            if(this.resource != ach.getResource()){
+                return false;
+            }
+        }
+        return true;
+    }
+
     public void setPlayer(Player player) {
         this.player = player;
     }
