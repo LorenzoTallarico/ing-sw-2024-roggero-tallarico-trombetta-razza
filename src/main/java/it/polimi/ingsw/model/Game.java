@@ -46,6 +46,18 @@ public class Game implements Serializable {
     }
 
 
+    public ArrayList<ResourceCard> getResourceDeck() {
+        return resourceDeck;
+    }
+
+    public ArrayList<GoldCard> getGoldDeck() {
+        return goldDeck;
+    }
+
+    public ArrayList<AchievementCard> getAchievementDeck() {
+        return achievementDeck;
+    }
+
     public AchievementCard popAchievementCard() {
         AchievementCard secretAchievement = null;
         try {
