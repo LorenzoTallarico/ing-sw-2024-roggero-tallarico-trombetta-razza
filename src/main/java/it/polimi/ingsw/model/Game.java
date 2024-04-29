@@ -24,6 +24,7 @@ public class Game implements Serializable {
     private int playersNumber;
     private GameState gameState;
 
+//Constructor
     private Game() {
         players = new ArrayList<Player>();
         createGoldDeck();
@@ -31,6 +32,18 @@ public class Game implements Serializable {
         createResourceDeck();
         createStarterDeck();
         gameState = GameState.LOBBY;
+    }
+
+//Singleton Methods
+    /**
+     *
+     * @return Game.instance
+     */
+    public static Game getInstance() {
+        if(instance == null) {
+            instance = new Game();
+        }
+        return instance;
     }
 
     private void dispose(){
@@ -46,6 +59,8 @@ public class Game implements Serializable {
     }
 
 
+//GET
+
     public ArrayList<ResourceCard> getResourceDeck() {
         return resourceDeck;
     }
@@ -56,106 +71,6 @@ public class Game implements Serializable {
 
     public ArrayList<AchievementCard> getAchievementDeck() {
         return achievementDeck;
-    }
-
-    public AchievementCard popAchievementCard() {
-        AchievementCard secretAchievement = null;
-        try {
-            secretAchievement = achievementDeck.get(0);
-            achievementDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            // Gestione dell'eccezione: l'indice non esiste
-            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
-        }
-        return secretAchievement;
-    }
-
-    public AchievementCard popAchievementCard(int i) {
-        AchievementCard secretAchievement = null;
-        try {
-            secretAchievement = achievementDeck.get(i);
-            achievementDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
-        }
-        return secretAchievement;
-    }
-
-    public ResourceCard popResourceCard() {
-        ResourceCard resource = null;
-        try {
-            resource = resourceDeck.get(0);
-            resourceDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto.");
-        }
-        return resource;
-    }
-
-    public ResourceCard popResourceCard(int i) {
-        ResourceCard resource = null;
-        try {
-            resource = resourceDeck.get(i);
-            resourceDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto o indice non valido.");
-        }
-        return resource;
-    }
-
-    public StarterCard popStarterCard() {
-        StarterCard starter = null;
-        try {
-            starter = starterDeck.get(0);
-            starterDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto.");
-        }
-        return starter;
-    }
-
-    public StarterCard popStarterCard(int i) {
-        StarterCard starter = null;
-        try {
-            starter = starterDeck.get(i);
-            starterDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto o indice non valido.");
-        }
-        return starter;
-    }
-
-    public GoldCard popGoldCard() {
-        GoldCard card = null;
-        try {
-            card = goldDeck.get(0);
-            goldDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto.");
-        }
-        return card;
-    }
-
-    public GoldCard popGoldCard(int i) {
-        GoldCard card = null;
-        try {
-            card = goldDeck.get(i);
-            goldDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto o indice non valido.");
-        }
-        return card;
-    }
-
-    /**
-     *
-     * @return Game.instance
-     */
-    public static Game getInstance() {
-        if(instance == null) {
-            instance = new Game();
-        }
-        return instance;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -178,77 +93,101 @@ public class Game implements Serializable {
         return playersNumber;
     }
 
-
-    //METHODS
-
-    public void start() {
-        gameState=GameState.SELECTACHIEVEMENT;
+//POP Method
+    public AchievementCard popAchievementCard() {
+    AchievementCard secretAchievement = null;
+    try {
+        secretAchievement = achievementDeck.get(0);
+        achievementDeck.remove(0);
+    } catch (IndexOutOfBoundsException e) {
+        // Gestione dell'eccezione: l'indice non esiste
+        System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
     }
+    return secretAchievement;
+}
 
-    public void nextPlayer() {
-        currPlayer++;
-        if(currPlayer >= playersNumber)
-            currPlayer = 0;
-    }
-
-    /**
-     * @overload
-     * @param nextState
-     */
-    public void nextPlayer(boolean nextState) {
-        currPlayer++;
-        if(currPlayer >= playersNumber) {
-            currPlayer = 0;
-            if(nextState) {
-                if(gameState == GameState.GAME) {
-                    for(Player p : players) {
-                        if(p.getPoints() >= 20) {
-                            nextState();
-                            return;
-                        }
-                    }
-                }
-                else
-                    nextState();
-            }
+    public GoldCard popGoldCard() {
+        GoldCard card = null;
+        try {
+            card = goldDeck.get(0);
+            goldDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto.");
         }
+        return card;
     }
 
-    public void nextState() {
-        switch(gameState){
-            case LOBBY:
-                gameState=GameState.INIT;
-                break;
-            case INIT:
-                gameState=GameState.READY;
-                break;
-            case READY:
-                gameState=GameState.SELECTACHIEVEMENT;
-                break;
-            case SELECTACHIEVEMENT:
-                gameState=GameState.GAME;
-                break;
-            case GAME:
-                gameState=GameState.LASTROUND;
-                break;
-            case LASTROUND:
-                gameState=GameState.FINALSCORE;
-                break;
-            case FINALSCORE:
-                gameState=GameState.END;
-                break;
-            case END:
-                dispose();
-                break;
+    public ResourceCard popResourceCard() {
+        ResourceCard resource = null;
+        try {
+            resource = resourceDeck.get(0);
+            resourceDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto.");
         }
+        return resource;
     }
 
-    public void end() {
-        gameState=GameState.END;
+    public StarterCard popStarterCard() {
+        StarterCard starter = null;
+        try {
+            starter = starterDeck.get(0);
+            starterDeck.remove(0);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto.");
+        }
+        return starter;
     }
+
+    /*
+    public AchievementCard popAchievementCard(int i) {
+        AchievementCard secretAchievement = null;
+        try {
+            secretAchievement = achievementDeck.get(i);
+            achievementDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
+        }
+        return secretAchievement;
+    }
+
+    public ResourceCard popResourceCard(int i) {
+        ResourceCard resource = null;
+        try {
+            resource = resourceDeck.get(i);
+            resourceDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto o indice non valido.");
+        }
+        return resource;
+    }
+
+    public StarterCard popStarterCard(int i) {
+        StarterCard starter = null;
+        try {
+            starter = starterDeck.get(i);
+            starterDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto o indice non valido.");
+        }
+        return starter;
+    }
+
+    public GoldCard popGoldCard(int i) {
+        GoldCard card = null;
+        try {
+            card = goldDeck.get(i);
+            goldDeck.remove(i);
+        } catch (IndexOutOfBoundsException e) {
+            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto o indice non valido.");
+        }
+        return card;
+    }
+    */
+
+    //INIT GAME Methods
 
     //NB: nei metodi di creazione dei deck non stiamo effettivamente instanziando alcuna carta(?) stiamo solo prendendo informazioni dal json
-
     private void createGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
@@ -313,6 +252,29 @@ public class Game implements Serializable {
         Collections.shuffle(starterDeck);
     }
 
+
+    /**
+     * Method that given an arraylist of players, assign them a color,
+     * shuffle their order and add em to the game
+     * @param players arraylist of players who will play in the game
+     */
+    public void addPlayers(ArrayList<Player> players) {
+        if(Game.players.isEmpty()) {
+            assignColors(players);
+            Collections.shuffle(players);
+            Game.players.addAll(players);
+            this.playersNumber = players.size();
+        }
+        init();
+    }
+
+    private void init() {
+        gameState = GameState.INIT;
+        createHands();
+        currPlayer=0;
+        gameState= GameState.READY;
+    }
+
     /**
      *{@summary this function creates an array list named hand with
      * a pseudo-pop and add the new hand to player, for each player in game
@@ -339,6 +301,72 @@ public class Game implements Serializable {
             players.get(i).setSecretAchievement(secretAchievement);
         }
 
+    }
+
+
+    //Methods
+
+    public void nextPlayer() {
+        currPlayer++;
+        if(currPlayer >= playersNumber)
+            currPlayer = 0;
+    }
+
+    /**
+     * @overload
+     * @param nextState
+     */
+    public void nextPlayer(boolean nextState) {
+        currPlayer++;
+        if(currPlayer >= playersNumber) {
+            currPlayer = 0;
+            if(nextState) {
+                if(gameState == GameState.GAME) {
+                    for(Player p : players) {
+                        if(p.getPoints() >= 20) {
+                            nextState();
+                            return;
+                        }
+                    }
+                }
+                else
+                    nextState();
+            }
+        }
+    }
+
+    public void nextState() {
+        switch(gameState){
+            case LOBBY:
+                gameState=GameState.INIT;
+                break;
+            case INIT:
+                gameState=GameState.READY;
+                break;
+            case READY:
+                gameState=GameState.SELECTACHIEVEMENT;
+                break;
+            case SELECTACHIEVEMENT:
+                gameState=GameState.GAME;
+                break;
+            case GAME:
+                gameState=GameState.LASTROUND;
+                break;
+            case LASTROUND:
+                gameState=GameState.FINALSCORE;
+                break;
+            case FINALSCORE:
+                gameState=GameState.END;
+                break;
+            case END:
+                dispose();
+                break;
+        }
+    }
+
+    //only for testing, useful for launching the dispose method
+    public void end() {
+        gameState=GameState.END;
     }
 
     /**
@@ -378,28 +406,6 @@ public class Game implements Serializable {
             }
         }
         return null; // out of bounds
-    }
-
-    /**
-     * Method that given an arraylist of players, assign them a color,
-     * shuffle their order and add em to the game
-     * @param players arraylist of players who will play in the game
-     */
-    public void addPlayers(ArrayList<Player> players) {
-        if(Game.players.isEmpty()) {
-            assignColors(players);
-            Collections.shuffle(players);
-            Game.players.addAll(players);
-            this.playersNumber = players.size();
-        }
-        init();
-    }
-
-    private void init() {
-        gameState = GameState.INIT;
-        createHands();
-        currPlayer=0;
-        gameState= GameState.READY;
     }
 
     /**
