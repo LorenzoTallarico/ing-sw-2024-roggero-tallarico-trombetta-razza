@@ -9,6 +9,12 @@ import java.util.Collections;
 
 public class GameTest {
 
+    /*
+    NB to Dispose Singleton use these commands at the end of method:
+        testGame.end();
+        testGame.nextState();
+     */
+
     @Test
     void IntegrityTest() {
         ArrayList<Player> players = new ArrayList<Player>();
@@ -148,6 +154,8 @@ public class GameTest {
 
             }
         }
+        testGame.end();
+        testGame.nextState();
     }
 
     @Test
@@ -265,5 +273,33 @@ public class GameTest {
         fake1.place(tempCard, 35, 45);
         fake1.addPoints(tempAchievement.calculatePoints());
         assertEquals(fake1.getPoints(), 8);
+    }
+
+    @Test
+    void drawTest(){
+        Game testGame = Game.getInstance();
+        ArrayList<Player> players = new ArrayList<Player>();
+        Player fake1 = new Player("Marco", false);
+        players.add(fake1);
+        testGame.addPlayers(players);
+        Card card;
+        int sizeResources = testGame.getResourceDeck().size();
+        int sizeGold = testGame.getGoldDeck().size();
+        assertNull(testGame.draw(-1));
+        assertNull(testGame.draw(6));
+        card = testGame.getResourceDeck().get(0);
+        assertEquals(card, testGame.draw(2));
+        assertInstanceOf(ResourceCard.class, card);
+        assertInstanceOf(ResourceCard.class, testGame.draw(0));
+        assertInstanceOf(ResourceCard.class, testGame.draw(1));
+        assertEquals(sizeResources-3, testGame.getResourceDeck().size());
+        card = testGame.getGoldDeck().get(0);
+        assertEquals(card, testGame.draw(5));
+        assertInstanceOf(GoldCard.class, card);
+        assertInstanceOf(GoldCard.class, testGame.draw(3));
+        assertInstanceOf(GoldCard.class, testGame.draw(4));
+        assertEquals(sizeGold-3, testGame.getGoldDeck().size());
+        testGame.end();
+        testGame.nextState();
     }
 }
