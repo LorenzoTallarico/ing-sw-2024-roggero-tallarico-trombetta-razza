@@ -143,14 +143,11 @@ public class Game implements Serializable {
     }
 
     public ResourceCard popResourceCard() {
-        ResourceCard resource = null;
-        try {
-            resource = resourceDeck.get(0);
-            resourceDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
+        if (resourceDeck.isEmpty()) {
             System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto.");
-        }
-        return resource;
+            return null;
+        } else
+            return resourceDeck.remove(0);
     }
 
     public StarterCard popStarterCard() {
