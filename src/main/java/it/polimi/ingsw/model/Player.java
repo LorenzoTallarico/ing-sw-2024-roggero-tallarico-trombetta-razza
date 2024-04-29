@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -123,6 +124,7 @@ public class Player implements Serializable {
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
     }
+
 
     /**
      * Method that sets the player as a winner
@@ -350,12 +352,6 @@ public class Player implements Serializable {
 
         return result;
     }
-
-
-
-    
-
-
 
 
 }

@@ -28,12 +28,20 @@ public class GameController {
                 players.add(p);
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
+                    run();
                 }
             }
         }
     }
 
+    public void run() {
+        // choice secret achievement
 
+        //game running...
+        while(true) {
+
+        }
+    }
 
 
     public boolean placeCard(Card card, int row, int column) {

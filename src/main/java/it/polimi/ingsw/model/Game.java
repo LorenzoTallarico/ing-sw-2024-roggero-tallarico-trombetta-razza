@@ -47,9 +47,9 @@ public class Game implements Serializable {
     }
 
     private void dispose(){
-        instance=null;
-        currPlayer=0;
-        playersNumber=0;
+        instance = null;
+        currPlayer = 0;
+        playersNumber = 0;
         players = new ArrayList<Player>();
         createGoldDeck();
         createAchievementDeck();
@@ -271,8 +271,8 @@ public class Game implements Serializable {
     private void init() {
         gameState = GameState.INIT;
         createHands();
-        currPlayer=0;
-        gameState= GameState.READY;
+        currPlayer = 0;
+        gameState = GameState.READY;
     }
 
     /**
@@ -285,19 +285,12 @@ public class Game implements Serializable {
         for(int i = 0; i < playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<Card>();
             ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();
-
-            hand.add(resourceDeck.get(0));
-            resourceDeck.remove(0);
-            hand.add(resourceDeck.get(0));
-            resourceDeck.remove(0);
-            hand.add(goldDeck.get(0));
-            goldDeck.remove(0);
+            for(int j = 0; j < 2; j++)
+                hand.add(popResourceCard());
+            hand.add(popGoldCard());
             players.get(i).setHand(hand);
-
-            secretAchievement.add(achievementDeck.get(0));
-            achievementDeck.remove(0);
-            secretAchievement.add(achievementDeck.get(0));
-            achievementDeck.remove(0);
+            for(int j = 0; j < 2; j++)
+                secretAchievement.add(popAchievementCard());
             players.get(i).setSecretAchievement(secretAchievement);
         }
 
@@ -336,27 +329,27 @@ public class Game implements Serializable {
     }
 
     public void nextState() {
-        switch(gameState){
+        switch(gameState) {
             case LOBBY:
-                gameState=GameState.INIT;
+                gameState = GameState.INIT;
                 break;
             case INIT:
-                gameState=GameState.READY;
+                gameState = GameState.READY;
                 break;
             case READY:
-                gameState=GameState.SELECTACHIEVEMENT;
+                gameState = GameState.SELECTACHIEVEMENT;
                 break;
             case SELECTACHIEVEMENT:
-                gameState=GameState.GAME;
+                gameState = GameState.GAME;
                 break;
             case GAME:
-                gameState=GameState.LASTROUND;
+                gameState = GameState.LASTROUND;
                 break;
             case LASTROUND:
-                gameState=GameState.FINALSCORE;
+                gameState = GameState.FINALSCORE;
                 break;
             case FINALSCORE:
-                gameState=GameState.END;
+                gameState = GameState.END;
                 break;
             case END:
                 dispose();
@@ -366,7 +359,7 @@ public class Game implements Serializable {
 
     //only for testing, useful for launching the dispose method
     public void end() {
-        gameState=GameState.END;
+        gameState = GameState.END;
     }
 
     /**
