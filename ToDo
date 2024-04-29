@@ -12,6 +12,7 @@ Completare Model:
 - Gestire caso fine partita se le carte da pescare terminano
 
 
+
 Controller:
 - Inizio
 - changeTurn () -- controllo anche se arrivato a 20 punti prima di cambiarlo

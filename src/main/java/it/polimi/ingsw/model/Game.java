@@ -62,14 +62,39 @@ public class Game implements Serializable {
 //GET
 
     public ArrayList<ResourceCard> getResourceDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+            ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
+            resourceDeck = new ArrayList<ResourceCard>();
+            Collections.addAll(resourceDeck, tempResource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return resourceDeck;
     }
 
     public ArrayList<GoldCard> getGoldDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
+            GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
+            goldDeck = new ArrayList<GoldCard>();
+            Collections.addAll(goldDeck, tempResource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return goldDeck;
     }
 
     public ArrayList<AchievementCard> getAchievementDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+            AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
+            achievementDeck = new ArrayList<AchievementCard>();
+            for (AchievementCard achievementCard : tempAchievement)
+                achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return achievementDeck;
     }
 
