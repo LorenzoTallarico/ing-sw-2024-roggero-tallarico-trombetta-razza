@@ -1,11 +1,11 @@
 package it.polimi.ingsw.networking.rmi;
 
+import it.polimi.ingsw.action.Action;
+import it.polimi.ingsw.action.ActionType;
 import it.polimi.ingsw.model.Message;
 import it.polimi.ingsw.model.Player;
 
-import javax.swing.*;
 import java.rmi.NotBoundException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -22,7 +22,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         END
     }
 
-    static int PORT = 1234;
+    private static int PORT = 1234;
     private Player p;
     private String nickname;
     private State state;
@@ -57,6 +57,47 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         this.runCli();
     }
 
+    private void runCli() throws RemoteException {
+        Scanner scan = new Scanner(System.in);
+        Message msg = null;
+        Action a = null;
+        try {
+            while(true) {
+                String line = scan.nextLine();
+                if(line.trim().isEmpty())
+                    continue;
+                StringTokenizer st = new StringTokenizer(line);
+                String command = st.nextToken();
+                command.toLowerCase();
+                switch (command) {
+                    case "chat":
+                        if (line.length() > 5) {
+                            msg = new Message(line.substring(5), nickname);
+                            a = new Action(ActionType.CHATMESSAGE, msg, nickname, null);
+                            server.sendAction(a);
+                        }
+                        break;
+                    case "getchat":
+                        a = new Action(ActionType.ASKINGCHAT, null, nickname, null);
+                        server.sendAction(a);
+                        break;
+                    case "whisper":
+                        command = st.nextToken();
+                        msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
+                        a = new Action(ActionType.CHATMESSAGE, msg, nickname, command);
+                        server.sendAction(a);
+                        System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > "  + msg.toString() + "\033[0m");
+                        break;
+                    default:
+                        System.out.println("Command unknown");
+                }
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("Invalid input");
+        }
+    }
+
+    /* RUN CLI RMI METODI
     private void runCli() throws RemoteException{
         Scanner scan = new Scanner(System.in);
         try {
@@ -98,7 +139,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         } catch (NoSuchElementException e) {
             System.out.println("Invalid input");
         }
-    }
+    } */
     //siamo un remote object quindi possono arrivare anche invocazioni remote (qui sotto mostriamo i cambiamenti)
     //NB:   Qui vanno gestite le sincronizzazioni dei thread!
     //      Infatti se consideriamo il gioco può essere che l'utente interagisca con la view e faccia altro mentre siamo in questo metodo
@@ -145,6 +186,54 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.err.println("> showUpdate error");
         }
     }
+
+    @Override
+    public void showAction(Action act) throws RemoteException{
+        //da capire la sincronizzazione
+        switch(act.getType()){
+            case WHOLECHAT:
+                ArrayList<Message> chat = ((ArrayList<Message>) act.getObject());
+                if (chat.isEmpty()) {
+                    System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
+                } else {
+                    System.out.println("\033[1m" + ">>> " + "------- PUBLIC CHAT -------" + "\033[0m");
+                    for (Message m : chat) {
+                        System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
+                    }
+                }
+                break;
+
+            case JOININGPLAYER:
+                System.out.println("> Player " + act.getObject() + " joined the game. ");
+                break;
+
+            case CHATMESSAGE:
+                Message m = (Message) act.getObject();
+                if (m.getRecipient().isEmpty()) {
+                    System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
+                } else {
+                    System.out.println("\033[1m" + ">>> PRIVATE > "  + m.toString() + "\033[0m");
+                }
+                break;
+            case CHOSENACHIEVEMENT:
+                break;
+            case CHOOSEABLEACHIEVEMENTS:
+                break;
+            case HAND:
+                break;
+            default:
+                break;
+
+
+
+
+
+        }
+    }
+
+
+
+
 
     @Override
     public void reportError(String details) throws RemoteException {

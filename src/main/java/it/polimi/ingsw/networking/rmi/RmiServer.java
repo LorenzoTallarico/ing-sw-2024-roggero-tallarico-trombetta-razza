@@ -1,5 +1,7 @@
 package it.polimi.ingsw.networking.rmi;
 
+import it.polimi.ingsw.action.Action;
+import it.polimi.ingsw.action.ActionType;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Card;
 import it.polimi.ingsw.model.Message;
@@ -17,14 +19,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 //NB: qua NON è sufficiente gestire le eccezioni con throws ma si dovrà usare try-catch correttamente
 public class RmiServer implements VirtualServer {
 
-    static int PORT = 1234;
-    final GameController controller;
-    final ArrayList<VirtualView> clients = new ArrayList<>();
-    final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
-    // struttura per migliorare la comunicazione tra i client e il server, sono delle code che mi permettono di facilitare
-    // la gestione degli update al client in quanto con queste è possibile ritornare prima che tutti i client abbiano ricevuto l'update
-    // e inoltre gli update verranno mandati in sequenza (così le richieste possono tornare subito senza aspettare che l'update venga mandato a tutti)
-
+    private static int PORT = 1234;
+    private final GameController controller;
+    private final ArrayList<VirtualView> clients = new ArrayList<>();
+    private final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>();
+    private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>();
 
     public RmiServer(GameController controller){
         this.controller = controller;
@@ -42,12 +42,31 @@ public class RmiServer implements VirtualServer {
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
         System.out.println("> Server bound.");
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // Codice da eseguire nel thread
+                System.out.println("Questo è un thread separato.");
+                try {
+                    ((RmiServer)server).clientsUpdateThread();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                } catch (RemoteException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        thread.start();
+
         try {
-            ((RmiServer)server).broadcastUpdateThread();
+            System.out.println("RAGGIUNGE SERVER UPDATETHREAD");
+            ((RmiServer)server).serverUpdateThread();
         }
         catch (InterruptedException e){
-            System.err.println("> Interrupted while waiting for updates: \n" + e.getMessage());
+            System.err.println("> ERROR: Updates queue for server interrupted:\n" + e.getMessage());
         }
+
     }
 
     public void broadcastUpdateThread() throws InterruptedException, RemoteException {
@@ -57,6 +76,53 @@ public class RmiServer implements VirtualServer {
                 for (VirtualView c : clients) {
                     c.showUpdate(o);
                 }
+            }
+        }
+    }
+
+    public void clientsUpdateThread() throws InterruptedException, RemoteException  {
+        while (true) {
+            Action a = clientActions.take();
+            if (a.getRecipient().isEmpty()) { //to all clients
+                for(VirtualView c : clients) {
+                    c.showAction(a);
+                }
+            } else { //to a single client
+                for(VirtualView c : clients) {
+                    if (c.getNickname().equalsIgnoreCase(a.getRecipient())) {
+                        c.showAction(a);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+    public void serverUpdateThread() throws InterruptedException, RemoteException {
+        while(true) {
+            Action a = serverActions.take();
+            System.out.println("> Handling action, action type " + a.getType().toString());
+            Action newAct = null;
+            switch (a.getType()) {
+                case WHOLECHAT:
+                    break;
+                case ASKINGCHAT:
+                    newAct = new Action(ActionType.WHOLECHAT, this.controller.getWholeChat(), null, a.getAuthor());
+                    clientActions.put(newAct);
+                    break;
+                case CHATMESSAGE:
+                    this.controller.sendChatMessage((Message)a.getObject());
+                    clientActions.put(a);
+                    break;
+                case CHOSENACHIEVEMENT:
+                    break;
+                case CHOOSEABLEACHIEVEMENTS:
+                    break;
+                case HAND:
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -87,16 +153,24 @@ public class RmiServer implements VirtualServer {
     }
 
     @Override
+    public void sendAction(Action action) throws RemoteException {
+        try {
+            System.out.println("> Received action, type " + action.getType().toString());
+            serverActions.put(action);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public void addPlayer(Player p) throws RemoteException {
         synchronized (this.clients){
-
-            //NB QUESTO E' SBAAGLIATO: IL METODO SUL CONTROLLER NON VA CHIAMATO QUI!!!!!!
-            // COME QUESTO TUTTI GLI ALTRI
             this.controller.addPlayer(p);
             String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
             System.out.println(textUpdate);
             try {
-                updates.put(textUpdate);
+                clientActions.put(new Action(ActionType.JOININGPLAYER, p.getName(), null, null));
+                //updates.put(textUpdate);
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
