@@ -26,7 +26,7 @@ public class StarterCard extends Card implements Serializable {
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
      */
-    StarterCard(Resource resource, Resource secondResource, Resource thirdResource, Corner[] frontCorners, Corner[] backCorners) {
+     public StarterCard(Resource resource, Resource secondResource, Resource thirdResource, Corner[] frontCorners, Corner[] backCorners) {
         this.secondResource = secondResource;
         this.thirdResource = thirdResource;
         this.resource = resource;

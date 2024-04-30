@@ -186,6 +186,16 @@ public class Player implements Serializable {
         Corner[] corners;
         boolean stop = false;
 
+        //NB: Starter card must be placed in 40:40 position
+        if (card.getClass() == StarterCard.class) {
+            if (area.getSpace(40, 40).isFree() && row == 40 && column == 40)
+                return true;
+            else
+                return false;
+        }
+
+
+
         //if space is out of bound (+1) card cannot be placed
         //if space is not free card cannot be placed
         //if space is dead card cannot be placed
