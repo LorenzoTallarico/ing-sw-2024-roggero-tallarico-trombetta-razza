@@ -61,6 +61,6 @@ public class SocketServer {
         ServerSocket listenSocket = new ServerSocket(PORT);
 
         //playersNumber va implementato in maniera corretta
-        new SocketServer(listenSocket, new GameController(1)).runServer();
+        new SocketServer(listenSocket, new GameController()).runServer(); //! changed gamecontroller, not param!!!
     }
 }

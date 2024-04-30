@@ -16,6 +16,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     enum State {
         WAIT,
+        COMMANDS,
         DRAW,
         PLACE,
         CHOICE,
@@ -33,7 +34,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         this.server = server;
         this.p = new Player();
         this.nickname = "";
-        reqChat = false;
         state = State.WAIT;
     }
 
@@ -54,141 +54,63 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.exit(0);
         }
         p = new Player(nickname, false);
+        state = State.COMMANDS;
         this.runCli();
     }
 
+    //synch
     private void runCli() throws RemoteException {
         Scanner scan = new Scanner(System.in);
         Message msg = null;
         Action a = null;
         try {
             while(true) {
-                String line = scan.nextLine();
-                if(line.trim().isEmpty())
-                    continue;
-                StringTokenizer st = new StringTokenizer(line);
-                String command = st.nextToken();
-                command.toLowerCase();
-                switch (command) {
-                    case "chat":
-                        if (line.length() > 5) {
-                            msg = new Message(line.substring(5), nickname);
-                            a = new Action(ActionType.CHATMESSAGE, msg, nickname, null);
+                if(state == State.COMMANDS) {
+                    String line = scan.nextLine();
+                    if (state != State.COMMANDS) {
+                        System.out.print("Sorry, re-enter your answer: ");
+                        continue;
+                    }
+                    if (line.trim().isEmpty())
+                        continue;
+                    StringTokenizer st = new StringTokenizer(line);
+                    String command = st.nextToken();
+                    command.toLowerCase();
+                    switch (command) {
+                        case "chat":
+                            if (line.length() > 5) {
+                                msg = new Message(line.substring(5), nickname);
+                                a = new Action(ActionType.CHATMESSAGE, msg, nickname, null);
+                                server.sendAction(a);
+                            }
+                            break;
+                        case "getchat":
+                            a = new Action(ActionType.ASKINGCHAT, null, nickname, null);
                             server.sendAction(a);
-                        }
-                        break;
-                    case "getchat":
-                        a = new Action(ActionType.ASKINGCHAT, null, nickname, null);
-                        server.sendAction(a);
-                        break;
-                    case "whisper":
-                        command = st.nextToken();
-                        msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
-                        a = new Action(ActionType.CHATMESSAGE, msg, nickname, command);
-                        server.sendAction(a);
-                        System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > "  + msg.toString() + "\033[0m");
-                        break;
-                    default:
-                        System.out.println("Command unknown");
+                            break;
+                        case "whisper":
+                            command = st.nextToken();
+                            msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
+                            a = new Action(ActionType.CHATMESSAGE, msg, nickname, command);
+                            server.sendAction(a);
+                            System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + "\033[0m");
+                            break;
+                        default:
+                            System.out.println("Command unknown");
+                    }
                 }
             }
         } catch (NoSuchElementException e) {
             System.out.println("Invalid input");
         }
-    }
 
-    /* RUN CLI RMI METODI
-    private void runCli() throws RemoteException{
-        Scanner scan = new Scanner(System.in);
-        try {
-            while(true){
-                String line = scan.nextLine();
-                if(line.isEmpty())
-                    continue;
-                switch(state) {
-                    case CHOICE:
-                        break;
-                    case PLACE:
-                        break;
-                    case DRAW:
-                        break;
-                    case WAIT:
-                        StringTokenizer st = new StringTokenizer(line);
-                        String command = st.nextToken();
-                        command.toLowerCase();
-                        switch (command) {
-                            case "chat":
-                                if (line.length() > 5)
-                                    server.sendChatMessage(line.substring(5), nickname);
-                                break;
-                            case "getchat":
-                                server.getWholeChat();
-                                reqChat = true;
-                                break;
-                            case "whisper":
-                                command = st.nextToken();
-                                server.sendChatWhisper(line.substring(7 + command.length() + 1), nickname, command);
-                                break;
-                            default:
-                                System.out.println("Command unknown");
-                        }
-                    default:
-                        break;
-                }
-            }
-        } catch (NoSuchElementException e) {
-            System.out.println("Invalid input");
-        }
-    } */
-    //siamo un remote object quindi possono arrivare anche invocazioni remote (qui sotto mostriamo i cambiamenti)
-    //NB:   Qui vanno gestite le sincronizzazioni dei thread!
-    //      Infatti se consideriamo il gioco può essere che l'utente interagisca con la view e faccia altro mentre siamo in questo metodo
-    @Override
-    public void showUpdate(Object o) throws RemoteException {
-        //synchronized...
-        if(o.getClass().equals(Player.class)) {
-            //p = (Player) o;
-            //System.out.println("> Player " + ((Player) o).getName() + " joined the game.\u001B[0m");
-        } else if(o.getClass().equals(String.class)){
-            System.out.println("> " + ((String) o));
-        } else if(o.getClass().equals(Message.class)) {
-            if(((Message) o).getRecipient().equalsIgnoreCase(nickname))
-                System.out.println("\033[1m" + ">>> PRIVATE > "  + o.toString() + "\033[0m");
-            else if(((Message) o).getRecipient().equalsIgnoreCase(""))
-                System.out.println("\033[1m" + ">>> " + o.toString() + "\033[0m");
-            else if(!((Message) o).getRecipient().isEmpty() && ((Message) o).getAuthor().equalsIgnoreCase(nickname)) {
-                boolean check = false;
-                for (Player p1 : this.server.getPlayers()){
-                    if (p1.getName().equals(((Message) o).getRecipient())) {
-                        check = true;
-                        break;
-                    }
-                }
-                if(check)
-                    System.out.println("\033[1m" + ">>> PRIVATE to " + ((Message) o).getRecipient() + " > "  + o.toString() + "\033[0m");
-                else
-                    System.err.println("\033[1m" + "Player named" + ((Message) o).getRecipient() + " does not exist " + "\033[0m");
-            }
-        } else if(o.getClass().equals(ArrayList.class)) {
-            if(reqChat) {
-                ArrayList<Message> chat = ((ArrayList<Message>) o);
-                if (chat.isEmpty()) {
-                    System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
-                } else {
-                    System.out.println("\033[1m" + ">>> " + "------- PUBLIC CHAT -------" + "\033[0m");
-                    for (Message m : chat) {
-                        System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
-                    }
-                }
-                reqChat = false;
-            }
-        } else {
-            System.err.println("> showUpdate error");
-        }
     }
 
     @Override
+    //synch
     public void showAction(Action act) throws RemoteException{
+        //synchronized (this)
+        Scanner scan = new Scanner(System.in);
         //da capire la sincronizzazione
         switch(act.getType()){
             case WHOLECHAT:
@@ -207,6 +129,17 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 System.out.println("> Player " + act.getObject() + " joined the game. ");
                 break;
 
+            case ASKINGPLAYERSNUMBER:
+                state = State.WAIT;
+                System.out.print("> Enter desired players number: ");
+                int playnum = Integer.parseInt(scan.nextLine());
+                while(playnum < 2 || playnum > 4) {
+                    System.out.print("> The number must be between 2 and 4: ");
+                    playnum = Integer.parseInt(scan.nextLine());
+                }
+                server.sendAction(new Action(ActionType.CHOSENPLAYERSNUMBER, playnum, null, null));
+                state = State.COMMANDS;
+                break;
             case CHATMESSAGE:
                 Message m = (Message) act.getObject();
                 if (m.getRecipient().isEmpty()) {
@@ -223,11 +156,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 break;
             default:
                 break;
-
-
-
-
-
         }
     }
 

@@ -25,6 +25,7 @@ public class RmiServer implements VirtualServer {
     private final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
     private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>();
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>();
+    private boolean connectionFlag = true;
 
     public RmiServer(GameController controller){
         this.controller = controller;
@@ -33,11 +34,7 @@ public class RmiServer implements VirtualServer {
     public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final String serverName = "GameServer";
-        /// qui non deve andare nulla di println perché non si andrà mai a leggere dal server
-        System.out.print("> Enter desired players number: ");
-        Scanner scan = new Scanner(System.in);
-        int playersNumber = scan.nextInt();
-        VirtualServer server = new RmiServer(new GameController(playersNumber));
+        VirtualServer server = new RmiServer(new GameController());
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
@@ -47,12 +44,10 @@ public class RmiServer implements VirtualServer {
             @Override
             public void run() {
                 // Codice da eseguire nel thread
-                System.out.println("Questo è un thread separato.");
+                System.out.println("> Running ClientsUpdateThread...");
                 try {
                     ((RmiServer)server).clientsUpdateThread();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                } catch (RemoteException e) {
+                } catch (InterruptedException | RemoteException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -60,7 +55,7 @@ public class RmiServer implements VirtualServer {
         thread.start();
 
         try {
-            System.out.println("RAGGIUNGE SERVER UPDATETHREAD");
+            System.out.println("> Running ServerUpdateThread..");
             ((RmiServer)server).serverUpdateThread();
         }
         catch (InterruptedException e){
@@ -69,30 +64,25 @@ public class RmiServer implements VirtualServer {
 
     }
 
-    public void broadcastUpdateThread() throws InterruptedException, RemoteException {
-        while(true) {
-            Object o = updates.take();
-            synchronized (this.clients){
-                for (VirtualView c : clients) {
-                    c.showUpdate(o);
-                }
-            }
-        }
-    }
 
     public void clientsUpdateThread() throws InterruptedException, RemoteException  {
-        while (true) {
-            Action a = clientActions.take();
-            if (a.getRecipient().isEmpty()) { //to all clients
-                for(VirtualView c : clients) {
-                    c.showAction(a);
-                }
-            } else { //to a single client
-                for(VirtualView c : clients) {
-                    if (c.getNickname().equalsIgnoreCase(a.getRecipient())) {
+        // TO DO usare while con boolean per coprire casistica in cui si salti la connessione (con una eccezione)
+        while (connectionFlag) {
+            try {
+                Action a = clientActions.take();
+                if (a.getRecipient().isEmpty()) { //to all clients
+                    for(VirtualView c : clients) {
                         c.showAction(a);
                     }
+                } else { //to a single client
+                    for(VirtualView c : clients) {
+                        if (c.getNickname().equalsIgnoreCase(a.getRecipient())) {
+                            c.showAction(a);
+                        }
+                    }
                 }
+            } catch (InterruptedException e) {
+                connectionFlag = false;
             }
         }
 
@@ -105,6 +95,9 @@ public class RmiServer implements VirtualServer {
             System.out.println("> Handling action, action type " + a.getType().toString());
             Action newAct = null;
             switch (a.getType()) {
+                case CHOSENPLAYERSNUMBER:
+                    this.controller.setPlayersNumber((int)a.getObject());
+                    break;
                 case WHOLECHAT:
                     break;
                 case ASKINGCHAT:
@@ -140,12 +133,20 @@ public class RmiServer implements VirtualServer {
                         return false;
                     }
                 }
-            if(this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
+            if(this.controller.getCurrPlayersNumber() != 0 && this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
                 System.out.println("> Denied connection to a new client, max number of players already reached.");
                 return false;
             } else {
                 this.clients.add(client);
                 System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
+                if(this.controller.getCurrPlayersNumber() == 0) {
+                    try {
+                        System.out.println("> " + nick + " is the first player.");
+                        clientActions.put(new Action(ActionType.ASKINGPLAYERSNUMBER, null, null, nick));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 addPlayer(new Player(nick, false));
                 return true;
             }
@@ -166,7 +167,7 @@ public class RmiServer implements VirtualServer {
     public void addPlayer(Player p) throws RemoteException {
         synchronized (this.clients){
             this.controller.addPlayer(p);
-            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + this.controller.getMaxPlayersNumber();
+            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
             System.out.println(textUpdate);
             try {
                 clientActions.put(new Action(ActionType.JOININGPLAYER, p.getName(), null, null));

@@ -6,15 +6,14 @@ import java.util.ArrayList;
 public class GameController {
     //Attributi ridondanti, da vedere se utili o togliere
     private Player currentPlayer;
-    private final int playersNumber;
+    private int playersNumber;
     private int position, index;
     private final Game model;
     private final ArrayList<Player> players;
     private final Chat chat;
 
-    public GameController(int playersNumber) {
+    public GameController() {
         model = Game.getInstance();
-        this.playersNumber = playersNumber;
         this.players = new ArrayList<>();
         chat = Chat.getInstance();
     }
@@ -28,18 +27,10 @@ public class GameController {
                 players.add(p);
                 if (players.size() == playersNumber) {
                     model.addPlayers(players);
-                    run();
                 }
+            } else {
+                System.out.println("> Controller couldn't add player " + p.getName());
             }
-        }
-    }
-
-    public void run() {
-        // choice secret achievement
-
-        //game running...
-        while(true) {
-
         }
     }
 
@@ -122,14 +113,12 @@ public class GameController {
             if (!players.isEmpty())
                 return players.size();
             else
-                return 999;
+                return 0;
         }
     }
 
     public int getMaxPlayersNumber() {
-        synchronized (this.players){
-            return playersNumber;
-        }
+        return this.playersNumber;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -151,12 +140,9 @@ public class GameController {
         }
     }
 
-
-
-
-
-
-
+    public void setPlayersNumber(int playersNumber) {
+        this.playersNumber = playersNumber;
+    }
 
     // ******* METODI UTILI PER TESTARE SOCKET **************
     public boolean add(Integer number) {
