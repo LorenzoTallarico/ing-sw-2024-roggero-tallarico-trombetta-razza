@@ -38,13 +38,13 @@ public class RmiServer implements VirtualServer {
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
         Registry registry = LocateRegistry.createRegistry(PORT);
         registry.rebind(serverName, stub);
-        System.out.println("> Server bound.");
+        System.out.println("> Server successfully started.");
 
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 // Codice da eseguire nel thread
-                System.out.println("> Running ClientsUpdateThread...");
+                System.out.println("> Running ClientsUpdateThread ...");
                 try {
                     ((RmiServer)server).clientsUpdateThread();
                 } catch (InterruptedException | RemoteException e) {
@@ -55,7 +55,7 @@ public class RmiServer implements VirtualServer {
         thread.start();
 
         try {
-            System.out.println("> Running ServerUpdateThread..");
+            System.out.println("> Running ServerUpdateThread ...");
             ((RmiServer)server).serverUpdateThread();
         }
         catch (InterruptedException e){
@@ -63,7 +63,6 @@ public class RmiServer implements VirtualServer {
         }
 
     }
-
 
     public void clientsUpdateThread() throws InterruptedException, RemoteException  {
         // TO DO usare while con boolean per coprire casistica in cui si salti la connessione (con una eccezione)
@@ -88,11 +87,10 @@ public class RmiServer implements VirtualServer {
 
     }
 
-
     public void serverUpdateThread() throws InterruptedException, RemoteException {
         while(true) {
             Action a = serverActions.take();
-            System.out.println("> Handling action, action type " + a.getType().toString());
+            System.out.println("> Handling action, action type \"" + a.getType().toString() + "\".");
             Action newAct = null;
             switch (a.getType()) {
                 case CHOSENPLAYERSNUMBER:
@@ -123,7 +121,7 @@ public class RmiServer implements VirtualServer {
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         synchronized (this.clients) {
-            System.err.println("> Join request received");
+            System.err.println("> Join request received.");
             String nick = client.getNickname();
             //System.out.println("> Adding player " + nick + ".");
             if(!clients.isEmpty())
@@ -139,7 +137,8 @@ public class RmiServer implements VirtualServer {
             } else {
                 this.clients.add(client);
                 System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
-                if(this.controller.getCurrPlayersNumber() == 0) {
+                addPlayer(new Player(nick, false));
+                if(this.controller.getCurrPlayersNumber() == 1) {
                     try {
                         System.out.println("> " + nick + " is the first player.");
                         clientActions.put(new Action(ActionType.ASKINGPLAYERSNUMBER, null, null, nick));
@@ -147,7 +146,6 @@ public class RmiServer implements VirtualServer {
                         throw new RuntimeException(e);
                     }
                 }
-                addPlayer(new Player(nick, false));
                 return true;
             }
         }
@@ -156,7 +154,7 @@ public class RmiServer implements VirtualServer {
     @Override
     public void sendAction(Action action) throws RemoteException {
         try {
-            System.out.println("> Received action, type " + action.getType().toString());
+            System.out.println("> Received action, type \"" + action.getType().toString() +"\".");
             serverActions.put(action);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -171,7 +169,6 @@ public class RmiServer implements VirtualServer {
             System.out.println(textUpdate);
             try {
                 clientActions.put(new Action(ActionType.JOININGPLAYER, p.getName(), null, null));
-                //updates.put(textUpdate);
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
@@ -214,7 +211,6 @@ public class RmiServer implements VirtualServer {
     public ArrayList<Player> getPlayers() throws RemoteException{
         return this.controller.getPlayers();
     }
-
 
     //da completare v
     @Override
