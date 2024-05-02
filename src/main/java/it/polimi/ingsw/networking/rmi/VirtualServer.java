@@ -12,18 +12,9 @@ public interface VirtualServer extends Remote {
 
     void sendAction(Action action) throws RemoteException;
 
-    void addPlayer(Player p) throws RemoteException;
-
-    void sendChatMessage(String msg, String author) throws RemoteException;
-
-    void sendChatWhisper(String msg, String nickname, String recipient) throws RemoteException;
-
-    void getWholeChat() throws RemoteException;
+    void addPlayer(Player p, VirtualView v) throws RemoteException;
 
     ArrayList<Player> getPlayers() throws RemoteException;
-
-
-
 
     void placeCard(Card card, int row, int column) throws RemoteException;
 
@@ -31,10 +22,4 @@ public interface VirtualServer extends Remote {
 
     void selectAchievementCard(int position) throws RemoteException;
 
-
-//    /* ########## INIZIO METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-//    void addState(Integer number) throws RemoteException;
-//    void reset() throws RemoteException;
-//    /* ########## FINE METODI DA RIMUOVERE, UTILI SOLO AL TESTING DEL NETOWRK ############# */
-//
 }

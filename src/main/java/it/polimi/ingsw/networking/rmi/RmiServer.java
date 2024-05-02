@@ -12,7 +12,6 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -22,10 +21,9 @@ public class RmiServer implements VirtualServer {
     private static int PORT = 1234;
     private final GameController controller;
     private final ArrayList<VirtualView> clients = new ArrayList<>();
-    private final BlockingQueue<Object> updates = new LinkedBlockingQueue<>();
     private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>();
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>();
-    private boolean connectionFlag = true;
+    private boolean connectionFlagServer = true, connectionFlagClient = true;
 
     public RmiServer(GameController controller){
         this.controller = controller;
@@ -40,10 +38,10 @@ public class RmiServer implements VirtualServer {
         registry.rebind(serverName, stub);
         System.out.println("> Server successfully started.");
 
-        Thread thread = new Thread(new Runnable() {
+        Thread threadClientQueue = new Thread(new Runnable() {
             @Override
             public void run() {
-                // Codice da eseguire nel thread
+                // Code executed in the thread
                 System.out.println("> Running ClientsUpdateThread ...");
                 try {
                     ((RmiServer)server).clientsUpdateThread();
@@ -52,68 +50,70 @@ public class RmiServer implements VirtualServer {
                 }
             }
         });
-        thread.start();
+        threadClientQueue.start();
 
         try {
             System.out.println("> Running ServerUpdateThread ...");
             ((RmiServer)server).serverUpdateThread();
-        }
-        catch (InterruptedException e){
+        } catch (InterruptedException e) {
             System.err.println("> ERROR: Updates queue for server interrupted:\n" + e.getMessage());
         }
 
     }
 
     public void clientsUpdateThread() throws InterruptedException, RemoteException  {
-        // TO DO usare while con boolean per coprire casistica in cui si salti la connessione (con una eccezione)
-        while (connectionFlag) {
+        while (connectionFlagServer) {
             try {
                 Action a = clientActions.take();
                 if (a.getRecipient().isEmpty()) { //to all clients
-                    for(VirtualView c : clients) {
-                        c.showAction(a);
+                    for(VirtualView client : clients) {
+                        client.showAction(a);
                     }
                 } else { //to a single client
-                    for(VirtualView c : clients) {
-                        if (c.getNickname().equalsIgnoreCase(a.getRecipient())) {
-                            c.showAction(a);
+                    for(VirtualView client : clients) {
+                        if (client.getNickname().equalsIgnoreCase(a.getRecipient())) {
+                            client.showAction(a);
                         }
                     }
                 }
             } catch (InterruptedException e) {
-                connectionFlag = false;
+                connectionFlagServer = false;
             }
         }
 
     }
 
     public void serverUpdateThread() throws InterruptedException, RemoteException {
-        while(true) {
-            Action a = serverActions.take();
-            System.out.println("> Handling action, action type \"" + a.getType().toString() + "\".");
-            Action newAct = null;
-            switch (a.getType()) {
-                case CHOSENPLAYERSNUMBER:
-                    this.controller.setPlayersNumber((int)a.getObject());
-                    break;
-                case WHOLECHAT:
-                    break;
-                case ASKINGCHAT:
-                    newAct = new Action(ActionType.WHOLECHAT, this.controller.getWholeChat(), null, a.getAuthor());
-                    clientActions.put(newAct);
-                    break;
-                case CHATMESSAGE:
-                    this.controller.sendChatMessage((Message)a.getObject());
-                    clientActions.put(a);
-                    break;
-                case CHOSENACHIEVEMENT:
-                    break;
-                case CHOOSEABLEACHIEVEMENTS:
-                    break;
-                case HAND:
-                    break;
-                default:
-                    break;
+        while(connectionFlagClient) {
+            try {
+                Action a = serverActions.take();
+                System.out.println("> Handling action, action type \"" + a.getType().toString() + "\".");
+                Action newAct = null;
+                switch (a.getType()) {
+                    case CHOSENPLAYERSNUMBER:
+                        this.controller.setPlayersNumber((int) a.getObject());
+                        break;
+                    case WHOLECHAT:
+                        break;
+                    case ASKINGCHAT:
+                        newAct = new Action(ActionType.WHOLECHAT, this.controller.getWholeChat(), null, a.getAuthor());
+                        clientActions.put(newAct);
+                        break;
+                    case CHATMESSAGE:
+                        this.controller.sendChatMessage((Message) a.getObject());
+                        clientActions.put(a);
+                        break;
+                    case CHOSENACHIEVEMENT:
+                        break;
+                    case CHOOSEABLEACHIEVEMENTS:
+                        break;
+                    case HAND:
+                        break;
+                    default:
+                        break;
+                }
+            }  catch (InterruptedException e) {
+                connectionFlagClient = false;
             }
         }
     }
@@ -136,7 +136,7 @@ public class RmiServer implements VirtualServer {
             } else {
                 this.clients.add(client);
                 System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
-                addPlayer(new Player(nick, false));
+                addPlayer(new Player(nick, false), client);
                 if(this.controller.getCurrPlayersNumber() == 1) {
                     try {
                         System.out.println("> " + nick + " is the first player.");
@@ -150,6 +150,10 @@ public class RmiServer implements VirtualServer {
         }
     }
 
+    public void addToClientsQueue(Action action) throws InterruptedException {
+        clientActions.put(action);
+    }
+
     @Override
     public void sendAction(Action action) throws RemoteException {
         try {
@@ -161,9 +165,9 @@ public class RmiServer implements VirtualServer {
     }
 
     @Override
-    public void addPlayer(Player p) throws RemoteException {
+    public void addPlayer(Player p, VirtualView c) throws RemoteException {
         synchronized (this.clients){
-            this.controller.addPlayer(p);
+            this.controller.addPlayer(p, c);
             String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
             System.out.println(textUpdate);
             try {
@@ -171,38 +175,6 @@ public class RmiServer implements VirtualServer {
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
-        }
-    }
-
-    @Override
-    public void sendChatMessage(String msg, String author) throws RemoteException {
-        Message mex = new Message(msg, author);
-        mex = this.controller.sendChatMessage(mex);
-        try {
-            updates.put(mex);
-        } catch(InterruptedException e) {
-            throw new RuntimeException();
-        }
-    }
-
-    @Override
-    public void sendChatWhisper(String msg, String author, String recipient) throws RemoteException {
-        Message mex = new Message(msg, author, recipient);
-        mex = this.controller.sendChatMessage(mex);
-        try {
-            updates.put(mex);
-        } catch(InterruptedException e) {
-            throw new RuntimeException();
-        }
-    }
-
-
-    @Override
-    public void getWholeChat() throws RemoteException {
-        try {
-            updates.put(this.controller.getWholeChat());
-        } catch (InterruptedException e){
-            throw new RuntimeException();
         }
     }
 

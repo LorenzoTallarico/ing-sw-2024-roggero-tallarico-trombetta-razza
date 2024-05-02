@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.listener.Listener;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -170,6 +172,10 @@ public class Player implements Serializable {
             int score = area.setSpace(card, row, column);
             hand.remove(card);
             points += score;
+            ArrayList<Listener> listeners = Game.getInstance().getListeners();
+            for(Listener l : listeners){
+                l.notifyCardPlacement(Game.getInstance().getPlayers(), name);
+            }
             return true;
         }
         else {

@@ -3,10 +3,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gson.*;
+import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.listener.Listener;
 
 // Da capire se risulta utile per gson o per Client/Server interaction il 'Serializable'
 public class Game implements Serializable {
@@ -23,6 +26,8 @@ public class Game implements Serializable {
     private ArrayList<AchievementCard> commonAchievement;
     private int playersNumber;
     private GameState gameState;
+    private ArrayList<VirtualView> clients;
+    private it.polimi.ingsw.listener.Listener bigListener;
 
 //Constructor
     private Game() {
@@ -60,6 +65,10 @@ public class Game implements Serializable {
 
 
 //GET
+
+    public Listener getListener(){
+        return this.bigListener;
+    }
 
     public ArrayList<ResourceCard> getResourceDeck() {
         Gson gson = new Gson();
@@ -274,28 +283,30 @@ public class Game implements Serializable {
         Collections.shuffle(starterDeck);
     }
 
-
     /**
      * Method that given an arraylist of players, assign them a color,
      * shuffle their order and add em to the game
      * @param players arraylist of players who will play in the game
      */
-    public void addPlayers(ArrayList<Player> players) {
+    public void addPlayers(ArrayList<Player> players, ArrayList<VirtualView> clients) throws RemoteException {
         if(Game.players.isEmpty()) {
             assignColors(players);
             Collections.shuffle(players);
             Game.players.addAll(players);
             this.playersNumber = players.size();
+            this.clients = clients;
         }
         init();
     }
 
-    private void init() {
+    private void init() throws RemoteException {
         gameState = GameState.INIT;
+        bigListener = new Listener(clients);
         createHands();
         currPlayer = 0;
         gameState = GameState.READY;
     }
+
 
     /**
      *{@summary this function creates an array list named hand with
@@ -303,7 +314,7 @@ public class Game implements Serializable {
      * use it only after create and shuffle gold and resource decks}
      * 2 resource and 1 gold in hand + 2 secretAchievement;
      **/
-    private void createHands() {
+    private void createHands() throws RemoteException {
         for(int i = 0; i < playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<Card>();
             ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();
@@ -314,6 +325,9 @@ public class Game implements Serializable {
             for(int j = 0; j < 2; j++)
                 secretAchievement.add(popAchievementCard());
             players.get(i).setSecretAchievement(secretAchievement);
+            players.get(i).getArea().setSpace(popStarterCard(), 40, 40);
+            bigListener.notifyStarterCard(players);
+            bigListener.notifyHands(players);
         }
 
     }

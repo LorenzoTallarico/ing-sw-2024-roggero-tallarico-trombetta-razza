@@ -1,6 +1,9 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.networking.rmi.VirtualView;
+
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class GameController {
@@ -10,23 +13,26 @@ public class GameController {
     private int position, index;
     private final Game model;
     private final ArrayList<Player> players;
+    private final ArrayList<VirtualView> clients;
     private final Chat chat;
 
     public GameController() {
         model = Game.getInstance();
         this.players = new ArrayList<>();
+        this.clients = new ArrayList<>();
         chat = Chat.getInstance();
     }
 
 
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
 
-    public void addPlayer(Player p) {
+    public void addPlayer(Player p, VirtualView v) throws RemoteException {
         synchronized (this.players) {
             if (players.size() <= playersNumber && model.getGameState().equals(GameState.LOBBY)) {
                 players.add(p);
+                clients.add(v);
                 if (players.size() == playersNumber) {
-                    model.addPlayers(players);
+                    model.addPlayers(players, clients);
                 }
             } else {
                 System.out.println("> Controller couldn't add player " + p.getName());
