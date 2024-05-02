@@ -57,7 +57,6 @@ public class SocketServer {
 
     public static void main(String[] args) throws IOException {
         String host = "127.0.0.1";
-
         ServerSocket listenSocket = new ServerSocket(PORT);
 
         //playersNumber va implementato in maniera corretta
