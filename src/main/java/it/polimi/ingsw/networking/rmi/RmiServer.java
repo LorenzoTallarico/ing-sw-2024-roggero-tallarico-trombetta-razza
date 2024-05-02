@@ -123,7 +123,6 @@ public class RmiServer implements VirtualServer {
         synchronized (this.clients) {
             System.err.println("> Join request received.");
             String nick = client.getNickname();
-            //System.out.println("> Adding player " + nick + ".");
             if(!clients.isEmpty())
                 for(VirtualView v : this.clients) {
                     if(v.getNickname().equalsIgnoreCase(nick)) {

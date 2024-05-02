@@ -37,10 +37,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         state = State.WAIT;
     }
 
-    private void setLine(){
-
-    }
-
     public static void main(String[] args) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
@@ -48,7 +44,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         new RmiClient(server).run();
     }
 
-    //run() e runCli() sono specifici all'istanza del rmiClient creato, va bene anche private il metodo tanto non lo dobbiamo esporre
     private void run() throws RemoteException {
         System.out.print("> Enter nickname: ");
         Scanner scan = new Scanner(System.in);
@@ -62,7 +57,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         this.runCli();
     }
 
-    //synch
     private void runCli() throws RemoteException {
         Scanner scan = new Scanner(System.in);
         Message msg = null;
@@ -73,8 +67,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if (line.trim().isEmpty())
                     continue;
                 StringTokenizer st = new StringTokenizer(line);
-                String command = st.nextToken();
-                command.toLowerCase();
+                String command = st.nextToken().toLowerCase();
                 switch (command) {
                     case "gamesize":
                         if (state == State.GAMESIZE) {
@@ -109,19 +102,19 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + "\033[0m");
                         break;
                     case "help":
-                        System.out.println("------- COMMAND LIST -------");
-                        System.out.printf("%-30s%s\n","chat ...","to send a public message to everyone.");
-                        System.out.printf("%-30s%s\n","whisper x ...","to send a private message to x.");
-                        System.out.printf("%-30s%s\n","getchat","to retrieve a full log of the public chat.");
-                        System.out.printf("%-30s%s\n","gamesize x","to choose the number x of players who will play the game.");
-                        //System.out.printf("-10%s%s\n",);
+                        System.out.println("> ------- COMMANDS LIST -------");
+                        System.out.printf("> %-30s%s\n","chat ...","to send a public message to everyone.");
+                        System.out.printf("> %-30s%s\n","whisper x ...","to send a private message to x.");
+                        System.out.printf("> %-30s%s\n","getchat","to retrieve a full log of the public chat.");
+                        System.out.printf("> %-30s%s\n","gamesize x","to choose the number x of players who will play the game.");
+                        //System.out.printf("%-30s%s",  ,   );
                         /*System.out.println("chat ...\t\tto send a public message to everyone.");
                         System.out.println("whisper x ...\t\tto send a private message to x.");
                         System.out.println("getchat\t\tto retrieve a full log of the public chat.");
                         System.out.println("gamesize\t\tto choose the number of players who will play the game.");*/
                         break;
                     default:
-                        System.err.println("Command unknown, write \"help\" for a list of commands.");
+                        System.err.println("> Command unknown, write \"help\" for a list of commands.");
                         break;
                 }
             }
@@ -139,7 +132,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if (chat.isEmpty()) {
                     System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
                 } else {
-                    System.out.println("\033[1m" + ">>> " + "------- PUBLIC CHAT -------" + "\033[0m");
+                    System.out.println("\033[1m" + ">>> " + "-------- PUBLIC CHAT --------" + "\033[0m");
                     for (Message m : chat) {
                         System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
                     }
