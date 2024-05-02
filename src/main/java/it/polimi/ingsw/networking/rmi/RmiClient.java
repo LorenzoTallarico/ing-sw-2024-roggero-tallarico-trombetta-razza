@@ -1,7 +1,6 @@
 package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.action.Action;
-import it.polimi.ingsw.action.ActionType;
+import it.polimi.ingsw.action.*;
 import it.polimi.ingsw.model.Message;
 import it.polimi.ingsw.model.Player;
 
@@ -91,13 +90,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case "getchat":
-                        a = new Action(ActionType.ASKINGCHAT, null, nickname, null);
+                        a = new AskingChatAction(nickname);
                         server.sendAction(a);
                         break;
                     case "whisper":
                         command = st.nextToken();
                         msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
-                        a = new Action(ActionType.CHATMESSAGE, msg, nickname, command);
+                        a = new ChatMessageAction(nickname, command, msg);
                         server.sendAction(a);
                         System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + "\033[0m");
                         break;
@@ -124,11 +123,12 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     }
 
+    //vanno cambiati tutti
     @Override
     public void showAction(Action act) throws RemoteException{
         switch(act.getType()){
             case WHOLECHAT:
-                ArrayList<Message> chat = ((ArrayList<Message>) act.getObject());
+                ArrayList<Message> chat = ((WholeChatAction)act).getMessages();
                 if (chat.isEmpty()) {
                     System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
                 } else {
@@ -146,7 +146,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 System.out.println("> Enter desired players number with command \"gamesize x\".");
                 break;
             case CHATMESSAGE:
-                Message m = (Message) act.getObject();
+                Message m = ((ChatMessageAction)act).getMessage();
                 if (m.getRecipient().isEmpty()) {
                     System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
                 } else {

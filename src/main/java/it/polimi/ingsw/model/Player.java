@@ -3,6 +3,7 @@ package it.polimi.ingsw.model;
 import it.polimi.ingsw.listener.Listener;
 
 import java.io.Serializable;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
@@ -165,17 +166,20 @@ public class Player implements Serializable {
      * @param column integer indicating the column of the playground where the card would be placed
      * @return boolean 'true' if the card was placed correctly, 'false' otherwise
      */
-    public boolean place(Card card, int row, int column){
+    public boolean place(Card card, int row, int column) throws RemoteException {
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
             int score = area.setSpace(card, row, column);
             hand.remove(card);
             points += score;
+            Game.getInstance().getListener().notifyCardPlacement(name, card, row, column);
+            /*
             ArrayList<Listener> listeners = Game.getInstance().getListeners();
             for(Listener l : listeners){
                 l.notifyCardPlacement(Game.getInstance().getPlayers(), name);
             }
+            */
             return true;
         }
         else {

@@ -2,16 +2,15 @@ package it.polimi.ingsw.action;
 
 import java.io.Serializable;
 
-public class Action  implements Serializable {
+// Se finite tutte, da mettere abstract e togliere obj
+public class Action implements Serializable {
 
     private final ActionType type;
-    private final Object obj;
     private final String author;
     private final String recipient;
 
-    public Action(ActionType type, Object obj, String author, String recipient) {
+    public Action(ActionType type, String author, String recipient) {
         this.type = type;
-        this.obj = obj;
         if(author != null)
             this.author = author;
         else
@@ -24,10 +23,6 @@ public class Action  implements Serializable {
 
     public ActionType getType() {
         return type;
-    }
-
-    public Object getObject() {
-        return obj;
     }
 
     public String getAuthor() {
