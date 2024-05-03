@@ -4,6 +4,8 @@ import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
+
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -16,7 +18,7 @@ public class GameTest {
      */
 
     @Test
-    void IntegrityTest() {
+    void IntegrityTest() throws RemoteException {
         ArrayList<Player> players = new ArrayList<Player>();
 
         Player fake1 = new Player("Marco", false);
@@ -28,7 +30,7 @@ public class GameTest {
         Player fake4 = new Player("Paolo", false);
         players.add(fake4);
         Game testGame = Game.getInstance();
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         // Verifica che ogni giocatore abbia un colore assegnato
         for (Player player : testGame.getPlayers()) {
             assertNotEquals(Color.NONE, player.getColor(), "Il colore del giocatore non è stato assegnato correttamente");
@@ -94,7 +96,7 @@ public class GameTest {
     }*/
 
     @Test
-    void nextPlayerTest() {
+    void nextPlayerTest() throws RemoteException {
         Game testGame = Game.getInstance();
         GameState[] vetStati = new GameState[8];
         vetStati[0] = GameState.LOBBY;
@@ -115,7 +117,7 @@ public class GameTest {
         players.add(fake3);
         Player fake4 = new Player("Paolo", false);
         players.add(fake4);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         testGame.getPlayers().get(0).addPoints(20);
         for (int i = 2; i < vetStati.length; i++) {
             for (int j = 0; j < testGame.getPlayersNumber(); j++) {
@@ -161,7 +163,7 @@ public class GameTest {
     }
 
     @Test
-    void handsTest() {
+    void handsTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
@@ -172,7 +174,7 @@ public class GameTest {
         players.add(fake3);
         Player fake4 = new Player("Paolo", false);
         players.add(fake4);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
 
         // in questo for controllo che ogni giocatore abbia effettivamente due carte achievement in secretAchievement, due carte risorsa e una oro in hand
         for (int i = 0; i < testGame.getPlayersNumber(); i++) {
@@ -205,12 +207,12 @@ public class GameTest {
     }
 
     @Test
-    void diagonalTest() {
+    void diagonalTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
         fake1.setHand(hand);
@@ -274,12 +276,12 @@ public class GameTest {
         testGame.nextState();
     }
     @Test
-    void lShapeTest(){
+    void lShapeTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
         fake1.setHand(hand);
@@ -337,12 +339,12 @@ public class GameTest {
     }
 
     @Test
-    void itemTest(){
+    void itemTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
         fake1.setHand(hand);
@@ -368,12 +370,12 @@ public class GameTest {
         testGame.nextState();
     }
     @Test
-    void resourceTest(){
+    void resourceTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
         fake1.setHand(hand);
@@ -396,12 +398,12 @@ public class GameTest {
         testGame.nextState();
     }
     @Test
-    void mixedTest(){
+    void mixedTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
         fake1.setHand(hand);
@@ -434,12 +436,12 @@ public class GameTest {
     }
 
     @Test
-    void drawTest(){
+    void drawTest() throws RemoteException {
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players);
+        testGame.addPlayers(players, null);
         Card card;
         assertNull(testGame.draw(-1));
         assertNull(testGame.draw(6));

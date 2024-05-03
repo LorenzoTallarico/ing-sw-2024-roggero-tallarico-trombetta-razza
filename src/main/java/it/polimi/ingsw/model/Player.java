@@ -173,7 +173,13 @@ public class Player implements Serializable {
             int score = area.setSpace(card, row, column);
             hand.remove(card);
             points += score;
-            Game.getInstance().getListener().notifyCardPlacement(name, card, row, column);
+            try {
+                Game.getInstance().getListener().notifyCardPlacement(name, card, row, column);
+            } catch (NullPointerException e) {
+                //da gestire meglio
+                //System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
+                System.err.println("....");
+            }
             /*
             ArrayList<Listener> listeners = Game.getInstance().getListeners();
             for(Listener l : listeners){
