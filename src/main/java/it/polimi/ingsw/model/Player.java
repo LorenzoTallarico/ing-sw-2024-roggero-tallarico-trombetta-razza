@@ -175,12 +175,12 @@ public class Player implements Serializable {
             hand.remove(card);
             points += score;
  //           try {
-                Game.getInstance().getListener().notifyCardPlacement(name, this, card, row, column);
+            Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column);
  //           } catch (NullPointerException e) {
                 //da gestire meglio
  //               System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
  //           }
-            Game.getInstance().getListener().notifyDrawCard(name, Game.getInstance().getCommonGold(), Game.getInstance().getCommonGold().isEmpty(),
+            Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), Game.getInstance().getCommonGold().isEmpty(),
                     Game.getInstance().getCommonResource(), Game.getInstance().getCommonResource().isEmpty());
             return true;
         }

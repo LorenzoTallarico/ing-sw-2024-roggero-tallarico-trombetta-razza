@@ -209,6 +209,32 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         System.err.println("> Permission denied, you can't choose the secret achievement right now.");
                     }
                     break;
+                case "draw":
+                    if(state.equals(State.DRAW)) {
+                        for(Card c : commonGold)
+                            customPrint.cardPrinter(c, true);
+                        for(Card c : commonResource)
+                            customPrint.cardPrinter(c, true);
+                        //stampare qualcosa che rappresenti
+                        int drawChoice = 0;
+                        do {
+                            //da stampare poi in TUI la corrispondenza tra drawChoice e carta disegnata
+                            System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
+                            drawChoice = Integer.parseInt(scan.nextLine());
+                            if(drawChoice < 1 || drawChoice > 6)
+                                System.out.println("> Please enter a valid number");
+                        } while(drawChoice < 1 || drawChoice > 6);
+                        //qua non ho ancora capito se volete Choose o Chosen nel dubbio metto Chosen
+                        a = new ChosenDrawCardAction(nickname, ????????);
+                        //qua o con uno switch o un lungo if-elseif vedere che parametri passare in Action 'a'
+                        // il problema è decidere come fare se il player decide di pescare una carta da un deck (magari un altra action o far passare altri parametri)
+                        server.sendAction(a);
+                        state = State.COMMANDS;
+                        //con l'action che poi viene mandata va poi anche gestito il passaggio dal turno di un giocatore al successivo
+                    } else {
+                        System.err.println("> Permission denied, you can't choose the secret achievement right now.");
+                    }
+                    break;
                 default:
                     System.err.println("> Command unknown, write \"help\" for a list of commands.");
                     break;
@@ -295,7 +321,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
                     this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                    //continuare da quaaa...........................
+                    this.isCommonGoldEmpty = ((AskingDrawAction)act).isCommonGoldEmpty();
+                    this.commonResource = ((AskingDrawAction)act).getCommonResource();
+                    this.isCommonResourceEmpty = ((AskingDrawAction)act).isCommonResourceEmpty();
                 }
                 break;
 

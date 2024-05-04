@@ -18,6 +18,7 @@ public enum ActionType {
     PLACEDCARD,
     PLACINGCARD,
     PLACEDCARDERROR,
+    CHOSENDRAWCARD,
 
     ASKINGDRAW,
 
