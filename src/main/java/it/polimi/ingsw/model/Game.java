@@ -66,6 +66,14 @@ public class Game implements Serializable {
 
 //GET
 
+    public ArrayList<GoldCard> getCommonGold(){
+        return this.commonGold;
+    }
+
+    public ArrayList<ResourceCard> getCommonResource(){
+        return this.commonResource;
+    }
+
     public Listener getListener(){
         return this.bigListener;
     }
@@ -308,6 +316,17 @@ public class Game implements Serializable {
     }
 
 
+    public void setStarterCard(String playerName, boolean front) throws RemoteException {
+        for(Player player : players) {
+            if(player.getName().equalsIgnoreCase(playerName)) {
+                player.getArea().getSpace(40, 40).getCard().setFront(front);
+                bigListener.notifyAchievementChoice(playerName, player.getSecretAchievement());
+                // notify a tutti della starter card?
+                //bigListener.updateArea(playername, player.getArea);
+            }
+        }
+    }
+
     /**
      *{@summary this function creates an array list named hand with
      * a pseudo-pop and add the new hand to player, for each player in game
@@ -326,10 +345,9 @@ public class Game implements Serializable {
                 secretAchievement.add(popAchievementCard());
             players.get(i).setSecretAchievement(secretAchievement);
             players.get(i).getArea().setSpace(popStarterCard(), 40, 40);
-            bigListener.notifyStarterCard(players);
-            //bigListener.notifyHands(players);
         }
-
+        bigListener.notifyStarterCard(players);
+        bigListener.notifyHands(players);
     }
 
 

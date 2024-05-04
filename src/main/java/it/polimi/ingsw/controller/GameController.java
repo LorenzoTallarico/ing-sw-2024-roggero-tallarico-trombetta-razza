@@ -26,6 +26,10 @@ public class GameController {
 
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
 
+    public void setStarterCardSide(String playerName, boolean front) throws RemoteException {
+        model.setStarterCard(playerName, front);
+    }
+
     public void addPlayer(Player p, VirtualView v) throws RemoteException {
         synchronized (this.players) {
             if (players.size() <= playersNumber && model.getGameState().equals(GameState.LOBBY)) {
@@ -41,16 +45,10 @@ public class GameController {
     }
 
 
-    public boolean placeCard(Card card, int row, int column) {
+    public boolean placeCard(Card card, boolean side, int row, int column) throws RemoteException {
             synchronized (this.model) {
                 if(model.getGameState().equals(GameState.GAME)||model.getGameState().equals(GameState.LASTROUND)) {
-                    if (model.getPlayers().get(model.getCurrPlayer()).placeable(card, row, column)) {
-                        model.getPlayers().get(model.getCurrPlayer()).getArea().setSpace(card, row, column);
-                        model.getPlayers().get(model.getCurrPlayer()).getHand().remove(card);
-                        return true;
-                    } else{
-                        return false;
-                    }
+                    return model.getPlayers().get(model.getCurrPlayer()).place(card, side, row, column);
                 }
                 return false;
             }

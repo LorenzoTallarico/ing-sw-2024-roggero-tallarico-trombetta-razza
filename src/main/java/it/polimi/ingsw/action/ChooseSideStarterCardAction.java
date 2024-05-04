@@ -12,7 +12,7 @@ public class ChooseSideStarterCardAction extends Action {
     }
 
     public StarterCard getCard() {
-        return this.card;
+        return card;
     }
 
 }

@@ -33,4 +33,13 @@ ROBE DA DIRE AL LAB 15/04
 - fare AchievementCard assegnamento a player e (scelta)
 - fare enum StatoGioco
 
-- SINGLETON DISPOSE | TALLAAAA
+Placing[carta e cordinate] -->server
+server fa check vero o falso se è piazzabile o meno
+ se vero--> placedCard[coord player]
+ se falso --> placedError
+ aggiornamento player
+
+ server AskingDraw
+
+ DRAW
+

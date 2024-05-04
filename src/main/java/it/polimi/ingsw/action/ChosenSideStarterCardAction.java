@@ -1,10 +1,16 @@
 package it.polimi.ingsw.action;
 
 public class ChosenSideStarterCardAction extends Action {
-    private final boolean front;
 
-    public ChosenSideStarterCardAction(String author, boolean front) {
+    private final boolean side;
+
+    public ChosenSideStarterCardAction(String author, boolean side) {
         super(ActionType.CHOSENSIDESTARTERCARD, author, null);
-        this.front = front;
+        this.side = side;
     }
+
+    public boolean getSide() {
+        return side;
+    }
+
 }

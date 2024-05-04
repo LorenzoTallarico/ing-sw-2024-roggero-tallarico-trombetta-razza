@@ -1,14 +1,16 @@
 package it.polimi.ingsw.action;
 
-import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.model.AchievementCard;
+
 public class ChosenAchievementAction extends Action {
 
-    private final Card achievement;
+    private final AchievementCard card;
 
-    public ChosenAchievementAction(String recipient, Card card) {
-        super(ActionType.CHOSENACHIEVEMENT, null, recipient);
-        this.achievement = card;
+    public ChosenAchievementAction(String author, AchievementCard card) {
+        super(ActionType.CHOSENACHIEVEMENT, author, null);
+        this.card = card;
     }
 
-    public Card getAchievement() {return achievement;}
+    public AchievementCard getAchievement() {return card;}
+
 }

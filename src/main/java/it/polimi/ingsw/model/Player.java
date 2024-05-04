@@ -14,7 +14,6 @@ public class Player implements Serializable {
     private final boolean gui = false;
     private boolean winner;
     private int points;
-    ArrayList<Player> players;
     private ArrayList<Card> hand;
     private Playground area;
     private Color color;
@@ -166,26 +165,28 @@ public class Player implements Serializable {
      * @param column integer indicating the column of the playground where the card would be placed
      * @return boolean 'true' if the card was placed correctly, 'false' otherwise
      */
-    public boolean place(Card card, /*boolean side,*/ int row, int column) throws RemoteException {
-        //DA SISTEMAREEEEE (SIDE)
-        //    card.setFront(side);
+    public boolean place(Card card, boolean side, int row, int column) throws RemoteException {
+        card.setFront(side);
+
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
             int score = area.setSpace(card, row, column);
             hand.remove(card);
             points += score;
-            try {
-                Game.getInstance().getListener().notifyCardPlacement(name, card, row, column);
-            } catch (NullPointerException e) {
+ //           try {
+                Game.getInstance().getListener().notifyCardPlacement(name, this, card, row, column);
+ //           } catch (NullPointerException e) {
                 //da gestire meglio
-                System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
-            }
-
-            Game.getInstance().getListener().notifyCardPlacement(this.name, card, row, column);
+ //               System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
+ //           }
+            Game.getInstance().getListener().notifyDrawCard(name, Game.getInstance().getCommonGold(), Game.getInstance().getCommonGold().isEmpty(),
+                    Game.getInstance().getCommonResource(), Game.getInstance().getCommonResource().isEmpty());
             return true;
         }
         else {
+            Game.getInstance().getListener().notifyCardError(this.name);
+            card.setFront(!side);
             return false;
         }
     }

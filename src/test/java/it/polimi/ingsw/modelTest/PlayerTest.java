@@ -157,7 +157,7 @@ public class PlayerTest {
         //carta startCard posizionata con il back visibile
         assertFalse(startCard.isFront());
         assertTrue(p.placeable(startCard, 40, 40));
-        assertTrue(p.place(startCard, 40, 40));
+        assertTrue(p.place(startCard, false, 40, 40));
         System.out.println("Stampa la carta posizionata in [40][40]:");
         pr.cardPrinter(startCard, false);
         assertEquals(startCard, p.getArea().getSpace(40,40).getCard());
@@ -170,14 +170,14 @@ public class PlayerTest {
         assertTrue(p.getHand().get(0).isFront());
 
         //posizionamento in tutti gli spazi dead attorno alla carta
-        assertFalse(p.place(p.getHand().get(0), 41, 40));
-        assertFalse(p.place(p.getHand().get(0), 40, 41));
-        assertFalse(p.place(p.getHand().get(0), 39, 40));
-        assertFalse(p.place(p.getHand().get(0), 40, 39));
+        assertFalse(p.place(p.getHand().get(0),  false, 41, 40));
+        assertFalse(p.place(p.getHand().get(0),  false, 40, 41));
+        assertFalse(p.place(p.getHand().get(0),  false, 39, 40));
+        assertFalse(p.place(p.getHand().get(0),  false, 40, 39));
 
 
         //fuori dai bound
-        assertFalse(p.place(p.getHand().get(0), 36, 36));
+        assertFalse(p.place(p.getHand().get(0), false, 36, 36));
 
 
         /*          Front card1   (in alto a dx a start)
@@ -192,7 +192,7 @@ public class PlayerTest {
          * */
         //(metto card1 in alto a dx rispetto a startCard
         //posizionamento in tutti gli spazi verso corner della carta
-        assertTrue(p.place(p.getHand().get(0), 39, 41));    //corner alto dx di starterCard
+        assertTrue(p.place(p.getHand().get(0), true, 39, 41));    //corner alto dx di starterCard
         System.out.println("Stampa la carta posizionata in [39][41]:");
         pr.cardPrinter(p.getArea().getSpace(39,41).getCard(), true);
         assertEquals(card1, p.getArea().getSpace(39,41).getCard());
@@ -215,7 +215,7 @@ public class PlayerTest {
          * */
         //(metto card2 in alto a sx rispetto a startCard)
         p.getHand().get(p.getHand().indexOf(card2)).setFront(true);
-        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card2)), 39, 39));    //corner alto sx di starterCard
+        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card2)), true, 39, 39));    //corner alto sx di starterCard
         System.out.println("Stampa la carta posizionata in [39][39]:");
         pr.cardPrinter(p.getArea().getSpace(39,39).getCard(), true);
         assertEquals(card2, p.getArea().getSpace(39,39).getCard());
@@ -237,20 +237,20 @@ public class PlayerTest {
 
         //provo a posizionare card3 in alto a sx rispetto a card2 (non è possibile perché il corner di card2 è dead)
         p.getHand().get(p.getHand().indexOf(card3)).setFront(true);
-        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), 40, 42));
+        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), true, 40, 42));
         assertNotEquals(card3, p.getArea().getSpace(40,42).getCard());
         assertTrue(p.getArea().getSpace(40,42).isFree());
         assertTrue(p.getHand().contains(card3));
 
         //controllo intermedio per verificare dead spaces
-        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), 40, 39));
-        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), 39, 40));
+        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), true, 40, 39));
+        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), true, 39, 40));
         //fuori dai bound
-        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), 37, 37));
+        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card3)), true, 37, 37));
 
 
         //la vado invece a posizionare nella posizione simmetrica(a sx di starter, sotto a sx di card2)
-        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card3)), 40, 38));
+        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card3)), true, 40, 38));
         System.out.println("Stampa la carta posizionata in [40][38]:");
         pr.cardPrinter(p.getArea().getSpace(40,38).getCard(), true);
         assertEquals(card3, p.getArea().getSpace(40,38).getCard());
@@ -273,12 +273,12 @@ public class PlayerTest {
         //provo un altra carta Card4 tra card3 e starter (non deve andare perché corner di Card3 dead)
         p.addCard(card4);
         p.getHand().get(p.getHand().indexOf(card4)).setFront(true);
-        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card4)), 41, 39));
+        assertFalse(p.place(p.getHand().get(p.getHand().indexOf(card4)), true, 41, 39));
         assertNotEquals(card4, p.getArea().getSpace(41,39).getCard());
         assertTrue(p.getArea().getSpace(41,39).isFree());
         assertTrue(p.getHand().contains(card4));
         //LA PIAZZO invece IN BASSO A SX A Card3
-        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card4)), 41, 37));
+        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card4)), true, 41, 37));
         pr.cardPrinter(p.getArea().getSpace(41,37).getCard(), true);
         assertEquals(card4, p.getArea().getSpace(41,37).getCard());
         assertEquals(card4, p.getArea().getSpace(41, 37).getCard());
@@ -306,7 +306,7 @@ public class PlayerTest {
 
         p.addCard(card5);
         p.getHand().get(p.getHand().indexOf(card5)).setFront(true);
-        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card5)), 41, 41));
+        assertTrue(p.place(p.getHand().get(p.getHand().indexOf(card5)), true, 41, 41));
         pr.cardPrinter(p.getArea().getSpace(41,41).getCard(), true);
         assertEquals(card5, p.getArea().getSpace(41,41).getCard());
         assertEquals(card5, p.getArea().getSpace(41,41).getCard());

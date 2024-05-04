@@ -2,13 +2,10 @@ package it.polimi.ingsw.listener;
 
 
 
-import it.polimi.ingsw.action.ChooseSideStarterCardAction;
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.action.Action;
-import it.polimi.ingsw.action.PlacedCardAction;
-import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.model.StarterCard;
+import it.polimi.ingsw.action.*;
+import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.util.Print;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -22,26 +19,58 @@ public class Listener {
     }
 
     public void notifyStarterCard(ArrayList<Player> players) throws RemoteException {
+        System.out.println("> All clients notified by starter card listener.");
         for(Player p : players) {
             StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
             Action action = new ChooseSideStarterCardAction(p.getName(), card);
-            for(VirtualView client : clients)
+            for(VirtualView client : clients) {
                 client.showAction(action);
+            }
         }
     }
 
-    public void notifyCardPlacement(String nickname, Card card, int row, int col) throws RemoteException {
+    public void notifyCardPlacement(String nickname, Player p, Card card, int row, int col) throws RemoteException {
         for(VirtualView client : clients) {
-            Action action = new PlacedCardAction(nickname, card, row, col);
+            Action action = new PlacedCardAction(nickname, p, card, row, col);
             client.showAction(action);
         }
     }
-/* TALLLALAA
+
+    public void notifyCardError(String nickname) throws RemoteException {
+        for(VirtualView client : clients) {
+            Action action = new PlacedErrorAction(nickname);
+            client.showAction(action);
+        }
+    }
+
+    public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, boolean isCommonGoldEmpty, ArrayList<ResourceCard> commonResource, boolean isCommonResourceEmpty) throws RemoteException{
+        for(VirtualView client : clients) {
+            Action action = new AskingDrawAction(nickname, commonGold, isCommonGoldEmpty, commonResource, isCommonResourceEmpty);
+            client.showAction(action);
+        }
+    }
+
+
     public void notifyHands(ArrayList<Player> players) throws RemoteException {
-        for(Player players : p) {
-            Action action = new Action(ActionType.PLACEDCARD, card, null, );
+        for(Player p : players) {
+            StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
+            Action action = new HandAction(p.getName(), p.getHand());
+            for(VirtualView client : clients) {
+                System.out.println("- ACTION BY " + p.getName() + "|"+ action.getRecipient() + " SENT TO " + client.getNickname());
+                client.showAction(action);
+            }
+        }
+    }
+
+    public void notifyAchievementChoice(String recipient, ArrayList<AchievementCard> achievements) throws RemoteException {
+        Action action = new ChooseableAchievementsAction(recipient, achievements);
+        for(VirtualView client : clients) {
             client.showAction(action);
         }
     }
-*/
+
+
+
+
+
 }

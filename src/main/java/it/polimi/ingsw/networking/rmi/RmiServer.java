@@ -106,6 +106,9 @@ public class RmiServer implements VirtualServer {
                         this.controller.sendChatMessage(((ChatMessageAction)action).getMessage());
                         clientActions.put(action);
                         break;
+                    case CHOSENSIDESTARTERCARD:
+                        this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction)action).getSide());
+                        break;
                     case CHOSENACHIEVEMENT:
                         break;
                     case CHOOSEABLEACHIEVEMENTS:
@@ -113,7 +116,7 @@ public class RmiServer implements VirtualServer {
                     case HAND:
                         break;
                     case PLACINGCARD:
-                        if(!this.controller.placeCard(((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
+                        if(!this.controller.placeCard(((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
                             newAction = new PlacedErrorAction(action.getAuthor());
                             clientActions.put(newAction);
                         }
@@ -159,9 +162,6 @@ public class RmiServer implements VirtualServer {
         }
     }
 
-    public void addToClientsQueue(Action action) throws InterruptedException {
-        clientActions.put(action);
-    }
 
     @Override
     public void sendAction(Action action) throws RemoteException {
@@ -187,48 +187,5 @@ public class RmiServer implements VirtualServer {
         }
     }
 
-    @Override
-    public ArrayList<Player> getPlayers() throws RemoteException{
-        return this.controller.getPlayers();
-    }
-
-
-
-
-    //da completare v
-    @Override
-    public void placeCard(Card card, int row, int column) throws RemoteException {
-        this.controller.placeCard(card,row,column);
-        // currentState = this.controller.getState();
-        synchronized (this.clients){
-            for(VirtualView c : this.clients){
-                //c.showUpdate(currentState);
-            }
-        }
-    }
-
-
-    @Override
-    public void drawCard(int index) throws RemoteException {
-        this.controller.drawCard(index);
-        // currentState = this.controller.getState();
-        synchronized (this.clients) {
-            for (VirtualView c : this.clients) {
-                // c.showUpdate(currentState);
-            }
-        }
-    }
-
-    @Override
-    public void selectAchievementCard (int position) throws RemoteException {
-        this.controller.selectAchievementCard(position);
-        // currentState = this.controller.getState();
-        synchronized (this.clients) {
-            for (VirtualView c : this.clients) {
-                //c.showUpdate(currentState);
-            }
-        }
-
-    }
 
 }

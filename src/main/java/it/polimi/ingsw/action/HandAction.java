@@ -7,7 +7,7 @@ public class HandAction extends Action {
 
     private final ArrayList<Card> hand;
 
-    public HandAction(String author, String recipient, ArrayList<Card> hand) {
+    public HandAction(String recipient, ArrayList<Card> hand) {
         super(ActionType.HAND, null, recipient);
         this.hand = hand;
     }

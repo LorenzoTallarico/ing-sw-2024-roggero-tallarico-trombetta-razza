@@ -38,6 +38,12 @@ public class StarterCard extends Card implements Serializable {
         }
     }
 
+
+
+    @Override
+    public Resource getResource() {
+        return resource;
+    }
     /**
      * Method that returns the card's potential second resource type
      * @return the card's resource type

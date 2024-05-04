@@ -14,12 +14,5 @@ public interface VirtualServer extends Remote {
 
     void addPlayer(Player p, VirtualView v) throws RemoteException;
 
-    ArrayList<Player> getPlayers() throws RemoteException;
-
-    void placeCard(Card card, int row, int column) throws RemoteException;
-
-    void drawCard(int index) throws RemoteException;
-
-    void selectAchievementCard(int position) throws RemoteException;
 
 }
