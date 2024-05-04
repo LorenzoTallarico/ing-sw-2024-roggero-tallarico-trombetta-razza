@@ -3,7 +3,7 @@ package it.polimi.ingsw.action;
 import it.polimi.ingsw.model.Card;
 public class ChosenAchievementAction extends Action {
 
-    Card achievement;
+    private final Card achievement;
 
     public ChosenAchievementAction(String recipient, Card card) {
         super(ActionType.CHOSENACHIEVEMENT, null, recipient);

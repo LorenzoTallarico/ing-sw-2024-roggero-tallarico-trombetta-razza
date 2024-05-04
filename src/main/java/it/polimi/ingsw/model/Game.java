@@ -327,7 +327,7 @@ public class Game implements Serializable {
             players.get(i).setSecretAchievement(secretAchievement);
             players.get(i).getArea().setSpace(popStarterCard(), 40, 40);
             bigListener.notifyStarterCard(players);
-            bigListener.notifyHands(players);
+            //bigListener.notifyHands(players);
         }
 
     }

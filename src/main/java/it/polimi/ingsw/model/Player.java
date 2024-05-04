@@ -166,7 +166,9 @@ public class Player implements Serializable {
      * @param column integer indicating the column of the playground where the card would be placed
      * @return boolean 'true' if the card was placed correctly, 'false' otherwise
      */
-    public boolean place(Card card, int row, int column) throws RemoteException {
+    public boolean place(Card card, /*boolean side,*/ int row, int column) throws RemoteException {
+        //DA SISTEMAREEEEE (SIDE)
+        //    card.setFront(side);
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
@@ -177,15 +179,10 @@ public class Player implements Serializable {
                 Game.getInstance().getListener().notifyCardPlacement(name, card, row, column);
             } catch (NullPointerException e) {
                 //da gestire meglio
-                //System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
-                System.err.println("....");
+                System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
             }
-            /*
-            ArrayList<Listener> listeners = Game.getInstance().getListeners();
-            for(Listener l : listeners){
-                l.notifyCardPlacement(Game.getInstance().getPlayers(), name);
-            }
-            */
+
+            Game.getInstance().getListener().notifyCardPlacement(this.name, card, row, column);
             return true;
         }
         else {

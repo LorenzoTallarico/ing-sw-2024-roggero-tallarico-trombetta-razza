@@ -2,9 +2,9 @@ package it.polimi.ingsw.listener;
 
 
 
+import it.polimi.ingsw.action.ChooseSideStarterCardAction;
 import it.polimi.ingsw.model.Card;
 import it.polimi.ingsw.action.Action;
-import it.polimi.ingsw.action.ActionType;
 import it.polimi.ingsw.action.PlacedCardAction;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.model.StarterCard;
@@ -24,7 +24,7 @@ public class Listener {
     public void notifyStarterCard(ArrayList<Player> players) throws RemoteException {
         for(Player p : players) {
             StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
-            Action action = new ChooseSideStarterCard()
+            Action action = new ChooseSideStarterCardAction(p.getName(), card);
             for(VirtualView client : clients)
                 client.showAction(action);
         }
@@ -36,12 +36,12 @@ public class Listener {
             client.showAction(action);
         }
     }
-
+/* TALLLALAA
     public void notifyHands(ArrayList<Player> players) throws RemoteException {
         for(Player players : p) {
             Action action = new Action(ActionType.PLACEDCARD, card, null, );
             client.showAction(action);
         }
     }
-
+*/
 }

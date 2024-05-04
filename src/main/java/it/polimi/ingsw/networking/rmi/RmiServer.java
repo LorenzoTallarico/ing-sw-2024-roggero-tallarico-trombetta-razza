@@ -1,7 +1,6 @@
 package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.action.Action;
-import it.polimi.ingsw.action.ActionType;
+import it.polimi.ingsw.action.*;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Card;
 import it.polimi.ingsw.model.Message;
@@ -62,9 +61,12 @@ public class RmiServer implements VirtualServer {
     }
 
     public void clientsUpdateThread() throws InterruptedException, RemoteException  {
-        while (connectionFlagServer) {
+        while (connectionFlagClient) {
             try {
                 Action a = clientActions.take();
+                for(VirtualView client : clients) {
+                    client.showAction(a);
+                }/* REMOVED - USE ONLY IF DON'T WANT CLIENTS RECEIVING ALL ACTIONS
                 if (a.getRecipient().isEmpty()) { //to all clients
                     for(VirtualView client : clients) {
                         client.showAction(a);
@@ -75,33 +77,34 @@ public class RmiServer implements VirtualServer {
                             client.showAction(a);
                         }
                     }
-                }
+                }*/
             } catch (InterruptedException e) {
-                connectionFlagServer = false;
+                connectionFlagClient = false;
             }
         }
 
     }
 
     public void serverUpdateThread() throws InterruptedException, RemoteException {
-        while(connectionFlagClient) {
+        while(connectionFlagServer) {
             try {
-                Action a = serverActions.take();
-                System.out.println("> Handling action, action type \"" + a.getType().toString() + "\".");
-                Action newAct = null;
-                switch (a.getType()) {
+                Action action = serverActions.take();
+                System.out.println("> Handling action, action type \"" + action.getType().toString() + "\".");
+                Action newAction = null;
+                switch (action.getType()) {
                     case CHOSENPLAYERSNUMBER:
-                        this.controller.setPlayersNumber((int) a.getObject());
+                        this.controller.setPlayersNumber(((ChosenPlayersNumberAction)action).getPlayersNumber());
                         break;
                     case WHOLECHAT:
+                        System.err.println("> Server should not receive any WHOLECHAT action.");
                         break;
                     case ASKINGCHAT:
-                        newAct = new Action(ActionType.WHOLECHAT, this.controller.getWholeChat(), null, a.getAuthor());
-                        clientActions.put(newAct);
+                        newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
+                        clientActions.put(newAction);
                         break;
                     case CHATMESSAGE:
-                        this.controller.sendChatMessage((Message) a.getObject());
-                        clientActions.put(a);
+                        this.controller.sendChatMessage(((ChatMessageAction)action).getMessage());
+                        clientActions.put(action);
                         break;
                     case CHOSENACHIEVEMENT:
                         break;
@@ -109,11 +112,17 @@ public class RmiServer implements VirtualServer {
                         break;
                     case HAND:
                         break;
+                    case PLACINGCARD:
+                        if(!this.controller.placeCard(((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
+                            newAction = new PlacedErrorAction(action.getAuthor());
+                            clientActions.put(newAction);
+                        }
+                        break;
                     default:
                         break;
                 }
             }  catch (InterruptedException e) {
-                connectionFlagClient = false;
+                connectionFlagServer = false;
             }
         }
     }
@@ -140,7 +149,7 @@ public class RmiServer implements VirtualServer {
                 if(this.controller.getCurrPlayersNumber() == 1) {
                     try {
                         System.out.println("> " + nick + " is the first player.");
-                        clientActions.put(new Action(ActionType.ASKINGPLAYERSNUMBER, null, null, nick));
+                        clientActions.put(new AskingPlayersNumberAction(nick));
                     } catch (InterruptedException e) {
                         throw new RuntimeException(e);
                     }
@@ -171,7 +180,7 @@ public class RmiServer implements VirtualServer {
             String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
             System.out.println(textUpdate);
             try {
-                clientActions.put(new Action(ActionType.JOININGPLAYER, p.getName(), null, null));
+                clientActions.put(new JoiningPlayerAction(p.getName(), this.controller.getCurrPlayersNumber(), this.controller.getMaxPlayersNumber()));
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
@@ -182,6 +191,9 @@ public class RmiServer implements VirtualServer {
     public ArrayList<Player> getPlayers() throws RemoteException{
         return this.controller.getPlayers();
     }
+
+
+
 
     //da completare v
     @Override

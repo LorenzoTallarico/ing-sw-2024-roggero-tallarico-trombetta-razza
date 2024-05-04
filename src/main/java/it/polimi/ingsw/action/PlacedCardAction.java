@@ -5,8 +5,8 @@ import it.polimi.ingsw.model.Card;
 public class PlacedCardAction extends Action {
 
     private final Card card;
-    private int row;
-    private int col;
+    private final int row;
+    private final int col;
 
     public PlacedCardAction(String recipient, Card card, int row, int column) {
         super(ActionType.PLACEDCARD, null, recipient);
