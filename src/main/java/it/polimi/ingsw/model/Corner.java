@@ -13,6 +13,7 @@ public class Corner implements Serializable {
         type = null;
         resource = null;
         item = null;
+        visible = true;
     }
 
     /**
