@@ -15,6 +15,7 @@ public class GameController {
     private final ArrayList<Player> players;
     private final ArrayList<VirtualView> clients;
     private final Chat chat;
+    private int startCountdown;
 
     public GameController() {
         model = Game.getInstance();
@@ -69,7 +70,7 @@ public class GameController {
             return false;
         }
     }
-
+/* NON USATO ! -  AL SUO POSTO setSecretAchievement()
     public boolean selectAchievementCard(int position) {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.SELECTACHIEVEMENT)) {
@@ -84,6 +85,18 @@ public class GameController {
         }
         return false;
     }
+*/
+    public void setSecretAchievement(String playerName, AchievementCard achievement) {
+        ArrayList<AchievementCard> secretAch = new ArrayList<>();
+        secretAch.add(achievement);
+        for(Player p : model.getPlayers()) {
+            if(p.getName().equalsIgnoreCase(playerName)) {
+                p.setSecretAchievement(secretAch);
+                countdown();
+                return;
+            }
+        }
+    }
 
     public boolean calculateEndPoints() {
         synchronized (this.model) {
@@ -96,12 +109,23 @@ public class GameController {
         return false;
     }
 
+
+    //everytime a player set his game (successfully chooses starter card and achievement)
+    //the countdown decrease
+    //if it reaches zero the game can start and the gamestate is set to GAME
+    private void countdown() {
+        startCountdown--;
+        if(startCountdown == 0) {
+            model.setGameState(GameState.GAME);
+        }
+    }
+
     public boolean isPlayerInTurn(Player p) {
         synchronized (this.model){
             return model.getCurrPlayer() == model.getPlayers().indexOf(p);
         }
     }
-
+/* non usato
     public void assignStarterAchievement(Player p1) {
         synchronized (this.model) {
             ArrayList<AchievementCard> goals = new ArrayList<AchievementCard>();
@@ -110,7 +134,7 @@ public class GameController {
             p1.setSecretAchievement(goals);
         }
     }
-
+*/
 
     public  int getCurrPlayersNumber() {
         synchronized(this.players) {

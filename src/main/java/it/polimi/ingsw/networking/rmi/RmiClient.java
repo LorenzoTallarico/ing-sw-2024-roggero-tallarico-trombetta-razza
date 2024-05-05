@@ -225,14 +225,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                                 System.out.println("> Please enter a valid number");
                         } while(drawChoice < 1 || drawChoice > 6);
                         //qua non ho ancora capito se volete Choose o Chosen nel dubbio metto Chosen
-                        a = new ChosenDrawCardAction(nickname, ????????);
+                       // !!!!----------- CHOSEN, è CHOSEN !!!!😘😘😘
+                        //a = new ChosenDrawCardAction(nickname, ????????);
                         //qua o con uno switch o un lungo if-elseif vedere che parametri passare in Action 'a'
                         // il problema è decidere come fare se il player decide di pescare una carta da un deck (magari un altra action o far passare altri parametri)
                         server.sendAction(a);
                         state = State.COMMANDS;
                         //con l'action che poi viene mandata va poi anche gestito il passaggio dal turno di un giocatore al successivo
                     } else {
-                        System.err.println("> Permission denied, you can't choose the secret achievement right now.");
+                        System.err.println("> Permission denied, you can't draw a card right now.");
                     }
                     break;
                 default:

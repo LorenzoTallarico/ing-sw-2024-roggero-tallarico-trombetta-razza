@@ -110,6 +110,7 @@ public class RmiServer implements VirtualServer {
                         this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction)action).getSide());
                         break;
                     case CHOSENACHIEVEMENT:
+                        this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction)action).getAchievement());
                         break;
                     case CHOOSEABLEACHIEVEMENTS:
                         break;
