@@ -12,6 +12,8 @@ public class Print {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
+    public static final String ANSI_BOLD = "\033[1m";
+    public static final String ANSI_BOLD_RESET = "\033[0m";
 
     /**
      * Custom printer for Text User Interface, when initialized resets the color on the terminal
@@ -22,20 +24,108 @@ public class Print {
 
     /**
      * Printing function for text user interface, it prints the whole playground
-     * with row's and column's indexes
+     * eventually with row's and column's indexes
+     * @param area The playground object with bounds and the matrix of the space
+     * @param coords Boolean to set true if we want to print also the coords
+     * @param spaces Boolean to set true if we want 2 empty rows and 2 empty columns
+     * at the borders of the grid
+     */
+    public void playgroundPrinter(Playground area, boolean coords, boolean spaces) {
+        int east, west, north, south;
+        if(spaces) {
+            east = area.getEastBound() == 0 ? 80 : area.getEastBound() + 1;
+            west = area.getWestBound() == 0 ? 80 : area.getWestBound() - 1;
+            north = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1;
+            south = area.getSouthBound() == 0 ? 80 : area.getSouthBound() + 1;
+        } else {
+            west = area.getWestBound();
+            east = area.getEastBound();
+            south = area.getSouthBound();
+            north = area.getNorthBound();
+        }
+        String[] resultArr = playgroundToString(area);
+        String result = "";
+        if(coords && !spaces) {
+            result = "      " + ANSI_BOLD;
+            for(int i = west; i <= east; i++){
+                if(i < 10)
+                    result = result.concat("    " + i);
+                else
+                    result = result.concat("   " + i);
+            }
+            result = result.concat(ANSI_BOLD_RESET + "\n");
+            for (int i = 0, row = north, wait = 0; i < resultArr.length; i++, wait++) {
+                if(wait == 2)
+                    wait = 0;
+                if(wait == 1) {
+                    if (row < 10)
+                        result = result.concat(ANSI_BOLD + "   " + row + "  " + ANSI_BOLD_RESET);
+                    else
+                        result = result.concat(ANSI_BOLD + "  " + row + "  " + ANSI_BOLD_RESET);
+                    row++;
+                } else {
+                    result = result.concat("      ");
+                }
+                result = result.concat(resultArr[i] + "\n");
+            }
+        } else if(coords && spaces) {
+            result = "      " + ANSI_BOLD;
+            for(int i = west; i <= east; i++){
+                if(i < 10)
+                    result = result.concat("    " + i);
+                else
+                    result = result.concat("   " + i);
+            }
+            if(north >= 0) {
+                result = result.concat(ANSI_BOLD_RESET + "\n");
+                if(north >= 10)
+                    result = result.concat("\n" + ANSI_BOLD + "  " + north + "  "+ ANSI_BOLD_RESET + "\n");
+                else
+                    result = result.concat("\n" + ANSI_BOLD + "   " + north + "  "+ ANSI_BOLD_RESET + "\n");
+            } else {
+                north--;
+            }
+            for (int i = 0, row = north+1, wait = 0; i < resultArr.length; i++, wait++) {
+                if(wait == 2)
+                    wait = 0;
+                if(wait == 1) {
+                    if (row < 10)
+                        result = result.concat(ANSI_BOLD + "   " + row + "  " + ANSI_BOLD_RESET);
+                    else
+                        result = result.concat(ANSI_BOLD + "  " + row + "  " + ANSI_BOLD_RESET);
+                    row++;
+                } else {
+                    result = result.concat("      ");
+                }
+                result = result.concat("     " + resultArr[i] + "\n");
+            }
+            if(south < 80)
+                if(south >= 10)
+                    result = result.concat(ANSI_BOLD + "  " + south + "  "+ ANSI_BOLD_RESET + "\n");
+                else
+                    result = result.concat(ANSI_BOLD + "   " + south + "  "+ ANSI_BOLD_RESET + "\n");
+
+        } else if(!coords && spaces) {
+            result = result.concat("\n\n");
+            for (int i = 0; i < resultArr.length; i++) {
+                result = result.concat("     " + resultArr[i] + "\n");
+            }
+            result = result.concat("\n\n");
+        } else { //no cords no spaces
+            for (int i = 0; i < resultArr.length; i++) {
+                result = result.concat(resultArr[i] + "\n");
+            }
+        }
+        System.out.print(result);
+    }
+
+    /**
+     * Printing function for text user interface, it prints the whole playground with row's
+     * and column's indexes and border space, it's an overloading of the previous method
      * @param area The playground object with bounds and the matrix of the space
      */
     public void playgroundPrinter(Playground area) {
-        int east = area.getEastBound() == 0 ? 0 : area.getEastBound() - 1;
-        int west = area.getWestBound() == 0 ? 80 : area.getWestBound() + 1;
-        int north = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1;
-        int south = area.getSouthBound() == 0 ? 80 : area.getSouthBound() + 1;
-        String[] resultArr = playgroundToString(area);
-        String result = "";
-        for(int i = 0; i < resultArr.length; i++) {
-            result = result.concat(resultArr[i] + "  :\n");
-        }
-        System.out.print(result);
+        playgroundPrinter(area, true, true);
     }
 
     /**
@@ -1794,10 +1884,10 @@ public class Print {
         if(card.getClass() == ResourceCard.class || card.getClass() == GoldCard.class) {
             // line 1 / 3
             if(corner[3].isVisible())
-                line[0] += def + cc[3];
-            line[0] += def + "─────";
+                line[0] += def + cc[3] + def + "─";
+            line[0] += def + "───";
             if(corner[0].isVisible())
-                line[0] += def + cc[0];
+                line[0] += def + "─" + cc[0];
             // line 2 / 3
             if(card.isFront())
                 line[1] += def + "│     │";
@@ -1805,10 +1895,10 @@ public class Print {
                 line[1] += def + "│  " + res + def + "  │";
             // line 3 / 3
             if(corner[2].isVisible())
-                line[2] += def + cc[2];
-            line[2] += def + "─────";
+                line[2] += def + cc[2] + def + "─";
+            line[2] += def + "───";
             if(corner[1].isVisible())
-                line[2] += def + cc[1];
+                line[2] += def + "─" + cc[1];
         } else if(card.getClass() == StarterCard.class) {
             def = ANSI_YELLOW;
             int qres = 1;
@@ -1855,10 +1945,10 @@ public class Print {
             }
             // line 1 / 3 starter
             if(corner[3].isVisible())
-                line[0] += def + cc[3];
-            line[0] += def + "─────";
+                line[0] += def + cc[3] + def + "─";
+            line[0] += def + "───";
             if(corner[0].isVisible())
-                line[0] += def + cc[0];
+                line[0] += def + "─" + cc[0];
             // line 2 / 3 starter
             if(card.isFront()) {
                 switch(qres) {
@@ -1879,10 +1969,10 @@ public class Print {
                 line[1] += def + "│     │";
             // line 3 / 3 starter
             if(corner[2].isVisible())
-                line[2] += def + cc[2];
-            line[2] += def + "─────";
+                line[2] += def + cc[2] + def + "─";
+            line[2] += def + "───";
             if(corner[1].isVisible())
-                line[2] += def + cc[1];
+                line[2] += def + "─" + cc[1];
         } else { // achievement card ??
             line[0] = "╭─────╮";
             line[1] = "│ERROR│";
@@ -1914,20 +2004,37 @@ public class Print {
         int south = area.getSouthBound();
         int north = area.getNorthBound();
         int height = south - north + 1;
-        int width = west - east + 1;
+        int width = east - west + 1;
         int cHeight = (height * 2) + 1;     //number of chars in a column
         int cWidth = (width * 5) + 2;       //number of chars in a row
-    //initializing the stringbuilder with all chars as spaces
+
+        /*//debugging
+        for(int row = north; row <= south; row++) {
+            for(int col = west; col <= east; col++) {
+                space = area.getSpace(row, col);
+                System.out.print("row: " + row + ", col: " + col);
+                if(!space.isFree() && !space.isDead()) { //space is card, not free, not dead
+                    card = space.getCard();
+                    System.out.print(", " + (card.getClass() == StarterCard.class ? ANSI_YELLOW : ANSI_CYAN) + "CARD" + ANSI_RESET + " | ");
+                } else if(space.isDead()) { //space is dead
+                    System.out.print(", " + ANSI_BLACK + "DEAD" + ANSI_RESET + " | ");
+                } else { //space is free but not dead
+                    System.out.print(", FREE | ");
+                }
+            }
+            System.out.println(";");
+        }*/
+
+    //initializing the stringbuilder array
         StringBuilder[] line = new StringBuilder[cHeight];
         for(int i = 0; i  < cHeight; i++)
-            for(int j = 0; j < cWidth; j++)
-                line[i] = new StringBuilder();
+            line[i] = new StringBuilder();
 
     //algorithm
-        for(int row = south; row <= north; row++) {
-            for(int col = east; col <= west; col++) {
-                y = row - south;
-                x = col - east;
+        for(int col = west; col <= east; col++) {
+            for(int row = north; row <= south; row++) {
+                y = row - north;
+                x = col - west;
                 space = area.getSpace(row, col);
                 if(!space.isFree() && !space.isDead()) { //space is card, not free, not dead
                     card = space.getCard();
@@ -1952,7 +2059,7 @@ public class Print {
                     else
                         line[(y*2)+1].append("   ");
                 //third line
-                    if(y == north - south) {
+                    if(y == south - north) {
                         if(x == 0)
                             line[(y*2)+2].append("     ");
                         else
@@ -1975,7 +2082,7 @@ public class Print {
                 //second line
                     line[(y*2)+1].append("       ");
                 //third line
-                    if(y == north - south) // last row
+                    if(y == south - north) // last row
                         line[(y*2)+2].append("       ");
                     else {
                         if(!area.getSpace(row+1,col-1).isFree())
@@ -1990,6 +2097,8 @@ public class Print {
     //converting the stringbuilder[] to string[]
         String[] result = new String[cHeight];
         for(int i = 0; i < cHeight; i++) {
+            //System.out.println(" - riga " + i  + " " + (line[i].length() == 0 ? "empty" : "full"));
+            if(line[i].length() == 0) System.out.println(" - riga " + i  + " is empty");
             result[i] = line[i].toString();
         }
         return result;
