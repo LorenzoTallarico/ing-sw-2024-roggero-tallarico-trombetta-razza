@@ -3,9 +3,7 @@ package it.polimi.ingsw.networking.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import it.polimi.ingsw.action.Action;
-import it.polimi.ingsw.action.ActionType;
-import java.util.ArrayList;
+import it.polimi.ingsw.networking.action.Action;
 
 public interface VirtualView extends Remote {
 

@@ -1,10 +1,9 @@
 package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.action.Action;
+import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.model.*;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 
 public interface VirtualServer extends Remote {
 

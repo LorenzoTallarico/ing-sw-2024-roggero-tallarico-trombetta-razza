@@ -1,8 +1,9 @@
 package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.action.*;
-import it.polimi.ingsw.action.Action;
+import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.networking.action.toclient.*;
+import it.polimi.ingsw.networking.action.toserver.*;
 import it.polimi.ingsw.util.Print;
 
 import java.rmi.NotBoundException;

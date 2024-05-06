@@ -1,9 +1,10 @@
-package it.polimi.ingsw.action;
+package it.polimi.ingsw.networking.action.toclient;
 
 import it.polimi.ingsw.model.GoldCard;
 import it.polimi.ingsw.model.ResourceCard;
+import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.ActionType;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class AskingDrawAction extends Action {

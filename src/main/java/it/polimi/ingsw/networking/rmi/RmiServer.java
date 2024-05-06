@@ -1,10 +1,13 @@
 package it.polimi.ingsw.networking.rmi;
 
-import it.polimi.ingsw.action.*;
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.model.Message;
 import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.networking.action.*;
+import it.polimi.ingsw.networking.action.toclient.AskingPlayersNumberAction;
+import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
+import it.polimi.ingsw.networking.action.toclient.PlacedErrorAction;
+import it.polimi.ingsw.networking.action.toclient.WholeChatAction;
+import it.polimi.ingsw.networking.action.toserver.*;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;

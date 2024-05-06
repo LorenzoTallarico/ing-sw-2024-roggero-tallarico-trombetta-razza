@@ -1,7 +1,4 @@
-package it.polimi.ingsw.action;
-
-import java.util.ArrayList;
-import it.polimi.ingsw.model.Card;
+package it.polimi.ingsw.networking.action;
 
 public class ConnectionAction extends Action{
 

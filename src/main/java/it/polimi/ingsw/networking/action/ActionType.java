@@ -1,4 +1,4 @@
-package it.polimi.ingsw.action;
+package it.polimi.ingsw.networking.action;
 
 public enum ActionType {
     CONNECTION,
