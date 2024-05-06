@@ -177,14 +177,14 @@ public class RmiServer implements VirtualServer {
     @Override
     public void addPlayer(Player p, VirtualView c) throws RemoteException {
         synchronized (this.clients){
-            this.controller.addPlayer(p, c);
-            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
-            System.out.println(textUpdate);
             try {
-                clientActions.put(new JoiningPlayerAction(p.getName(), this.controller.getCurrPlayersNumber(), this.controller.getMaxPlayersNumber()));
+                clientActions.put(new JoiningPlayerAction(p.getName(), this.controller.getCurrPlayersNumber() + 1, this.controller.getMaxPlayersNumber()));
             } catch(InterruptedException e) {
                 throw new RuntimeException();
             }
+            this.controller.addPlayer(p, c);
+            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
+            System.out.println(textUpdate);
         }
     }
 

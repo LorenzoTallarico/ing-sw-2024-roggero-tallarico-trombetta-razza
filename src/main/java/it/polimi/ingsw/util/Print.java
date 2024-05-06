@@ -101,9 +101,9 @@ public class Print {
             }
             if(south < 80)
                 if(south >= 10)
-                    result = result.concat(ANSI_BOLD + "  " + south + "  "+ ANSI_BOLD_RESET + "\n");
+                    result = result.concat(ANSI_BOLD + "  " + south + "  "+ ANSI_BOLD_RESET + "\n\n");
                 else
-                    result = result.concat(ANSI_BOLD + "   " + south + "  "+ ANSI_BOLD_RESET + "\n");
+                    result = result.concat(ANSI_BOLD + "   " + south + "  "+ ANSI_BOLD_RESET + "\n\n");
 
         } else if(!coords && spaces) {
             result = result.concat("\n\n");

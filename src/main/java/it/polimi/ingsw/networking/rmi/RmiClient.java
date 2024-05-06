@@ -68,7 +68,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.exit(0);
         }
         p = new Player(nickname, false);
-        state = State.COMMANDS;
         this.runCli();
     }
 
@@ -283,10 +282,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
-                    System.out.println("> Choose the side you want to place your starter card with command \"start\".");
-                    customPrint.cardPrinter(starterCard, true);
-                    customPrint.cardPrinter(starterCard, false);
-                }
+                    System.out.println("> Choose the side you want to place your starter card with command \"start\".");}
                 break;
             case CHOOSEABLEACHIEVEMENTS:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
