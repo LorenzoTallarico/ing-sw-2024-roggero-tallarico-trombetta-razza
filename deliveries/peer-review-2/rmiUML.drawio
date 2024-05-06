@@ -1,0 +1,66 @@
+<mxfile host="app.diagrams.net" modified="2024-05-06T11:28:24.284Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" version="24.3.1" etag="kN3OvvJUi9n5ti4relW-" type="device">
+  <diagram id="mmSv3yoaekDg0R2PVEG-" name="Page-1">
+    <mxGraphModel dx="1432" dy="901" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RmiClient&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;- isCommonResourceEmpty: boolean&lt;br/&gt;- server: VirtualServer&lt;br/&gt;- nickname: String&lt;br/&gt;- allPlayers: ArrayList&amp;lt;Player&amp;gt;&lt;br/&gt;- choosableAchievements: ArrayList&amp;lt;AchievementCard&amp;gt;&lt;br/&gt;- commonResource: ArrayList&amp;lt;ResourceCard&amp;gt;&lt;br/&gt;- state: State&lt;br/&gt;- p: Player&lt;br/&gt;- isCommonGoldEmpty: boolean&lt;br/&gt;- PORT: int&lt;br/&gt;- achievements: ArrayList&amp;lt;AchievementCard&amp;gt;&lt;br/&gt;- customPrint: Print&lt;br/&gt;- starterCard: StarterCard&lt;br/&gt;- commonGold: ArrayList&amp;lt;GoldCard&amp;gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ reportError(String): void&lt;br/&gt;+ getNickname(): String&lt;br/&gt;- runCli(): void&lt;br/&gt;+ main(String[]): void&lt;br/&gt;- run(): void&lt;br/&gt;+ showAction(Action): void&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-100" y="400" width="389" height="500" as="geometry" />
+        </mxCell>
+        <mxCell id="node2" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;RmiServer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;- PORT: int&lt;br/&gt;- connectionFlagServer: boolean&lt;br/&gt;- clientActions: BlockingQueue&amp;lt;Action&amp;gt;&lt;br/&gt;- clients: ArrayList&amp;lt;VirtualView&amp;gt;&lt;br/&gt;- connectionFlagClient: boolean&lt;br/&gt;- serverActions: BlockingQueue&amp;lt;Action&amp;gt;&lt;br/&gt;- controller: GameController&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ serverUpdateThread(): void&lt;br/&gt;+ connect(VirtualView): boolean&lt;br/&gt;+ clientsUpdateThread(): void&lt;br/&gt;+ sendAction(Action): void&lt;br/&gt;+ main(String[]): void&lt;br/&gt;+ addPlayer(Player, VirtualView): void&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="328" y="452" width="291" height="348" as="geometry" />
+        </mxCell>
+        <mxCell id="node4" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;enumeration&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;State&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ COMMANDS: &lt;br/&gt;+ DRAW: &lt;br/&gt;+ WAIT: &lt;br/&gt;+ STARTERCARD: &lt;br/&gt;+ GAMESIZE: &lt;br/&gt;+ ACHIEVEMENTSCHOICE: &lt;br/&gt;+ END: &lt;br/&gt;+ PLACE: &lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ values(): State[]&lt;br/&gt;+ valueOf(String): State&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-190" y="19" width="203" height="271" as="geometry" />
+        </mxCell>
+        <mxCell id="node3" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;VirtualServer&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sendAction(Action): void&lt;br/&gt;+ addPlayer(Player, VirtualView): void&lt;br/&gt;+ connect(VirtualView): boolean&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="100" y="-132" width="266" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="node0" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;i&gt;&amp;lt;&amp;lt;interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br/&gt;&lt;b&gt;VirtualView&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ reportError(String): void&lt;br/&gt;+ showAction(Action): void&lt;br/&gt;+ getNickname(): String&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="332" y="88" width="202" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="edge0" value="" style="html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;dashed=1;startArrow=none;endArrow=block;endSize=12;strokeColor=#000000;exitX=0.833;exitY=0.000;exitDx=0;exitDy=0;entryX=0.250;entryY=1.000;entryDx=0;entryDy=0;" parent="1" source="node1" target="node0" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="223" y="400" />
+              <mxPoint x="223" y="330" />
+              <mxPoint x="383" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge1" value="" style="html=1;rounded=1;edgeStyle=orthogonalEdgeStyle;dashed=1;startArrow=none;endArrow=block;endSize=12;strokeColor=#000000;exitX=0.250;exitY=0.000;exitDx=0;exitDy=0;entryX=0.750;entryY=1.000;entryDx=0;entryDy=0;" parent="1" source="node2" target="node3" edge="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="401" y="290" />
+              <mxPoint x="300" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n4eirIU879ZpAd8_MBod-2" value="" style="endArrow=open;startArrow=circlePlus;endFill=0;startFill=0;endSize=8;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="node4" target="node1">
+          <mxGeometry width="160" relative="1" as="geometry">
+            <mxPoint x="70" y="480" as="sourcePoint" />
+            <mxPoint x="230" y="480" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="-88" y="330" />
+              <mxPoint x="-3" y="330" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n4eirIU879ZpAd8_MBod-4" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=bottom;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.25;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node1" target="node3">
+          <mxGeometry x="-0.7912" y="5" relative="1" as="geometry">
+            <mxPoint x="70" y="290" as="sourcePoint" />
+            <mxPoint x="230" y="290" as="targetPoint" />
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n4eirIU879ZpAd8_MBod-5" value="1" style="endArrow=open;html=1;endSize=12;startArrow=diamondThin;startSize=14;startFill=1;edgeStyle=orthogonalEdgeStyle;align=left;verticalAlign=bottom;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="node2" target="node0">
+          <mxGeometry x="-0.5564" y="4" relative="1" as="geometry">
+            <mxPoint x="360" y="390" as="sourcePoint" />
+            <mxPoint x="230" y="320" as="targetPoint" />
+            <mxPoint x="1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -304,7 +304,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> You placed a " + ((PlacedCardAction)act).getCard().getClass().toString() + "in [" +
                             ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]");
-                    // QUI SI STAMPERA' IL PLAYGROUND
+                    p = ((PlacedCardAction)act).getPlayer();
+                    // QUI SI STAMPERA' IL PLAYGROUNG
                 } else {
                     // someone else place a card
                     System.out.println("> Player " + ((PlacedCardAction)act).getPlayer().getName() + " placed a " +
