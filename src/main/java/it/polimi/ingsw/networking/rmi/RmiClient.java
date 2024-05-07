@@ -137,13 +137,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         System.out.println("> This is your playground:");
                         customPrint.playgroundPrinter(p.getArea());
                         System.out.println("> This is your hand:");
-                        //to do function that prints hand and achievements in line
-                        for(Card card : p.getHand()) {
-                            customPrint.cardPrinter(card, true);
-                            customPrint.cardPrinter(card, false);
-                        }
-                        for(AchievementCard achievement : achievements)
-                            customPrint.cardPrinter(achievement, true);
+                        customPrint.largeHandPrinter(p.getHand(), achievements);
                         boolean checkIndex = false;
                         boolean checkSide = false;
                         boolean chosenSide = false;
@@ -205,8 +199,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "achievement":
                     if(state.equals(State.ACHIEVEMENTSCHOICE)) {
-                        customPrint.cardPrinter(choosableAchievements.get(0), true);
-                        customPrint.cardPrinter(choosableAchievements.get(1), true);
+                        ArrayList<Card> temp = new ArrayList<>();
+                        temp.addAll(choosableAchievements);
+                        customPrint.inLineLargeCardsPrinter(temp);
                         int achChoice = 0;
                         while(achChoice < 1 || achChoice > 2) {
                             System.out.print("> Enter 1 or 2 to choose your secret achievement: ");

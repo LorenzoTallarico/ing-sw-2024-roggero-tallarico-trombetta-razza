@@ -120,6 +120,6 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
     public String getNickname() throws RemoteException {
         return "";
     }
-*/
-}
 
+}
+*/
