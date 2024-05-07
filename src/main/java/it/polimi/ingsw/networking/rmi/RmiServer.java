@@ -128,6 +128,7 @@ public class RmiServer implements VirtualServer {
                         break;
                     case CHOSENDRAWCARD:
                         this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction)action).getIndex());
+                        System.out.println("In serverRMI dopo aver chiamato il controller");
                         break;
                     default:
                         break;

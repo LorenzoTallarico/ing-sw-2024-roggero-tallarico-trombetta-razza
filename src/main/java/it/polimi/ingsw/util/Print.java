@@ -1,6 +1,7 @@
 package it.polimi.ingsw.util;
 import it.polimi.ingsw.model.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Print {
@@ -2995,8 +2996,90 @@ public class Print {
         String[] back = largeCardToString(card, false);
         String toPrint = "";
         for(int i = 0; i < front.length; i++)
-            toPrint = toPrint.concat(front[i] + " " + back[i] + "\n");
+            toPrint = toPrint.concat(front[i] + " " + ANSI_RESET + back[i] + "\n");
         System.out.print(toPrint);
+    }
+
+    /**
+     * Printing function for text user interface, given an arraylist of cards,
+     * it prints them all in a single row
+     * @param cards The arraylist containing the cards we want to be printed
+     */
+    public void inLineLargeCardsPrinter(ArrayList<Card> cards) {
+        String[] lines = new String[6];
+        String[] temp;
+        Arrays.fill(lines, "");
+        for(int i = 0; i < cards.size(); i++) {
+            if(cards.get(i).getClass() == AchievementCard.class)
+                temp = largeCardToString(cards.get(i), true);
+            else
+                temp = largeCardToString(cards.get(i));
+            for(int j = 0; j < 6; j++)
+                lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+        }
+        String result = "";
+        for(int i = 0; i < 6; i++)
+            result = result.concat(lines + "\n");
+        System.out.print(result);
+    }
+
+    public void largeHandPrinter(ArrayList<Card> cards, ArrayList<AchievementCard> achievements) {
+        String[] lines = new String[6];
+        String[] temp;
+        String result = "";
+
+        if(!cards.isEmpty()) {
+            // first row
+            Arrays.fill(lines, "       ");
+            result = "       " + ANSI_BOLD;
+            for(int i = 0; i < cards.size(); i++) {
+                result = result.concat("       " + i + "° Card" + "       " + "   ");
+            }
+            result = result.concat("             " + "Secret achievement and common achievements" + "              ");
+            result = result.concat(ANSI_BOLD_RESET + "\n");
+            lines[2] = ANSI_BOLD + " Front " + ANSI_BOLD_RESET;
+            lines[3] = ANSI_BOLD + "  side " + ANSI_BOLD_RESET;
+            for(int i = 0; i < cards.size(); i++) {
+                temp = largeCardToString(cards.get(i), true);
+                for(int j = 0; j < 6; j++)
+                    lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+            }
+            for(int i = 0; i < achievements.size(); i++) {
+                temp = largeCardToString(achievements.get(i), true);
+                for(int j = 0; j < 6; j++)
+                    lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+            }
+            for(int i = 0; i < 6; i++) {
+                result = result.concat(lines[i] + "\n");
+            }
+            //second row
+            Arrays.fill(lines, "       ");
+            lines[2] = ANSI_BOLD + "  Back " + ANSI_BOLD_RESET;
+            lines[3] = ANSI_BOLD + "  side " + ANSI_BOLD_RESET;
+            for(int i = 0; i < cards.size(); i++) {
+                temp = largeCardToString(cards.get(i), true);
+                for(int j = 0; j < 6; j++)
+                    lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+            }
+            for(int i = 0; i < 6; i++) {
+                result = result.concat(lines[i] + "\n");
+            }
+        } else { //just achievements ? should be an error in the game
+            Arrays.fill(lines, "");
+            for(int i = 0; i < achievements.size(); i++) {
+                temp = largeCardToString(achievements.get(i), true);
+                for(int j = 0; j < 6; j++)
+                    lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+            }
+            result = ANSI_BOLD;
+            result = result.concat("             " + "Secret achievement and common achievements" + "              ");
+            result = result.concat(ANSI_BOLD_RESET + "\n");
+            for(int i = 0; i < 6; i++) {
+                result = result.concat(lines[i] + "\n");
+            }
+        }
+
+        System.out.print(result);
     }
 
 }

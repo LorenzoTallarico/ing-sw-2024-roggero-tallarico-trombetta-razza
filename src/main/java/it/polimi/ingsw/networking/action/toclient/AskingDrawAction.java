@@ -10,32 +10,32 @@ import java.util.ArrayList;
 public class AskingDrawAction extends Action {
 
     private final  ArrayList<GoldCard> commonGold;
-    private final boolean isCommonGoldEmpty;
+    private final boolean goldDeck;
     private final  ArrayList<ResourceCard> commonResource;
-    private final boolean isCommonResourceEmpty;
+    private final boolean resourceDeck;
 
 
-    public AskingDrawAction(String recipient, ArrayList<GoldCard> commonGold, boolean isCommonGoldEmpty, ArrayList<ResourceCard> commonResource, boolean isCommonResourceEmpty) {
+    public AskingDrawAction(String recipient, ArrayList<GoldCard> commonGold, boolean goldDeck, ArrayList<ResourceCard> commonResource, boolean resourceDeck) {
         super(ActionType.ASKINGDRAW, null, recipient);
         this.commonGold = commonGold;
-        this.isCommonGoldEmpty = isCommonGoldEmpty;
+        this.goldDeck = goldDeck;
         this.commonResource = commonResource;
-        this.isCommonResourceEmpty = isCommonResourceEmpty;
+        this.resourceDeck = resourceDeck;
     }
 
     public ArrayList<GoldCard> getCommonGold() {
         return commonGold;
     }
 
-    public boolean isCommonGoldEmpty() {
-        return isCommonGoldEmpty;
+    public boolean getGoldDeck() {
+        return goldDeck;
     }
 
     public ArrayList<ResourceCard> getCommonResource() {
         return commonResource;
     }
 
-    public boolean isCommonResourceEmpty() {
-        return isCommonResourceEmpty;
+    public boolean getResourceDeck() {
+        return resourceDeck;
     }
 }

@@ -41,9 +41,9 @@ public class Listener {
         }
     }
 
-    public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, boolean isCommonGoldEmpty, ArrayList<ResourceCard> commonResource, boolean isCommonResourceEmpty) throws RemoteException{
+    public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, boolean goldDeck, ArrayList<ResourceCard> commonResource, boolean resourceDeck) throws RemoteException{
         for(VirtualView client : clients) {
-            Action action = new AskingDrawAction(nickname, commonGold, isCommonGoldEmpty, commonResource, isCommonResourceEmpty);
+            Action action = new AskingDrawAction(nickname, commonGold, goldDeck, commonResource, resourceDeck);
             client.showAction(action);
         }
     }
@@ -53,6 +53,7 @@ public class Listener {
         for(VirtualView client : clients) {
             Action action = new CardDrawnAction(nickname, card);
             client.showAction(action);
+            System.out.println("qui arriva la notifyDrawCompleted");
         }
     }
 

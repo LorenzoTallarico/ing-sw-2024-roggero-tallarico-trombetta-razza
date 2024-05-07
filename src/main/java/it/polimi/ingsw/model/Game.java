@@ -436,6 +436,7 @@ public class Game implements Serializable {
                         if (!resourceDeck.isEmpty())
                             commonResource.add(index, popResourceCard());
                     }
+                    System.out.println("Nel model, sto chiamando la fine del metodo prima del listener");
                     bigListener.notifyDrawCompleted(name, drawCard);
                     return drawCard;
                 }
@@ -451,6 +452,7 @@ public class Game implements Serializable {
                         if(!goldDeck.isEmpty())
                             commonGold.add(index, popGoldCard());
                     }
+                    System.out.println("Nel model, sto chiamando la fine del metodo prima del listener");
                     bigListener.notifyDrawCompleted(name, drawCard);
                     return drawCard;
                 }

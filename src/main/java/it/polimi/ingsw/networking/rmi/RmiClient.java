@@ -26,7 +26,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         END
     }
 
-    private final static int PORT = 1234;
+    private final static int PORT = 6969;
     private Player p;
     private String nickname;
     private State state;
@@ -186,8 +186,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "start":
                     if(state.equals(State.STARTERCARD)) {
-                        customPrint.cardPrinter(starterCard, true);
-                        customPrint.cardPrinter(starterCard, false);
+                        customPrint.largeCardBothSidesPrinter(starterCard);
                         do {
                             System.out.print("> Enter \"front\" or \"back\": ");
                             line = scan.nextLine();
@@ -239,15 +238,16 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         do {
                             //da stampare poi in TUI la corrispondenza tra drawChoice e carta disegnata
                             repeatDraw = false;
-                            drawChoice = Integer.parseInt(scan.nextLine());
                             if (goldDeck && resourceDeck) {
                                 System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
+                                drawChoice = Integer.parseInt(scan.nextLine());
                                 if(drawChoice < 1 || drawChoice > 6){
                                     System.out.println("> Please enter a valid number");
                                     repeatDraw = true;
                                 }
                             } else if (!goldDeck && resourceDeck){
                                 System.out.print("> Enter 1, 2, 3, 4 or 6 to draw your card: ");
+                                drawChoice = Integer.parseInt(scan.nextLine());
                                 if(drawChoice < 1 || drawChoice > 6 || drawChoice == 5){
                                     System.out.println("> Please enter a valid number");
                                     repeatDraw = true;
@@ -255,6 +255,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             }
                             else if(goldDeck && !resourceDeck) {
                                 System.out.print("> Enter 1, 2, 3, 4 or 5 to draw your card: ");
+                                drawChoice = Integer.parseInt(scan.nextLine());
                                 if(drawChoice < 1 || drawChoice > 5){
                                     System.out.println("> Please enter a valid number");
                                     repeatDraw = true;
@@ -262,6 +263,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             }
                             else if(!goldDeck && !resourceDeck) {
                                 System.out.print("> Enter 1, 2, 3 or 4 to draw your card: ");
+                                drawChoice = Integer.parseInt(scan.nextLine());
                                 if(drawChoice < 1 || drawChoice > 4){
                                     System.out.println("> Please enter a valid number");
                                     repeatDraw = true;
@@ -375,9 +377,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
                     this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                    this.goldDeck = ((AskingDrawAction)act).isCommonGoldEmpty();
+                    this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
                     this.commonResource = ((AskingDrawAction)act).getCommonResource();
-                    this.resourceDeck = ((AskingDrawAction)act).isCommonResourceEmpty();
+                    this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
                 }
                 break;
             case CARDDRAWN:

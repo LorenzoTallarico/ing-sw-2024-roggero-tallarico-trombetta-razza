@@ -180,8 +180,8 @@ public class Player implements Serializable {
                 //da gestire meglio
  //               System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
  //           }
-            Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), Game.getInstance().getCommonGold().isEmpty(),
-                    Game.getInstance().getCommonResource(), Game.getInstance().getCommonResource().isEmpty());
+            Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), !Game.getInstance().getGoldDeck().isEmpty(),
+                    Game.getInstance().getCommonResource(), !Game.getInstance().getResourceDeck().isEmpty());
             return true;
         }
         else {

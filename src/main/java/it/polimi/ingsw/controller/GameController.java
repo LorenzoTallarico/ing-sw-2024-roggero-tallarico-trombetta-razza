@@ -65,6 +65,7 @@ public class GameController {
                     if (model.draw(model.getPlayers().get(model.getCurrPlayer()).getName(), index) != null) {
                         model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
                         model.nextPlayer(true);
+                        System.out.println("nel controller ho chiamato il model e sto ritornando true");
                         return true;
                     }
                 }
