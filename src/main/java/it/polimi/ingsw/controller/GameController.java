@@ -86,7 +86,7 @@ public class GameController {
         return false;
     }
 */
-    public void setSecretAchievement(String playerName, AchievementCard achievement) {
+    public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {
         ArrayList<AchievementCard> secretAch = new ArrayList<>();
         secretAch.add(achievement);
         for(Player p : model.getPlayers()) {
@@ -113,7 +113,7 @@ public class GameController {
     //everytime a player set his game (successfully chooses starter card and achievement)
     //the countdown decrease
     //if it reaches zero the game can start and the gamestate is set to GAME
-    private void countdown() {
+    private void countdown() throws RemoteException {
         startCountdown--;
         if(startCountdown == 0) {
             model.setGameState(GameState.GAME);
@@ -170,6 +170,7 @@ public class GameController {
 
     public void setPlayersNumber(int playersNumber) {
         this.playersNumber = playersNumber;
+        startCountdown = playersNumber;
     }
 
     // ******* METODI UTILI PER TESTARE SOCKET **************

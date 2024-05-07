@@ -51,23 +51,26 @@ public class Listener {
 
     public void notifyHands(ArrayList<Player> players) throws RemoteException {
         for(Player p : players) {
-            StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
             Action action = new HandAction(p.getName(), p.getHand());
             for(VirtualView client : clients) {
-                System.out.println("- ACTION BY " + p.getName() + "|"+ action.getRecipient() + " SENT TO " + client.getNickname());
                 client.showAction(action);
             }
         }
     }
 
-    public void notifyAchievementChoice(String recipient, ArrayList<AchievementCard> achievements) throws RemoteException {
-        Action action = new ChooseableAchievementsAction(recipient, achievements);
+    public void notifyAchievementChoice(String recipient, ArrayList<AchievementCard> achievements,  ArrayList<AchievementCard> commonGoals) throws RemoteException {
+        Action action = new ChooseableAchievementsAction(recipient, achievements, commonGoals);
         for(VirtualView client : clients) {
             client.showAction(action);
         }
     }
 
-
+    public void notifyToPlace(Player player) throws RemoteException {
+        Action action = new AskingPlaceAction(player);
+        for(VirtualView client : clients) {
+            client.showAction(action);
+        }
+    }
 
 
 

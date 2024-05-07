@@ -123,8 +123,12 @@ public class Game implements Serializable {
         return gameState;
     }
 
-    public void setGameState(GameState gs) {
+    public void setGameState(GameState gs) throws RemoteException {
         gameState = gs;
+        if(gameState.equals(GameState.GAME)) {
+            System.out.println("> Game started, first player is " + players.get(getCurrPlayer()).getName() + ".");
+            bigListener.notifyToPlace(players.get(getCurrPlayer()));
+        }
     }
 
     public int getCurrPlayer() {
@@ -273,10 +277,8 @@ public class Game implements Serializable {
         }
         Collections.shuffle(achievementDeck);
         commonAchievement = new ArrayList<AchievementCard>();
-        for(int i = 0; i < 2; i++) {
-            commonAchievement.add(achievementDeck.get(0));
-            achievementDeck.remove(0);
-        }
+        for(int i = 0; i < 2; i++)
+            commonAchievement.add(popAchievementCard());
     }
 
     private void createStarterDeck() {
@@ -320,7 +322,7 @@ public class Game implements Serializable {
         for(Player player : players) {
             if(player.getName().equalsIgnoreCase(playerName)) {
                 player.getArea().getSpace(40, 40).getCard().setFront(front);
-                bigListener.notifyAchievementChoice(playerName, player.getSecretAchievement());
+                bigListener.notifyAchievementChoice(playerName, player.getSecretAchievement(), commonAchievement);
                 // notify a tutti della starter card?
                 //bigListener.updateArea(playername, player.getArea);
             }

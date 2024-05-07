@@ -17,7 +17,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
 
     enum State {
-        WAIT,
         COMMANDS,
         GAMESIZE,
         STARTERCARD,
@@ -39,8 +38,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     private ArrayList<AchievementCard> choosableAchievements;
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<GoldCard> commonGold;
-    private boolean isCommonGoldEmpty;
-    private boolean isCommonResourceEmpty;
+    private boolean goldDeck;
+    private boolean resourceDeck;
 
 
     public RmiClient(VirtualServer server) throws RemoteException {
@@ -132,7 +131,16 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "place":
                     if(state.equals(State.PLACE)) {
-                        //qui stamperò le carte con l'indice corrispondente
+                        System.out.println("> This is your playground:");
+                        customPrint.playgroundPrinter(p.getArea());
+                        System.out.println("> This is your hand:");
+                        //to do function that prints hand and achievements in line
+                        for(Card card : p.getHand()) {
+                            customPrint.cardPrinter(card, true);
+                            customPrint.cardPrinter(card, false);
+                        }
+                        for(AchievementCard achievement : achievements)
+                            customPrint.cardPrinter(achievement, true);
                         boolean checkIndex = false;
                         boolean checkSide = false;
                         boolean chosenSide = false;
@@ -203,6 +211,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             achChoice = Integer.parseInt(scan.nextLine());
                         }
                         a = new ChosenAchievementAction(nickname, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
+                        achievements.add(0, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         server.sendAction(a);
                         state = State.COMMANDS;
                     } else {
@@ -288,6 +297,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             case CHOOSEABLEACHIEVEMENTS:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     choosableAchievements = ((ChooseableAchievementsAction)act).getAchievements();
+                    achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
                     state = State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
                 }
@@ -295,6 +305,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             case HAND:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     p.setHand(((HandAction)act).getHand());
+                }
+                break;
+            case ASKINGPLACE:
+                if(act.getRecipient().equalsIgnoreCase(nickname)) {
+                    p = ((AskingPlaceAction)act).getPlayer();
+                    state = State.PLACE;
+                    System.out.println("> It's your time to play, enter \"place\" to place a card.");
                 }
                 break;
             case PLACEDCARD:
@@ -320,9 +337,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
                     this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                    this.isCommonGoldEmpty = ((AskingDrawAction)act).isCommonGoldEmpty();
+                    this.goldDeck = ((AskingDrawAction)act).isCommonGoldEmpty();
                     this.commonResource = ((AskingDrawAction)act).getCommonResource();
-                    this.isCommonResourceEmpty = ((AskingDrawAction)act).isCommonResourceEmpty();
+                    this.resourceDeck = ((AskingDrawAction)act).isCommonResourceEmpty();
                 }
                 break;
 
