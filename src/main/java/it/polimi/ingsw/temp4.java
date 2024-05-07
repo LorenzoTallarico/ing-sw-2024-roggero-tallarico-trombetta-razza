@@ -44,7 +44,7 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.tempPrint(ris.get(j));
+                printer.largeCardBothSidesPrinter(ris.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -84,7 +84,7 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.tempPrint(gld.get(j));
+                printer.largeCardBothSidesPrinter(gld.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -118,7 +118,7 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.tempPrint(strt.get(j));
+                printer.largeCardBothSidesPrinter(strt.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -149,13 +149,24 @@ public class temp4 {
                 } else {
                     System.out.println("error");
                 }
-                printer.tempPrint(ach.get(j));
+                printer.largeCardBothSidesPrinter(ach.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        String AsciiArt =
+                "  ______                   __                            __    __              __                                   __  __            \n"+
+                        " /      \\                 /  |                          /  \\  /  |            /  |                                 /  |/  |           \n"+
+                        "/$$$$$$  |  ______    ____$$ |  ______   __    __       $$  \\ $$ |  ______   _$$ |_    __    __   ______   ______  $$ |$$/   _______  \n"+
+                        "$$ |  $$/  /      \\  /    $$ | /      \\ /  \\  /  |      $$$  \\$$ | /      \\ / $$   |  /  |  /  | /      \\ /      \\ $$ |/  | /       | \n"+
+                        "$$ |      /$$$$$$  |/$$$$$$$ |/$$$$$$  |$$  \\/$$/       $$$$  $$ | $$$$$$  |$$$$$$/   $$ |  $$ |/$$$$$$  |$$$$$$  |$$ |$$ |/$$$$$$$/  \n"+
+                        "$$ |   __ $$ |  $$ |$$ |  $$ |$$    $$ | $$  $$<        $$ $$ $$ | /    $$ |  $$ | __ $$ |  $$ |$$ |  $$/ /    $$ |$$ |$$ |$$      \\  \n"+
+                        "$$ \\__/  |$$ \\__$$ |$$ \\__$$ |$$$$$$$$/  /$$$$  \\       $$ |$$$$ |/$$$$$$$ |  $$ |/  |$$ \\__$$ |$$ |     /$$$$$$$ |$$ |$$ | $$$$$$  | \n"+
+                        "$$    $$/ $$    $$/ $$    $$ |$$       |/$$/ $$  |      $$ | $$$ |$$    $$ |  $$  $$/ $$    $$/ $$ |     $$    $$ |$$ |$$ |/     $$/  \n"+
+                        " $$$$$$/   $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/       $$/   $$/  $$$$$$$/    $$$$/   $$$$$$/  $$/       $$$$$$$/ $$/ $$/ $$$$$$$/   \n";
 
+        System.out.println(AsciiArt);
     }
 }
