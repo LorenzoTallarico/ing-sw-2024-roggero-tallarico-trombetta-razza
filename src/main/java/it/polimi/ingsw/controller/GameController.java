@@ -46,21 +46,23 @@ public class GameController {
     }
 
 
-    public boolean placeCard(Card card, boolean side, int row, int column) throws RemoteException {
-            synchronized (this.model) {
-                if(model.getGameState().equals(GameState.GAME)||model.getGameState().equals(GameState.LASTROUND)) {
-                    return model.getPlayers().get(model.getCurrPlayer()).place(card, side, row, column);
-                }
-                return false;
+    //playerName superfluo perché controllo già prendendo il currPlayer sul model però si potrebbe fare un doppio
+    public boolean placeCard(String playerName, Card card, boolean side, int row, int column) throws RemoteException {
+        synchronized (this.model) {
+            if(model.getGameState().equals(GameState.GAME)||model.getGameState().equals(GameState.LASTROUND)) {
+                return model.getPlayers().get(model.getCurrPlayer()).place(card, side, row, column);
             }
+            return false;
+        }
     }
 
-    public boolean drawCard(int index) {
+    //idem sopra per playerName
+    public boolean drawCard(String playerName, int index) throws RemoteException {
         synchronized (this.model) {
             if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
                 if(getPlayers().get(model.getCurrPlayer()).getHand().size() == 2){
-                    Card card = model.draw(index);
-                    if (model.draw(index) != null) {
+                    Card card = model.draw(model.getPlayers().get(model.getCurrPlayer()).getName(), index);
+                    if (model.draw(model.getPlayers().get(model.getCurrPlayer()).getName(), index) != null) {
                         model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
                         model.nextPlayer(true);
                         return true;

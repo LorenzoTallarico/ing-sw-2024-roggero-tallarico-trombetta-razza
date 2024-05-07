@@ -6,14 +6,15 @@ import it.polimi.ingsw.networking.action.ActionType;
 
 public class ChosenDrawCardAction extends Action {
 
-    private final Card card; //da gestire poi il cast a seconda della carta
+    private final int index; //da gestire poi il cast a seconda della carta
 
-    public ChosenDrawCardAction(String author, Card card) {
+    public ChosenDrawCardAction(String author, int index) {
         super(ActionType.CHOSENDRAWCARD, author, null);
-        this.card = card;
+        this.index = index;
     }
 
-    public Card getCard() {
-        return card;
+    public int getIndex() {
+        return index;
     }
+
 }

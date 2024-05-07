@@ -20,7 +20,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 //NB: qua NON è sufficiente gestire le eccezioni con throws ma si dovrà usare try-catch correttamente
 public class RmiServer implements VirtualServer {
 
-    private static int PORT = 1234;
+    private static int PORT_RMI = 6969;
+    private static int PORT_SOCKET = 7171;
     private final GameController controller;
     private final ArrayList<VirtualView> clients = new ArrayList<>();
     private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>();
@@ -36,7 +37,7 @@ public class RmiServer implements VirtualServer {
         final String serverName = "GameServer";
         VirtualServer server = new RmiServer(new GameController());
         VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server,0 );
-        Registry registry = LocateRegistry.createRegistry(PORT);
+        Registry registry = LocateRegistry.createRegistry(PORT_RMI);
         registry.rebind(serverName, stub);
         System.out.println("> Server successfully started.");
 
@@ -120,10 +121,13 @@ public class RmiServer implements VirtualServer {
                     case HAND:
                         break;
                     case PLACINGCARD:
-                        if(!this.controller.placeCard(((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
+                        if(!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
                             newAction = new PlacedErrorAction(action.getAuthor());
                             clientActions.put(newAction);
                         }
+                        break;
+                    case CHOSENDRAWCARD:
+                        this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction)action).getIndex());
                         break;
                     default:
                         break;

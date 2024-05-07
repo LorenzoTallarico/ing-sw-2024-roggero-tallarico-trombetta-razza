@@ -40,7 +40,8 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     private ArrayList<GoldCard> commonGold;
     private boolean goldDeck;
     private boolean resourceDeck;
-
+    boolean repeatDraw;
+    private static final String LOCAL_HOST = "127.0.0.1";
 
     public RmiClient(VirtualServer server) throws RemoteException {
         this.server = server;
@@ -73,10 +74,12 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     private void runCli() throws RemoteException {
         Scanner scan = new Scanner(System.in);
-        Message msg = null;
-        Action a = null;
+        Message msg;
+        Action a;
 
         while(true) {
+            a = null;
+            msg = null;
             String line = scan.nextLine();
             if (line.trim().isEmpty())
                 continue;
@@ -220,30 +223,65 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "draw":
                     if(state.equals(State.DRAW)) {
+                        System.out.println("Common gold cards 1 - 2:");
                         for(Card c : commonGold)
                             customPrint.cardPrinter(c, true);
+                        System.out.println("Common resources cards 3 - 4::");
                         for(Card c : commonResource)
                             customPrint.cardPrinter(c, true);
-                        //stampare qualcosa che rappresenti
+                        if(goldDeck){
+                            System.out.println("5 --> Gold deck");
+                        }
+                        if(resourceDeck){
+                            System.out.println("6 --> Resource deck");
+                        }
                         int drawChoice = 0;
                         do {
                             //da stampare poi in TUI la corrispondenza tra drawChoice e carta disegnata
-                            System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
+                            repeatDraw = false;
                             drawChoice = Integer.parseInt(scan.nextLine());
-                            if(drawChoice < 1 || drawChoice > 6)
-                                System.out.println("> Please enter a valid number");
-                        } while(drawChoice < 1 || drawChoice > 6);
+                            if (goldDeck && resourceDeck) {
+                                System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
+                                if(drawChoice < 1 || drawChoice > 6){
+                                    System.out.println("> Please enter a valid number");
+                                    repeatDraw = true;
+                                }
+                            } else if (!goldDeck && resourceDeck){
+                                System.out.print("> Enter 1, 2, 3, 4 or 6 to draw your card: ");
+                                if(drawChoice < 1 || drawChoice > 6 || drawChoice == 5){
+                                    System.out.println("> Please enter a valid number");
+                                    repeatDraw = true;
+                                }
+                            }
+                            else if(goldDeck && !resourceDeck) {
+                                System.out.print("> Enter 1, 2, 3, 4 or 5 to draw your card: ");
+                                if(drawChoice < 1 || drawChoice > 5){
+                                    System.out.println("> Please enter a valid number");
+                                    repeatDraw = true;
+                                }
+                            }
+                            else if(!goldDeck && !resourceDeck) {
+                                System.out.print("> Enter 1, 2, 3 or 4 to draw your card: ");
+                                if(drawChoice < 1 || drawChoice > 4){
+                                    System.out.println("> Please enter a valid number");
+                                    repeatDraw = true;
+                                }
+                            }
+                        } while(repeatDraw);
                         //qua non ho ancora capito se volete Choose o Chosen nel dubbio metto Chosen
-                       // !!!!----------- CHOSEN, è CHOSEN !!!!😘😘😘
-                        //a = new ChosenDrawCardAction(nickname, ????????);
+                        // !!!!----------- CHOSEN, è CHOSEN !!!!😘😘😘
+                        a = new ChosenDrawCardAction(nickname, drawChoice-1);
                         //qua o con uno switch o un lungo if-elseif vedere che parametri passare in Action 'a'
                         // il problema è decidere come fare se il player decide di pescare una carta da un deck (magari un altra action o far passare altri parametri)
                         server.sendAction(a);
-                        state = State.COMMANDS;
                         //con l'action che poi viene mandata va poi anche gestito il passaggio dal turno di un giocatore al successivo
                     } else {
                         System.err.println("> Permission denied, you can't draw a card right now.");
                     }
+                    break;
+                case "playground":
+                    System.out.println("> This is your playground:");
+                    customPrint.playgroundPrinter(p.getArea());
                     break;
                 default:
                     System.err.println("> Command unknown, write \"help\" for a list of commands.");
@@ -342,8 +380,14 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     this.resourceDeck = ((AskingDrawAction)act).isCommonResourceEmpty();
                 }
                 break;
-
-
+            case CARDDRAWN:
+                if(act.getRecipient().equalsIgnoreCase(nickname)){
+                    System.out.println("You drew the following card:");
+                    customPrint.largeCardBothSidesPrinter(((CardDrawnAction)act).getCard());
+                    System.out.println("Your turn has ended");
+                    state = State.COMMANDS;
+                }
+                break;
             default:
                 break;
         }

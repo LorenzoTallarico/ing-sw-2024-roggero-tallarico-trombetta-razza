@@ -423,7 +423,7 @@ public class Game implements Serializable {
      * @param index indice per selezione: convenzione 0 prima risorsa tavolo, 1 seconda risorsa tavolo, 2 mazzo risorse, 3 prima gold tavolo 4 seconda gold tavolo 5 mazzo gold
      * @return Card or null if indexOutOfBound or position empty
      */
-    public Card draw(int index) { //Da sistemare
+    public Card draw(String name, int index) throws RemoteException {
         if(index >= 0 && index <= 5) {
             Card drawCard = null;
             if (index < 3) {
@@ -436,6 +436,7 @@ public class Game implements Serializable {
                         if (!resourceDeck.isEmpty())
                             commonResource.add(index, popResourceCard());
                     }
+                    bigListener.notifyDrawCompleted(name, drawCard);
                     return drawCard;
                 }
             }
@@ -450,6 +451,7 @@ public class Game implements Serializable {
                         if(!goldDeck.isEmpty())
                             commonGold.add(index, popGoldCard());
                     }
+                    bigListener.notifyDrawCompleted(name, drawCard);
                     return drawCard;
                 }
             }

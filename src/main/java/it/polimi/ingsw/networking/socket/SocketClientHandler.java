@@ -10,10 +10,10 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-
+/*
 public class SocketClientHandler implements VirtualViewSocket {
     final GameController controller;
-    final SocketServer server;
+    //final SocketServer server;
     final BufferedReader input;
     //da capire se ha senso usare Reader e Writer *BUFFERED*
     final PrintWriter output;;
@@ -22,7 +22,7 @@ public class SocketClientHandler implements VirtualViewSocket {
 
     //permette di leggere dal socket e comunicare cosa abbiamo ricevuto e applicare modifiche tramite controller
     // ci da un modo per comunicare ai client
-    public SocketClientHandler(GameController controller, SocketServer server, BufferedReader input, PrintWriter output/*, VirtualViewSocket view*/) {
+    public SocketClientHandler(GameController controller, SocketServer server, BufferedReader input, PrintWriter output/*, VirtualViewSocket view*//*) {
         this.controller = controller;
         this.server = server;
         this.input = input;
@@ -103,3 +103,4 @@ public class SocketClientHandler implements VirtualViewSocket {
 
 
 }
+*/

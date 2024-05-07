@@ -1996,6 +1996,11 @@ public class Print {
         System.out.println(result[0] + "\n" + result[1] + "\n" + result[2]);
     }
 
+    /**
+     * Given a playground this function converts it in an array of string
+     * @param area The playground we want to convert
+     * @return an array of strings
+     */
     private String[] playgroundToString(Playground area) {
         Space space;
         Card card;
@@ -2119,22 +2124,22 @@ public class Print {
             switch(card.getResource()) {
                 case WOLF:
                     corners[4] = "W";
-                    System.out.print(ANSI_BLUE);
+                    Arrays.fill(result, ANSI_BLUE);
                     def = ANSI_BLUE;
                     break;
                 case LEAF:
                     corners[4] = "L";
-                    System.out.print(ANSI_GREEN);
+                    Arrays.fill(result, ANSI_GREEN);
                     def = ANSI_GREEN;
                     break;
                 case BUTTERFLY:
                     corners[4] = "B";
-                    System.out.print(ANSI_PURPLE);
+                    Arrays.fill(result, ANSI_PURPLE);
                     def = ANSI_PURPLE;
                     break;
                 case MUSHROOM:
                     corners[4] = "M";
-                    System.out.print(ANSI_RED);
+                    Arrays.fill(result, ANSI_RED);
                     def = ANSI_RED;
                     break;
                 default:
@@ -2195,97 +2200,98 @@ public class Print {
                 if(card.getPoints() != 0)
                     pts = ANSI_YELLOW + card.getPoints() + def;
                 if(corners[3].equals("x")) {
-                    System.out.print("╭────");
+                    result[0] = result[0].concat("╭────");
                 } else {
-                    System.out.print("╭───┬");
+                    result[0] = result[0].concat("╭───┬");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("───────────────╮");
+                    result[0] = result[0].concat("───────────────╮");
                 } else {
-                    System.out.println("───────────┬───╮");
+                    result[0] = result[0].concat("───────────┬───╮");
                 }
                 if(corners[3].equals("x")) {
-                    System.out.print("│    ");
+                    result[1] = result[1].concat("│    ");
                 } else {
-                    System.out.print("│ " + corners[3] + " │");
+                    result[1] = result[1].concat("│ " + corners[3] + " │");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("     " + pts + "         │");
+                    result[1] = result[1].concat("     " + pts + "         │");
                 } else {
-                    System.out.println("     " + pts + "     │ " + corners[0] + " │");
+                    result[1] = result[1].concat("     " + pts + "     │ " + corners[0] + " │");
                 }
                 if(corners[3].equals("x")) {
-                    System.out.print("│    ");
+                    result[2] = result[2].concat("│    ");
                 } else {
-                    System.out.print("├───╯");
+                    result[2] = result[2].concat("├───╯");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("               │");
+                    result[2] = result[2].concat("               │");
                 } else {
-                    System.out.println("           ╰───┤");
+                    result[2] = result[2].concat("           ╰───┤");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("│    ");
+                    result[3] = result[3].concat("│    ");
                 } else {
-                    System.out.print("├───╮");
+                    result[3] = result[3].concat("├───╮");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("               │");
+                    result[3] = result[3].concat("               │");
                 } else {
-                    System.out.println("           ╭───┤");
+                    result[3] = result[3].concat("           ╭───┤");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("│    ");
+                    result[4] = result[4].concat("│    ");
                 } else {
-                    System.out.print("│ " + corners[2] + " │");
+                    result[4] = result[4].concat("│ " + corners[2] + " │");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("               │");
+                    result[4] = result[4].concat("               │");
                 } else {
-                    System.out.println("           │ " + corners[1] + " │");
+                    result[4] = result[4].concat("           │ " + corners[1] + " │");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("╰────");
+                    result[5] = result[5].concat("╰────");
                 } else {
-                    System.out.print("╰───┴");
+                    result[5] = result[5].concat("╰───┴");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("───────────────╯");
+                    result[5] = result[5].concat("───────────────╯");
                 } else {
-                    System.out.println("───────────┴───╯");
+                    result[5] = result[5].concat("───────────┴───╯");
                 }
             } else { //back side
-                System.out.println("╭───┬───────────┬───╮");
-                System.out.println("│   │           │   │");
-                System.out.println("├───╯           ╰───┤");
-                System.out.println("├───╮     " + corners[4] + "     ╭───┤");
-                System.out.println("│   │           │   │");
-                System.out.println("╰───┴───────────┴───╯");
+                result[0] = result[0].concat("╭───┬───────────┬───╮");
+                result[1] = result[1].concat("│   │           │   │");
+                result[2] = result[2].concat("├───╯           ╰───┤");
+                result[3] = result[3].concat("├───╮     " + corners[4] + "     ╭───┤");
+                result[4] = result[4].concat("│   │           │   │");
+                result[5] = result[5].concat("╰───┴───────────┴───╯");
             }
         } else if(card.getClass() == GoldCard.class) { //printing a gold card
             switch(card.getResource()) {
                 case WOLF:
                     corners[4] = "W";
-                    System.out.print(ANSI_BLUE);
+                    Arrays.fill(result, ANSI_BLUE);
                     def = ANSI_BLUE;
                     break;
                 case LEAF:
                     corners[4] = "L";
-                    System.out.print(ANSI_GREEN);
+                    Arrays.fill(result, ANSI_GREEN);
                     def = ANSI_GREEN;
                     break;
                 case BUTTERFLY:
                     corners[4] = "B";
-                    System.out.print(ANSI_PURPLE);
+                    Arrays.fill(result, ANSI_PURPLE);
                     def = ANSI_PURPLE;
                     break;
                 case MUSHROOM:
                     corners[4] = "M";
-                    System.out.print(ANSI_RED);
+                    Arrays.fill(result, ANSI_RED);
                     def = ANSI_RED;
                     break;
                 default:
                     corners[4] = "#";
+                    Arrays.fill(result, ANSI_RESET);
                     def = ANSI_RESET;
                     break;
             }
@@ -2381,293 +2387,293 @@ public class Print {
                 }
                 pts = pts + def;
                 if(corners[3].equals("x")) {
-                    System.out.print("╭────");
+                    result[0] = result[0].concat("╭────");
                 } else {
-                    System.out.print("╭───┬");
+                    result[0] = result[0].concat("╭───┬");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("───────────────╮");
+                    result[0] = result[0].concat("───────────────╮");
                 } else {
-                    System.out.println("───────────┬───╮");
+                    result[0] = result[0].concat("───────────┬───╮");
                 }
                 if(corners[3].equals("x")) {
-                    System.out.print("│    ");
+                    result[1] = result[1].concat("│    ");
                 } else {
-                    System.out.print("│ " + corners[3] + " │");
+                    result[1] = result[1].concat("│ " + corners[3] + " │");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("    " + pts + "        │");
+                    result[1] = result[1].concat("    " + pts + "        │");
                 } else {
-                    System.out.println("    " + pts + "    │ " + corners[0] + " │");
+                    result[1] = result[1].concat("    " + pts + "    │ " + corners[0] + " │");
                 }
                 if(corners[3].equals("x")) {
-                    System.out.print("│    ");
+                    result[2] = result[2].concat("│    ");
                 } else {
-                    System.out.print("├───╯");
+                    result[2] = result[2].concat("├───╯");
                 }
                 if(corners[0].equals("x")) {
-                    System.out.println("               │");
+                    result[2] = result[2].concat("               │");
                 } else {
-                    System.out.println("           ╰───┤");
+                    result[2] = result[2].concat("           ╰───┤");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("│    ");
+                    result[3] = result[3].concat("│    ");
                 } else {
-                    System.out.print("├───╮");
+                    result[3] = result[3].concat("├───╮");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("               │");
+                    result[3] = result[3].concat("               │");
                 } else {
-                    System.out.println("           ╭───┤");
+                    result[3] = result[3].concat("           ╭───┤");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("│    ");
+                    result[4] = result[4].concat("│    ");
                 } else {
-                    System.out.print("│ " + corners[2] + " │");
+                    result[4] = result[4].concat("│ " + corners[2] + " │");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("   " + reqRes + "       │");
+                    result[4] = result[4].concat("   " + reqRes + "       │");
                 } else {
-                    System.out.println("   " + reqRes + "   │ " + corners[1] + " │");
+                    result[4] = result[4].concat("   " + reqRes + "   │ " + corners[1] + " │");
                 }
                 if(corners[2].equals("x")) {
-                    System.out.print("╰────");
+                    result[5] = result[5].concat("╰────");
                 } else {
-                    System.out.print("╰───┴");
+                    result[5] = result[5].concat("╰───┴");
                 }
                 if(corners[1].equals("x")) {
-                    System.out.println("───────────────╯");
+                    result[5] = result[5].concat("───────────────╯");
                 } else {
-                    System.out.println("───────────┴───╯");
+                    result[5] = result[5].concat("───────────┴───╯");
                 }
             } else { //back side
-                System.out.println("╭───┬───────────┬───╮");
-                System.out.println("│   │           │   │");
-                System.out.println("├───╯           ╰───┤");
-                System.out.println("├───╮     " + corners[4] + "     ╭───┤");
-                System.out.println("│   │           │   │");
-                System.out.println("╰───┴───────────┴───╯");
+                result[0] = result[0].concat("╭───┬───────────┬───╮");
+                result[1] = result[1].concat("│   │           │   │");
+                result[2] = result[2].concat("├───╯           ╰───┤");
+                result[3] = result[3].concat("├───╮     " + corners[4] + "     ╭───┤");
+                result[4] = result[4].concat("│   │           │   │");
+                result[5] = result[5].concat("╰───┴───────────┴───╯");
             }
         } else if(card.getClass() == AchievementCard.class) { //printing an achievement card
             def = ANSI_YELLOW;
-            System.out.print(def);
+            Arrays.fill(result, def);
             if(side) {
                 if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyDiagonal.class) {
                     switch(card.getResource()) {
                         case WOLF:
                             def = ANSI_BLUE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│      ██     " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│  ██               │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│      ██     " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│  ██               │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case LEAF:
                             def = ANSI_GREEN;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│  ██         " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│      ██           │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│  ██         " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│      ██           │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case MUSHROOM:
                             def = ANSI_RED;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│      ██     " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│  ██               │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│      ██     " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│  ██               │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case BUTTERFLY:
                             def = ANSI_PURPLE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│  ██         " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│      ██           │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│  ██         " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│      ██           │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         default:
-                            System.out.println("╭───┬───────────┬───╮");
-                            System.out.println("│ # │           │ # │");
-                            System.out.println("├───╯    ACH    ╰───┤");
-                            System.out.println("├───╮  DIAGONAL ╭───┤");
-                            System.out.println("│ # │   ERROR   │ # │");
-                            System.out.println("╰───┴───────────┴───╯");
+                            result[0] = result[0].concat("╭───┬───────────┬───╮");
+                            result[1] = result[1].concat("│ # │           │ # │");
+                            result[2] = result[2].concat("├───╯    ACH    ╰───┤");
+                            result[3] = result[3].concat("├───╮  DIAGONAL ╭───┤");
+                            result[4] = result[4].concat("│ # │   ERROR   │ # │");
+                            result[5] = result[5].concat("╰───┴───────────┴───╯");
                             break;
                     }
                 } else if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyItem.class) {
                     def = ANSI_WHITE;
-                    System.out.print(def);
+                    Arrays.fill(result, def);
                     switch(((AchievementCard) card).getItem()) {
                         case JAR:
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     J       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    J J        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     J       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    J J        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case SCROLL:
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     S       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    S S        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     S       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    S S        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case PLUME:
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     P       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    P P        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     P       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    P P        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         default:
-                            System.out.println("╭───┬───────────┬───╮");
-                            System.out.println("│ # │           │ # │");
-                            System.out.println("├───╯   ACH     ╰───┤");
-                            System.out.println("├───╮   ITEM    ╭───┤");
-                            System.out.println("│ # │   ERROR   │ # │");
-                            System.out.println("╰───┴───────────┴───╯");
+                            result[0] = result[0].concat("╭───┬───────────┬───╮");
+                            result[1] = result[1].concat("│ # │           │ # │");
+                            result[2] = result[2].concat("├───╯   ACH     ╰───┤");
+                            result[3] = result[3].concat("├───╮   ITEM    ╭───┤");
+                            result[4] = result[4].concat("│ # │   ERROR   │ # │");
+                            result[5] = result[5].concat("╰───┴───────────┴───╯");
                             break;
                     }
                 } else if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyLshape.class) {
                     switch(card.getResource()) {
                         case WOLF:
                             def = ANSI_BLUE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│      " + ANSI_RED + "██" + def + "     " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│    ██             │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│      " + ANSI_RED + "██" + def + "     " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│    ██             │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case LEAF:
                             def = ANSI_GREEN;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│    ██       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│  " + ANSI_PURPLE + "██" + def + "               │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│    ██       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│  " + ANSI_PURPLE + "██" + def + "               │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case MUSHROOM:
                             def = ANSI_RED;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│    ██       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│      " + ANSI_GREEN + "██" + def + "           │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│    ██       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│      " + ANSI_GREEN + "██" + def + "           │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case BUTTERFLY:
                             def = ANSI_PURPLE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│  " + ANSI_BLUE + "██" + def +  "         " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│    ██             │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│  " + ANSI_BLUE + "██" + def +  "         " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    ██         " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│    ██             │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         default:
-                            System.out.println("╭───┬───────────┬───╮");
-                            System.out.println("│ # │           │ # │");
-                            System.out.println("├───╯    ACH    ╰───┤");
-                            System.out.println("├───╮  L SHAPE  ╭───┤");
-                            System.out.println("│ # │   ERROR   │ # │");
-                            System.out.println("╰───┴───────────┴───╯");
+                            result[0] = result[0].concat("╭───┬───────────┬───╮");
+                            result[1] = result[1].concat("│ # │           │ # │");
+                            result[2] = result[2].concat("├───╯    ACH    ╰───┤");
+                            result[3] = result[3].concat("├───╮  L SHAPE  ╭───┤");
+                            result[4] = result[4].concat("│ # │   ERROR   │ # │");
+                            result[5] = result[5].concat("╰───┴───────────┴───╯");
                             break;
                     }
                 } else if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyMixed.class) {
                     def = ANSI_WHITE;
-                    System.out.println(def + "╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                    System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                    System.out.println("│             " + ANSI_YELLOW + "'\\./'" + def + " │");
-                    System.out.println("│    P J S      " + ANSI_YELLOW + "'" + def + "   │");
-                    System.out.println("│                   │");
-                    System.out.println("╰───────────────────╯");
+                    Arrays.fill(result, def);
+                    result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                    result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                    result[2] = result[2].concat("│             " + ANSI_YELLOW + "'\\./'" + def + " │");
+                    result[3] = result[3].concat("│    P J S      " + ANSI_YELLOW + "'" + def + "   │");
+                    result[4] = result[4].concat("│                   │");
+                    result[5] = result[5].concat("╰───────────────────╯");
                 } else if(((AchievementCard)card).getStrategy().getClass() == ConcreteStrategyResource.class) {
                     switch(card.getResource()) {
                         case WOLF:
                             def = ANSI_BLUE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     W       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    W W        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     W       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    W W        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case LEAF:
                             def = ANSI_GREEN;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     L       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    L L        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     L       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    L L        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case MUSHROOM:
                             def = ANSI_RED;
-                            System.out.print(def);
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     M       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    M M        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result, def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     M       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    M M        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         case BUTTERFLY:
                             def = ANSI_PURPLE;
-                            System.out.print(def);
-                            System.out.println("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
-                            System.out.println("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
-                            System.out.println("│     B       " + ANSI_YELLOW + "'\\./'" + def + " │");
-                            System.out.println("│    B B        " + ANSI_YELLOW + "'" + def + "   │");
-                            System.out.println("│                   │");
-                            System.out.println("╰───────────────────╯");
+                            Arrays.fill(result,def);
+                            result[0] = result[0].concat("╭─────────────" + ANSI_YELLOW + "┬───┬" + def + "─╮");
+                            result[1] = result[1].concat("│             " + ANSI_YELLOW + "│ " + card.getPoints() + " │" + def + " │");
+                            result[2] = result[2].concat("│     B       " + ANSI_YELLOW + "'\\./'" + def + " │");
+                            result[3] = result[3].concat("│    B B        " + ANSI_YELLOW + "'" + def + "   │");
+                            result[4] = result[4].concat("│                   │");
+                            result[5] = result[5].concat("╰───────────────────╯");
                             break;
                         default:
-                            System.out.println("╭───┬───────────┬───╮");
-                            System.out.println("│ # │           │ # │");
-                            System.out.println("├───╯    ACH    ╰───┤");
-                            System.out.println("├───╮  RESOURCE ╭───┤");
-                            System.out.println("│ # │   ERROR   │ # │");
-                            System.out.println("╰───┴───────────┴───╯");
+                            result[0] = result[0].concat("╭───┬───────────┬───╮");
+                            result[1] = result[1].concat("│ # │           │ # │");
+                            result[2] = result[2].concat("├───╯    ACH    ╰───┤");
+                            result[3] = result[3].concat("├───╮  RESOURCE ╭───┤");
+                            result[4] = result[4].concat("│ # │   ERROR   │ # │");
+                            result[5] = result[5].concat("╰───┴───────────┴───╯");
                             break;
                     }
                 } else {
-                    System.out.println("╭───┬───────────┬───╮");
-                    System.out.println("│ # │           │ # │");
-                    System.out.println("├───╯    ACH    ╰───┤");
-                    System.out.println("├───╮   ERROR   ╭───┤");
-                    System.out.println("│ # │           │ # │");
-                    System.out.println("╰───┴───────────┴───╯");
+                    result[0] = result[0].concat("╭───┬───────────┬───╮");
+                    result[1] = result[1].concat("│ # │           │ # │");
+                    result[2] = result[2].concat("├───╯    ACH    ╰───┤");
+                    result[3] = result[3].concat("├───╮   ERROR   ╭───┤");
+                    result[4] = result[4].concat("│ # │           │ # │");
+                    result[5] = result[5].concat("╰───┴───────────┴───╯");
                 }
             } else {
                 def = ANSI_WHITE;
-                System.out.print(def);
-                System.out.println("╭───────────────────╮");
-                System.out.println("│" + ANSI_YELLOW + "        @@@        " + def + "│");
-                System.out.println("│" + ANSI_YELLOW + " *    ,@@@@@,    * " + def + "│");
-                System.out.println("│" + ANSI_YELLOW + "       °@#@°       " + def + "│");
-                System.out.println("│" + ANSI_YELLOW + " <>   , °#° ,   <> " + def + "│");
-                System.out.println("╰───────────────────╯");
+                Arrays.fill(result, def);
+                result[0] = result[0].concat("╭───────────────────╮");
+                result[1] = result[1].concat("│" + ANSI_YELLOW + "        @@@        " + def + "│");
+                result[2] = result[2].concat("│" + ANSI_YELLOW + " *    ,@@@@@,    * " + def + "│");
+                result[3] = result[3].concat("│" + ANSI_YELLOW + "       °@#@°       " + def + "│");
+                result[4] = result[4].concat("│" + ANSI_YELLOW + " <>   , °#° ,   <> " + def + "│");
+                result[5] = result[5].concat("╰───────────────────╯");
             }
         } else if(card.getClass() == StarterCard.class) { //printing a starter card
             def = ANSI_YELLOW;
@@ -2954,6 +2960,43 @@ public class Print {
             return largeCardToString(card, true);
         else
             return largeCardToString(card, card.isFront());
+    }
+
+    /**
+     * Printing function for text user interface, it prints the selected side of card
+     * using non-regular ascii characters
+     * @param card The card we want to print in the tui
+     * @param side The side we want to display, true for front, false for back
+     */
+    public void largeCardPrinter(Card card, boolean side) {
+        String[] lines = largeCardToString(card, side);
+        String result = "";
+        for (String line : lines)
+            result = result.concat(line + "\n");
+        System.out.println(result);
+    }
+
+    /**
+     * Printing function for text user interface, it prints the current side of the card
+     * with non-regular ascii characters, it's an overloading of the previous method
+     * @param card The card we want to print in the tui
+     */
+    public void largeCardPrinter(Card card) {
+        largeCardPrinter(card, card.isFront());
+    }
+
+    /**
+     * Printing function for text user interface, it prints both sides of the card
+     * with non-regular ascii characters
+     * @param card The card we want to print in the tui
+     */
+    public void largeCardBothSidesPrinter(Card card) {
+        String[] front = largeCardToString(card, true);
+        String[] back = largeCardToString(card, false);
+        String toPrint = "";
+        for(int i = 0; i < front.length; i++)
+            toPrint = toPrint.concat(front[i] + " " + back[i] + "\n");
+        System.out.print(toPrint);
     }
 
 }

@@ -49,6 +49,14 @@ public class Listener {
     }
 
 
+    public void notifyDrawCompleted(String nickname, Card card) throws RemoteException {
+        for(VirtualView client : clients) {
+            Action action = new CardDrawnAction(nickname, card);
+            client.showAction(action);
+        }
+    }
+
+
     public void notifyHands(ArrayList<Player> players) throws RemoteException {
         for(Player p : players) {
             Action action = new HandAction(p.getName(), p.getHand());

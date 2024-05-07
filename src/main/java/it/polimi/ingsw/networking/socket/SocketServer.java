@@ -1,6 +1,7 @@
 package it.polimi.ingsw.networking.socket;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.networking.rmi.VirtualServer;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -9,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
-public class SocketServer {
+/*
+public class SocketServer implements VirtualServer {
     final ServerSocket listenSocket;
     static int PORT = 1235;
     final GameController controller;
@@ -63,3 +64,4 @@ public class SocketServer {
         new SocketServer(listenSocket, new GameController()).runServer(); //! changed gamecontroller, not param!!!
     }
 }
+*/
