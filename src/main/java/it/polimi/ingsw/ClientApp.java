@@ -15,7 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-
+/*
 public class ClientApp extends UnicastRemoteObject implements VirtualView {
 
 
@@ -58,7 +58,6 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
-
         String AsciiArt =
                 "  ______                   __                            __    __              __                                   __  __            \n"+
                 " /      \\                 /  |                          /  \\  /  |            /  |                                 /  |/  |           \n"+
@@ -121,6 +120,6 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
     public String getNickname() throws RemoteException {
         return "";
     }
-
+*/
 }
 
