@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import it.polimi.ingsw.listener.Listener;
+import it.polimi.ingsw.util.Print;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
@@ -160,19 +161,24 @@ public class Player implements Serializable {
 
     /**
      * Method that places the card in the space indicated, if possible
-     * @param card Card that would be placed
+     * @param cardIndex inter representing the position in the hand of the card to place
      * @param row integer indicating the row of the playground where the card would be placed
      * @param column integer indicating the column of the playground where the card would be placed
      * @return boolean 'true' if the card was placed correctly, 'false' otherwise
      */
-    public boolean place(Card card, boolean side, int row, int column) throws RemoteException {
+    public boolean place(int cardIndex, boolean side, int row, int column) throws RemoteException {
+        Card card = hand.get(cardIndex);
         card.setFront(side);
-
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
+            Print customPrint = new Print();
+            System.out.println("-------- PRIMA DEL REMOVE ---------");
+            customPrint.largeHandPrinter(hand, null);
+            hand.remove(cardIndex);
             int score = area.setSpace(card, row, column);
-            hand.remove(card);
+            System.out.println("-------- DOPO IL REMOVE ---------");
+            customPrint.largeHandPrinter(hand, null);
             points += score;
  //           try {
             Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column);

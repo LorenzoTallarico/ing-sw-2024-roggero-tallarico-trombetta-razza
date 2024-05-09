@@ -47,10 +47,10 @@ public class GameController {
 
 
     //playerName superfluo perché controllo già prendendo il currPlayer sul model però si potrebbe fare un doppio
-    public boolean placeCard(String playerName, Card card, boolean side, int row, int column) throws RemoteException {
+    public boolean placeCard(String playerName, int cardIndex, boolean side, int row, int column) throws RemoteException {
         synchronized (this.model) {
-            if(model.getGameState().equals(GameState.GAME)||model.getGameState().equals(GameState.LASTROUND)) {
-                return model.getPlayers().get(model.getCurrPlayer()).place(card, side, row, column);
+            if(model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
+                return model.getPlayers().get(model.getCurrPlayer()).place(cardIndex, side, row, column);
             }
             return false;
         }

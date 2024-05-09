@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class Listener {
 
-    private ArrayList<VirtualView> clients;
+    private final ArrayList<VirtualView> clients;
 
     public Listener(ArrayList<VirtualView> clients) {
         this.clients = clients;
@@ -28,30 +28,30 @@ public class Listener {
     }
 
     public void notifyCardPlacement(String nickname, Player p, Card card, int row, int col) throws RemoteException {
+        Action action = new PlacedCardAction(nickname, p, card, row, col);
         for(VirtualView client : clients) {
-            Action action = new PlacedCardAction(nickname, p, card, row, col);
             client.showAction(action);
         }
     }
 
     public void notifyCardError(String nickname) throws RemoteException {
+        Action action = new PlacedErrorAction(nickname);
         for(VirtualView client : clients) {
-            Action action = new PlacedErrorAction(nickname);
             client.showAction(action);
         }
     }
 
     public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, boolean goldDeck, ArrayList<ResourceCard> commonResource, boolean resourceDeck) throws RemoteException{
+        Action action = new AskingDrawAction(nickname, commonGold, goldDeck, commonResource, resourceDeck);
         for(VirtualView client : clients) {
-            Action action = new AskingDrawAction(nickname, commonGold, goldDeck, commonResource, resourceDeck);
             client.showAction(action);
         }
     }
 
 
-    public void notifyDrawCompleted(String nickname, Card card) throws RemoteException {
+    public void notifyDrawCompleted(String nickname, Card card, Player player) throws RemoteException {
+        Action action = new CardDrawnAction(nickname, card, player);
         for(VirtualView client : clients) {
-            Action action = new CardDrawnAction(nickname, card);
             client.showAction(action);
             System.out.println("qui arriva la notifyDrawCompleted");
         }

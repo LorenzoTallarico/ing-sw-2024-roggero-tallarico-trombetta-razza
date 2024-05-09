@@ -7,21 +7,21 @@ import it.polimi.ingsw.networking.action.ActionType;
 
 public class PlacingCardAction extends Action {
 
-    private final Card card;
+    private final int cardIndex;
     private final int row;
     private final int column;
     private final boolean side;
 
-    public PlacingCardAction(Card card, boolean side, int row, int column, String author) {
+    public PlacingCardAction(int cardIndex, boolean side, int row, int column, String author) {
         super(ActionType.PLACINGCARD, author, null);
-        this.card = card;
+        this.cardIndex = cardIndex;
         this.row = row;
         this.column = column;
         this.side = side;
     }
 
-    public Card getCard() {
-        return card;
+    public int getCardIndex() {
+        return cardIndex;
     }
 
     public int getRow() {

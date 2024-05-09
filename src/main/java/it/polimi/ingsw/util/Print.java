@@ -2986,6 +2986,7 @@ public class Print {
         largeCardPrinter(card, card.isFront());
     }
 
+
     /**
      * Printing function for text user interface, it prints both sides of the card
      * with non-regular ascii characters
@@ -3001,8 +3002,28 @@ public class Print {
     }
 
     /**
+     * Printing function for text user interface, given an arraylist of achievement
+     * cards, it prints them all in a single row, showing only the front side
+     * @param achCards The arraylist containing the cards we want to be printed
+     */
+    public void inLineAchievementPrinter(ArrayList<AchievementCard> achCards) {
+        String[] lines = new String[6];
+        String[] temp;
+        Arrays.fill(lines, "");
+        for(int i = 0; i < achCards.size(); i++) {
+            temp = largeCardToString(achCards.get(i), true);
+            for(int j = 0; j < 6; j++)
+                lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+        }
+        String result = "";
+        for(int i = 0; i < 6; i++)
+            result = result.concat(lines[i] + "\n");
+        System.out.print(result);
+    }
+
+    /**
      * Printing function for text user interface, given an arraylist of cards,
-     * it prints them all in a single row
+     * it prints them all in a single row showing their current side
      * @param cards The arraylist containing the cards we want to be printed
      */
     public void inLineLargeCardsPrinter(ArrayList<Card> cards) {
@@ -3010,19 +3031,22 @@ public class Print {
         String[] temp;
         Arrays.fill(lines, "");
         for(int i = 0; i < cards.size(); i++) {
-            if(cards.get(i).getClass() == AchievementCard.class)
-                temp = largeCardToString(cards.get(i), true);
-            else
-                temp = largeCardToString(cards.get(i));
+            temp = largeCardToString(cards.get(i));
             for(int j = 0; j < 6; j++)
                 lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
         }
         String result = "";
         for(int i = 0; i < 6; i++)
-            result = result.concat(lines + "\n");
+            result = result.concat(lines[i] + "\n");
         System.out.print(result);
     }
 
+    /** Given an array of cards, representing the hand of the player and an
+     * array of achievements, representing the secret and the common achievements,
+     * This method prints all the cards in two rows, one for each side
+     * @param cards The cards representing the hand of the player
+     * @param achievements The achievement cards representing the achievement of the player
+     */
     public void largeHandPrinter(ArrayList<Card> cards, ArrayList<AchievementCard> achievements) {
         String[] lines = new String[6];
         String[] temp;
@@ -3033,7 +3057,7 @@ public class Print {
             Arrays.fill(lines, "       ");
             result = "       " + ANSI_BOLD;
             for(int i = 0; i < cards.size(); i++) {
-                result = result.concat("       " + i + "° Card" + "       " + "   ");
+                result = result.concat("       " + (i+1) + "° Card" + "       " + "   ");
             }
             result = result.concat("             " + "Secret achievement and common achievements" + "              ");
             result = result.concat(ANSI_BOLD_RESET + "\n");
@@ -3044,11 +3068,12 @@ public class Print {
                 for(int j = 0; j < 6; j++)
                     lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
             }
-            for(int i = 0; i < achievements.size(); i++) {
-                temp = largeCardToString(achievements.get(i), true);
-                for(int j = 0; j < 6; j++)
-                    lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
-            }
+            if(achievements != null)
+                for(int i = 0; i < achievements.size(); i++) {
+                    temp = largeCardToString(achievements.get(i), true);
+                    for(int j = 0; j < 6; j++)
+                        lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
+                }
             for(int i = 0; i < 6; i++) {
                 result = result.concat(lines[i] + "\n");
             }
@@ -3057,7 +3082,7 @@ public class Print {
             lines[2] = ANSI_BOLD + "  Back " + ANSI_BOLD_RESET;
             lines[3] = ANSI_BOLD + "  side " + ANSI_BOLD_RESET;
             for(int i = 0; i < cards.size(); i++) {
-                temp = largeCardToString(cards.get(i), true);
+                temp = largeCardToString(cards.get(i), false);
                 for(int j = 0; j < 6; j++)
                     lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
             }
@@ -3078,7 +3103,6 @@ public class Print {
                 result = result.concat(lines[i] + "\n");
             }
         }
-
         System.out.print(result);
     }
 

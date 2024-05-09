@@ -121,7 +121,7 @@ public class RmiServer implements VirtualServer {
                     case HAND:
                         break;
                     case PLACINGCARD:
-                        if(!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction)action).getCard(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
+                        if(!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction)action).getCardIndex(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
                             newAction = new PlacedErrorAction(action.getAuthor());
                             clientActions.put(newAction);
                         }

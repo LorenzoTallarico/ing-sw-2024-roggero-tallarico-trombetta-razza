@@ -424,6 +424,11 @@ public class Game implements Serializable {
      * @return Card or null if indexOutOfBound or position empty
      */
     public Card draw(String name, int index) throws RemoteException {
+        Player tempPlayer = null;
+        for(Player plyr : players) {
+            if(plyr.getName().equalsIgnoreCase(name))
+                tempPlayer = plyr;
+        }
         if(index >= 0 && index <= 5) {
             Card drawCard = null;
             if (index < 3) {
@@ -436,12 +441,11 @@ public class Game implements Serializable {
                         if (!resourceDeck.isEmpty())
                             commonResource.add(index, popResourceCard());
                     }
-                    System.out.println("Nel model, sto chiamando la fine del metodo prima del listener");
-                    bigListener.notifyDrawCompleted(name, drawCard);
+                    System.out.println("-- Game.draw() -- Nel model, sto chiamando la fine del metodo prima del listener");
+                    bigListener.notifyDrawCompleted(name, drawCard, tempPlayer);
                     return drawCard;
                 }
-            }
-            else{
+            } else{
                 index -= 3;
                 if(index == 2) {
                     return popGoldCard();
@@ -452,8 +456,8 @@ public class Game implements Serializable {
                         if(!goldDeck.isEmpty())
                             commonGold.add(index, popGoldCard());
                     }
-                    System.out.println("Nel model, sto chiamando la fine del metodo prima del listener");
-                    bigListener.notifyDrawCompleted(name, drawCard);
+                    System.out.println("-- Game.draw() -- Nel model, sto chiamando la fine del metodo prima del listener");
+                    bigListener.notifyDrawCompleted(name, drawCard, tempPlayer);
                     return drawCard;
                 }
             }
