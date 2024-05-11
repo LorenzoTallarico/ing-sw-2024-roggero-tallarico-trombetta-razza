@@ -1,5 +1,5 @@
 package it.polimi.ingsw.networking.socket;
-
+/*
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.socket.VirtualServerSocket;
@@ -10,7 +10,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-/*
+
 public class SocketClientHandler implements VirtualViewSocket {
     final GameController controller;
     //final SocketServer server;

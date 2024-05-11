@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-/*
+
 public class SocketServer implements VirtualServer {
     final ServerSocket listenSocket;
     static int PORT = 1235;
@@ -64,4 +64,3 @@ public class SocketServer implements VirtualServer {
         new SocketServer(listenSocket, new GameController()).runServer(); //! changed gamecontroller, not param!!!
     }
 }
-*/
