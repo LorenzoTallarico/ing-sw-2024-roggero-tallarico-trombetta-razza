@@ -15,7 +15,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-
+/*
 public class ClientApp extends UnicastRemoteObject implements VirtualView {
 
 
@@ -123,3 +123,4 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
 
 }
 
+*/

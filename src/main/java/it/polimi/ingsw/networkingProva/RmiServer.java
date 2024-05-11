@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
-
+/*
 public class RmiServer extends UnicastRemoteObject implements VirtualServer {
     private final GameController controller;
     private BlockingQueue<Action> clientActions;
@@ -47,3 +47,5 @@ public class RmiServer extends UnicastRemoteObject implements VirtualServer {
         controller.addPlayer(p, c);
     }
 }
+*/
+ */
