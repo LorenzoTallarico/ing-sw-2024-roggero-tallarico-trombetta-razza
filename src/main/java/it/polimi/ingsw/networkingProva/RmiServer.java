@@ -48,4 +48,3 @@ public class RmiServer extends UnicastRemoteObject implements VirtualServer {
     }
 }
 */
- */
