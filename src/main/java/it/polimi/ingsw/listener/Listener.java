@@ -20,15 +20,15 @@ public class Listener {
         System.out.println("> All clients notified by starter card listener.");
         for(Player p : players) {
             StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
-            Action action = new ChooseSideStarterCardAction(p.getName(), card);
+            Action action = new ChooseSideStarterCardAction(p.getName(), card, p);
             for(VirtualView client : clients) {
                 client.showAction(action);
             }
         }
     }
 
-    public void notifyCardPlacement(String nickname, Player p, Card card, int row, int col) throws RemoteException {
-        Action action = new PlacedCardAction(nickname, p, card, row, col);
+    public void notifyCardPlacement(String nickname, Player p, Card card, int row, int col, int score) throws RemoteException {
+        Action action = new PlacedCardAction(nickname, p, card, row, col, score);
         for(VirtualView client : clients) {
             client.showAction(action);
         }
@@ -41,7 +41,7 @@ public class Listener {
         }
     }
 
-    public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, boolean goldDeck, ArrayList<ResourceCard> commonResource, boolean resourceDeck) throws RemoteException{
+    public void notifyDrawCard(String nickname, ArrayList<GoldCard> commonGold, Resource goldDeck, ArrayList<ResourceCard> commonResource, Resource resourceDeck) throws RemoteException{
         Action action = new AskingDrawAction(nickname, commonGold, goldDeck, commonResource, resourceDeck);
         for(VirtualView client : clients) {
             client.showAction(action);
@@ -49,11 +49,10 @@ public class Listener {
     }
 
 
-    public void notifyDrawCompleted(String nickname, Card card, Player player) throws RemoteException {
-        Action action = new CardDrawnAction(nickname, card, player);
+    public void notifyDrawCompleted(Player player, Card card) throws RemoteException {
+        Action action = new CardDrawnAction(player.getName(), player, card);
         for(VirtualView client : clients) {
             client.showAction(action);
-            System.out.println("qui arriva la notifyDrawCompleted");
         }
     }
 

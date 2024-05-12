@@ -1,4 +1,5 @@
 package it.polimi.ingsw.model;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -11,7 +12,6 @@ import com.google.gson.*;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.listener.Listener;
 
-// Da capire se risulta utile per gson o per Client/Server interaction il 'Serializable'
 public class Game implements Serializable {
 
     private static Game instance;
@@ -31,7 +31,7 @@ public class Game implements Serializable {
 
 //Constructor
     private Game() {
-        players = new ArrayList<Player>();
+        players = new ArrayList<>();
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
@@ -78,7 +78,15 @@ public class Game implements Serializable {
         return this.bigListener;
     }
 
+    public ArrayList<GoldCard> getGoldDeck() {
+        return goldDeck;
+    }
+
     public ArrayList<ResourceCard> getResourceDeck() {
+        return resourceDeck;
+    }
+
+    public ArrayList<ResourceCard> getOrderedResourceDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
@@ -90,7 +98,7 @@ public class Game implements Serializable {
         return resourceDeck;
     }
 
-    public ArrayList<GoldCard> getGoldDeck() {
+    public ArrayList<GoldCard> getOrderedGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
@@ -102,7 +110,7 @@ public class Game implements Serializable {
         return goldDeck;
     }
 
-    public ArrayList<AchievementCard> getAchievementDeck() {
+    public ArrayList<AchievementCard> getOrderedAchievementDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
@@ -129,6 +137,13 @@ public class Game implements Serializable {
             System.out.println("> Game started, first player is " + players.get(getCurrPlayer()).getName() + ".");
             bigListener.notifyToPlace(players.get(getCurrPlayer()));
         }
+        if(gameState.equals(GameState.FINALSCORE)) {
+            // to do calculate points of everyone
+            // to set winners booleans
+            // then, with a new listener method:
+            // update all instances of players in the clients with an action
+            // make clients see the scoreboard
+        }
     }
 
     public int getCurrPlayer() {
@@ -141,43 +156,45 @@ public class Game implements Serializable {
 
 //POP Method
     public AchievementCard popAchievementCard() {
-    AchievementCard secretAchievement = null;
-    try {
-        secretAchievement = achievementDeck.get(0);
+    AchievementCard achievement = null;
+    if(!achievementDeck.isEmpty()) {
+        achievement = achievementDeck.get(0);
         achievementDeck.remove(0);
-    } catch (IndexOutOfBoundsException e) {
-        // Gestione dell'eccezione: l'indice non esiste
-        System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
+    } else {
+        System.err.println("! achievement deck null or empty");
     }
-    return secretAchievement;
+    return achievement;
 }
 
     public GoldCard popGoldCard() {
         GoldCard card = null;
-        try {
+        if(!goldDeck.isEmpty()) {
             card = goldDeck.get(0);
             goldDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto.");
+        } else {
+            System.err.println("! gold deck null or empty");
         }
         return card;
     }
 
     public ResourceCard popResourceCard() {
-        if (resourceDeck.isEmpty()) {
-            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto.");
-            return null;
-        } else
-            return resourceDeck.remove(0);
+        ResourceCard card = null;
+        if(!resourceDeck.isEmpty()) {
+            card = resourceDeck.get(0);
+            resourceDeck.remove(0);
+        } else {
+            System.err.println("! resource deck null or empty");
+        }
+        return card;
     }
 
     public StarterCard popStarterCard() {
         StarterCard starter = null;
-        try {
+        if(!starterDeck.isEmpty()) {
             starter = starterDeck.get(0);
             starterDeck.remove(0);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto.");
+        } else {
+            System.err.println("! starter deck null or empty");
         }
         return starter;
     }
@@ -230,7 +247,6 @@ public class Game implements Serializable {
 
     //INIT GAME Methods
 
-    //NB: nei metodi di creazione dei deck non stiamo effettivamente instanziando alcuna carta(?) stiamo solo prendendo informazioni dal json
     private void createGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
@@ -241,28 +257,24 @@ public class Game implements Serializable {
             e.printStackTrace();
         }
         Collections.shuffle(goldDeck);
-        commonGold = new ArrayList<GoldCard>();
-        for(int i = 0; i < 2; i++) {
-            commonGold.add(goldDeck.get(0));
-            goldDeck.remove(0);
-        }
+        commonGold = new ArrayList<>();
+        for(int i = 0; i < 2; i++)
+            commonGold.add(popGoldCard());
     }
 
     private void createResourceDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
-            resourceDeck = new ArrayList<ResourceCard>();
+            resourceDeck = new ArrayList<>();
             Collections.addAll(resourceDeck, tempResource);
         } catch (IOException e) {
             e.printStackTrace();
         }
         Collections.shuffle(resourceDeck);
-        commonResource = new ArrayList<ResourceCard>();
-        for(int i = 0; i < 2; i++) {
-            commonResource.add(resourceDeck.get(0));
-            resourceDeck.remove(0);
-        }
+        commonResource = new ArrayList<>();
+        for(int i = 0; i < 2; i++)
+            commonResource.add(popResourceCard());
     }
 
     private void createAchievementDeck() {
@@ -276,7 +288,7 @@ public class Game implements Serializable {
             e.printStackTrace();
         }
         Collections.shuffle(achievementDeck);
-        commonAchievement = new ArrayList<AchievementCard>();
+        commonAchievement = new ArrayList<>();
         for(int i = 0; i < 2; i++)
             commonAchievement.add(popAchievementCard());
     }
@@ -285,7 +297,7 @@ public class Game implements Serializable {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
-            starterDeck = new ArrayList<StarterCard>();
+            starterDeck = new ArrayList<>();
             Collections.addAll(starterDeck, tempStarter);
         } catch (IOException e) {
             e.printStackTrace();
@@ -323,8 +335,6 @@ public class Game implements Serializable {
             if(player.getName().equalsIgnoreCase(playerName)) {
                 player.getArea().getSpace(40, 40).getCard().setFront(front);
                 bigListener.notifyAchievementChoice(playerName, player.getSecretAchievement(), commonAchievement);
-                // notify a tutti della starter card?
-                //bigListener.updateArea(playername, player.getArea);
             }
         }
     }
@@ -355,10 +365,16 @@ public class Game implements Serializable {
 
     //Methods
 
-    public void nextPlayer() {
+    public void nextPlayer() throws RemoteException {
         currPlayer++;
-        if(currPlayer >= playersNumber)
-            currPlayer = 0;
+        if(currPlayer >= playersNumber) {
+            if(gameState == GameState.LASTROUND) {
+                setGameState(GameState.FINALSCORE);
+                return;
+            } else
+                currPlayer = 0;
+        }
+        bigListener.notifyToPlace(players.get(currPlayer));
     }
 
     /**
@@ -429,40 +445,34 @@ public class Game implements Serializable {
             if(plyr.getName().equalsIgnoreCase(name))
                 tempPlayer = plyr;
         }
-        if(index >= 0 && index <= 5) {
-            Card drawCard = null;
-            if (index < 3) {
-                if (index == 2) {
-                    return popResourceCard();
-                } else {
-                    if (commonResource.size() > index) {
-                        drawCard = commonResource.get(index);
-                        commonResource.remove(index);
-                        if (!resourceDeck.isEmpty())
-                            commonResource.add(index, popResourceCard());
-                    }
-                    System.out.println("-- Game.draw() -- Nel model, sto chiamando la fine del metodo prima del listener");
-                    bigListener.notifyDrawCompleted(name, drawCard, tempPlayer);
-                    return drawCard;
-                }
-            } else{
-                index -= 3;
-                if(index == 2) {
-                    return popGoldCard();
-                } else {
-                    if(commonGold.size() > index) {
-                        drawCard = commonGold.get(index);
-                        commonGold.remove(index);
-                        if(!goldDeck.isEmpty())
-                            commonGold.add(index, popGoldCard());
-                    }
-                    System.out.println("-- Game.draw() -- Nel model, sto chiamando la fine del metodo prima del listener");
-                    bigListener.notifyDrawCompleted(name, drawCard, tempPlayer);
-                    return drawCard;
-                }
-            }
+        if(tempPlayer == null) //error, player not existing, shouldn't happen, client can send draw action only if asked to
+            return null;
+        Card drawCard = null;
+        switch(index) {
+            case 1: // gold cards on the table
+            case 2:
+                drawCard = commonGold.get(index - 1);
+                commonGold.remove(index-1);
+                commonGold.add(popGoldCard());
+                break;
+            case 3: // resource cards on the table
+            case 4:
+                drawCard = commonResource.get(index - 3);
+                commonResource.remove(index - 3);
+                commonResource.add(popResourceCard());
+                break;
+            case 5: // gold card on top of the gold deck
+                drawCard = popGoldCard();
+                break;
+            case 6: // gold card on top of the gold deck
+                drawCard = popResourceCard();
+                break;
+            default: //error shouldn't happen, clients check index
+                return null;
         }
-        return null; // out of bounds
+        tempPlayer.getHand().add(drawCard);
+        bigListener.notifyDrawCompleted(tempPlayer, drawCard);
+        return drawCard;
     }
 
     /**

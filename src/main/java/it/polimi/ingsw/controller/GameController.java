@@ -46,7 +46,6 @@ public class GameController {
     }
 
 
-    //playerName superfluo perché controllo già prendendo il currPlayer sul model però si potrebbe fare un doppio
     public boolean placeCard(String playerName, int cardIndex, boolean side, int row, int column) throws RemoteException {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
@@ -56,19 +55,20 @@ public class GameController {
         }
     }
 
-    //idem sopra per playerName
     public boolean drawCard(String playerName, int index) throws RemoteException {
         synchronized (this.model) {
             if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
-                if(getPlayers().get(model.getCurrPlayer()).getHand().size() == 2){
-                    Card card = model.draw(model.getPlayers().get(model.getCurrPlayer()).getName(), index);
-                    if (model.draw(model.getPlayers().get(model.getCurrPlayer()).getName(), index) != null) {
-                        model.getPlayers().get(model.getCurrPlayer()).getHand().add(card);
-                        model.nextPlayer(true);
-                        System.out.println("nel controller ho chiamato il model e sto ritornando true");
+                if(getPlayers().get(model.getCurrPlayer()).getHand().size() == 2) {
+                    Card card = model.draw(playerName, index);
+                    if(card != null) {
+                        model.nextPlayer();
                         return true;
                     }
+                } else {
+                    System.out.println("> Player " + playerName + " has too many cards, they can't draw one.");
                 }
+            } else {
+                System.out.println("> Player " + playerName + " can't draw a card, it's not the right state of the game.");
             }
             return false;
         }

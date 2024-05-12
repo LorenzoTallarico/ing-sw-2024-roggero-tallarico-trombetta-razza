@@ -8,6 +8,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class temp4 {
     public static void main(String[] args) {
@@ -15,12 +17,18 @@ public class temp4 {
         Gson gson = new Gson();
         Gson gson1 = new Gson();
         Print printer = new Print();
+        ArrayList<ResourceCard> risorse = new ArrayList<>();
+        ArrayList<GoldCard> ori = new ArrayList<>();
+        Resource mazzoOro = Resource.WOLF;
+        Resource mazzoRisorsa = Resource.LEAF;
 
         // RESOURCE CARDS
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             // convert JSON file to resource card array
             ResourceCard[] res = gson.fromJson(reader, ResourceCard[].class);
             ArrayList<ResourceCard> ris = new ArrayList<ResourceCard>();
+            //risorse.add(res[3]);
+            risorse.add(res[34]);
             Corner[] frontCorners;
             Corner[] backCorners;
             // print cards
@@ -56,6 +64,8 @@ public class temp4 {
             // convert JSON file to resource card array
             GoldCard[] gold = gson.fromJson(reader, GoldCard[].class);
             ArrayList<GoldCard> gld = new ArrayList<GoldCard>();
+            ori.add(gold[18]);
+            ori.add(gold[26]);
             Corner[] frontCorners;
             Corner[] backCorners;
             // print cards
@@ -86,6 +96,12 @@ public class temp4 {
                 }
                 printer.largeCardBothSidesPrinter(gld.get(j));
                 System.out.println("\n########################################\n");
+            }
+            System.out.println("-----------------------");
+            Collections.shuffle(gld);
+            for(int i = 0; i < gld.size(); i++) {
+                System.out.println("- ORO " + (i+1)+"°");
+                printer.largeCardBothSidesPrinter(gld.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -156,6 +172,8 @@ public class temp4 {
             e.printStackTrace();
         }
 
+
+
         String AsciiArt =
                 "  ______                   __                            __    __              __                                   __  __            \n"+
                         " /      \\                 /  |                          /  \\  /  |            /  |                                 /  |/  |           \n"+
@@ -168,5 +186,6 @@ public class temp4 {
                         " $$$$$$/   $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/       $$/   $$/  $$$$$$$/    $$$$/   $$$$$$/  $$/       $$$$$$$/ $$/ $$/ $$$$$$$/   \n";
 
         System.out.println(AsciiArt);
+        printer.drawChoicePrinter(ori, risorse, mazzoOro, mazzoRisorsa);
     }
 }

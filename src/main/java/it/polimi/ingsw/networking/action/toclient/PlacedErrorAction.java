@@ -10,7 +10,7 @@ public class PlacedErrorAction extends Action {
 
     public PlacedErrorAction(String nickname){
         super(ActionType.PLACEDCARDERROR, null, nickname);
-        this.error = "> Card can't be placed in the given position.";
+        this.error = "> This card can't be placed there, try a different position and/or side.";
     }
 
     public String getError() {

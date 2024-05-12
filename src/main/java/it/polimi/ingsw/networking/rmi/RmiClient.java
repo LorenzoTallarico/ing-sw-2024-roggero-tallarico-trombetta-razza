@@ -33,13 +33,12 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     private final VirtualServer server;
     private ArrayList<Player> allPlayers;
     private StarterCard starterCard;
-    private final Print customPrint;
     private ArrayList<AchievementCard> achievements; // the first element is the secret achievement
     private ArrayList<AchievementCard> choosableAchievements;
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<GoldCard> commonGold;
-    private boolean goldDeck;
-    private boolean resourceDeck;
+    private Resource goldDeck;
+    private Resource resourceDeck;
     boolean repeatDraw;
     private static final String LOCAL_HOST = "127.0.0.1";
 
@@ -49,7 +48,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         this.nickname = "";
         state = State.COMMANDS;
         this.allPlayers = new ArrayList<>();
-        customPrint = new Print();
         achievements = new ArrayList<>();
     }
 
@@ -78,8 +76,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         Action a;
 
         while(true) {
-            a = null;
-            msg = null;
             String line = scan.nextLine();
             if (line.trim().isEmpty())
                 continue;
@@ -88,15 +84,20 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             switch (command) {
                 case "gamesize":
                     if (state == State.GAMESIZE) {
-                        int playnum = Integer.parseInt(st.nextToken());
-                        while(playnum < 2 || playnum > 4) {
-                            System.out.print("> The number must be between 2 and 4: ");
-                            playnum = Integer.parseInt(scan.nextLine());
+                        try {
+                            int playnum = Integer.parseInt(st.nextToken());
+                            while(playnum < 2 || playnum > 4) {
+                                System.out.print("> The number must be between 2 and 4: ");
+                                playnum = Integer.parseInt(scan.nextLine());
+                            }
+                            a = new ChosenPlayersNumberAction(playnum);
+                            server.sendAction(a);
+                            System.out.println("> Game's size set to " + playnum + ".");
+                            state = State.COMMANDS;
+                        } catch (NoSuchElementException e) {
+                            System.out.println("> Invalid command syntax.");
+                            continue;
                         }
-                        a = new ChosenPlayersNumberAction(playnum);
-                        server.sendAction(a);
-                        System.out.println("> Game's size set to " + playnum + ".");
-                        state = State.COMMANDS;
                     } else {
                         System.err.println("> Permission denied, game's size already set.");
                     }
@@ -117,7 +118,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
                     a = new ChatMessageAction(nickname, command, msg);
                     server.sendAction(a);
-                    System.out.println("\033[1m" + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + "\033[0m");
+                    System.out.println(Print.ANSI_BOLD + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + Print.ANSI_BOLD_RESET);
                     break;
                 case "help":
                     System.out.println("> ------- COMMANDS LIST -------");
@@ -131,17 +132,18 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.printf("> %-30s%s\n","draw","to draw a new card.");
                     System.out.printf("> %-30s%s\n","playground x","to look at the playground of the player x, if you leave x blank, it will show yours.");
                     System.out.printf("> %-30s%s\n","hand","to look at the cards you have in your hand and the achievements you shall fulfill.");
+                    System.out.printf("> %-30s%s\n","list","to know the full list of players currently playing and their score.");
                     break;
                 case "hand":
                     System.out.println("> This is your hand:");
-                    customPrint.largeHandPrinter(p.getHand(), achievements);
+                    Print.largeHandPrinter(p.getHand(), achievements);
                     break;
                 case "place":
                     if(state.equals(State.PLACE)) {
                         System.out.println("> This is your playground:");
-                        customPrint.playgroundPrinter(p.getArea());
+                        Print.playgroundPrinter(p.getArea());
                         System.out.println("> This is your hand:");
-                        customPrint.largeHandPrinter(p.getHand(), achievements);
+                        Print.largeHandPrinter(p.getHand(), achievements);
                         boolean checkIndex = false;
                         boolean checkSide = false;
                         boolean chosenSide = false;
@@ -153,11 +155,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             System.out.print("> Enter the number of the card, the side you prefer, the row and the column where you want to place the card." +
                                             "\n> Follow this order [card] [side] [row] [column]: ");
                             line = scan.nextLine();
-                            st = new StringTokenizer(line);
-                            index = (Integer.parseInt(st.nextToken()))-1;
-                            side = st.nextToken();
-                            row = Integer.parseInt(st.nextToken());
-                            column = Integer.parseInt(st.nextToken());
+                            try {
+                                st = new StringTokenizer(line);
+                                index = (Integer.parseInt(st.nextToken())) - 1;
+                                side = st.nextToken();
+                                row = Integer.parseInt(st.nextToken());
+                                column = Integer.parseInt(st.nextToken());
+                            } catch (NoSuchElementException e) {
+                                continue;
+                            }
                             if(index >= 0 && index <= p.getHand().size())
                                 checkIndex = true;
                             else
@@ -181,7 +187,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 case "start":
                     if(state.equals(State.STARTERCARD)) {
                         System.out.println(Print.ANSI_BOLD + "      Front side           Back side      " + Print.ANSI_BOLD_RESET);
-                        customPrint.largeCardBothSidesPrinter(starterCard);
+                        Print.largeCardBothSidesPrinter(starterCard);
                         do {
                             System.out.print("> Enter \"front\" or \"back\": ");
                             line = scan.nextLine();
@@ -201,12 +207,14 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "achievement":
                     if(state.equals(State.ACHIEVEMENTSCHOICE)) {
-                        System.out.println(customPrint.ANSI_BOLD + "      1° Option               2° Option      " + customPrint.ANSI_BOLD_RESET);
-                        customPrint.inLineAchievementPrinter(choosableAchievements);
+                        System.out.println(Print.ANSI_BOLD + "      1° Option               2° Option      " + Print.ANSI_BOLD_RESET);
+                        Print.inLineAchievementPrinter(choosableAchievements);
                         int achChoice = 0;
                         while(achChoice < 1 || achChoice > 2) {
                             System.out.print("> Enter \"1\" or \"2\" to choose your secret achievement: ");
-                            achChoice = Integer.parseInt(scan.nextLine());
+                            try {
+                                achChoice = Integer.parseInt(scan.nextLine());
+                            } catch (NoSuchElementException ignored) { }
                         }
                         a = new ChosenAchievementAction(nickname, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         achievements.add(0, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
@@ -219,61 +227,46 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     break;
                 case "draw":
                     if(state.equals(State.DRAW)) {
-                        System.out.println("Common gold cards 1 - 2:");
-                        for(Card c : commonGold)
-                            customPrint.cardPrinter(c, true);
-                        System.out.println("Common resources cards 3 - 4::");
-                        for(Card c : commonResource)
-                            customPrint.cardPrinter(c, true);
-                        if(goldDeck){
-                            System.out.println("5 --> Gold deck");
-                        }
-                        if(resourceDeck){
-                            System.out.println("6 --> Resource deck");
-                        }
+                        Print.drawChoicePrinter(commonGold, commonResource, goldDeck,resourceDeck);
                         int drawChoice = 0;
                         do {
-                            //da stampare poi in TUI la corrispondenza tra drawChoice e carta disegnata
                             repeatDraw = false;
-                            if (goldDeck && resourceDeck) {
-                                System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
-                                drawChoice = Integer.parseInt(scan.nextLine());
-                                if(drawChoice < 1 || drawChoice > 6){
-                                    System.out.println("> Please enter a valid number");
-                                    repeatDraw = true;
+                            try {
+                                if (goldDeck != null && resourceDeck != null) {
+                                    System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
+                                    drawChoice = Integer.parseInt(scan.nextLine());
+                                    if (drawChoice < 1 || drawChoice > 6) {
+                                        System.out.println("> Please enter a valid number");
+                                        repeatDraw = true;
+                                    }
+                                } else if (goldDeck == null && resourceDeck != null) {
+                                    System.out.print("> Enter 1, 2, 3, 4 or 6 to draw your card: ");
+                                    drawChoice = Integer.parseInt(scan.nextLine());
+                                    if (drawChoice < 1 || drawChoice > 6 || drawChoice == 5) {
+                                        System.out.println("> Please enter a valid number");
+                                        repeatDraw = true;
+                                    }
+                                } else if (goldDeck != null && resourceDeck == null) {
+                                    System.out.print("> Enter 1, 2, 3, 4 or 5 to draw your card: ");
+                                    drawChoice = Integer.parseInt(scan.nextLine());
+                                    if (drawChoice < 1 || drawChoice > 5) {
+                                        System.out.println("> Please enter a valid number");
+                                        repeatDraw = true;
+                                    }
+                                } else if (goldDeck == null && resourceDeck == null) {
+                                    System.out.print("> Enter 1, 2, 3 or 4 to draw your card: ");
+                                    drawChoice = Integer.parseInt(scan.nextLine());
+                                    if (drawChoice < 1 || drawChoice > 4) {
+                                        System.out.println("> Please enter a valid number.");
+                                        repeatDraw = true;
+                                    }
                                 }
-                            } else if (!goldDeck && resourceDeck){
-                                System.out.print("> Enter 1, 2, 3, 4 or 6 to draw your card: ");
-                                drawChoice = Integer.parseInt(scan.nextLine());
-                                if(drawChoice < 1 || drawChoice > 6 || drawChoice == 5){
-                                    System.out.println("> Please enter a valid number");
-                                    repeatDraw = true;
-                                }
-                            }
-                            else if(goldDeck && !resourceDeck) {
-                                System.out.print("> Enter 1, 2, 3, 4 or 5 to draw your card: ");
-                                drawChoice = Integer.parseInt(scan.nextLine());
-                                if(drawChoice < 1 || drawChoice > 5){
-                                    System.out.println("> Please enter a valid number");
-                                    repeatDraw = true;
-                                }
-                            }
-                            else if(!goldDeck && !resourceDeck) {
-                                System.out.print("> Enter 1, 2, 3 or 4 to draw your card: ");
-                                drawChoice = Integer.parseInt(scan.nextLine());
-                                if(drawChoice < 1 || drawChoice > 4){
-                                    System.out.println("> Please enter a valid number");
-                                    repeatDraw = true;
-                                }
+                            } catch (NoSuchElementException e) {
+                                repeatDraw = true;
                             }
                         } while(repeatDraw);
-                        //qua non ho ancora capito se volete Choose o Chosen nel dubbio metto Chosen
-                        // !!!!----------- CHOSEN, è CHOSEN !😘😘😘
-                        a = new ChosenDrawCardAction(nickname, drawChoice-1);
-                        //qua o con uno switch o un lungo if-elseif vedere che parametri passare in Action 'a'
-                        // il problema è decidere come fare se il player decide di pescare una carta da un deck (magari un altra action o far passare altri parametri)
+                        a = new ChosenDrawCardAction(nickname, drawChoice);
                         server.sendAction(a);
-                        //con l' action che poi viene mandata va poi anche gestito il passaggio dal turno di un giocatore al successivo
                         state = State.COMMANDS;
                     } else {
                         System.err.println("> Permission denied, you can't draw a card right now.");
@@ -282,21 +275,31 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 case "playground":
                     if(line.trim().equalsIgnoreCase("playground")) {
                         System.out.println("> This is your playground:");
-                        customPrint.playgroundPrinter(p.getArea());
+                        Print.playgroundPrinter(p.getArea());
                     } else {
                         boolean tempCheck = false;
                         command = st.nextToken();
                         for(Player player : allPlayers) {
                             if(player.getName().equalsIgnoreCase(command)) {
                                 tempCheck = true;
-                                System.out.println("> This is your " + player.getName() + "'s playground:");
-                                customPrint.playgroundPrinter(player.getArea());
+                                System.out.println("> This is " + player.getName() + "'s playground:");
+                                Print.playgroundPrinter(player.getArea());
                             }
                         }
                         if(!tempCheck) {
-                            System.out.println("> " + command + " is not playing in this game.");
+                            if (command.equalsIgnoreCase(nickname)) {
+                                System.out.println("> This is your playground:");
+                            Print.playgroundPrinter(p.getArea());
+                            } else
+                                System.out.println("> " + command + " is not playing in this game.");
                         }
                     }
+                    break;
+                case "list":
+                    System.out.println("> -------- Players list --------");
+                    for(Player player : allPlayers)
+                        System.out.println("> " + Print.getPlayerColor(player.getName(), allPlayers, p) + player.getName() + ": " + player.getPoints() + " pts;" + Print.ANSI_RESET);
+                    System.out.println("> " + Print.getPlayerColor(nickname, allPlayers, p) + "(You) " + nickname + ": " + p.getPoints() + " pts;" + Print.ANSI_RESET);
                     break;
                 default:
                     System.err.println("> Command unknown, write \"help\" for a list of commands.");
@@ -313,11 +316,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     ArrayList<Message> chat = ((WholeChatAction) act).getMessages();
                     if (chat.isEmpty()) {
-                        System.out.println("\033[1m" + ">>> " + "Public chat is empty" + "\033[0m");
+                        System.out.println(Print.ANSI_BOLD + ">>> " + "Public chat is empty" + Print.ANSI_BOLD_RESET);
                     } else {
-                        System.out.println("\033[1m" + ">>> " + "-------- PUBLIC CHAT --------" + "\033[0m");
+                        System.out.println(Print.ANSI_BOLD + ">>> " + "-------- PUBLIC CHAT --------" + Print.ANSI_BOLD_RESET);
                         for (Message m : chat) {
-                            System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
+                            System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
                         }
                     }
                 }
@@ -335,9 +338,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().isEmpty() || act.getRecipient().equalsIgnoreCase(nickname)) {
                     Message m = ((ChatMessageAction) act).getMessage();
                     if (m.getRecipient().isEmpty()) {
-                        System.out.println("\033[1m" + ">>> " + m.toString() + "\033[0m");
+                        System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
                     } else {
-                        System.out.println("\033[1m" + ">>> PRIVATE > " + m.toString() + "\033[0m");
+                        System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
                     }
                 }
                 break;
@@ -345,7 +348,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
+                    p = ((ChooseSideStarterCardAction)act).getPlayer();
                     System.out.println("> Choose the side you want to place your starter card with command \"start\".");
+                } else {
+                    refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }
                 break;
             case CHOOSEABLEACHIEVEMENTS:
@@ -368,20 +374,20 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> It's your time to play, enter \"place\" to place a card.");
                 } else {
                     refreshPlayers(((AskingPlaceAction)act).getPlayer());
-                    System.out.println("> It's " + act.getRecipient() + "'s  turn to place a card.");
+                    System.out.println("> It's " + act.getRecipient() + "'s turn to place a card.");
                 }
                 break;
             case PLACEDCARD:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> You placed a " + (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
-                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "].");
+                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
                     p = ((PlacedCardAction)act).getPlayer();
-                    customPrint.playgroundPrinter(p.getArea());
+                    Print.playgroundPrinter(p.getArea());
                 } else {
                     refreshPlayers(((PlacedCardAction)act).getPlayer());
                     System.out.println("> " + ((PlacedCardAction)act).getPlayer().getName() + " just placed a " +
                             (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
-                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "].");
+                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
                 }
                 break;
             case PLACEDCARDERROR:
@@ -399,16 +405,18 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     this.commonResource = ((AskingDrawAction)act).getCommonResource();
                     this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
                 } else {
-                    System.out.println("> It's " + act.getRecipient() + "'s  turn to draw a card.");
+                    System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
                 }
                 break;
             case CARDDRAWN:
                 if(act.getRecipient().equalsIgnoreCase(nickname)){
+                    p = ((CardDrawnAction)act).getPlayer();
                     System.out.println("> You drew the following card:");
-                    customPrint.largeCardBothSidesPrinter(((CardDrawnAction)act).getCard());
+                    Print.largeCardBothSidesPrinter(((CardDrawnAction)act).getCard());
                     System.out.println("> Your turn is over.");
                 } else {
-                    System.out.println("> " + act.getRecipient() + "drew a card.");
+                    refreshPlayers(((CardDrawnAction)act).getPlayer());
+                    System.out.println("> " + act.getRecipient() + " drew a card.");
                 }
                 break;
             default:

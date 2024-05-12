@@ -8,21 +8,20 @@ import it.polimi.ingsw.model.Card;
 
 public class CardDrawnAction extends Action {
 
-    private final Card card;
     private final Player player;
+    private final Card card;
 
-    public CardDrawnAction(String recipient, Card card, Player player) {
+    public CardDrawnAction(String recipient, Player player, Card card) {
         super(ActionType.CARDDRAWN, null, recipient);
-        this.card = card;
         this.player = player;
-    }
-
-    public Card getCard() {
-        return this.card;
+        this.card = card;
     }
 
     public Player getPlayer() {
         return player;
     }
 
+    public Card getCard() {
+        return card;
+    }
 }

@@ -33,7 +33,7 @@ public class Print {
      * @param spaces Boolean to set true if we want 2 empty rows and 2 empty columns
      * at the borders of the grid
      */
-    public void playgroundPrinter(Playground area, boolean coords, boolean spaces) {
+    public static void playgroundPrinter(Playground area, boolean coords, boolean spaces) {
         int east, west, north, south;
         if(spaces) {
             east = area.getEastBound() == 0 ? 80 : area.getEastBound() + 1;
@@ -127,7 +127,7 @@ public class Print {
      * and column's indexes and border space, it's an overloading of the previous method
      * @param area The playground object with bounds and the matrix of the space
      */
-    public void playgroundPrinter(Playground area) {
+    public static void playgroundPrinter(Playground area) {
         playgroundPrinter(area, true, true);
     }
 
@@ -137,7 +137,7 @@ public class Print {
      * @param card The card we want to print in the tui
      * @param side The side we want to display, true for front, false for back
      */
-    public void cardPrinter(Card card, boolean side) {
+    public static void cardPrinter(Card card, boolean side) {
         String[] corners = new String[7];
         String def;
         if(card.getClass() == ResourceCard.class) { //printing a resource card
@@ -969,7 +969,7 @@ public class Print {
      * with non-regular ascii characters, it's an overloading of the previous method
      * @param card The card we want to print in the tui
      */
-    public void cardPrinter(Card card) {
+    public static void cardPrinter(Card card) {
         cardPrinter(card, card.isFront());
     }
 
@@ -979,7 +979,7 @@ public class Print {
      * @param card The card we want to print in the tui
      * @param side The side we want to display, true for front, false for back
      */
-    public void basicCardPrinter(Card card, boolean side) {
+    public static void basicCardPrinter(Card card, boolean side) {
         String[] corners = new String[7];
         String def;
         if(card.getClass() == ResourceCard.class) { //printing a resource card
@@ -1775,7 +1775,7 @@ public class Print {
      * with regular ascii characters, it's an overloading of the previous method
      * @param card The card we want to print in the tui
      */
-    public void basicCardPrinter(Card card) {
+    public static void basicCardPrinter(Card card) {
         cardPrinter(card, card.isFront());
     }
 
@@ -1785,7 +1785,7 @@ public class Print {
      * representing the current side of the card
      * @param card The card we want to convert in strings
      */
-    private String[] smallCardToString(Card card) {
+    private static String[] smallCardToString(Card card) {
         String[] line = {"", "", ""};
         String w = ANSI_BLUE + "W" + ANSI_RESET;
         String l = ANSI_GREEN + "L" + ANSI_RESET;
@@ -1992,7 +1992,7 @@ public class Print {
      * a small version
      * @param card The card we want to print
      */
-    public void smallCardPrinter(Card card) {
+    public static void smallCardPrinter(Card card) {
         String[] result = smallCardToString(card);
         System.out.println(result[0] + "\n" + result[1] + "\n" + result[2]);
     }
@@ -2002,7 +2002,7 @@ public class Print {
      * @param area The playground we want to convert
      * @return an array of strings
      */
-    private String[] playgroundToString(Playground area) {
+    private static String[] playgroundToString(Playground area) {
         Space space;
         Card card;
         String[] text;
@@ -2117,7 +2117,7 @@ public class Print {
      * @param card The card we want to convert in strings
      * @param side Boolean for the side we want elaborate, true for front, false for back.
      */
-    private String[] largeCardToString(Card card, boolean side) {
+    private static String[] largeCardToString(Card card, boolean side) {
         String[] result = new String[6];
         String[] corners = new String[7];
         String def;
@@ -2956,7 +2956,7 @@ public class Print {
      * It's an overloading of the previous method
      * @param card The card we want to convert in strings
      */
-    private String[] largeCardToString(Card card) {
+    private static String[] largeCardToString(Card card) {
         if(card.getClass() == AchievementCard.class)
             return largeCardToString(card, true);
         else
@@ -2969,7 +2969,7 @@ public class Print {
      * @param card The card we want to print in the tui
      * @param side The side we want to display, true for front, false for back
      */
-    public void largeCardPrinter(Card card, boolean side) {
+    public static void largeCardPrinter(Card card, boolean side) {
         String[] lines = largeCardToString(card, side);
         String result = "";
         for (String line : lines)
@@ -2982,7 +2982,7 @@ public class Print {
      * with non-regular ascii characters, it's an overloading of the previous method
      * @param card The card we want to print in the tui
      */
-    public void largeCardPrinter(Card card) {
+    public static void largeCardPrinter(Card card) {
         largeCardPrinter(card, card.isFront());
     }
 
@@ -2992,7 +2992,7 @@ public class Print {
      * with non-regular ascii characters
      * @param card The card we want to print in the tui
      */
-    public void largeCardBothSidesPrinter(Card card) {
+    public static void largeCardBothSidesPrinter(Card card) {
         String[] front = largeCardToString(card, true);
         String[] back = largeCardToString(card, false);
         String toPrint = "";
@@ -3006,7 +3006,7 @@ public class Print {
      * cards, it prints them all in a single row, showing only the front side
      * @param achCards The arraylist containing the cards we want to be printed
      */
-    public void inLineAchievementPrinter(ArrayList<AchievementCard> achCards) {
+    public static void inLineAchievementPrinter(ArrayList<AchievementCard> achCards) {
         String[] lines = new String[6];
         String[] temp;
         Arrays.fill(lines, "");
@@ -3026,7 +3026,7 @@ public class Print {
      * it prints them all in a single row showing their current side
      * @param cards The arraylist containing the cards we want to be printed
      */
-    public void inLineLargeCardsPrinter(ArrayList<Card> cards) {
+    public static void inLineLargeCardsPrinter(ArrayList<Card> cards) {
         String[] lines = new String[6];
         String[] temp;
         Arrays.fill(lines, "");
@@ -3041,13 +3041,14 @@ public class Print {
         System.out.print(result);
     }
 
-    /** Given an array of cards, representing the hand of the player and an
+    /**
+     * Given an array of cards, representing the hand of the player and an
      * array of achievements, representing the secret and the common achievements,
      * This method prints all the cards in two rows, one for each side
      * @param cards The cards representing the hand of the player
      * @param achievements The achievement cards representing the achievement of the player
      */
-    public void largeHandPrinter(ArrayList<Card> cards, ArrayList<AchievementCard> achievements) {
+    public static void largeHandPrinter(ArrayList<Card> cards, ArrayList<AchievementCard> achievements) {
         String[] lines = new String[6];
         String[] temp;
         String result = "";
@@ -3104,6 +3105,169 @@ public class Print {
             }
         }
         System.out.print(result);
+    }
+
+    /**
+     * Given a player's name, this function return the special tui chars for its color
+     * @param player the name of the player we want to obtain the color from
+     * @param list arraylist of the players in the game
+     * @param single player asking for color
+     * @return String of chars representing the color for tui
+     */
+    public static String getPlayerColor(String player, ArrayList<Player> list, Player single) {
+        Player tmp = null;
+        String color;
+        if(player.equalsIgnoreCase(single.getName()))
+            tmp = single;
+        else
+            for(Player p : list)
+                if(player.equalsIgnoreCase(p.getName()))
+                    tmp = p;
+        if(tmp == null)
+            color = "";
+        else
+            switch(tmp.getColor()) {
+                case RED:
+                    color = ANSI_RED;
+                    break;
+                case BLUE:
+                    color = ANSI_BLUE;
+                    break;
+                case GREEN:
+                    color = ANSI_GREEN;
+                    break;
+                case YELLOW:
+                    color = ANSI_YELLOW;
+                    break;
+                case NONE:
+                default:
+                    color = "";
+                    break;
+            }
+        return color;
+    }
+
+    /**
+     * Given all the cards on the table, this function prints em for the tui
+     * @param commonGold arraylist representing the gold cards
+     * @param commonResource arraylist representing the resource cards
+     * @param goldDeck resource of the first card on top of the gold deck
+     * null if the deck is empty
+     * @param resourceDeck resource of the first card on top of the resource deck
+     * null if the deck is empty
+     */
+    public static void drawChoicePrinter(ArrayList<GoldCard> commonGold, ArrayList<ResourceCard> commonResource, Resource goldDeck, Resource resourceDeck) {
+        String result = ANSI_BOLD;
+        String[] lines = new String[6];
+        Arrays.fill(lines, "");
+        String spaces;
+        String[] gDeck = new String[8];
+        String[] rDeck = new String[8];
+        String[] tempLines;
+        if(resourceDeck != null || goldDeck != null) {
+            int cSpaces = 22 * (commonGold.size() + commonResource.size());
+            spaces = "";
+            for(int i = 0; i < cSpaces; i++)
+                spaces = spaces.concat(" ");
+            result = result.concat(spaces);
+            if(goldDeck != null) {
+                result = result.concat("      5: Gold deck      ");
+                gDeck = inlineDeckPrinter(goldDeck);
+            }
+            if(resourceDeck != null) {
+                result = result.concat("    6: Resource deck");
+                rDeck = inlineDeckPrinter(resourceDeck);
+            }
+            result = result.concat(ANSI_BOLD_RESET);
+            result = result.concat("\n" + spaces);
+            if(goldDeck != null)
+                result = result.concat(gDeck[0] + " ");
+            if(resourceDeck != null)
+                result = result.concat(rDeck[0]);
+            result = result.concat("\n");
+
+        }
+        result = result.concat(ANSI_BOLD);
+        for(int i = 0; i < commonGold.size(); i++) {
+            result = result.concat("    " + (i+1) + ": Gold card      ");
+        }
+        for(int i = 0; i < commonResource.size(); i++) {
+            result = result.concat("  " + (i+3) + ": Resource card    ");
+        }
+        result = result.concat(ANSI_BOLD_RESET);
+        if(goldDeck != null)
+            result = result.concat(gDeck[1] + " ");
+        if(resourceDeck != null)
+            result = result.concat(rDeck[1]);
+        result = result.concat("\n");
+        if(!commonGold.isEmpty()) {
+            for(int j = 0; j < commonGold.size(); j++) {
+                tempLines = largeCardToString(commonGold.get(j), true);
+                for (int i = 0; i < 6; i++) {
+                    lines[i] = lines[i].concat(tempLines[i] + " ");
+                }
+            }
+        }
+        if(!commonResource.isEmpty()) {
+            for(int j = 0; j < commonResource.size(); j++) {
+                tempLines = largeCardToString(commonResource.get(j), true);
+                for (int i = 0; i < 6; i++) {
+                    lines[i] = lines[i].concat(tempLines[i] + " ");
+                }
+            }
+        }
+        if(goldDeck != null)
+            for (int i = 0; i < 6; i++)
+                lines[i] = lines[i].concat(gDeck[i+2] + " ");
+        if(resourceDeck != null)
+            for (int i = 0; i < 6; i++)
+                lines[i] = lines[i].concat(rDeck[i+2] + " ");
+        for(int i = 0; i < 6; i++)
+            result = result.concat(lines[i] + "\n");
+        System.out.print(result);
+    }
+
+    /**
+     * Given a resource this function will return an array of string representing
+     * a deck of back-sided cards with the top one having the right resource
+     * @param resource the resource of the top card on the deck
+     * @return the array of string representing the deck
+     */
+    private static String[] inlineDeckPrinter(Resource resource) {
+        String c = "#";
+        String def = "";
+        if(resource != null)
+            switch(resource) {
+                case WOLF:
+                    c = "W";
+                    def = ANSI_BLUE;
+                    break;
+                case LEAF:
+                    c = "L";
+                    def = ANSI_GREEN;
+                    break;
+                case BUTTERFLY:
+                    c = "B";
+                    def = ANSI_PURPLE;
+                    break;
+                case MUSHROOM:
+                    c = "M";
+                    def = ANSI_RED;
+                    break;
+                default:
+                    c = "#";
+                    break;
+            }
+        String[] result = new String[8];
+        result[0] = ANSI_RESET + "  ╭───┬───────────┬───╮";
+        result[1] = ANSI_RESET + " ╭┴──┬┴──────────┬┴──╮│";
+        result[2] = def + "╭┴──┬┴──────────┬┴──╮" + ANSI_RESET + "│┤";
+        result[3] = def + "│   │           │   │" + ANSI_RESET + "┤┤";
+        result[4] = def + "├───╯           ╰───┤" + ANSI_RESET + "┤│";
+        result[5] = def + "├───╮     " + c + "     ╭───┤" + ANSI_RESET + "├╯";
+        result[6] = def + "│   │           │   ├" + ANSI_RESET + "╯ ";
+        result[7] = def + "╰───┴───────────┴───╯  " + ANSI_RESET;
+        return result;
     }
 
 }

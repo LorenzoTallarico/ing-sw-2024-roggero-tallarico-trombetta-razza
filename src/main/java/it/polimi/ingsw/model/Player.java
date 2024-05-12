@@ -1,8 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.listener.Listener;
-import it.polimi.ingsw.util.Print;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -40,7 +37,7 @@ public class Player implements Serializable {
         color = Color.NONE;
         winner = false;
         area = new Playground();
-        hand = new ArrayList<Card>();
+        hand = new ArrayList<>();
         points = 0;
         secretAchievement = new ArrayList<>();
         //this.gui=gui;
@@ -172,25 +169,14 @@ public class Player implements Serializable {
         boolean check = placeable(card, row, column);
         if(check) {
             //card must be added to the correct space
-            Print customPrint = new Print();
-            System.out.println("-------- PRIMA DEL REMOVE ---------");
-            customPrint.largeHandPrinter(hand, null);
             hand.remove(cardIndex);
             int score = area.setSpace(card, row, column);
-            System.out.println("-------- DOPO IL REMOVE ---------");
-            customPrint.largeHandPrinter(hand, null);
             points += score;
- //           try {
-            Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column);
- //           } catch (NullPointerException e) {
-                //da gestire meglio
- //               System.err.println("Null pointer exception in Player.place() due to notifyCardPlacement() call");
- //           }
-            Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), !Game.getInstance().getGoldDeck().isEmpty(),
-                    Game.getInstance().getCommonResource(), !Game.getInstance().getResourceDeck().isEmpty());
+            Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column, score);
+            Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), Game.getInstance().getGoldDeck().get(0).getResource(),
+                    Game.getInstance().getCommonResource(), Game.getInstance().getResourceDeck().get(0).getResource());
             return true;
-        }
-        else {
+        } else {
             Game.getInstance().getListener().notifyCardError(this.name);
             card.setFront(!side);
             return false;
@@ -200,7 +186,7 @@ public class Player implements Serializable {
 
     public boolean placeable(Card card, int row, int column) {
         //collection in which we find the possible corners of the card that will cover another card
-        Stack<Integer> corn = new Stack<Integer>();
+        Stack<Integer> corn = new Stack<>();
         //Collection that allows only unique elements (helps checking that the corner's number is always different for the same card)
         HashSet<Integer> counter = new HashSet<Integer>();
         Corner[] corners;
@@ -227,10 +213,10 @@ public class Player implements Serializable {
                 (!area.getSpace(row, column).isFree()))
             return false;
 
-        if(card.getClass() == GoldCard.class){
+        if(card.getClass() == GoldCard.class && card.isFront())
             if(!checkGold((GoldCard) card))
                 return false;
-        }
+
 
         //within bounds, space is free and not dead (down here is not necessary to check also if space is dead, might be removed)
         //topRight = 0
@@ -361,25 +347,13 @@ public class Player implements Serializable {
     }
 
     //checks if there are enough resources on the playground to place the gold card
-    public boolean checkGold(GoldCard card){
-        boolean result=true;
-        if(card.countResource(Resource.LEAF) > area.countResources(Resource.LEAF)){
+    public boolean checkGold(GoldCard card) {
+        boolean result = true;
+        if(card.countResource(Resource.LEAF) > area.countResources(Resource.LEAF) ||
+                card.countResource(Resource.WOLF) > area.countResources(Resource.WOLF) ||
+                card.countResource(Resource.BUTTERFLY) > area.countResources(Resource.BUTTERFLY) ||
+                card.countResource(Resource.MUSHROOM) > area.countResources(Resource.MUSHROOM))
             result = false;
-            return result;
-        }
-        if(card.countResource(Resource.WOLF) > area.countResources(Resource.WOLF)){
-            result = false;
-            return result;
-        }
-        if(card.countResource(Resource.BUTTERFLY) > area.countResources(Resource.BUTTERFLY)){
-            result = false;
-            return result;
-        }
-        if(card.countResource(Resource.MUSHROOM) > area.countResources(Resource.MUSHROOM)){
-            result = false;
-            return result;
-        }
-
         return result;
     }
 
