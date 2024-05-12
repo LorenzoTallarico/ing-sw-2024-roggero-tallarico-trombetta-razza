@@ -12,7 +12,6 @@ public class StrategyInstanceCreator implements InstanceCreator<Strategy> {
 
     @Override
     public Strategy createInstance(Type type) {
-        //confronto switch equivale a "equals"
         switch(strategyType) {
             case "ConcreteStrategyDiagonal":
                 return new ConcreteStrategyDiagonal();
@@ -25,7 +24,7 @@ public class StrategyInstanceCreator implements InstanceCreator<Strategy> {
             case "ConcreteStrategyResource":
                 return new ConcreteStrategyResource();
             default:
-                throw new IllegalArgumentException("Tipo di strategia non supportato: " + strategyType);
+                throw new IllegalArgumentException("Strategy type not supported: " + strategyType);
         }
     }
 

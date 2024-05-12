@@ -419,6 +419,15 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> " + act.getRecipient() + " drew a card.");
                 }
                 break;
+            case WINNERS:
+                for(Player tempPlayer : ((WinnersAction)act).getPlayers())
+                    if(nickname.equalsIgnoreCase(tempPlayer.getName()))
+                        p = tempPlayer;
+                    else
+                        refreshPlayers(tempPlayer);
+                Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
+                //print scoreboard method
+                break;
             default:
                 break;
         }

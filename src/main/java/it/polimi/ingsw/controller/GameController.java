@@ -73,22 +73,7 @@ public class GameController {
             return false;
         }
     }
-/* NON USATO ! -  AL SUO POSTO setSecretAchievement()
-    public boolean selectAchievementCard(int position) {
-        synchronized (this.model) {
-            if(model.getGameState().equals(GameState.SELECTACHIEVEMENT)) {
-                if (position == 0 || position == 1) {
-                    ArrayList<AchievementCard> goal = new ArrayList<AchievementCard>();
-                    goal.add(model.getPlayers().get(model.getCurrPlayer()).getSecretAchievement().get(position));
-                    model.getPlayers().get(model.getCurrPlayer()).setSecretAchievement(goal);
-                    model.nextPlayer(true);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-*/
+
     public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {
         ArrayList<AchievementCard> secretAch = new ArrayList<>();
         secretAch.add(achievement);
@@ -101,7 +86,7 @@ public class GameController {
         }
     }
 
-    public boolean calculateEndPoints() {
+    public boolean calculateEndPoints() throws RemoteException {
         synchronized (this.model) {
             if(model.getGameState().equals(GameState.FINALSCORE)) {
                 model.calculateEndPoints();

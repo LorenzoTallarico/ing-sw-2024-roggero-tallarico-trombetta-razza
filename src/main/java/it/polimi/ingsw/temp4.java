@@ -16,7 +16,6 @@ public class temp4 {
 
         Gson gson = new Gson();
         Gson gson1 = new Gson();
-        Print printer = new Print();
         ArrayList<ResourceCard> risorse = new ArrayList<>();
         ArrayList<GoldCard> ori = new ArrayList<>();
         Resource mazzoOro = Resource.WOLF;
@@ -52,7 +51,7 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.largeCardBothSidesPrinter(ris.get(j));
+                Print.largeCardBothSidesPrinter(ris.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -94,14 +93,14 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.largeCardBothSidesPrinter(gld.get(j));
+                Print.largeCardBothSidesPrinter(gld.get(j));
                 System.out.println("\n########################################\n");
             }
             System.out.println("-----------------------");
             Collections.shuffle(gld);
             for(int i = 0; i < gld.size(); i++) {
                 System.out.println("- ORO " + (i+1)+"°");
-                printer.largeCardBothSidesPrinter(gld.get(i));
+                Print.largeCardBothSidesPrinter(gld.get(i));
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -134,7 +133,7 @@ public class temp4 {
                             backCorners[i].getItem() + " " +
                             "visible: " + backCorners[i].isVisible());
                 }
-                printer.largeCardBothSidesPrinter(strt.get(j));
+                Print.largeCardBothSidesPrinter(strt.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -165,7 +164,7 @@ public class temp4 {
                 } else {
                     System.out.println("error");
                 }
-                printer.largeCardBothSidesPrinter(ach.get(j));
+                Print.largeCardBothSidesPrinter(ach.get(j));
                 System.out.println("\n########################################\n");
             }
         } catch (IOException e) {
@@ -184,8 +183,18 @@ public class temp4 {
                         "$$ \\__/  |$$ \\__$$ |$$ \\__$$ |$$$$$$$$/  /$$$$  \\       $$ |$$$$ |/$$$$$$$ |  $$ |/  |$$ \\__$$ |$$ |     /$$$$$$$ |$$ |$$ | $$$$$$  | \n"+
                         "$$    $$/ $$    $$/ $$    $$ |$$       |/$$/ $$  |      $$ | $$$ |$$    $$ |  $$  $$/ $$    $$/ $$ |     $$    $$ |$$ |$$ |/     $$/  \n"+
                         " $$$$$$/   $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/       $$/   $$/  $$$$$$$/    $$$$/   $$$$$$/  $$/       $$$$$$$/ $$/ $$/ $$$$$$$/   \n";
+        String youWon = "                   __      __  ______   __    __        __       __   ______   __    __ \n" +
+                "                  /  \\    /  |/      \\ /  |  /  |      /  |  _  /  | /      \\ /  \\  /  |\n" +
+                "                  $$  \\  /$$//$$$$$$  |$$ |  $$ |      $$ | / \\ $$ |/$$$$$$  |$$  \\ $$ |\n" +
+                "                   $$  \\/$$/ $$ |  $$ |$$ |  $$ |      $$ |/$  \\$$ |$$ |  $$ |$$$  \\$$ |\n" +
+                "                    $$  $$/  $$ |  $$ |$$ |  $$ |      $$ /$$$  $$ |$$ |  $$ |$$$$  $$ |\n" +
+                "                     $$$$/   $$ |  $$ |$$ |  $$ |      $$ $$/$$ $$ |$$ |  $$ |$$ $$ $$ |\n" +
+                "                      $$ |   $$ \\__$$ |$$ \\__$$ |      $$$$/  $$$$ |$$ \\__$$ |$$ |$$$$ |\n" +
+                "                      $$ |   $$    $$/ $$    $$/       $$$/    $$$ |$$    $$/ $$ | $$$ |\n" +
+                "                      $$/     $$$$$$/   $$$$$$/        $$/      $$/  $$$$$$/  $$/   $$/ \n";
 
         System.out.println(AsciiArt);
-        printer.drawChoicePrinter(ori, risorse, mazzoOro, mazzoRisorsa);
+        System.out.println(youWon + Print.ANSI_YELLOW + Print.ANSI_BOLD + youWon + Print.ANSI_BOLD_RESET + Print.ANSI_RESET);
+        //Print.drawChoicePrinter(ori, risorse, mazzoOro, mazzoRisorsa);
     }
 }

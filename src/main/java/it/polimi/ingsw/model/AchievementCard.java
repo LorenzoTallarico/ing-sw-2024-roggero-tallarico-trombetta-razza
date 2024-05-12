@@ -30,22 +30,20 @@ public class AchievementCard extends Card implements Serializable {
     }
 
 
-    public boolean equals(AchievementCard ach){
-        if (!this.strategyType.equals(ach.getStrategyType())){
+    public boolean equals(AchievementCard ach) {
+        if(!this.strategyType.equals(ach.getStrategyType())){
             return false;
         }
-        if(this.getStrategyType().equals("ConcreteStrategyItem")){
+        if(this.getStrategyType().equals("ConcreteStrategyItem")) {
             if (this.item != ach.getItem()){
-                return false;
+                return this.item == ach.getItem();
             }
         }
-        if(this.getStrategyType().equals("ConcreteStrategyMixed")){
+        if(this.getStrategyType().equals("ConcreteStrategyMixed")) {
             return true;
         }
-        if(this.strategyType.equals(ach.getStrategyType())){
-            if(this.resource != ach.getResource()){
-                return false;
-            }
+        if(this.strategyType.equals(ach.getStrategyType())) {
+            return this.resource == ach.getResource();
         }
         return true;
     }
@@ -66,7 +64,11 @@ public class AchievementCard extends Card implements Serializable {
         return strategyType;
     }
 
-    public int calculatePoints(){
-        return points + strategy.execute(resource, player, item);
+    public int calculatePoints() {
+        return strategy.execute(resource, player, item);
+    }
+
+    public int calculatePoints(Player p) {
+        return strategy.execute(resource, p, item);
     }
 }

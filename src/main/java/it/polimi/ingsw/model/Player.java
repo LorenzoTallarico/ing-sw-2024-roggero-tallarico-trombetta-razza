@@ -172,6 +172,8 @@ public class Player implements Serializable {
             hand.remove(cardIndex);
             int score = area.setSpace(card, row, column);
             points += score;
+            if(points >= 20)
+                Game.getInstance().setGameState(GameState.LASTROUND);
             Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column, score);
             Game.getInstance().getListener().notifyDrawCard(this.name, Game.getInstance().getCommonGold(), Game.getInstance().getGoldDeck().get(0).getResource(),
                     Game.getInstance().getCommonResource(), Game.getInstance().getResourceDeck().get(0).getResource());

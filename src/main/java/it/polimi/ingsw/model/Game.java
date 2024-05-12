@@ -55,7 +55,7 @@ public class Game implements Serializable {
         instance = null;
         currPlayer = 0;
         playersNumber = 0;
-        players = new ArrayList<Player>();
+        players = new ArrayList<>();
         createGoldDeck();
         createAchievementDeck();
         createResourceDeck();
@@ -90,37 +90,37 @@ public class Game implements Serializable {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
-            resourceDeck = new ArrayList<ResourceCard>();
-            Collections.addAll(resourceDeck, tempResource);
+            ArrayList<ResourceCard> tempDeck = new ArrayList<>();
+            Collections.addAll(tempDeck, tempResource);
+            return tempDeck;
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-        return resourceDeck;
     }
 
     public ArrayList<GoldCard> getOrderedGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
-            goldDeck = new ArrayList<GoldCard>();
+            ArrayList<GoldCard> tempDeck = new ArrayList<>();
             Collections.addAll(goldDeck, tempResource);
+            return tempDeck;
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-        return goldDeck;
     }
 
     public ArrayList<AchievementCard> getOrderedAchievementDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
-            achievementDeck = new ArrayList<AchievementCard>();
+            ArrayList<AchievementCard> tempDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
-                achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
+                tempDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
+            return tempDeck;
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-        return achievementDeck;
     }
 
     public ArrayList<Player> getPlayers() {
@@ -136,14 +136,8 @@ public class Game implements Serializable {
         if(gameState.equals(GameState.GAME)) {
             System.out.println("> Game started, first player is " + players.get(getCurrPlayer()).getName() + ".");
             bigListener.notifyToPlace(players.get(getCurrPlayer()));
-        }
-        if(gameState.equals(GameState.FINALSCORE)) {
-            // to do calculate points of everyone
-            // to set winners booleans
-            // then, with a new listener method:
-            // update all instances of players in the clients with an action
-            // make clients see the scoreboard
-        }
+        } else if(gameState.equals(GameState.FINALSCORE))
+            calculateEndPoints();
     }
 
     public int getCurrPlayer() {
@@ -199,51 +193,6 @@ public class Game implements Serializable {
         return starter;
     }
 
-    /*
-    public AchievementCard popAchievementCard(int i) {
-        AchievementCard secretAchievement = null;
-        try {
-            secretAchievement = achievementDeck.get(i);
-            achievementDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta dell'obiettivo. Deck vuoto o indice non valido.");
-        }
-        return secretAchievement;
-    }
-
-    public ResourceCard popResourceCard(int i) {
-        ResourceCard resource = null;
-        try {
-            resource = resourceDeck.get(i);
-            resourceDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta delle risorse. Deck vuoto o indice non valido.");
-        }
-        return resource;
-    }
-
-    public StarterCard popStarterCard(int i) {
-        StarterCard starter = null;
-        try {
-            starter = starterDeck.get(i);
-            starterDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta di avvio. Deck vuoto o indice non valido.");
-        }
-        return starter;
-    }
-
-    public GoldCard popGoldCard(int i) {
-        GoldCard card = null;
-        try {
-            card = goldDeck.get(i);
-            goldDeck.remove(i);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Errore: Impossibile rimuovere la carta d'oro. Deck vuoto o indice non valido.");
-        }
-        return card;
-    }
-    */
 
     //INIT GAME Methods
 
@@ -254,7 +203,7 @@ public class Game implements Serializable {
             goldDeck = new ArrayList<GoldCard>();
             Collections.addAll(goldDeck, tempGold);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("> Error: JSON files not found.");
         }
         Collections.shuffle(goldDeck);
         commonGold = new ArrayList<>();
@@ -269,7 +218,7 @@ public class Game implements Serializable {
             resourceDeck = new ArrayList<>();
             Collections.addAll(resourceDeck, tempResource);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("> Error: JSON files not found.");
         }
         Collections.shuffle(resourceDeck);
         commonResource = new ArrayList<>();
@@ -285,7 +234,7 @@ public class Game implements Serializable {
             for (AchievementCard achievementCard : tempAchievement)
                 achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("> Error: JSON files not found.");
         }
         Collections.shuffle(achievementDeck);
         commonAchievement = new ArrayList<>();
@@ -300,7 +249,7 @@ public class Game implements Serializable {
             starterDeck = new ArrayList<>();
             Collections.addAll(starterDeck, tempStarter);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("> Error: JSON files not found.");
         }
         Collections.shuffle(starterDeck);
     }
@@ -377,10 +326,7 @@ public class Game implements Serializable {
         bigListener.notifyToPlace(players.get(currPlayer));
     }
 
-    /**
-     * @overload
-     * @param nextState
-     */
+
     public void nextPlayer(boolean nextState) {
         currPlayer++;
         if(currPlayer >= playersNumber) {
@@ -435,8 +381,9 @@ public class Game implements Serializable {
     }
 
     /**
-     *
-     * @param index indice per selezione: convenzione 0 prima risorsa tavolo, 1 seconda risorsa tavolo, 2 mazzo risorse, 3 prima gold tavolo 4 seconda gold tavolo 5 mazzo gold
+     * Given the name of a player and an index representing his choice,
+     * this method removes a card from the table and adds it to the hand of the player
+     * @param index integer representing the choice, 1-2 gold , 3-4 resources, 5-6 decks
      * @return Card or null if indexOutOfBound or position empty
      */
     public Card draw(String name, int index) throws RemoteException {
@@ -447,7 +394,7 @@ public class Game implements Serializable {
         }
         if(tempPlayer == null) //error, player not existing, shouldn't happen, client can send draw action only if asked to
             return null;
-        Card drawCard = null;
+        Card drawCard;
         switch(index) {
             case 1: // gold cards on the table
             case 2:
@@ -476,9 +423,8 @@ public class Game implements Serializable {
     }
 
     /**
-     *
+     * Method that randomly assign colors to players
      * @param players : ArrayList of Player
-     * {@summary Assign a random color at player that has Color.NONE as its color attribute}
      */
     private void assignColors(ArrayList<Player> players) {
         boolean find;
@@ -530,12 +476,30 @@ public class Game implements Serializable {
         }
     }
 
-    public void calculateEndPoints() {
-        for (Player player : players) {
-            player.addPoints(player.getSecretAchievement().get(0).calculatePoints());
-            player.addPoints(commonAchievement.get(0).calculatePoints());
-            player.addPoints(commonAchievement.get(1).calculatePoints());
+    public void calculateEndPoints() throws RemoteException {
+        int[] points = new int[players.size()];
+        int max = 0, totalMax = 0;
+        for(int i = 0; i < players.size(); i++) {
+            points[i] += players.get(i).getSecretAchievement().get(0).calculatePoints(players.get(i));
+            points[i] += commonAchievement.get(0).calculatePoints(players.get(i));
+            points[i] += commonAchievement.get(1).calculatePoints(players.get(i));
+            if(points[i] > max)
+                max = points[i];
+            players.get(i).addPoints(points[i]);
+            if(players.get(i).getPoints() > totalMax)
+                totalMax = players.get(i).getPoints();
         }
+        int checkTie = 0;
+        for(int i = 0; i < players.size() && checkTie < 2; i++)
+            if(players.get(i).getPoints() == totalMax)
+                checkTie++;
+        if(checkTie > 1) { // two or more players have the same amount of points
+            for(int i = 0; i < players.size(); i++)
+                players.get(i).setWinner(players.get(i).getPoints() == totalMax && points[i] == max);
+        } else { // there is no tie in total score
+            for (Player player : players) player.setWinner(player.getPoints() == totalMax);
+        }
+        bigListener.notifyWinners(players);
     }
 
 

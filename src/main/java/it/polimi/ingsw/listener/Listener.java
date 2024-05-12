@@ -80,6 +80,11 @@ public class Listener {
         }
     }
 
-
+    public void notifyWinners(ArrayList<Player> players) throws RemoteException {
+        Action action = new WinnersAction(players);
+        for(VirtualView client : clients) {
+            client.showAction(action);
+        }
+    }
 
 }
