@@ -1,22 +1,15 @@
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.controller.GameController;
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.*;
-import it.polimi.ingsw.networking.action.toclient.AskingPlayersNumberAction;
-import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
 import it.polimi.ingsw.networking.action.toclient.PlacedErrorAction;
 import it.polimi.ingsw.networking.action.toclient.WholeChatAction;
 import it.polimi.ingsw.networking.action.toserver.*;
-import jdk.internal.net.http.common.Utils;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

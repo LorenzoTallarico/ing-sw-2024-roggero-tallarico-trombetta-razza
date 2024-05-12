@@ -214,7 +214,7 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -283,7 +283,7 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement, tempAchievement2;
@@ -346,7 +346,7 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -377,7 +377,7 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -405,7 +405,7 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -443,18 +443,18 @@ public class GameTest {
         players.add(fake1);
         testGame.addPlayers(players, null);
         Card card;
-        assertNull(testGame.draw(-1));
-        assertNull(testGame.draw(6));
+        assertNull(testGame.draw("Marco", -1));
+        assertNull(testGame.draw("Marco", 6));
         card = testGame.getResourceDeck().get(0);
-        assertEquals(card, testGame.draw(2));
+        assertEquals(card, testGame.draw("Marco", 2));
         assertInstanceOf(ResourceCard.class, card);
-        assertInstanceOf(ResourceCard.class, testGame.draw(0));
-        assertInstanceOf(ResourceCard.class, testGame.draw(1));
+        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 0));
+        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 1));
         card = testGame.getGoldDeck().get(0);
-        assertEquals(card, testGame.draw(5));
+        assertEquals(card, testGame.draw("Marco", 5));
         assertInstanceOf(GoldCard.class, card);
-        assertInstanceOf(GoldCard.class, testGame.draw(3));
-        assertInstanceOf(GoldCard.class, testGame.draw(4));
+        assertInstanceOf(GoldCard.class, testGame.draw("Marco", 3));
+        assertInstanceOf(GoldCard.class, testGame.draw("Marco", 4));
         testGame.end();
         testGame.nextState();
     }
