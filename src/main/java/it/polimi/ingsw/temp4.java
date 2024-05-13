@@ -191,10 +191,31 @@ public class temp4 {
                 "                     $$$$/   $$ |  $$ |$$ |  $$ |      $$ $$/$$ $$ |$$ |  $$ |$$ $$ $$ |\n" +
                 "                      $$ |   $$ \\__$$ |$$ \\__$$ |      $$$$/  $$$$ |$$ \\__$$ |$$ |$$$$ |\n" +
                 "                      $$ |   $$    $$/ $$    $$/       $$$/    $$$ |$$    $$/ $$ | $$$ |\n" +
-                "                      $$/     $$$$$$/   $$$$$$/        $$/      $$/  $$$$$$/  $$/   $$/ \n";
+                "                      $$/     $$$$$$/   $$$$$$/        $$/      $$/  $$$$$$/  $$/   $$/ \n" +
+                "╳\n";
 
         System.out.println(AsciiArt);
         System.out.println(youWon + Print.ANSI_YELLOW + Print.ANSI_BOLD + youWon + Print.ANSI_BOLD_RESET + Print.ANSI_RESET);
         //Print.drawChoicePrinter(ori, risorse, mazzoOro, mazzoRisorsa);
+        Player p1 = new Player("Pie", false);
+        p1.setColor(Color.GREEN);
+        p1.addPoints(20);
+        Player p2 = new Player("Teo", false);
+        p2.setColor(Color.YELLOW);
+        p2.addPoints(8);
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(p1);
+        players.add(p2);
+        Print.scoreboardPrinter(players);
+        Player p3 = new Player("Tommy", false);
+        p3.setColor(Color.BLUE);
+        p3.addPoints(26);
+        players.add(p3);
+        Print.scoreboardPrinter(players);
+        Player p4 = new Player("Talla", false);
+        p4.setColor(Color.RED);
+        p4.addPoints(17);
+        players.add(p4);
+        Print.scoreboardPrinter(players);
     }
 }

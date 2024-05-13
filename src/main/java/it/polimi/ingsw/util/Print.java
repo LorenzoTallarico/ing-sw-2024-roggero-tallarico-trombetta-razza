@@ -1,6 +1,5 @@
 package it.polimi.ingsw.util;
 import it.polimi.ingsw.model.*;
-import jdk.internal.org.jline.utils.AnsiWriter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3299,37 +3298,154 @@ public class Print {
         System.out.println("\n" + color + ANSI_BOLD + (win ? youWon : youLost) + ANSI_BOLD_RESET + ANSI_RESET + "\n");
     }
 
-    public static void scoreboardPrinter() {
-
+    /**
+     * This method prints the scoreboard for the tui showing the points of each player
+     * @param players the arraylist of players playing the game
+     */
+    public static void scoreboardPrinter(ArrayList<Player> players) {
+        int[] pos = new int[players.size()];
+        String[] x = new String[players.size()];
+        for(int i = 0; i < players.size(); i++) {
+            pos[i] = players.get(i).getPoints();
+            switch(players.get(i).getColor()) {
+                case YELLOW:
+                    x[i] = ANSI_YELLOW + "╳" + ANSI_RESET;
+                    break;
+                case GREEN:
+                    x[i] = ANSI_GREEN + "╳" + ANSI_RESET;
+                    break;
+                case RED:
+                    x[i] = ANSI_RED + "╳" + ANSI_RESET;
+                    break;
+                case BLUE:
+                    x[i] = ANSI_BLUE + "╳" + ANSI_RESET;
+                    break;
+                case NONE:
+                default:
+                    x[i] = "@";
+            }
+        }
+        String[] lines = new String[11];
+    //first row
+        Arrays.fill(lines, "    ");
+        lines[0] = lines[0].concat("╔═══════════════════════════════╣" + ANSI_BOLD + "SCOREBOARD" + ANSI_BOLD_RESET + "╠════════════════════════════════╗");
+    //20s
+        lines[1] = lines[1].concat("║   ");
+        lines[2] = lines[2].concat("║ ╭─");
+        lines[3] = lines[3].concat("║ │ ");
+        for(int i = 20; i <= 29; i++) {
+        //upper
+            if(pos[0] == i)
+                lines[1] = lines[1].concat("┌" + x[0]);
+            else
+                lines[1] = lines[1].concat("┌─");
+            if(pos[1] == i)
+                lines[1] = lines[1].concat("──" + x[1] + "┐ ");
+            else
+                lines[1] = lines[1].concat("───┐ ");
+        //middle
+            if(i != 29)
+                lines[2] = lines[2].concat("┤ " + i + " ├─");
+            else
+                lines[2] = lines[2].concat("┤ 29 │");
+        //lower
+            if(players.size() >= 3 && pos[2] == i)
+                lines[3] = lines[3].concat("└" + x[2]);
+            else
+                lines[3] = lines[3].concat("└─");
+            if(players.size() >= 4 && pos[3] == i)
+                lines[3] = lines[3].concat("──" + x[3] + "┘ ");
+            else
+                lines[3] = lines[3].concat("───┘ ");
+        }
+        lines[1] = lines[1].concat("  ║");
+        lines[2] = lines[2].concat("   ║");
+        lines[3] = lines[3].concat("  ║");
+    //10s
+        lines[4] = lines[4].concat("║ │ ");
+        lines[5] = lines[5].concat("║ ╰─");
+        lines[6] = lines[6].concat("║   ");
+        for(int i = 19; i >= 10; i--) {
+            //upper
+            if(pos[0] == i)
+                lines[4] = lines[4].concat("┌" + x[0]);
+            else
+                lines[4] = lines[4].concat("┌─");
+            if(pos[1] == i)
+                lines[4] = lines[4].concat("──" + x[1] + "┐ ");
+            else
+                lines[4] = lines[4].concat("───┐ ");
+            //middle
+            lines[5] = lines[5].concat("┤ " + i + " ├─");
+            //lower
+            if(players.size() >= 3 && pos[2] == i)
+                lines[6] = lines[6].concat("└" + x[2]);
+            else
+                lines[6] = lines[6].concat("└─");
+            if(players.size() >= 4 && pos[3] == i)
+                lines[6] = lines[6].concat("──" + x[3] + "┘ ");
+            else
+                lines[6] = lines[6].concat("───┘ ");
+        }
+        lines[4] = lines[4].concat("  ║");
+        lines[5] = lines[5].concat("╮ ║");
+        lines[6] = lines[6].concat("│ ║");
+    //0s
+        lines[7] = lines[7].concat("║        ");
+        lines[8] = lines[8].concat("║        ");
+        lines[9] = lines[9].concat("║        ");
+        for(int i = 0; i <= 9; i++) {
+            //upper
+            if(pos[0] == i)
+                lines[7] = lines[7].concat("┌" + x[0]);
+            else
+                lines[7] = lines[7].concat("┌─");
+            if(pos[1] == i)
+                lines[7] = lines[7].concat("─" + x[1] + "┐ ");
+            else
+                lines[7] = lines[7].concat("──┐ ");
+            //middle
+            if(i != 0)
+                lines[8] = lines[8].concat("┤ " + i + " ├─");
+            else
+                lines[8] = lines[8].concat("│ 0 ├─");
+            //lower
+            if(players.size() >= 3 && pos[2] == i)
+                lines[9] = lines[9].concat("└" + x[2]);
+            else
+                lines[9] = lines[9].concat("└─");
+            if(players.size() >= 4 && pos[3] == i)
+                lines[9] = lines[9].concat("─" + x[3] + "┘ ");
+            else
+                lines[9] = lines[9].concat("──┘ ");
+        }
+        lines[7] = lines[7].concat("     │ ║");
+        lines[8] = lines[8].concat("─────╯ ║");
+        lines[9] = lines[9].concat("       ║");
+    //last row
+        lines[10] = lines[10].concat("╚═══════════════════════════════════════════════════════════════════════════╝");
+    //names on the right
+        for(int i = 0; i < players.size(); i++)
+            lines[2+(i*2)] = lines[2+(i*2)].concat("   "+ x[i] + " " + players.get(i).getName() + ": " + pos[i] + "pts");
+    //printing all together
+        String result = "\n";
+        for(int i = 0; i < 11; i++)
+            result = result.concat(lines[i] + "\n");
+        System.out.println(result);
     }
 
-    /*
-    ┌─────────────────────────────────────────────────────────┐
-    │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ │
-    │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │
-    │ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ │
-    │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ │
-    │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │
-    │ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ │
-    │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ │
-    │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │
-    │ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ │
-    │ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐ │
-    │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │ xx │ │
-    │ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ └────┘ │
-    └─────────────────────────────────────────────────────────┘
-
-┌────┐
-│ xx │
-└────┘
-╭╮
-╰╯
-┌┬─┬──┬─┬┐
-├┘╭┴──┴╮└┤
-├─┤ 20 ├─┤
-├┐╰┬──┬╯┌┤
-└┴─┴──┴─┴┘
-
+    /**
+     * This method prints the scoreboard for the tui showing the points of each player
+     * It's an overloading of the previous method, to use for clients that
+     * save the own player in a different variable
+     * @param players the arraylist of players playing the game
+     * @param single player invoking the method
      */
+    public static void scoreboardPrinter(ArrayList<Player> players, Player single) {
+        ArrayList<Player> temp = new ArrayList<>();
+        temp.add(single);
+        temp.addAll(players);
+        scoreboardPrinter(temp);
+    }
 
 }

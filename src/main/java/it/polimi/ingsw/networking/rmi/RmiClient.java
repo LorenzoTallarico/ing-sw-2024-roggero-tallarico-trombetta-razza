@@ -94,7 +94,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             server.sendAction(a);
                             System.out.println("> Game's size set to " + playnum + ".");
                             state = State.COMMANDS;
-                        } catch (NoSuchElementException e) {
+                        } catch (NoSuchElementException | NumberFormatException e) {
                             System.out.println("> Invalid command syntax.");
                             continue;
                         }
@@ -133,6 +133,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.printf("> %-30s%s\n","playground x","to look at the playground of the player x, if you leave x blank, it will show yours.");
                     System.out.printf("> %-30s%s\n","hand","to look at the cards you have in your hand and the achievements you shall fulfill.");
                     System.out.printf("> %-30s%s\n","list","to know the full list of players currently playing and their score.");
+                    System.out.printf("> %-30s%s\n","scoreboard","to look at the scoreboard.");
                     break;
                 case "hand":
                     System.out.println("> This is your hand:");
@@ -161,7 +162,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                                 side = st.nextToken();
                                 row = Integer.parseInt(st.nextToken());
                                 column = Integer.parseInt(st.nextToken());
-                            } catch (NoSuchElementException e) {
+                            } catch (NoSuchElementException | NumberFormatException e) {
                                 continue;
                             }
                             if(index >= 0 && index <= p.getHand().size())
@@ -261,7 +262,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                                         repeatDraw = true;
                                     }
                                 }
-                            } catch (NoSuchElementException e) {
+                            } catch (NoSuchElementException | NumberFormatException e) {
                                 repeatDraw = true;
                             }
                         } while(repeatDraw);
@@ -300,6 +301,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     for(Player player : allPlayers)
                         System.out.println("> " + Print.getPlayerColor(player.getName(), allPlayers, p) + player.getName() + ": " + player.getPoints() + " pts;" + Print.ANSI_RESET);
                     System.out.println("> " + Print.getPlayerColor(nickname, allPlayers, p) + "(You) " + nickname + ": " + p.getPoints() + " pts;" + Print.ANSI_RESET);
+                    break;
+                case "scoreboard":
+                    Print.scoreboardPrinter(allPlayers, p);
                     break;
                 default:
                     System.err.println("> Command unknown, write \"help\" for a list of commands.");
@@ -426,7 +430,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     else
                         refreshPlayers(tempPlayer);
                 Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
-                //print scoreboard method
+                Print.scoreboardPrinter(allPlayers, p);
                 break;
             default:
                 break;
