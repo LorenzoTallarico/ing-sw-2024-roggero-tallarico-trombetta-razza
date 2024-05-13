@@ -48,6 +48,7 @@ public class Listener {
         }
     }
 
+    
 
     public void notifyDrawCompleted(Player player, Card card) throws RemoteException {
         Action action = new CardDrawnAction(player.getName(), player, card);
@@ -55,6 +56,7 @@ public class Listener {
             client.showAction(action);
         }
     }
+
 
 
     public void notifyHands(ArrayList<Player> players) throws RemoteException {
