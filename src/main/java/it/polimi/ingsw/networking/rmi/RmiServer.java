@@ -8,6 +8,7 @@ import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
 import it.polimi.ingsw.networking.action.toclient.PlacedErrorAction;
 import it.polimi.ingsw.networking.action.toclient.WholeChatAction;
 import it.polimi.ingsw.networking.action.toserver.*;
+import it.polimi.ingsw.util.Print;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -59,7 +60,7 @@ public class RmiServer implements VirtualServer {
             System.out.println("> Running ServerUpdateThread ...");
             ((RmiServer)server).serverUpdateThread();
         } catch (InterruptedException e) {
-            System.err.println("> ERROR: Updates queue for server interrupted:\n" + e.getMessage());
+            System.out.println(Print.ANSI_RED + "> ERROR: Updates queue for server interrupted:\n" + Print.ANSI_RESET + e.getMessage());
         }
 
     }
@@ -70,7 +71,7 @@ public class RmiServer implements VirtualServer {
                 Action a = clientActions.take();
                 for(VirtualView client : clients) {
                     client.showAction(a);
-                }/* REMOVED - USE ONLY IF DON'T WANT CLIENTS RECEIVING ALL ACTIONS
+                }/* REMOVED - USE ONLY IF YOU DON'T WANT CLIENTS RECEIVING ALL ACTIONS
                 if (a.getRecipient().isEmpty()) { //to all clients
                     for(VirtualView client : clients) {
                         client.showAction(a);
@@ -99,9 +100,6 @@ public class RmiServer implements VirtualServer {
                     case CHOSENPLAYERSNUMBER:
                         this.controller.setPlayersNumber(((ChosenPlayersNumberAction)action).getPlayersNumber());
                         break;
-                    case WHOLECHAT:
-                        System.err.println("> Server should not receive any WHOLECHAT action.");
-                        break;
                     case ASKINGCHAT:
                         newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
                         clientActions.put(newAction);
@@ -115,10 +113,6 @@ public class RmiServer implements VirtualServer {
                         break;
                     case CHOSENACHIEVEMENT:
                         this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction)action).getAchievement());
-                        break;
-                    case CHOOSEABLEACHIEVEMENTS:
-                        break;
-                    case HAND:
                         break;
                     case PLACINGCARD:
                         if(!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction)action).getCardIndex(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
@@ -141,21 +135,21 @@ public class RmiServer implements VirtualServer {
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         synchronized (this.clients) {
-            System.err.println("> Join request received.");
+            System.out.println("> Join request received.");
             String nick = client.getNickname();
             if(!clients.isEmpty())
                 for(VirtualView v : this.clients) {
                     if(v.getNickname().equalsIgnoreCase(nick)) {
-                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
+                        System.out.println(Print.ANSI_RED + "> Denied connection to a new client, user \"" + nick + "\" already existing." + Print.ANSI_RESET);
                         return false;
                     }
                 }
             if(this.controller.getCurrPlayersNumber() != 0 && this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
-                System.out.println("> Denied connection to a new client, max number of players already reached.");
+                System.out.println(Print.ANSI_RED + "> Denied connection to a new client, max number of players already reached." + Print.ANSI_RESET);
                 return false;
             } else {
                 this.clients.add(client);
-                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
+                System.out.println(Print.ANSI_GREEN + "> Allowed connection to a new client named \"" + nick + "\"." + Print.ANSI_RESET);
                 addPlayer(new Player(nick, false), client);
                 if(this.controller.getCurrPlayersNumber() == 1) {
                     try {

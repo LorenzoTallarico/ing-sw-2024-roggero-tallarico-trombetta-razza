@@ -6,6 +6,7 @@ import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
 import it.polimi.ingsw.util.Print;
 
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -53,20 +54,27 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
-        Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
-        VirtualServer server = (VirtualServer) registry.lookup(serverName);
-        new RmiClient(server).run();
+        try {
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
+            VirtualServer server = (VirtualServer) registry.lookup(serverName);
+            new RmiClient(server).run();
+        } catch(ConnectException | NotBoundException e) {
+            System.out.println(Print.ANSI_RED + "> Server might be down." + Print.ANSI_RESET);
+            System.exit(0);
+        }
     }
 
     private void run() throws RemoteException {
-        System.out.print("> Enter nickname: ");
         Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
+        do {
+            System.out.print("> Enter nickname: ");
+             nickname = scan.nextLine().trim();
+        } while(nickname.isEmpty());
         if(!this.server.connect(this)) {
-            System.err.println("> Connection failed, max number of players already reached or name already taken.");
+            System.out.println(Print.ANSI_RED + "> Connection failed, max number of players already reached or name already taken." + Print.ANSI_RESET);
             System.exit(0);
         }
-        p = new Player(nickname, false);
+
         this.runCli();
     }
 
@@ -99,7 +107,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             continue;
                         }
                     } else {
-                        System.err.println("> Permission denied, game's size already set.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, game's size already set." + Print.ANSI_RESET);
                     }
                     break;
                 case "chat":
@@ -182,7 +190,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         server.sendAction(a);
                         state = State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't place a card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't place a card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "start":
@@ -203,7 +211,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         p.getArea().setSpace(starterCard, 40, 40);
                         state = State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't choose the starter card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't choose the starter card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "achievement":
@@ -215,7 +223,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                             System.out.print("> Enter \"1\" or \"2\" to choose your secret achievement: ");
                             try {
                                 achChoice = Integer.parseInt(scan.nextLine());
-                            } catch (NoSuchElementException ignored) { }
+                            } catch (NoSuchElementException | NumberFormatException ignored) { }
                         }
                         a = new ChosenAchievementAction(nickname, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         achievements.add(0, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
@@ -223,7 +231,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         System.out.println("> Waiting for other players to choose their starter card and secret achievement.");
                         state = State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't choose the secret achievement right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't choose the secret achievement right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "draw":
@@ -270,7 +278,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         server.sendAction(a);
                         state = State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't draw a card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't draw a card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "playground":
@@ -306,7 +314,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     Print.scoreboardPrinter(allPlayers, p);
                     break;
                 default:
-                    System.err.println("> Command unknown, write \"help\" for a list of commands.");
+                    System.out.println(Print.ANSI_RED + "> Command unknown, write \"help\" for a list of commands." + Print.ANSI_RESET);
                     break;
             }
         }
@@ -352,7 +360,9 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
-                    p = ((ChooseSideStarterCardAction)act).getPlayer();
+                    synchronized(p) {
+                        p = ((ChooseSideStarterCardAction) act).getPlayer();
+                    }
                     System.out.println("> Choose the side you want to place your starter card with command \"start\".");
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
@@ -364,11 +374,6 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
                     state = State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
-                }
-                break;
-            case HAND:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    p.setHand(((HandAction)act).getHand());
                 }
                 break;
             case ASKINGPLACE:
@@ -395,7 +400,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 }
                 break;
             case PLACEDCARDERROR:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
+                if(act.getRecipient().equalsIgnoreCase(nickname) && state.equals(State.COMMANDS)) {
                     System.out.println(((PlacedErrorAction)act).getError());
                     state = State.PLACE;
                 }
