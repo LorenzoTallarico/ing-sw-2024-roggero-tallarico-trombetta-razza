@@ -10,6 +10,9 @@ import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,7 +21,9 @@ import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.StringTokenizer;
-/*
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class Client implements VirtualView {
 
     enum State {
@@ -34,8 +39,8 @@ public class Client implements VirtualView {
     private final static int PORT = 6969;
     private Player p;
     private String nickname;
-    private RmiClient.State state;
-    private final VirtualServer server;
+    private Client.State state;
+    private VirtualServer server;
     private ArrayList<Player> allPlayers;
     private StarterCard starterCard;
     private ArrayList<AchievementCard> achievements; // the first element is the secret achievement
@@ -45,15 +50,42 @@ public class Client implements VirtualView {
     private Resource goldDeck;
     private Resource resourceDeck;
     boolean repeatDraw;
-    private static final String LOCAL_HOST = "127.0.0.1";
-
-    public RmiClient(VirtualServer server) throws RemoteException {
+    private final BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
+    private final BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
+    
+            
+    public Client(VirtualServer server) throws RemoteException {
         this.server = server;
         this.p = new Player();
         this.nickname = "";
-        state = RmiClient.State.COMMANDS;
+        state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
+    }
+    
+    public Client (int connectionChoice, int portChoice, String ip) throws RemoteException, NotBoundException {
+        this.p = new Player();
+        this.nickname = "";
+        state = Client.State.COMMANDS;
+        this.allPlayers = new ArrayList<>();
+        achievements = new ArrayList<>();
+        if(connectionChoice == 1){ //RMI
+            final String serverName = "GameServer";
+            Registry registry = LocateRegistry.getRegistry(ip, portChoice);
+            VirtualServer server = (ServerRmi) registry.lookup(serverName); //era cast con (VirtualView)
+            new Client(server).run();
+        }
+        else { //Socket
+            Socket socket = new Socket(ip, portChoice);
+            server = new
+
+        }
+
+    }
+    
+    public void startCliRMI(int connectionChoice, int portChoice, String ip){
+
+        
     }
 
     public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
@@ -468,4 +500,3 @@ public class Client implements VirtualView {
 
 
 }
-*/

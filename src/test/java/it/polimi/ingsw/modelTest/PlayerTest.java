@@ -140,7 +140,7 @@ public class PlayerTest {
         backAngS[2]= c2s;
         backAngS[3]= c3s;
         Card startCard = new StarterCard(Resource.BUTTERFLY, null, null, frontAngS, backAngS);
-        System.out.println("Stampa carta Starter:");
+        System.out.println("Print Starter Card:");
         Print.cardPrinter(startCard, false);
 
         /*          Front StarterCard                Back StarterCard
@@ -352,6 +352,10 @@ public class PlayerTest {
 */
 
 
+
+        //to reset singleton
+        testGame.end();
+        testGame.nextState();
 
 
     }

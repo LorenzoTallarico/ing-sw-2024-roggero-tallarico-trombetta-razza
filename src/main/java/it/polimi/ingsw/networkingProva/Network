@@ -2,3 +2,9 @@ AppClient lancia Client che implementa VirtualView e se sceglie rmi chiama la co
 altrimenti con socket crea il thread
 
 Web server ha connect che data la virtual view incapsula
+
+
+- metodo connect per Socket, askingNickname -> Client, sendNickname -> Server, VIrtualView da gestire per Socket
+
+-ClientApp
+-Client e relative ServerRmi e ServerSocket

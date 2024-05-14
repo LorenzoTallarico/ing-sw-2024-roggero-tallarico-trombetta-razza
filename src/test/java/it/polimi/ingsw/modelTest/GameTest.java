@@ -3,6 +3,10 @@ package it.polimi.ingsw.modelTest;
 import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import it.polimi.ingsw.networking.rmi.RmiClient;
+import it.polimi.ingsw.networking.rmi.VirtualServer;
+import it.polimi.ingsw.networking.rmi.VirtualView;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
@@ -399,11 +403,17 @@ public class GameTest {
     }
     @Test
     void mixedTest() throws RemoteException {
+
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players, null);
+        VirtualServer server = null;
+        VirtualView cli = new RmiClient(server);
+        ArrayList<VirtualView> clients = new ArrayList<>();
+        clients.add(cli);
+
+        testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
         fake1.setHand(hand);
@@ -437,11 +447,17 @@ public class GameTest {
 
     @Test
     void drawTest() throws RemoteException {
+
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
-        testGame.addPlayers(players, null);
+        VirtualServer server = null;
+        VirtualView cli = new RmiClient(server);
+        ArrayList<VirtualView> clients = new ArrayList<>();
+        clients.add(cli);
+
+        testGame.addPlayers(players, clients);
         Card card;
         assertNull(testGame.draw("Marco", -1));
         assertNull(testGame.draw("Marco", 6));

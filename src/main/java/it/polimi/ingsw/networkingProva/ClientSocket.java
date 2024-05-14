@@ -12,17 +12,17 @@ import java.rmi.RemoteException;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientSocket implements VirtualView, Runnable {
-    private final Socket cliSocket;
+    private Socket serSocket = null;
     private final ObjectOutputStream outputStream;
     private final BlockingQueue<Action> serverActions;
     private final ObjectInputStream inputStream;
     private String nickname = null;
     private boolean connected = true;
 
-    public ClientSocket(Socket cliSocket, BlockingQueue<Action> serverActions) throws IOException {
-        this.cliSocket = cliSocket;
-        this.outputStream = new ObjectOutputStream(cliSocket.getOutputStream());
-        this.inputStream = new ObjectInputStream(cliSocket.getInputStream());
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions) throws IOException {
+        this.serSocket = serSocket;
+        this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
+        this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
     }
 
@@ -57,9 +57,7 @@ public class ClientSocket implements VirtualView, Runnable {
             Action action = null;
             try {
                 action = (Action) inputStream.readObject();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
             try {

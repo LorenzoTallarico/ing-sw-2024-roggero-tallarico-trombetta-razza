@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import com.sun.security.ntlm.Client;
 import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.toclient.*;
@@ -15,49 +16,10 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
-/*
-public class ClientApp extends UnicastRemoteObject implements VirtualView {
 
+public class ClientApp {
 
-    enum State {
-        COMMANDS,
-        GAMESIZE,
-        STARTERCARD,
-        DRAW,
-        PLACE,
-        ACHIEVEMENTSCHOICE,
-        END
-    }
-
-    //ADD OBJECT USERINTERFACE
-    private static final int PORT_RMI = 6969;
-    private static final int PORT_SOCKET = 7171; //it's 69 plus 2 fingers
-    private Player p;
-    private String nickname;
-    private ClientApp.State state;
-    private  VirtualServer server;
-    private ArrayList<Player> allPlayers;
-    private StarterCard starterCard;
-    private final Print customPrint;
-    private ArrayList<AchievementCard> achievements; // the first element is the secret achievement
-    private ArrayList<AchievementCard> choosableAchievements;
-    private ArrayList<ResourceCard> commonResource;
-    private ArrayList<GoldCard> commonGold;
-    private boolean goldDeck;
-    private boolean resourceDeck;
-    boolean repeatDraw;
-
-    public ClientApp(VirtualServer server) throws RemoteException {
-        this.server = server;
-        this.p = new Player();
-        this.nickname = "";
-        state = ClientApp.State.COMMANDS;
-        this.allPlayers = new ArrayList<>();
-        customPrint = new Print();
-        achievements = new ArrayList<>();
-    }
-
-    public static void main(String[] args) throws RemoteException, NotBoundException {
+    public static void main(String[] args) {
         String AsciiArt =
                 "  ______                   __                            __    __              __                                   __  __            \n"+
                 " /      \\                 /  |                          /  \\  /  |            /  |                                 /  |/  |           \n"+
@@ -73,6 +35,9 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
         String line;
         StringTokenizer st;
         int connectionChoice;
+        int portChoice = 7171;
+        String ip = "127.0.0.1";
+
         do{
             System.out.println("> Select connection method:");
             System.out.println("   [1] RMI Connection");
@@ -81,46 +46,31 @@ public class ClientApp extends UnicastRemoteObject implements VirtualView {
             line = scan.nextLine();
             st = new StringTokenizer(line);
             connectionChoice = Integer.parseInt(st.nextToken());
-            if(connectionChoice == 1 || connectionChoice == 2)
+            if(connectionChoice == 1 || connectionChoice == 2) {
                 checkChoice = true;
+            }
         }while(!checkChoice);
-        if(connectionChoice ==1){
-            final String serverName = "GameServer";
-            Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT_RMI);
-            VirtualServer server = (VirtualServer) registry.lookup(serverName);
-            new ClientApp(server).run();
-        } else {
-
+        System.out.println("> Select port (0 for default): ");
+        scan = new Scanner(System.in);
+        line = scan.nextLine();
+        st = new StringTokenizer(line);
+        portChoice = Integer.parseInt(st.nextToken());
+        if(portChoice == 0){
+            if(connectionChoice == 1) //RMI
+                portChoice = 6969;
+            else
+                portChoice =7171;
         }
-    }
-
-    private void run() throws RemoteException {
-        System.out.print("> Enter nickname: ");
-        Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
-        if(!this.server.connect(this)) {
-            System.err.println("> Connection failed, max number of players already reached or name already taken.");
-            System.exit(0);
+        System.out.println("> Select ip (0 for localhost): ");
+        scan = new Scanner(System.in);
+        line = scan.nextLine();
+        st = new StringTokenizer(line);
+        String ipChoice = st.nextToken();
+        if (ipChoice.equals("0")){
+            ipChoice = "127.0.0.1";
         }
-        p = new Player(nickname, false);
-        this.runCli();
-    }
-
-    @Override
-    public void reportError(String details) throws RemoteException {
-
-    }
-
-    @Override
-    public void showAction(Action act) throws RemoteException {
-
-    }
-
-    @Override
-    public String getNickname() throws RemoteException {
-        return "";
+        Client c = new Client(connectionChoice, portChoice, ipChoice);
     }
 
 }
 
-*/
