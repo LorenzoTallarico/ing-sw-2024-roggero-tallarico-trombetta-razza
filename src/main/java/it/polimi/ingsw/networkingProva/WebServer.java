@@ -1,27 +1,35 @@
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.controller.GameController;
+import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.*;
-import it.polimi.ingsw.networking.action.toclient.PlacedErrorAction;
-import it.polimi.ingsw.networking.action.toclient.WholeChatAction;
 import it.polimi.ingsw.networking.action.toserver.*;
+import it.polimi.ingsw.networking.action.toclient.*;
+import it.polimi.ingsw.networking.rmi.VirtualServer;
+import it.polimi.ingsw.networking.rmi.VirtualView;
+
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class WebServer {
+//Ricezione info in webServer e gestione di tali info, invece invio al client tutto in VirtualView
+public class WebServer implements VirtualServer {
     private static int PORT_RMI= 6969;
     private static int PORT_SOCKET= 7171;
     private GameController controller = null;
-    private final ArrayList<ClientHandler> clients = new ArrayList<>();
+    private final ArrayList<VirtualView> clients = new ArrayList<>();
     private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
     private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
+    private VirtualView rmiServer;
 
     public WebServer(int[] ports) {
         PORT_RMI = ports[0];
@@ -36,11 +44,12 @@ public class WebServer {
     }
 
     public void startRmiServer() {
-        /*
+        //Creazione RmiServer
         try {
             final String serverName = "GameServer";
 
-            VirtualServer server = new ClientHandlerRmi(serverActions, clientActions, clients); //al posto di GameController
+            //VirtualServer server = new RmiServer(new GameController);
+            VirtualServer server = this; //al posto di GameController
             VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server, 0);
             Registry registry = LocateRegistry.createRegistry(PORT_RMI);
             registry.rebind(serverName, stub);
@@ -49,19 +58,23 @@ public class WebServer {
         } catch (RemoteException e) {
             System.err.println("Errore durante l'avvio del server RMI: " + e.getMessage());
         }
-        */
-    }
 
+    }
     public void startSocketServer() {
         try {
             ServerSocket serverSocket = new ServerSocket(PORT_SOCKET);
             System.out.println("Server Socket pronto.");
-            while (clients.size()<5) {
+            while (true) {
                 Socket clientSocket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandlerSocket(clientSocket, serverActions);
-                clients.add(clientHandler);
-                Thread clientSocketThread = new Thread((Runnable) clientHandler); // Crea un nuovo thread per ogni client handler
+                VirtualView actualSocket = new ClientSocket(clientSocket, serverActions);
+                //clients.add(VirtualViewSocket);
+                Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
+                connect(actualSocket);
+                //.....
+                //fingiamo che è connesso
+
+
                 //invio messaggio connessione accettata, e si aspetta di ricevere stesso messaggio indietro
                 //client invia il suo nickname in modo da aggiornare la mappa con il proprio nickname e attende risposta
                 //server thread che controlla se è arrivato a capienza con Boolean attesaDiRisposta
@@ -76,8 +89,8 @@ public class WebServer {
         try {
             while (connectionFlagClient) {
                 Action a = clientActions.take();
-                for (ClientHandler handler : clients) {
-                    handler.sendAction(a);
+                for (VirtualView handler : clients) {
+                    handler.showAction(a);
                 }
             }
         } catch (InterruptedException | IOException e) {
@@ -126,7 +139,6 @@ public class WebServer {
                         break;
                     case CHOSENDRAWCARD:
                         this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction)action).getIndex());
-                        System.out.println("In serverRMI dopo aver chiamato il controller");
                         break;
                     default:
                         break;
@@ -169,6 +181,65 @@ public class WebServer {
         };
         Thread serverUpdateThread = new Thread(clientsUpdateRunnable);
         serverUpdateThread.start();
+    }
+
+    @Override
+    public boolean connect(VirtualView cli) throws RemoteException {
+        VirtualView client = new Client(cli);
+        synchronized (this.clients) {
+            System.err.println("> Join request received.");
+            String nick = client.getNickname();
+            if(!clients.isEmpty())
+                //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
+                for(VirtualView v : this.clients) {
+                    if(v.getNickname().equalsIgnoreCase(nick)) {
+                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
+                        return false;
+                    }
+                }
+            if(this.controller.getCurrPlayersNumber() != 0 && this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
+                System.out.println("> Denied connection to a new client, max number of players already reached.");
+                return false;
+            } else {
+                this.clients.add(client);
+                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
+                addPlayer(new Player(nick, false), client);
+                if(this.controller.getCurrPlayersNumber() == 1) {
+                    try {
+                        System.out.println("> " + nick + " is the first player.");
+                        clientActions.put(new AskingPlayersNumberAction(nick));
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                return true;
+            }
+        }
+    }
+
+    @Override
+    public void addPlayer(Player p, VirtualView c) throws RemoteException {
+        synchronized (this.clients){
+            try {
+                clientActions.put(new JoiningPlayerAction(p.getName(), this.controller.getCurrPlayersNumber() + 1, this.controller.getMaxPlayersNumber()));
+            } catch(InterruptedException e) {
+                throw new RuntimeException();
+            }
+            this.controller.addPlayer(p, c);
+            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
+            System.out.println(textUpdate);
+        }
+    }
+
+
+    @Override
+    public void sendAction(Action action) throws RemoteException {
+        try {
+            System.out.println("> Received action, type \"" + action.getType().toString() +"\".");
+            serverActions.put(action);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

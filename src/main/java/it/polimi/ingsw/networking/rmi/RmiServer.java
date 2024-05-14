@@ -9,6 +9,7 @@ import it.polimi.ingsw.networking.action.toclient.PlacedErrorAction;
 import it.polimi.ingsw.networking.action.toclient.WholeChatAction;
 import it.polimi.ingsw.networking.action.toserver.*;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -82,7 +83,7 @@ public class RmiServer implements VirtualServer {
                         }
                     }
                 }*/
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | IOException e) {
                 connectionFlagClient = false;
             }
         }

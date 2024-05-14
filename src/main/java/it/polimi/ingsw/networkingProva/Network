@@ -1,0 +1,4 @@
+AppClient lancia Client che implementa VirtualView e se sceglie rmi chiama la connect passando se stesso come virtual View
+altrimenti con socket crea il thread
+
+Web server ha connect che data la virtual view incapsula

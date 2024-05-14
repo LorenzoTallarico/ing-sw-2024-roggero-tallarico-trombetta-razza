@@ -1,30 +1,54 @@
 package it.polimi.ingsw.networkingProva;
 
+import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.action.Action;
+
 
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.rmi.RemoteException;
 import java.util.concurrent.BlockingQueue;
 
-public class ClientHandlerSocket implements ClientHandler, Runnable {
-    private final Socket clientSocket;
+public class ClientSocket implements VirtualView, Runnable {
+    private final Socket cliSocket;
     private final ObjectOutputStream outputStream;
     private final BlockingQueue<Action> serverActions;
     private final ObjectInputStream inputStream;
+    private String nickname = null;
+    private boolean connected = true;
 
-    public ClientHandlerSocket(Socket clientSocket, BlockingQueue<Action> serverActions) throws IOException {
-        this.clientSocket = clientSocket;
-        this.outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-        this.inputStream = new ObjectInputStream(clientSocket.getInputStream());
+    public ClientSocket(Socket cliSocket, BlockingQueue<Action> serverActions) throws IOException {
+        this.cliSocket = cliSocket;
+        this.outputStream = new ObjectOutputStream(cliSocket.getOutputStream());
+        this.inputStream = new ObjectInputStream(cliSocket.getInputStream());
         this.serverActions = serverActions;
     }
 
     @Override
-    public void sendAction(Action action) throws IOException {
-        outputStream.writeObject(action);
+    public void reportError(String details) throws RemoteException {
+
+    }
+
+    @Override
+    public void showAction(Action act) throws IOException {
+        outputStream.writeObject(act);
         outputStream.flush();
+    }
+
+    @Override
+    public String getNickname() {
+        //if(firstConnection)
+        //invio AskNickname
+        //ricezione Nickname e set dell'attributo
+
+        return nickname;
+    }
+
+
+    public void setNickname(String nickname){
+        this.nickname = nickname;
     }
 
     @Override
