@@ -3052,15 +3052,15 @@ public class Print {
         String[] lines = new String[6];
         String[] temp;
         String result = "";
-
-        if(!cards.isEmpty()) {
+        if(cards != null && !cards.isEmpty()) {
             // first row
             Arrays.fill(lines, "       ");
             result = "       " + ANSI_BOLD;
             for(int i = 0; i < cards.size(); i++) {
                 result = result.concat("       " + (i+1) + "° Card" + "       " + "   ");
             }
-            result = result.concat("             " + "Secret achievement and common achievements" + "              ");
+            if(achievements != null && !achievements.isEmpty())
+                result = result.concat("             " + "Secret achievement and common achievements" + "              ");
             result = result.concat(ANSI_BOLD_RESET + "\n");
             lines[2] = ANSI_BOLD + " Front " + ANSI_BOLD_RESET;
             lines[3] = ANSI_BOLD + "  side " + ANSI_BOLD_RESET;
@@ -3069,7 +3069,7 @@ public class Print {
                 for(int j = 0; j < 6; j++)
                     lines[j] = lines[j].concat(temp[j] + "   " + ANSI_RESET);
             }
-            if(achievements != null)
+            if(achievements != null && !achievements.isEmpty())
                 for(int i = 0; i < achievements.size(); i++) {
                     temp = largeCardToString(achievements.get(i), true);
                     for(int j = 0; j < 6; j++)
@@ -3090,7 +3090,7 @@ public class Print {
             for(int i = 0; i < 6; i++) {
                 result = result.concat(lines[i] + "\n");
             }
-        } else { //just achievements ? should be an error in the game
+        } else if(achievements != null && !achievements.isEmpty()){ //just achievements ? should be an error in the game
             Arrays.fill(lines, "");
             for(int i = 0; i < achievements.size(); i++) {
                 temp = largeCardToString(achievements.get(i), true);
@@ -3103,7 +3103,8 @@ public class Print {
             for(int i = 0; i < 6; i++) {
                 result = result.concat(lines[i] + "\n");
             }
-        }
+        } else
+            result = ANSI_BOLD + "It seems you don't have card in your hand.\n" + ANSI_BOLD_RESET;
         System.out.print(result);
     }
 

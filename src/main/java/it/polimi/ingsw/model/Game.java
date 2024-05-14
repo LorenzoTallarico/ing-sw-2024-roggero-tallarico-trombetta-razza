@@ -11,6 +11,7 @@ import java.util.Collections;
 import com.google.gson.*;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.listener.Listener;
+import it.polimi.ingsw.util.Print;
 
 public class Game implements Serializable {
 
@@ -308,7 +309,6 @@ public class Game implements Serializable {
             players.get(i).getArea().setSpace(popStarterCard(), 40, 40);
         }
         bigListener.notifyStarterCard(players);
-        bigListener.notifyHands(players);
     }
 
 
