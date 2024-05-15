@@ -5,8 +5,9 @@ import java.awt.*;
 
 public class gui_temp {
     public static void main(String[] args) {
-        JFrame f = new JFrame();
-
+        JFrame f = new JFrame("Codex Naturalis");
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
         JButton b1 = new JButton("NORTH");
         JButton b2 = new JButton("SOUTH");
         JButton b3 = new JButton("EAST");
@@ -22,7 +23,7 @@ public class gui_temp {
         j2.add(b2);
         j3.add(b3);
         JLabel label = new JLabel();
-        ImageIcon icon = new ImageIcon("src/main/resources/img.png");
+        ImageIcon icon = new ImageIcon("src/main/resources/img/misc/img.png");
         label.setIcon(icon);
         j4.add(label);
         j5.add(b5);
@@ -34,8 +35,8 @@ public class gui_temp {
         j3.setPreferredSize(new Dimension(400, 200));
         f.add(j5, BorderLayout.CENTER);
         f.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //f.setUndecorated(true);
         f.setVisible(true);
         f.pack();
-        f.setUndecorated(true);
     }
 }
