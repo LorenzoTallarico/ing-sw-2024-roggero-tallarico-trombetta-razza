@@ -2016,22 +2016,25 @@ public class Print {
         int cHeight = (height * 2) + 1;     //number of chars in a column
         int cWidth = (width * 5) + 2;       //number of chars in a row
 
-        /*//debugging
+        //debugging
         for(int row = north; row <= south; row++) {
             for(int col = west; col <= east; col++) {
                 space = area.getSpace(row, col);
                 System.out.print("row: " + row + ", col: " + col);
                 if(!space.isFree() && !space.isDead()) { //space is card, not free, not dead
                     card = space.getCard();
-                    System.out.print(", " + (card.getClass() == StarterCard.class ? ANSI_YELLOW : ANSI_CYAN) + "CARD" + ANSI_RESET + " | ");
+                    System.out.print(", " + (card.getClass() == StarterCard.class ? ANSI_YELLOW : ANSI_CYAN) + "CARD" + ANSI_RESET + ", ");
+                    for(Corner c : (card.isFront() ? card.getFrontCorners() : card.getBackCorners()))
+                        System.out.print((c.isVisible() ? Print.ANSI_GREEN + "V" : Print.ANSI_RED + "N") + Print.ANSI_RESET);
+                    System.out.print(" ");
                 } else if(space.isDead()) { //space is dead
-                    System.out.print(", " + ANSI_BLACK + "DEAD" + ANSI_RESET + " | ");
+                    System.out.print(", " + ANSI_BLACK + "DEAD" + ANSI_RESET + ",      ");
                 } else { //space is free but not dead
-                    System.out.print(", FREE | ");
+                    System.out.print(", FREE,      ");
                 }
             }
             System.out.println(";");
-        }*/
+        }
 
     //initializing the stringbuilder array
         StringBuilder[] line = new StringBuilder[cHeight];
@@ -2076,7 +2079,7 @@ public class Print {
                 } else { //space is free but not dead
                 //first line
                     if(y == 0) { //top row
-                        line[y*2].append("     ");
+                            line[y*2].append("       ");
                     } else { //check if there is card on top left
                         if(x == 0) //most left
                             line[y*2].append("     ");

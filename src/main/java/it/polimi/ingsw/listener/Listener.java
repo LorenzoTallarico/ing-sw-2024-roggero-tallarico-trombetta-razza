@@ -4,7 +4,9 @@ import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.util.Print;
 
+import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
@@ -16,13 +18,17 @@ public class Listener {
         this.clients = clients;
     }
 
-    public void notifyStarterCard(ArrayList<Player> players) throws RemoteException {
+    public void notifyStarterCard(ArrayList<Player> players,  ArrayList<GoldCard> commonGold, ArrayList<ResourceCard> commonResource, Resource goldDeck, Resource resourceDeck) throws RemoteException {
         System.out.println("> All clients notified by starter card listener.");
         for(Player p : players) {
             StarterCard card = (StarterCard) p.getArea().getSpace(40,40).getCard();
-            Action action = new ChooseSideStarterCardAction(p.getName(), card, p);
+            Action action = new ChooseSideStarterCardAction(p.getName(), card, p, commonGold, goldDeck, commonResource, resourceDeck);
             for(VirtualView client : clients) {
-                client.showAction(action);
+                try {
+                    client.showAction(action);
+                } catch(IOException e) {
+                    System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+                }
             }
         }
     }
@@ -31,7 +37,11 @@ public class Listener {
         System.out.println("> All clients notified by card placement listener. <- " + nickname);
         Action action = new PlacedCardAction(nickname, p, card, row, col, score);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 
@@ -39,7 +49,11 @@ public class Listener {
         System.out.println("> All clients notified by placement error listener. <- " + nickname);
         Action action = new PlacedErrorAction(nickname);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 
@@ -47,7 +61,11 @@ public class Listener {
         System.out.println("> All clients notified by ask to draw listener. <- " + nickname);
         Action action = new AskingDrawAction(nickname, commonGold, goldDeck, commonResource, resourceDeck);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 
@@ -56,26 +74,26 @@ public class Listener {
         System.out.println("> All clients notified by completed draw listener. <- " + player.getName());
         Action action = new CardDrawnAction(player.getName(), player, card);
         for(VirtualView client : clients) {
-            client.showAction(action);
-        }
-    }
-
-
-
-    public void notifyHands(ArrayList<Player> players) throws RemoteException {
-        for(Player p : players) {
-            Action action = new HandAction(p.getName(), p.getHand());
-            for(VirtualView client : clients) {
+            try {
                 client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
             }
         }
     }
+
+
+
 
     public void notifyAchievementChoice(String recipient, ArrayList<AchievementCard> achievements,  ArrayList<AchievementCard> commonGoals) throws RemoteException {
         System.out.println("> All clients notified by achievement choice listener. <- " + recipient);
         Action action = new ChooseableAchievementsAction(recipient, achievements, commonGoals);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 
@@ -83,7 +101,11 @@ public class Listener {
         System.out.println("> All clients notified by ask to place listener. <- " + player.getName());
         Action action = new AskingPlaceAction(player);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 
@@ -91,7 +113,11 @@ public class Listener {
         System.out.println("> All clients notified by end game winners listener.");
         Action action = new WinnersAction(players);
         for(VirtualView client : clients) {
-            client.showAction(action);
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
         }
     }
 

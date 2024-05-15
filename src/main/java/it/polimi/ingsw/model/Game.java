@@ -11,7 +11,7 @@ import java.util.Collections;
 import com.google.gson.*;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.listener.Listener;
-import it.polimi.ingsw.util.Print;
+
 
 public class Game implements Serializable {
 
@@ -201,7 +201,7 @@ public class Game implements Serializable {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
-            goldDeck = new ArrayList<GoldCard>();
+            goldDeck = new ArrayList<>();
             Collections.addAll(goldDeck, tempGold);
         } catch (IOException e) {
             System.err.println("> Error: JSON files not found.");
@@ -231,7 +231,7 @@ public class Game implements Serializable {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
-            achievementDeck = new ArrayList<AchievementCard>();
+            achievementDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
                 achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
         } catch (IOException e) {
@@ -297,8 +297,8 @@ public class Game implements Serializable {
      **/
     private void createHands() throws RemoteException {
         for(int i = 0; i < playersNumber; i++) {
-            ArrayList<Card> hand = new ArrayList<Card>();
-            ArrayList<AchievementCard> secretAchievement = new ArrayList<AchievementCard>();
+            ArrayList<Card> hand = new ArrayList<>();
+            ArrayList<AchievementCard> secretAchievement = new ArrayList<>();
             for(int j = 0; j < 2; j++)
                 hand.add(popResourceCard());
             hand.add(popGoldCard());
@@ -308,7 +308,7 @@ public class Game implements Serializable {
             players.get(i).setSecretAchievement(secretAchievement);
             players.get(i).getArea().setSpace(popStarterCard(), 40, 40);
         }
-        bigListener.notifyStarterCard(players);
+        bigListener.notifyStarterCard(players, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
     }
 
 

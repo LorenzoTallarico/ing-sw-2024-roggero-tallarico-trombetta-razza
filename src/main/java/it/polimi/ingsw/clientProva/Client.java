@@ -1,5 +1,5 @@
 package it.polimi.ingsw.clientProva;
-
+/*
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ChatMessageAction;
@@ -500,3 +500,4 @@ public class Client implements VirtualView {
 
 
 }
+*/

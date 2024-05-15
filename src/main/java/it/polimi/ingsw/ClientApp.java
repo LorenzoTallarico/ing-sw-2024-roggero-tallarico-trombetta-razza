@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-import com.sun.security.ntlm.Client;
+
 import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.toclient.*;
@@ -69,7 +69,7 @@ public class ClientApp {
         if (ipChoice.equals("0")){
             ipChoice = "127.0.0.1";
         }
-        Client c = new Client(connectionChoice, portChoice, ipChoice);
+        //Client c = new Client(connectionChoice, portChoice, ipChoice);
     }
 
 }

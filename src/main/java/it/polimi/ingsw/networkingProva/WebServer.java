@@ -19,7 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
+/*
 //Ricezione info in webServer e gestione di tali info, invece invio al client tutto in VirtualView
 public class WebServer implements VirtualServer {
     private static int PORT_RMI= 6969;
@@ -243,3 +243,4 @@ public class WebServer implements VirtualServer {
     }
 
 }
+*/

@@ -140,6 +140,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                     System.out.printf("> %-30s%s\n","draw","to draw a new card.");
                     System.out.printf("> %-30s%s\n","playground x","to look at the playground of the player x, if you leave x blank, it will show yours.");
                     System.out.printf("> %-30s%s\n","hand","to look at the cards you have in your hand and the achievements you shall fulfill.");
+                    System.out.printf("> %-30s%s\n","table","to look at the cards and the decks in the middle of the table.");
                     System.out.printf("> %-30s%s\n","list","to know the full list of players currently playing and their score.");
                     System.out.printf("> %-30s%s\n","scoreboard","to look at the scoreboard.");
                     break;
@@ -313,6 +314,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 case "scoreboard":
                     Print.scoreboardPrinter(allPlayers, p);
                     break;
+                case "table":
+                    System.out.println("> These are the cards on the table right now:");
+                    Print.drawChoicePrinter(commonGold, commonResource, goldDeck,resourceDeck);
+                    break;
                 default:
                     System.out.println(Print.ANSI_RED + "> Command unknown, write \"help\" for a list of commands." + Print.ANSI_RESET);
                     break;
@@ -358,6 +363,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 break;
             case CHOOSESIDESTARTERCARD:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
+                    this.commonGold = ((ChooseSideStarterCardAction)act).getCommonGold();
+                    this.goldDeck = ((ChooseSideStarterCardAction)act).getGoldDeck();
+                    this.commonResource = ((ChooseSideStarterCardAction)act).getCommonResource();
+                    this.resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
                     synchronized(p) {
@@ -406,13 +415,13 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                 }
                 break;
             case ASKINGDRAW:
+                this.commonGold = ((AskingDrawAction)act).getCommonGold();
+                this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
+                this.commonResource = ((AskingDrawAction)act).getCommonResource();
+                this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
-                    this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                    this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
-                    this.commonResource = ((AskingDrawAction)act).getCommonResource();
-                    this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
                 } else {
                     System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
                 }
