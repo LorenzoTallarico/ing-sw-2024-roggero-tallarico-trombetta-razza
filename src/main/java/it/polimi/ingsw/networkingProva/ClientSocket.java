@@ -33,6 +33,7 @@ public class ClientSocket implements VirtualView, Runnable {
 
     @Override
     public void showAction(Action act) throws IOException {
+        //qui il client sta MANDANDO l'azione
         outputStream.writeObject(act);
         outputStream.flush();
     }

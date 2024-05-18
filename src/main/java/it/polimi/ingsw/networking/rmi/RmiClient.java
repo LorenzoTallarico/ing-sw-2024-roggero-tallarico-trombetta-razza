@@ -53,6 +53,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
+        // qui teoricamente non ci sarà più un main perché il client verrà lanciato da ClientApp, quindi si userà direttamente il metodo "init()" quando si istanzierà RmiClient
         final String serverName = "GameServer";
         try {
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
@@ -63,6 +64,21 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.exit(0);
         }
     }
+
+    //Metodo che ci serve public, verrà usato una volta che viene lanciato un client e viene scelta la tecnologia RMI
+    /*
+    public void init() throws RemoteException, NotBoundException{
+        final String serverName = "GameServer";
+        try {
+            Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
+            VirtualServer server = (VirtualServer) registry.lookup(serverName);
+            new RmiClient(server).run();
+        } catch(ConnectException | NotBoundException e) {
+            System.out.println(Print.ANSI_RED + "> Server might be down." + Print.ANSI_RESET);
+            System.exit(0);
+        }
+    }
+    */
 
     private void run() throws RemoteException {
         Scanner scan = new Scanner(System.in);

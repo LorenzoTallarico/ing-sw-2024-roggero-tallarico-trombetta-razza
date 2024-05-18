@@ -70,12 +70,20 @@ public class Client implements VirtualView {
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
         if(connectionChoice == 1){ //RMI
+
+            //qui mi sembra più comodo lanciare direttamente RmiClient con il metodo init() e lasciare tutto a lui come qui sotto nel commento
+            // new RmiClient(server).init();
+
             final String serverName = "GameServer";
             Registry registry = LocateRegistry.getRegistry(ip, portChoice);
             VirtualServer server = (ServerRmi) registry.lookup(serverName); //era cast con (VirtualView)
             new Client(server).run();
+
         }
         else { //Socket
+
+            //qui analogamente gestirei il tutto nella classe ClientSocket in modo da poter separare la logica
+            //
             Socket socket = new Socket(ip, portChoice);
             server = new
 

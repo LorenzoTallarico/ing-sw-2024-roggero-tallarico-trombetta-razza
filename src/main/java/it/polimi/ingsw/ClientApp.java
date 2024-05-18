@@ -69,6 +69,8 @@ public class ClientApp {
         if (ipChoice.equals("0")){
             ipChoice = "127.0.0.1";
         }
+
+
         //Client c = new Client(connectionChoice, portChoice, ipChoice);
     }
 

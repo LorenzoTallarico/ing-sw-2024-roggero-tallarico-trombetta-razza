@@ -19,7 +19,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-/*
+
 //Ricezione info in webServer e gestione di tali info, invece invio al client tutto in VirtualView
 public class WebServer implements VirtualServer {
     private static int PORT_RMI= 6969;
@@ -53,19 +53,21 @@ public class WebServer implements VirtualServer {
             VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server, 0);
             Registry registry = LocateRegistry.createRegistry(PORT_RMI);
             registry.rebind(serverName, stub);
+            System.out.println("RMI Server ready.");
 
-            System.out.println("RMI Server pronto.");
         } catch (RemoteException e) {
-            System.err.println("Errore durante l'avvio del server RMI: " + e.getMessage());
+            System.err.println("Error during the start of the RMI server: " + e.getMessage());
         }
 
     }
     public void startSocketServer() {
         try {
+            // ServerSocket è una classe predefinita di java, dovremmo cambiare nome perché si crea confusione
             ServerSocket serverSocket = new ServerSocket(PORT_SOCKET);
-            System.out.println("Server Socket pronto.");
+            System.out.println("Server Socket ready.");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
+                //qui si è attaccato un nuovo client
                 VirtualView actualSocket = new ClientSocket(clientSocket, serverActions);
                 //clients.add(VirtualViewSocket);
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
@@ -184,8 +186,8 @@ public class WebServer implements VirtualServer {
     }
 
     @Override
-    public boolean connect(VirtualView cli) throws RemoteException {
-        VirtualView client = new Client(cli);
+    public boolean connect(VirtualView client) throws RemoteException {
+        //VirtualView client = new Client(cli);
         synchronized (this.clients) {
             System.err.println("> Join request received.");
             String nick = client.getNickname();
@@ -243,4 +245,3 @@ public class WebServer implements VirtualServer {
     }
 
 }
-*/
