@@ -2,7 +2,10 @@ package it.polimi.ingsw.networking.action;
 
 public enum ActionType {
     CONNECTION,
+    SETNICKNAME,
+    ASKINGSTART,
     JOININGPLAYER,
+    START,
 
     ASKINGPLAYERSNUMBER,
     CHOSENPLAYERSNUMBER,

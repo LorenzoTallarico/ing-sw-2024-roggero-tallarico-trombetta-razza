@@ -16,16 +16,14 @@ public class ServerSocket implements VirtualServer, Runnable {
 
     private final Socket cliSocket;
     private final ObjectOutputStream outputStream;
-    private final BlockingQueue<Action> clientActionsToSend;
+    private final BlockingQueue<Action> serverActionReceived;
     private final ObjectInputStream inputStream;
-    private String nickname = null;
-    private boolean connected = true;
 
-    public ServerSocket(Socket cliSocket, BlockingQueue<Action> clientActionsToSend) throws IOException {
+    public ServerSocket(Socket cliSocket, BlockingQueue<Action> serverActionReceived) throws IOException {
         this.cliSocket = cliSocket;
         this.outputStream = new ObjectOutputStream(cliSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(cliSocket.getInputStream());
-        this.clientActionsToSend = clientActionsToSend;
+        this.serverActionReceived = serverActionReceived;
     }
 
     @Override
@@ -35,6 +33,12 @@ public class ServerSocket implements VirtualServer, Runnable {
 
     @Override
     public void sendAction(Action action) throws RemoteException {
+        try{
+            outputStream.writeObject(action);
+            outputStream.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -52,7 +56,7 @@ public class ServerSocket implements VirtualServer, Runnable {
                 throw new RuntimeException(e);
             }
             try {
-                clientActionsToSend.put(action);
+                serverActionReceived.put(action);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

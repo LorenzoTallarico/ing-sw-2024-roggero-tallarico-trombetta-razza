@@ -10,6 +10,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     private VirtualView client = null;
 
+
     public ClientRmi(VirtualView client) throws RemoteException{
         this.client = client;
     }
@@ -28,6 +29,16 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     @Override
     public String getNickname() throws RemoteException {
         return client.getNickname();
+    }
+
+    @Override
+    public boolean getOnline() { //da aggiungere
+        return false;
+    }
+
+    @Override
+    public boolean getGui() {
+        return client.getGui();
     }
 
 

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.networkingProva;
 
+import it.polimi.ingsw.clientProva.Client;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.*;
@@ -30,6 +31,7 @@ public class WebServer implements VirtualServer {
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
     private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
     private VirtualView rmiServer;
+    private boolean gameStarted = false;
 
     public WebServer(int[] ports) {
         PORT_RMI = ports[0];
@@ -68,18 +70,10 @@ public class WebServer implements VirtualServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 //qui si è attaccato un nuovo client
-                VirtualView actualSocket = new ClientSocket(clientSocket, serverActions);
-                //clients.add(VirtualViewSocket);
+                VirtualView actualSocket = new ClientSocket(clientSocket, serverActions, clients);
+                clients.add(actualSocket);
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
-                connect(actualSocket);
-                //.....
-                //fingiamo che è connesso
-
-
-                //invio messaggio connessione accettata, e si aspetta di ricevere stesso messaggio indietro
-                //client invia il suo nickname in modo da aggiornare la mappa con il proprio nickname e attende risposta
-                //server thread che controlla se è arrivato a capienza con Boolean attesaDiRisposta
             }
         } catch (IOException e) {
             System.err.println("Errore durante l'avvio del server Socket: " + e.getMessage());
@@ -108,46 +102,67 @@ public class WebServer implements VirtualServer {
                 Action action = serverActions.take();
                 System.out.println("> Handling action, action type \"" + action.getType().toString() + "\".");
                 Action newAction = null;
-                switch (action.getType()) {
-                    case CHOSENPLAYERSNUMBER:
-                        this.controller.setPlayersNumber(((ChosenPlayersNumberAction)action).getPlayersNumber());
-                        break;
-                    case WHOLECHAT:
-                        System.err.println("> Server should not receive any WHOLECHAT action.");
-                        break;
-                    case ASKINGCHAT:
-                        newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
-                        clientActions.put(newAction);
-                        break;
-                    case CHATMESSAGE:
-                        this.controller.sendChatMessage(((ChatMessageAction)action).getMessage());
-                        clientActions.put(action);
-                        break;
-                    case CHOSENSIDESTARTERCARD:
-                        this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction)action).getSide());
-                        break;
-                    case CHOSENACHIEVEMENT:
-                        this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction)action).getAchievement());
-                        break;
-                    case CHOOSEABLEACHIEVEMENTS:
-                        break;
-                    case HAND:
-                        break;
-                    case PLACINGCARD:
-                        if(!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction)action).getCardIndex(), ((PlacingCardAction)action).getSide(), ((PlacingCardAction)action).getRow(), ((PlacingCardAction)action).getColumn())){
-                            newAction = new PlacedErrorAction(action.getAuthor());
+                if (gameStarted) {
+                    switch (action.getType()) {
+                        case CHOSENPLAYERSNUMBER:
+                            this.controller.setPlayersNumber(((ChosenPlayersNumberAction) action).getPlayersNumber());
+                            break;
+                        case ASKINGCHAT:
+                            newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
                             clientActions.put(newAction);
-                        }
-                        break;
-                    case CHOSENDRAWCARD:
-                        this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction)action).getIndex());
-                        break;
-                    default:
-                        break;
+                            break;
+                        case CHATMESSAGE:
+                            this.controller.sendChatMessage(((ChatMessageAction) action).getMessage());
+                            clientActions.put(action);
+                            break;
+                        case CHOSENSIDESTARTERCARD:
+                            this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction) action).getSide());
+                            break;
+                        case CHOSENACHIEVEMENT:
+                            this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction) action).getAchievement());
+                            break;
+                        case PLACINGCARD:
+                            if (!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction) action).getCardIndex(), ((PlacingCardAction) action).getSide(), ((PlacingCardAction) action).getRow(), ((PlacingCardAction) action).getColumn())) {
+                                newAction = new PlacedErrorAction(action.getAuthor());
+                                clientActions.put(newAction);
+                            }
+                            break;
+                        case CHOSENDRAWCARD:
+                            this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }  catch (InterruptedException e) {
-                connectionFlagServer = false;
-            }
+                else{
+                    switch (action.getType()) {
+                        case START:
+                            if(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
+                                this.controller.setPlayersNumber(((StartAction) action).getPlayerNumber());
+                                for(VirtualView client : clients){
+                                    addPlayer(new Player(client.getNickname(), false), client);
+                                }
+                                gameStarted = true;
+                            }
+                            else{
+                                String nickname = null;
+                                for(int i=0; i<clients.size() && nickname == null; i++) {
+                                    if(clients.get(i).getOnline()) {
+                                        nickname = clients.get(i).getNickname();
+                                    }
+                                }
+                                Action act = new AskingStartAction(nickname, countOnlinePlayer());
+                                clientActions.put(act);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                } catch(InterruptedException e){
+                    connectionFlagServer = false;
+                }
+
         }
     }
 
@@ -185,7 +200,7 @@ public class WebServer implements VirtualServer {
         serverUpdateThread.start();
     }
 
-    @Override
+   /* @Override
     public boolean connect(VirtualView client) throws RemoteException {
         //VirtualView client = new Client(cli);
         synchronized (this.clients) {
@@ -217,6 +232,47 @@ public class WebServer implements VirtualServer {
                 return true;
             }
         }
+    }*/
+
+    @Override
+    public boolean connect(VirtualView client) throws RemoteException {
+        //VirtualView client = new Client(cli);
+        synchronized (this.clients) {
+            System.err.println("> Join request received.");
+            String nick = client.getNickname();
+            if(!clients.isEmpty())
+                //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
+                for(VirtualView v : this.clients) {
+                    if(v.getNickname().equalsIgnoreCase(nick)) {
+                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
+                        return false;
+                    }
+                }
+            if(countOnlinePlayer()==4) {
+                System.out.println("> Denied connection to a new client, max number of players already reached.");
+                return false;
+            } else {
+                this.clients.add(client);
+                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
+                for(VirtualView v : this.clients) {
+                    if(v.getOnline()) {
+                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());
+                        return true;
+                    }
+                }
+                return true;
+            }
+        }
+    }
+
+
+    private int countOnlinePlayer() throws RemoteException {
+        int count = 0;
+        for(VirtualView v : this.clients) {
+            if(v.getOnline() && v.getNickname() != null)
+                count ++;
+        }
+        return count;
     }
 
     @Override

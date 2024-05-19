@@ -1,5 +1,5 @@
 package it.polimi.ingsw.clientProva;
-/*
+
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ChatMessageAction;
@@ -10,6 +10,7 @@ import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -52,32 +53,34 @@ public class Client implements VirtualView {
     boolean repeatDraw;
     private final BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
     private final BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
-    
-            
-    public Client(VirtualServer server) throws RemoteException {
+    private boolean gui;
+
+
+    /*public Client(VirtualServer server) throws RemoteException {
         this.server = server;
         this.p = new Player();
         this.nickname = "";
         state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
-    }
-    
-    public Client (int connectionChoice, int portChoice, String ip) throws RemoteException, NotBoundException {
+    }*/
+
+    public Client (int connectionChoice, int portChoice, String ip, boolean gui) throws IOException, NotBoundException {
         this.p = new Player();
         this.nickname = "";
         state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
+        this.gui = gui;
         if(connectionChoice == 1){ //RMI
-
             //qui mi sembra più comodo lanciare direttamente RmiClient con il metodo init() e lasciare tutto a lui come qui sotto nel commento
             // new RmiClient(server).init();
 
             final String serverName = "GameServer";
             Registry registry = LocateRegistry.getRegistry(ip, portChoice);
-            VirtualServer server = (ServerRmi) registry.lookup(serverName); //era cast con (VirtualView)
-            new Client(server).run();
+            VirtualServer server = (ServerRmi) registry.lookup(serverName);
+            this.server = server;
+            finalizeConnectionRmi();
 
         }
         else { //Socket
@@ -85,23 +88,31 @@ public class Client implements VirtualView {
             //qui analogamente gestirei il tutto nella classe ClientSocket in modo da poter separare la logica
             //
             Socket socket = new Socket(ip, portChoice);
-            server = new
+            VirtualServer serverSocket = (VirtualServer) new ServerSocket(socket, serverActionsReceived);
+            this.server = serverSocket;
+            Thread serverSocketThread = new Thread((Runnable) serverSocket); // Crea un nuovo thread di ascolto per i messaggi in arrivo dal server
+            serverSocketThread.start();
 
         }
 
     }
-    
-    public void startCliRMI(int connectionChoice, int portChoice, String ip){
 
-        
+    public void finalizeConnectionRmi() throws RemoteException {
+        System.out.print("> Enter nickname: ");
+        Scanner scan = new Scanner(System.in);
+        nickname = scan.nextLine();
+        if(!this.server.connect(this)) {
+            System.err.println("> Connection failed, max number of players already reached or name already taken.");
+            System.exit(0);
+        }
     }
 
-    public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
+   /* public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
         VirtualServer server = (VirtualServer) registry.lookup(serverName);
         new RmiClient(server).run();
-    }
+    }*/
 
     private void run() throws RemoteException {
         System.out.print("> Enter nickname: ");
@@ -128,7 +139,7 @@ public class Client implements VirtualView {
             String command = st.nextToken().toLowerCase();
             switch (command) {
                 case "gamesize":
-                    if (state == RmiClient.State.GAMESIZE) {
+                    if (state == Client.State.GAMESIZE) {
                         try {
                             int playnum = Integer.parseInt(st.nextToken());
                             while(playnum < 2 || playnum > 4) {
@@ -138,13 +149,13 @@ public class Client implements VirtualView {
                             a = new ChosenPlayersNumberAction(playnum);
                             server.sendAction(a);
                             System.out.println("> Game's size set to " + playnum + ".");
-                            state = RmiClient.State.COMMANDS;
+                            state = Client.State.COMMANDS;
                         } catch (NoSuchElementException | NumberFormatException e) {
                             System.out.println("> Invalid command syntax.");
                             continue;
                         }
                     } else {
-                        System.err.println("> Permission denied, game's size already set.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, game's size already set." + Print.ANSI_RESET);
                     }
                     break;
                 case "chat":
@@ -177,6 +188,7 @@ public class Client implements VirtualView {
                     System.out.printf("> %-30s%s\n","draw","to draw a new card.");
                     System.out.printf("> %-30s%s\n","playground x","to look at the playground of the player x, if you leave x blank, it will show yours.");
                     System.out.printf("> %-30s%s\n","hand","to look at the cards you have in your hand and the achievements you shall fulfill.");
+                    System.out.printf("> %-30s%s\n","table","to look at the cards and the decks in the middle of the table.");
                     System.out.printf("> %-30s%s\n","list","to know the full list of players currently playing and their score.");
                     System.out.printf("> %-30s%s\n","scoreboard","to look at the scoreboard.");
                     break;
@@ -185,7 +197,7 @@ public class Client implements VirtualView {
                     Print.largeHandPrinter(p.getHand(), achievements);
                     break;
                 case "place":
-                    if(state.equals(RmiClient.State.PLACE)) {
+                    if(state.equals(Client.State.PLACE)) {
                         System.out.println("> This is your playground:");
                         Print.playgroundPrinter(p.getArea());
                         System.out.println("> This is your hand:");
@@ -225,13 +237,13 @@ public class Client implements VirtualView {
                         } while(!checkIndex && !checkSide);
                         a = new PlacingCardAction(index, chosenSide, row, column, nickname);
                         server.sendAction(a);
-                        state = RmiClient.State.COMMANDS;
+                        state = Client.State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't place a card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't place a card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "start":
-                    if(state.equals(RmiClient.State.STARTERCARD)) {
+                    if(state.equals(Client.State.STARTERCARD)) {
                         System.out.println(Print.ANSI_BOLD + "      Front side           Back side      " + Print.ANSI_BOLD_RESET);
                         Print.largeCardBothSidesPrinter(starterCard);
                         do {
@@ -246,13 +258,13 @@ public class Client implements VirtualView {
                             starterCard.setFront(false);
                         server.sendAction(new ChosenSideStarterCardAction(nickname, starterCard.isFront()));
                         p.getArea().setSpace(starterCard, 40, 40);
-                        state = RmiClient.State.COMMANDS;
+                        state = Client.State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't choose the starter card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't choose the starter card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "achievement":
-                    if(state.equals(RmiClient.State.ACHIEVEMENTSCHOICE)) {
+                    if(state.equals(Client.State.ACHIEVEMENTSCHOICE)) {
                         System.out.println(Print.ANSI_BOLD + "      1° Option               2° Option      " + Print.ANSI_BOLD_RESET);
                         Print.inLineAchievementPrinter(choosableAchievements);
                         int achChoice = 0;
@@ -260,19 +272,19 @@ public class Client implements VirtualView {
                             System.out.print("> Enter \"1\" or \"2\" to choose your secret achievement: ");
                             try {
                                 achChoice = Integer.parseInt(scan.nextLine());
-                            } catch (NoSuchElementException ignored) { }
+                            } catch (NoSuchElementException | NumberFormatException ignored) { }
                         }
                         a = new ChosenAchievementAction(nickname, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         achievements.add(0, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         server.sendAction(a);
                         System.out.println("> Waiting for other players to choose their starter card and secret achievement.");
-                        state = RmiClient.State.COMMANDS;
+                        state = Client.State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't choose the secret achievement right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't choose the secret achievement right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "draw":
-                    if(state.equals(RmiClient.State.DRAW)) {
+                    if(state.equals(Client.State.DRAW)) {
                         Print.drawChoicePrinter(commonGold, commonResource, goldDeck,resourceDeck);
                         int drawChoice = 0;
                         do {
@@ -313,9 +325,9 @@ public class Client implements VirtualView {
                         } while(repeatDraw);
                         a = new ChosenDrawCardAction(nickname, drawChoice);
                         server.sendAction(a);
-                        state = RmiClient.State.COMMANDS;
+                        state = Client.State.COMMANDS;
                     } else {
-                        System.err.println("> Permission denied, you can't draw a card right now.");
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't draw a card right now." + Print.ANSI_RESET);
                     }
                     break;
                 case "playground":
@@ -350,8 +362,12 @@ public class Client implements VirtualView {
                 case "scoreboard":
                     Print.scoreboardPrinter(allPlayers, p);
                     break;
+                case "table":
+                    System.out.println("> These are the cards on the table right now:");
+                    Print.drawChoicePrinter(commonGold, commonResource, goldDeck,resourceDeck);
+                    break;
                 default:
-                    System.err.println("> Command unknown, write \"help\" for a list of commands.");
+                    System.out.println(Print.ANSI_RED + "> Command unknown, write \"help\" for a list of commands." + Print.ANSI_RESET);
                     break;
             }
         }
@@ -379,7 +395,7 @@ public class Client implements VirtualView {
                 break;
             case ASKINGPLAYERSNUMBER:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    state = RmiClient.State.GAMESIZE;
+                    state = Client.State.GAMESIZE;
                     System.out.println("> Enter desired players number with command \"gamesize x\".");
                 }
                 break;
@@ -395,9 +411,15 @@ public class Client implements VirtualView {
                 break;
             case CHOOSESIDESTARTERCARD:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
+                    this.commonGold = ((ChooseSideStarterCardAction)act).getCommonGold();
+                    this.goldDeck = ((ChooseSideStarterCardAction)act).getGoldDeck();
+                    this.commonResource = ((ChooseSideStarterCardAction)act).getCommonResource();
+                    this.resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
-                    state = RmiClient.State.STARTERCARD;
-                    p = ((ChooseSideStarterCardAction)act).getPlayer();
+                    state = Client.State.STARTERCARD;
+                    synchronized(p) {
+                        p = ((ChooseSideStarterCardAction) act).getPlayer();
+                    }
                     System.out.println("> Choose the side you want to place your starter card with command \"start\".");
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
@@ -407,19 +429,14 @@ public class Client implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     choosableAchievements = ((ChooseableAchievementsAction)act).getAchievements();
                     achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
-                    state = RmiClient.State.ACHIEVEMENTSCHOICE;
+                    state = Client.State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
-                }
-                break;
-            case HAND:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    p.setHand(((HandAction)act).getHand());
                 }
                 break;
             case ASKINGPLACE:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     p = ((AskingPlaceAction)act).getPlayer();
-                    state = RmiClient.State.PLACE;
+                    state = Client.State.PLACE;
                     System.out.println("> It's your time to play, enter \"place\" to place a card.");
                 } else {
                     refreshPlayers(((AskingPlaceAction)act).getPlayer());
@@ -440,19 +457,19 @@ public class Client implements VirtualView {
                 }
                 break;
             case PLACEDCARDERROR:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
+                if(act.getRecipient().equalsIgnoreCase(nickname) && state.equals(Client.State.COMMANDS)) {
                     System.out.println(((PlacedErrorAction)act).getError());
-                    state = RmiClient.State.PLACE;
+                    state = Client.State.PLACE;
                 }
                 break;
             case ASKINGDRAW:
+                this.commonGold = ((AskingDrawAction)act).getCommonGold();
+                this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
+                this.commonResource = ((AskingDrawAction)act).getCommonResource();
+                this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
-                    state = RmiClient.State.DRAW;
-                    this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                    this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
-                    this.commonResource = ((AskingDrawAction)act).getCommonResource();
-                    this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
+                    state = Client.State.DRAW;
                 } else {
                     System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
                 }
@@ -493,6 +510,16 @@ public class Client implements VirtualView {
         return nickname;
     }
 
+    @Override
+    public boolean getOnline() {
+        return false;
+    }
+
+    @Override
+    public boolean getGui() {
+        return gui;
+    }
+
     private void refreshPlayers(Player player) {
         boolean check = false;
         for(int i = 0; i < allPlayers.size() && !check; i++) {
@@ -508,4 +535,3 @@ public class Client implements VirtualView {
 
 
 }
-*/

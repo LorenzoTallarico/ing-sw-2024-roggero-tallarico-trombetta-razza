@@ -478,6 +478,17 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         return nickname;
     }
 
+
+    @Override
+    public boolean getOnline() {
+        return false;
+    }
+
+    @Override
+    public boolean getGui() {
+        return false;
+    }
+
     private void refreshPlayers(Player player) {
         boolean check = false;
         for(int i = 0; i < allPlayers.size() && !check; i++) {
