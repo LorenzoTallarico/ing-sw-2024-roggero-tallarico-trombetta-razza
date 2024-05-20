@@ -74,8 +74,9 @@ public class ClientSocket implements VirtualView, Runnable {
                 throw new RuntimeException(e);
             }
             try {
-                if(nickname != null )
+                if(nickname != null ) {
                     serverActions.put(action);
+                }
                 else if(action.getType().equals(ActionType.SETNICKNAME)) {
                     boolean checkAlreadyExists = false;
                     String tempNickname = ((SetNicknameAction) action).getNickname();
@@ -89,9 +90,11 @@ public class ClientSocket implements VirtualView, Runnable {
                         connected = true;
                         nickname = tempNickname;
                         gui = ((SetNicknameAction) action).getGui();
+                        System.out.println(">Allowed Socket connection to a new client named \""+nickname+"\".");
                     }
                     outputStream.writeObject(response);
                     outputStream.flush();
+                    //aggiungere il messaggio fake di aggiunta di un client
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

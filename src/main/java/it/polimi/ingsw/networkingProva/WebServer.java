@@ -263,7 +263,7 @@ public class WebServer implements VirtualServer {
                 return false;
             } else {
                 this.clients.add(client);
-                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
+                System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
                 for(VirtualView v : this.clients) {
                     if(v.getOnline()) {
                         Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());

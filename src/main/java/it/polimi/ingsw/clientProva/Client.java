@@ -69,9 +69,9 @@ public class Client implements VirtualView, Serializable {
         achievements = new ArrayList<>();
     }*/
 
-    public Client (int connectionChoice, int portChoice, String ip, boolean gui) throws IOException, NotBoundException {
+    public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname) throws IOException, NotBoundException {
         this.p = new Player();
-        this.nickname = "";
+        this.nickname = nickname;
         state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
@@ -84,7 +84,6 @@ public class Client implements VirtualView, Serializable {
             Registry registry = LocateRegistry.getRegistry(ip, portChoice);
             VirtualServer server = (VirtualServer) registry.lookup(serverName);
             this.server = server;
-            finalizeConnectionRmi();
         }
         else { //Socket
 
@@ -94,21 +93,34 @@ public class Client implements VirtualView, Serializable {
             this.server = serverSocket;
             Thread serverSocketThread = new Thread((Runnable) serverSocket); // Crea un nuovo thread di ascolto per i messaggi in arrivo dal server
             serverSocketThread.start();
-            run();
         }
 
+        new Thread(() -> {
+            try {
+                clientUpdateThread();
+            } catch (RemoteException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+        finalizeConnection(connectionChoice);
     }
 
-    public void finalizeConnectionRmi() throws RemoteException {
-        System.out.print("> Enter nickname: ");
-        Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
-        if(!this.server.connect(this)) {
-            System.err.println("> Connection failed, max number of players already reached or name already taken.");
-            System.exit(0);
+    private void finalizeConnection(int connectionChoice) throws RemoteException {
+        if (connectionChoice == 1) {
+            if (!this.server.connect(this)) {
+                System.err.println("> Connection failed, max number of players already reached or name already taken.");
+                System.exit(0);
+            }
+            connected = true;
+            System.out.println("Login successful " + nickname);
+            runCommandLine();
+        } else{
+            Action act = new SetNicknameAction(nickname, gui);
+            server.sendAction(act);
         }
+        if(!gui)
+            runCommandLine();
     }
-
 
    /* public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
@@ -129,20 +141,11 @@ public class Client implements VirtualView, Serializable {
         this.runCli();
     }*/
 
-    private void run(){
+    private void runCommandLine() throws RemoteException {
         // Start runCli Thread
         new Thread(() -> {
             try {
                 runCli();
-            } catch (RemoteException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-        // Start ClientUpdateThread
-        new Thread(() -> {
-            try {
-                clientUpdateThread();
             } catch (RemoteException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -540,8 +543,10 @@ public class Client implements VirtualView, Serializable {
                         if (((SetNicknameAction)act).getNickname()!= null) {
                             nickname = ((SetNicknameAction)act).getNickname();
                             connected =true;
+                            System.out.println("Login successful " + nickname);
                         }
                         else{
+                            System.out.println("Login Error!");
                             System.exit(0);
                         }
                         break;

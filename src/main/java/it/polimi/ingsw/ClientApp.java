@@ -39,7 +39,9 @@ public class ClientApp {
         int connectionChoice;
         int portChoice = 7171;
         String ip = "127.0.0.1";
+        String nickname =null;
         int guiChoice;
+        System.out.println(AsciiArt);
         do {
             System.out.println("> Select the graphic:");
             System.out.println("   [1] TUI");
@@ -87,15 +89,22 @@ public class ClientApp {
         if (ipChoice.equals("0")){
             ipChoice = "127.0.0.1";
         }
-
+        do{
+            System.out.println("> Enter Nickname: ");
+            scan = new Scanner(System.in);
+            line = scan.nextLine();
+            st = new StringTokenizer(line);
+            nickname = st.nextToken();
+        }while(nickname==null);
 
         if(guiChoice == 1){
             //TUI
-            Client c = new Client(connectionChoice, portChoice, ipChoice, false);
+          Client c = new Client(connectionChoice, portChoice, ipChoice, false, nickname);
+
         }
         else {
             //GUI
-            Client c = new Client(connectionChoice, portChoice, ipChoice, true);
+            Client c = new Client(connectionChoice, portChoice, ipChoice, true, nickname);
         }
 
 
