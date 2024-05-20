@@ -85,9 +85,11 @@ public class ClientSocket implements VirtualView, Runnable {
                     if(checkAlreadyExists)// se ritorna il messaggio con null al client il nick non è valido, altrimenti se torna lo stesso nick al client è stato accettato
                         tempNickname = null;
                     Action response = new SetNicknameAction(tempNickname, false);
-                    nickname = tempNickname;
-                    connected = true;
-                    gui = ((SetNicknameAction) action).getGui();
+                    if(tempNickname != null){
+                        connected = true;
+                        nickname = tempNickname;
+                        gui = ((SetNicknameAction) action).getGui();
+                    }
                     outputStream.writeObject(response);
                     outputStream.flush();
                 }

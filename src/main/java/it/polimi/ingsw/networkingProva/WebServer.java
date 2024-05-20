@@ -43,15 +43,22 @@ public class WebServer implements VirtualServer {
         this.controller = controller;
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
+
     }
 
     public void startRmiServer() {
         //Creazione RmiServer
         try {
+            int rmiPort = PORT_RMI;
+            int socketPort = PORT_SOCKET;
+            int[] ports = {rmiPort, socketPort};
+
+
             final String serverName = "GameServer";
 
             //VirtualServer server = new RmiServer(new GameController);
-            VirtualServer server = this; //al posto di GameController
+            VirtualServer server = new WebServer(this.controller, ports); //al posto di GameController
+            //VirtualServer server = this; //al posto di GameController
             VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server, 0);
             Registry registry = LocateRegistry.createRegistry(PORT_RMI);
             registry.rebind(serverName, stub);
@@ -137,8 +144,8 @@ public class WebServer implements VirtualServer {
                 else{
                     switch (action.getType()) {
                         case START:
-                            if(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
-                                this.controller.setPlayersNumber(((StartAction) action).getPlayerNumber());
+                            if(countOnlinePlayer()!=0){//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
+                                this.controller.setPlayersNumber(countOnlinePlayer());
                                 for(VirtualView client : clients){
                                     addPlayer(new Player(client.getNickname(), false), client);
                                 }
@@ -199,6 +206,9 @@ public class WebServer implements VirtualServer {
         Thread serverUpdateThread = new Thread(clientsUpdateRunnable);
         serverUpdateThread.start();
     }
+    private void finalizeStart(){
+
+    }
 
    /* @Override
     public boolean connect(VirtualView client) throws RemoteException {
@@ -257,6 +267,11 @@ public class WebServer implements VirtualServer {
                 for(VirtualView v : this.clients) {
                     if(v.getOnline()) {
                         Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());
+                        try{
+                            clientActions.put(act);
+                        }catch(InterruptedException e){
+                            e.printStackTrace();
+                        }
                         return true;
                     }
                 }

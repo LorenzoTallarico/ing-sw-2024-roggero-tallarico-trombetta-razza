@@ -14,13 +14,11 @@ import java.util.concurrent.BlockingQueue;
 
 public class ServerSocket implements VirtualServer, Runnable {
 
-    private final Socket cliSocket;
     private final ObjectOutputStream outputStream;
     private final BlockingQueue<Action> serverActionReceived;
     private final ObjectInputStream inputStream;
 
     public ServerSocket(Socket cliSocket, BlockingQueue<Action> serverActionReceived) throws IOException {
-        this.cliSocket = cliSocket;
         this.outputStream = new ObjectOutputStream(cliSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(cliSocket.getInputStream());
         this.serverActionReceived = serverActionReceived;

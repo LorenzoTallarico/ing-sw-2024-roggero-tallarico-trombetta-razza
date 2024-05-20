@@ -54,6 +54,9 @@ public class Client implements VirtualView {
     private final BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
     private final BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
     private boolean gui;
+    private boolean connected = false;
+    private boolean connectionFlagServer=true;
+    private boolean connectionFlagClient=true;
 
 
     /*public Client(VirtualServer server) throws RemoteException {
@@ -78,10 +81,9 @@ public class Client implements VirtualView {
 
             final String serverName = "GameServer";
             Registry registry = LocateRegistry.getRegistry(ip, portChoice);
-            VirtualServer server = (ServerRmi) registry.lookup(serverName);
+            VirtualServer server = (VirtualServer) registry.lookup(serverName);
             this.server = server;
             finalizeConnectionRmi();
-
         }
         else { //Socket
 
@@ -92,7 +94,7 @@ public class Client implements VirtualView {
             this.server = serverSocket;
             Thread serverSocketThread = new Thread((Runnable) serverSocket); // Crea un nuovo thread di ascolto per i messaggi in arrivo dal server
             serverSocketThread.start();
-
+            run();
         }
 
     }
@@ -107,6 +109,7 @@ public class Client implements VirtualView {
         }
     }
 
+
    /* public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
         final String serverName = "GameServer";
         Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
@@ -114,19 +117,39 @@ public class Client implements VirtualView {
         new RmiClient(server).run();
     }*/
 
-    private void run() throws RemoteException {
+   /* private void run() throws RemoteException {
         System.out.print("> Enter nickname: ");
         Scanner scan = new Scanner(System.in);
         nickname = scan.nextLine();
-        if(!this.server.connect(this)) {
+        if(!this.server.connect(this)) { //si puo dividere le casistiche facendo tornare un int
             System.err.println("> Connection failed, max number of players already reached or name already taken.");
             System.exit(0);
         }
         p = new Player(nickname, false);
         this.runCli();
+    }*/
+
+    private void run(){
+        // Start runCli Thread
+        new Thread(() -> {
+            try {
+                runCli();
+            } catch (RemoteException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        // Start ClientUpdateThread
+        new Thread(() -> {
+            try {
+                clientUpdateThread();
+            } catch (RemoteException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
-    private void runCli() throws RemoteException {
+    private void runCli() throws RemoteException, InterruptedException {
         Scanner scan = new Scanner(System.in);
         Message msg;
         Action a;
@@ -147,7 +170,7 @@ public class Client implements VirtualView {
                                 playnum = Integer.parseInt(scan.nextLine());
                             }
                             a = new ChosenPlayersNumberAction(playnum);
-                            server.sendAction(a);
+                            clientActionsToSend.put(a);
                             System.out.println("> Game's size set to " + playnum + ".");
                             state = Client.State.COMMANDS;
                         } catch (NoSuchElementException | NumberFormatException e) {
@@ -158,22 +181,26 @@ public class Client implements VirtualView {
                         System.out.println(Print.ANSI_RED + "> Permission denied, game's size already set." + Print.ANSI_RESET);
                     }
                     break;
+                case "startgame":
+                    a = new StartAction(nickname);
+                    clientActionsToSend.put(a);
+                    break;
                 case "chat":
                     if (line.length() > 5) {
                         msg = new Message(line.substring(5), nickname);
                         a = new ChatMessageAction(nickname, null, msg);
-                        server.sendAction(a);
+                        clientActionsToSend.put(a);
                     }
                     break;
                 case "getchat":
                     a = new AskingChatAction(nickname);
-                    server.sendAction(a);
+                    clientActionsToSend.put(a);
                     break;
                 case "whisper":
                     command = st.nextToken();
                     msg = new Message(line.substring(7 + command.length() + 1), nickname, command);
                     a = new ChatMessageAction(nickname, command, msg);
-                    server.sendAction(a);
+                    clientActionsToSend.put(a);
                     System.out.println(Print.ANSI_BOLD + ">>> PRIVATE to " + msg.getRecipient() + " > " + msg.toString() + Print.ANSI_BOLD_RESET);
                     break;
                 case "help":
@@ -181,7 +208,8 @@ public class Client implements VirtualView {
                     System.out.printf("> %-30s%s\n","chat [...]","to send a public message to everyone.");
                     System.out.printf("> %-30s%s\n","whisper [x] [...]","to send a private message to x.");
                     System.out.printf("> %-30s%s\n","getchat","to retrieve a full log of the public chat.");
-                    System.out.printf("> %-30s%s\n","gamesize [x]","to choose the number x of players who will play the game.");
+                    System.out.printf("> %-30s%s\n","startgame","to start a new game with the players now connected.");
+                    //System.out.printf("> %-30s%s\n","gamesize [x]","to choose the number x of players who will play the game.");
                     System.out.printf("> %-30s%s\n","start","to choose the side of the starter card.");
                     System.out.printf("> %-30s%s\n","achievement","to choose your secret achievement");
                     System.out.printf("> %-30s%s\n","place","to place a card from your hand.");
@@ -236,7 +264,7 @@ public class Client implements VirtualView {
                             }
                         } while(!checkIndex && !checkSide);
                         a = new PlacingCardAction(index, chosenSide, row, column, nickname);
-                        server.sendAction(a);
+                        clientActionsToSend.put(a);
                         state = Client.State.COMMANDS;
                     } else {
                         System.out.println(Print.ANSI_RED + "> Permission denied, you can't place a card right now." + Print.ANSI_RESET);
@@ -276,7 +304,7 @@ public class Client implements VirtualView {
                         }
                         a = new ChosenAchievementAction(nickname, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
                         achievements.add(0, achChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
-                        server.sendAction(a);
+                        clientActionsToSend.put(a);
                         System.out.println("> Waiting for other players to choose their starter card and secret achievement.");
                         state = Client.State.COMMANDS;
                     } else {
@@ -324,7 +352,7 @@ public class Client implements VirtualView {
                             }
                         } while(repeatDraw);
                         a = new ChosenDrawCardAction(nickname, drawChoice);
-                        server.sendAction(a);
+                        clientActionsToSend.put(a);
                         state = Client.State.COMMANDS;
                     } else {
                         System.out.println(Print.ANSI_RED + "> Permission denied, you can't draw a card right now." + Print.ANSI_RESET);
@@ -374,128 +402,153 @@ public class Client implements VirtualView {
 
     }
 
-    @Override
-    public void showAction(Action act) throws RemoteException{
-        switch(act.getType()){
-            case WHOLECHAT:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    ArrayList<Message> chat = ((WholeChatAction) act).getMessages();
-                    if (chat.isEmpty()) {
-                        System.out.println(Print.ANSI_BOLD + ">>> " + "Public chat is empty" + Print.ANSI_BOLD_RESET);
-                    } else {
-                        System.out.println(Print.ANSI_BOLD + ">>> " + "-------- PUBLIC CHAT --------" + Print.ANSI_BOLD_RESET);
-                        for (Message m : chat) {
-                            System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
+
+    public void clientUpdateThread() throws RemoteException, InterruptedException {
+        while(connectionFlagServer) {
+            Action act = serverActionsReceived.take();
+            if (connected) {
+                switch (act.getType()) {
+
+                    case WHOLECHAT:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            ArrayList<Message> chat = ((WholeChatAction) act).getMessages();
+                            if (chat.isEmpty()) {
+                                System.out.println(Print.ANSI_BOLD + ">>> " + "Public chat is empty" + Print.ANSI_BOLD_RESET);
+                            } else {
+                                System.out.println(Print.ANSI_BOLD + ">>> " + "-------- PUBLIC CHAT --------" + Print.ANSI_BOLD_RESET);
+                                for (Message m : chat) {
+                                    System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
+                                }
+                            }
                         }
-                    }
+                        break;
+                    case JOININGPLAYER:
+                        System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                        break;
+                    case ASKINGPLAYERSNUMBER:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            state = Client.State.GAMESIZE;
+                            System.out.println("> Enter desired players number with command \"gamesize x\".");
+                        }
+                        break;
+                    case CHATMESSAGE:
+                        if (act.getRecipient().isEmpty() || act.getRecipient().equalsIgnoreCase(nickname)) {
+                            Message m = ((ChatMessageAction) act).getMessage();
+                            if (m.getRecipient().isEmpty()) {
+                                System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
+                            } else {
+                                System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
+                            }
+                        }
+                        break;
+                    case CHOOSESIDESTARTERCARD:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            this.commonGold = ((ChooseSideStarterCardAction) act).getCommonGold();
+                            this.goldDeck = ((ChooseSideStarterCardAction) act).getGoldDeck();
+                            this.commonResource = ((ChooseSideStarterCardAction) act).getCommonResource();
+                            this.resourceDeck = ((ChooseSideStarterCardAction) act).getResourceDeck();
+                            starterCard = ((ChooseSideStarterCardAction) act).getCard();
+                            state = Client.State.STARTERCARD;
+                            synchronized (p) {
+                                p = ((ChooseSideStarterCardAction) act).getPlayer();
+                            }
+                            System.out.println("> Choose the side you want to place your starter card with command \"start\".");
+                        } else {
+                            refreshPlayers(((ChooseSideStarterCardAction) act).getPlayer());
+                        }
+                        break;
+                    case CHOOSEABLEACHIEVEMENTS:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            choosableAchievements = ((ChooseableAchievementsAction) act).getAchievements();
+                            achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
+                            state = Client.State.ACHIEVEMENTSCHOICE;
+                            System.out.println("> Choose your secret achievement with the command \"achievement\".");
+                        }
+                        break;
+                    case ASKINGPLACE:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            p = ((AskingPlaceAction) act).getPlayer();
+                            state = Client.State.PLACE;
+                            System.out.println("> It's your time to play, enter \"place\" to place a card.");
+                        } else {
+                            refreshPlayers(((AskingPlaceAction) act).getPlayer());
+                            System.out.println("> It's " + act.getRecipient() + "'s turn to place a card.");
+                        }
+                        break;
+                    case PLACEDCARD:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            System.out.println("> You placed a " + (((PlacedCardAction) act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
+                                    ((PlacedCardAction) act).getRow() + "][" + ((PlacedCardAction) act).getColumn() + "]" + (((PlacedCardAction) act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction) act).getScore() + " pts")) + ".");
+                            p = ((PlacedCardAction) act).getPlayer();
+                            Print.playgroundPrinter(p.getArea());
+                        } else {
+                            refreshPlayers(((PlacedCardAction) act).getPlayer());
+                            System.out.println("> " + ((PlacedCardAction) act).getPlayer().getName() + " just placed a " +
+                                    (((PlacedCardAction) act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
+                                    ((PlacedCardAction) act).getRow() + "][" + ((PlacedCardAction) act).getColumn() + "]" + (((PlacedCardAction) act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction) act).getScore() + " pts")) + ".");
+                        }
+                        break;
+                    case PLACEDCARDERROR:
+                        if (act.getRecipient().equalsIgnoreCase(nickname) && state.equals(Client.State.COMMANDS)) {
+                            System.out.println(((PlacedErrorAction) act).getError());
+                            state = Client.State.PLACE;
+                        }
+                        break;
+                    case ASKINGDRAW:
+                        this.commonGold = ((AskingDrawAction) act).getCommonGold();
+                        this.goldDeck = ((AskingDrawAction) act).getGoldDeck();
+                        this.commonResource = ((AskingDrawAction) act).getCommonResource();
+                        this.resourceDeck = ((AskingDrawAction) act).getResourceDeck();
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            System.out.println("> Choose the card you want to draw with the command \"draw\".");
+                            state = Client.State.DRAW;
+                        } else {
+                            System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
+                        }
+                        break;
+                    case CARDDRAWN:
+                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                            p = ((CardDrawnAction) act).getPlayer();
+                            System.out.println("> You drew the following card:");
+                            Print.largeCardBothSidesPrinter(((CardDrawnAction) act).getCard());
+                            System.out.println("> Your turn is over.");
+                        } else {
+                            refreshPlayers(((CardDrawnAction) act).getPlayer());
+                            System.out.println("> " + act.getRecipient() + " drew a card.");
+                        }
+                        break;
+                    case WINNERS:
+                        for (Player tempPlayer : ((WinnersAction) act).getPlayers())
+                            if (nickname.equalsIgnoreCase(tempPlayer.getName()))
+                                p = tempPlayer;
+                            else
+                                refreshPlayers(tempPlayer);
+                        Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
+                        Print.scoreboardPrinter(allPlayers, p);
+                        break;
+                    case ASKINGSTART:
+                        if(((AskingStartAction)act).getRecipient().equalsIgnoreCase(nickname)){
+                            System.out.println("> Players online: " +((AskingStartAction)act).getPlayerNumber());
+                            System.out.println("> Type \"start\" to start the game");
+                        }
+                    default:
+                        break;
                 }
-                break;
-            case JOININGPLAYER:
-                System.out.println("> Player " + ((JoiningPlayerAction)act).getPlayer() + " joined the game. " + ((JoiningPlayerAction)act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction)act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction)act).getGameSize()));
-                break;
-            case ASKINGPLAYERSNUMBER:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    state = Client.State.GAMESIZE;
-                    System.out.println("> Enter desired players number with command \"gamesize x\".");
+            } else {
+                switch (act.getType()) {
+                    case SETNICKNAME: //only for Socket
+                        if (((SetNicknameAction)act).getNickname()!= null) {
+                            nickname = ((SetNicknameAction)act).getNickname();
+                            connected =true;
+                        }
+                        else{
+                            System.exit(0);
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case CHATMESSAGE:
-                if(act.getRecipient().isEmpty() || act.getRecipient().equalsIgnoreCase(nickname)) {
-                    Message m = ((ChatMessageAction) act).getMessage();
-                    if (m.getRecipient().isEmpty()) {
-                        System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
-                    } else {
-                        System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
-                    }
-                }
-                break;
-            case CHOOSESIDESTARTERCARD:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    this.commonGold = ((ChooseSideStarterCardAction)act).getCommonGold();
-                    this.goldDeck = ((ChooseSideStarterCardAction)act).getGoldDeck();
-                    this.commonResource = ((ChooseSideStarterCardAction)act).getCommonResource();
-                    this.resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
-                    starterCard = ((ChooseSideStarterCardAction)act).getCard();
-                    state = Client.State.STARTERCARD;
-                    synchronized(p) {
-                        p = ((ChooseSideStarterCardAction) act).getPlayer();
-                    }
-                    System.out.println("> Choose the side you want to place your starter card with command \"start\".");
-                } else {
-                    refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
-                }
-                break;
-            case CHOOSEABLEACHIEVEMENTS:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    choosableAchievements = ((ChooseableAchievementsAction)act).getAchievements();
-                    achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
-                    state = Client.State.ACHIEVEMENTSCHOICE;
-                    System.out.println("> Choose your secret achievement with the command \"achievement\".");
-                }
-                break;
-            case ASKINGPLACE:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    p = ((AskingPlaceAction)act).getPlayer();
-                    state = Client.State.PLACE;
-                    System.out.println("> It's your time to play, enter \"place\" to place a card.");
-                } else {
-                    refreshPlayers(((AskingPlaceAction)act).getPlayer());
-                    System.out.println("> It's " + act.getRecipient() + "'s turn to place a card.");
-                }
-                break;
-            case PLACEDCARD:
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    System.out.println("> You placed a " + (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
-                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
-                    p = ((PlacedCardAction)act).getPlayer();
-                    Print.playgroundPrinter(p.getArea());
-                } else {
-                    refreshPlayers(((PlacedCardAction)act).getPlayer());
-                    System.out.println("> " + ((PlacedCardAction)act).getPlayer().getName() + " just placed a " +
-                            (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
-                            ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
-                }
-                break;
-            case PLACEDCARDERROR:
-                if(act.getRecipient().equalsIgnoreCase(nickname) && state.equals(Client.State.COMMANDS)) {
-                    System.out.println(((PlacedErrorAction)act).getError());
-                    state = Client.State.PLACE;
-                }
-                break;
-            case ASKINGDRAW:
-                this.commonGold = ((AskingDrawAction)act).getCommonGold();
-                this.goldDeck = ((AskingDrawAction)act).getGoldDeck();
-                this.commonResource = ((AskingDrawAction)act).getCommonResource();
-                this.resourceDeck = ((AskingDrawAction)act).getResourceDeck();
-                if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    System.out.println("> Choose the card you want to draw with the command \"draw\".");
-                    state = Client.State.DRAW;
-                } else {
-                    System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
-                }
-                break;
-            case CARDDRAWN:
-                if(act.getRecipient().equalsIgnoreCase(nickname)){
-                    p = ((CardDrawnAction)act).getPlayer();
-                    System.out.println("> You drew the following card:");
-                    Print.largeCardBothSidesPrinter(((CardDrawnAction)act).getCard());
-                    System.out.println("> Your turn is over.");
-                } else {
-                    refreshPlayers(((CardDrawnAction)act).getPlayer());
-                    System.out.println("> " + act.getRecipient() + " drew a card.");
-                }
-                break;
-            case WINNERS:
-                for(Player tempPlayer : ((WinnersAction)act).getPlayers())
-                    if(nickname.equalsIgnoreCase(tempPlayer.getName()))
-                        p = tempPlayer;
-                    else
-                        refreshPlayers(tempPlayer);
-                Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
-                Print.scoreboardPrinter(allPlayers, p);
-                break;
-            default:
-                break;
+            }
         }
     }
 
@@ -531,6 +584,28 @@ public class Client implements VirtualView {
         }
         if(!check) //the player is being refreshed for the first time
             allPlayers.add(player);
+    }
+
+    public void showAction(Action actionFromServer) throws RemoteException {
+        try {
+            serverActionsReceived.put(actionFromServer);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //Invio delle action al server
+    public void serverUpdateThread() throws InterruptedException, RemoteException {
+        // Invia l'azione al server appena la trova in coda
+        try {
+            while (connectionFlagServer) {
+                Action a = clientActionsToSend.take();
+                server.sendAction(a);
+            }
+        } catch (InterruptedException | IOException e) {
+            // Gestione dell'eccezione
+            connectionFlagServer = false;
+            e.printStackTrace();
+        }
     }
 
 
