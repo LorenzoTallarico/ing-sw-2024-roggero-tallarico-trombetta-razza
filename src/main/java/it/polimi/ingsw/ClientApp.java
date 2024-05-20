@@ -41,7 +41,7 @@ public class ClientApp {
         String ip = "127.0.0.1";
         int guiChoice;
         do {
-            System.out.println("> Select connection method:");
+            System.out.println("> Select the graphic:");
             System.out.println("   [1] TUI");
             System.out.println("   [2] GUI");
             scan = new Scanner(System.in);
@@ -76,7 +76,7 @@ public class ClientApp {
         if(portChoice == 0){
             if(connectionChoice == 1) //RMI
                 portChoice = 6969;
-            else
+            else //Socket
                 portChoice =7171;
         }
         System.out.println("> Select ip (0 for localhost): ");

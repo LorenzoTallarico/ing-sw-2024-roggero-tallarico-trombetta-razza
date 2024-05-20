@@ -4,8 +4,8 @@ import it.polimi.ingsw.networkingProva.WebServer;
 
 public class ServerApp {
 
-    private static final int SOCKET_DEFAULT_PORT = 6969; // Default server socket port
-    private static final int RMI_DEFAULT_PORT = 7171; // Default server RMI port
+    private static final int SOCKET_DEFAULT_PORT = 7171; // Default server socket port
+    private static final int RMI_DEFAULT_PORT = 6969; // Default server RMI port
 
 
     public static void main(String[] args) {

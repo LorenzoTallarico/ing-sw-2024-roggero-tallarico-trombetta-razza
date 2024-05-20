@@ -70,9 +70,9 @@ public class WebServer implements VirtualServer {
 
     }
     public void startSocketServer() {
-        try {
+        try (ServerSocket serverSocket = new ServerSocket(PORT_SOCKET)) {
             // ServerSocket è una classe predefinita di java, dovremmo cambiare nome perché si crea confusione
-            ServerSocket serverSocket = new ServerSocket(PORT_SOCKET);
+            //ServerSocket serverSocket = new ServerSocket(PORT_SOCKET);
             System.out.println("Server Socket ready.");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
@@ -203,7 +203,7 @@ public class WebServer implements VirtualServer {
                 e.printStackTrace();
             }
         };
-        Thread serverUpdateThread = new Thread(clientsUpdateRunnable);
+        Thread serverUpdateThread = new Thread(serverUpdateRunnable);
         serverUpdateThread.start();
     }
     private void finalizeStart(){

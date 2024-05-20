@@ -13,6 +13,7 @@ import it.polimi.ingsw.util.Print;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -25,7 +26,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Client implements VirtualView {
+public class Client implements VirtualView, Serializable {
 
     enum State {
         COMMANDS,
@@ -76,10 +77,10 @@ public class Client implements VirtualView {
         achievements = new ArrayList<>();
         this.gui = gui;
         if(connectionChoice == 1){ //RMI
-            //qui mi sembra più comodo lanciare direttamente RmiClient con il metodo init() e lasciare tutto a lui come qui sotto nel commento
             // new RmiClient(server).init();
 
             final String serverName = "GameServer";
+            //try-catch
             Registry registry = LocateRegistry.getRegistry(ip, portChoice);
             VirtualServer server = (VirtualServer) registry.lookup(serverName);
             this.server = server;
@@ -87,7 +88,6 @@ public class Client implements VirtualView {
         }
         else { //Socket
 
-            //qui analogamente gestirei il tutto nella classe ClientSocket in modo da poter separare la logica
             //
             Socket socket = new Socket(ip, portChoice);
             VirtualServer serverSocket = (VirtualServer) new ServerSocket(socket, serverActionsReceived);
