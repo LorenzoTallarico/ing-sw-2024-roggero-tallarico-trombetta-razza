@@ -19,6 +19,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -26,7 +27,7 @@ import java.util.StringTokenizer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-public class Client implements VirtualView, Serializable {
+public class Client extends UnicastRemoteObject implements VirtualView {
 
     enum State {
         COMMANDS,
@@ -52,12 +53,12 @@ public class Client implements VirtualView, Serializable {
     private Resource goldDeck;
     private Resource resourceDeck;
     boolean repeatDraw;
-    private final BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
-    private final BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
+    private BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
+    private BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
     private boolean gui;
-    private boolean connected = false;
+    private boolean connected = true;
     private boolean connectionFlagServer=true;
-    private boolean connectionFlagClient=true;
+    private boolean connectionFlagClient=true; //da sistemare
 
 
     /*public Client(VirtualServer server) throws RemoteException {
@@ -69,7 +70,7 @@ public class Client implements VirtualView, Serializable {
         achievements = new ArrayList<>();
     }*/
 
-    public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname) throws IOException, NotBoundException {
+    public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname)  throws IOException, NotBoundException {
         this.p = new Player();
         this.nickname = nickname;
         state = Client.State.COMMANDS;
@@ -157,7 +158,7 @@ public class Client implements VirtualView, Serializable {
         Message msg;
         Action a;
 
-        while(true) {
+        while(connectionFlagClient) {
             String line = scan.nextLine();
             if (line.trim().isEmpty())
                 continue;
@@ -570,7 +571,7 @@ public class Client implements VirtualView, Serializable {
 
     @Override
     public boolean getOnline() {
-        return false;
+        return connected;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientRmi extends UnicastRemoteObject implements VirtualView {
+public class ClientRmi implements VirtualView {
     private VirtualView client = null;
 
 
@@ -32,12 +32,12 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
-    public boolean getOnline() throws RemoteException  { //da aggiungere
-        return false;
+    public boolean getOnline() throws RemoteException { //da aggiungere
+        return client.getOnline();
     }
 
     @Override
-    public boolean getGui() throws RemoteException {
+    public boolean getGui() {
         return client.getGui();
     }
 

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.networking.action.ActionType;
+import it.polimi.ingsw.networking.action.toclient.AskingStartAction;
 import it.polimi.ingsw.networking.action.toserver.SetNicknameAction;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.action.Action;
@@ -17,18 +18,20 @@ import java.util.concurrent.BlockingQueue;
 public class ClientSocket implements VirtualView, Runnable {
     private Socket serSocket = null;
     private final ObjectOutputStream outputStream;
-    private final BlockingQueue<Action> serverActions;
+    private BlockingQueue<Action> serverActions;
+    private BlockingQueue<Action> clientActions;
     private final ObjectInputStream inputStream;
-    private final ArrayList<VirtualView> clients;
+    private ArrayList<VirtualView> clients;
     private String nickname = null;
     private boolean connected = true;
     private boolean gui;
 
-    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, ArrayList<VirtualView> clients) throws IOException {
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients) throws IOException {
         this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
+        this.clientActions = clientActions;
         this.clients = clients;
     }
 
@@ -42,6 +45,7 @@ public class ClientSocket implements VirtualView, Runnable {
         //qui il server sta MANDANDO l'azione al client
         outputStream.writeObject(act);
         outputStream.flush();
+        outputStream.reset();
     }
 
     @Override
@@ -94,6 +98,22 @@ public class ClientSocket implements VirtualView, Runnable {
                     }
                     outputStream.writeObject(response);
                     outputStream.flush();
+                    outputStream.reset();
+                    String destNickname = null;
+                    for(VirtualView v: clients)
+                        System.out.println("Nome: "+ v.getNickname());
+                    for(int i=0; i<clients.size() && destNickname == null; i++) {
+                        if(clients.get(i).getOnline()) {
+                            destNickname = clients.get(i).getNickname();
+                        }
+                    }
+                    int count = 0;
+                    for(VirtualView v : this.clients) {
+                        if(v.getOnline() && v.getNickname() != null)
+                            count ++;
+                    }
+                    Action act = new AskingStartAction(destNickname, count);
+                    clientActions.put(act);
                     //aggiungere il messaggio fake di aggiunta di un client
                 }
             } catch (InterruptedException e) {

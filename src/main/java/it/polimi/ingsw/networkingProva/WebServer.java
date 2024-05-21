@@ -26,9 +26,9 @@ public class WebServer implements VirtualServer {
     private static int PORT_RMI= 6969;
     private static int PORT_SOCKET= 7171;
     private GameController controller = null;
-    private final ArrayList<VirtualView> clients = new ArrayList<>();
-    private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
-    private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
+    private ArrayList<VirtualView> clients = new ArrayList<>();
+    private BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
+    private BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
     private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
     private VirtualView rmiServer;
     private boolean gameStarted = false;
@@ -77,7 +77,7 @@ public class WebServer implements VirtualServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 //qui si è attaccato un nuovo client
-                VirtualView actualSocket = new ClientSocket(clientSocket, serverActions, clients);
+                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients);
                 clients.add(actualSocket);
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
@@ -147,7 +147,8 @@ public class WebServer implements VirtualServer {
                             if(countOnlinePlayer()!=0){//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
                                 this.controller.setPlayersNumber(countOnlinePlayer());
                                 for(VirtualView client : clients){
-                                    addPlayer(new Player(client.getNickname(), false), client);
+                                    if(client.getOnline())
+                                        addPlayer(new Player(client.getNickname(), false), client);
                                 }
                                 gameStarted = true;
                             }
@@ -206,9 +207,7 @@ public class WebServer implements VirtualServer {
         Thread serverUpdateThread = new Thread(serverUpdateRunnable);
         serverUpdateThread.start();
     }
-    private void finalizeStart(){
 
-    }
 
    /* @Override
     public boolean connect(VirtualView client) throws RemoteException {
@@ -258,15 +257,23 @@ public class WebServer implements VirtualServer {
                         return false;
                     }
                 }
-            if(countOnlinePlayer()==4) {
+            if(countOnlinePlayer()>=4) {
                 System.out.println("> Denied connection to a new client, max number of players already reached.");
                 return false;
             } else {
-                this.clients.add(client);
+                clients.add((VirtualView) client);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
                 for(VirtualView v : this.clients) {
-                    if(v.getOnline()) {
-                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());
+                    System.out.println("Fuori l'if getOnline()");
+                    System.out.println("Questo è il nickname del client:" + v.getNickname());
+                    if(v.getOnline()){
+                        System.out.println("Il Client è online");
+                    } else {
+                        System.out.println("Il Client NON è online");
+                    }
+                    if(v.getOnline() && v.getNickname()!=null) {
+                        System.out.println("Dentro l'if getOnline()");
+                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer()+1);
                         try{
                             clientActions.put(act);
                         }catch(InterruptedException e){
