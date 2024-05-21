@@ -18,25 +18,54 @@ public class gui_temp {
         JPanel j1 = new JPanel();
         JPanel j2 = new JPanel();
         JPanel j3 = new JPanel();
-        JPanel j4 = new JPanel();
+        JPanel j4 = new ImagePanel();
         j1.add(b1);
         j2.add(b2);
         j3.add(b3);
-        JLabel label = new JLabel();
-        ImageIcon icon = new ImageIcon("src/main/resources/img/misc/img.png");
-        label.setIcon(icon);
-        j4.add(label);
         j5.add(b5);
         f.add(j1, BorderLayout.NORTH);
         f.add(j2, BorderLayout.SOUTH);
         f.add(j3, BorderLayout.EAST);
         f.add(j4, BorderLayout.WEST);
+        f.add(j5, BorderLayout.CENTER);
         j4.setPreferredSize(new Dimension(400, 200));
         j3.setPreferredSize(new Dimension(400, 200));
-        f.add(j5, BorderLayout.CENTER);
-        f.setExtendedState(JFrame.MAXIMIZED_BOTH);
         //f.setUndecorated(true);
         f.setVisible(true);
         f.pack();
+    }
+}
+class ImagePanel extends JPanel {
+    private final Image image1;
+    private final Image image2;
+    private final Image image3;
+    int dimensionX,dimensionY,width,height;
+
+    public ImagePanel() {
+        image1 = new ImageIcon("src/main/resources/img/misc/img.png").getImage();
+        image2 = new ImageIcon("src/main/resources/img/misc/red.png").getImage();
+        image3= new ImageIcon("src/main/resources/img/misc/yellow.png").getImage();
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (image1 != null) {
+            g.drawImage(image1, 0, 0, this);
+        }
+        if (image2 != null) {
+            dimensionX = 100;
+            dimensionY = 100;
+            width = 50;
+            height = 50;
+            g.drawImage(image2, dimensionX, dimensionY,width,height,this);
+        }
+        if (image3 != null) {
+            dimensionX = 100;
+            dimensionY = 500;
+            width = 50;
+            height = 50;
+            g.drawImage(image3, dimensionX, dimensionY,width,height,this);
+        }
+
     }
 }
