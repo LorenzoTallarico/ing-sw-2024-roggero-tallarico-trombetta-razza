@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="686.0" prefWidth="1294.0" spacing="20.0" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:controller="it.polimi.ingsw.AFXtempController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="686.0" prefWidth="1294.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="330.0" minWidth="330.0" prefWidth="330.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="567.3333333333334" minWidth="10.0" prefWidth="567.3333333333334" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints maxHeight="254.33333333333334" minHeight="10.0" prefHeight="254.33333333333334" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="430.66666666666663" minHeight="0.0" prefHeight="334.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="311.99999999999994" minHeight="0.0" prefHeight="97.33333333333337" vgrow="SOMETIMES" />
+        </rowConstraints>
+        <children>
+            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="227.0" prefWidth="302.0">
+                <children>
+                    <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="302.0">
+                        <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                <children>
+                                    <TextArea fx:id="chatOutput" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="302.0" promptText="Chat messages will be shown here" />
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </ScrollPane>
+                    <TextField fx:id="chatInput" layoutY="200.0" maxHeight="41.0" maxWidth="267.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#onEnterKeyPressedChatInput" prefHeight="25.0" prefWidth="257.0" promptText="Write here to chat with others" />
+                    <Button layoutX="260.0" layoutY="200.0" mnemonicParsing="false" onAction="#onInviaButtonClick" text="Invia" />
+                </children>
+                <GridPane.margin>
+                    <Insets left="20.0" top="20.0" />
+                </GridPane.margin>
+            </AnchorPane>
+            <AnchorPane fx:id="scoreboardPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="331.0" prefWidth="312.0" GridPane.rowIndex="1">
+                <children>
+                    <ImageView fitHeight="332.0" fitWidth="340.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@img/misc/scoreboard.png" />
+                        </image>
+                    </ImageView>
+                    <RadioButton fx:id="p1Rad" layoutX="189.0" layoutY="52.0" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Pietro" />
+                    <RadioButton fx:id="p2Rad" layoutX="189.0" layoutY="76.0" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Matteo" />
+                    <RadioButton fx:id="p3Rad" layoutX="189.0" layoutY="100.0" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Lord Farquaad" />
+                    <RadioButton fx:id="p4Rad" layoutX="189.0" layoutY="124.0" mnemonicParsing="false" text="Michelangelo" />
+                    <ImageView fx:id="p1Img" fitHeight="20.0" fitWidth="20.0" layoutX="25.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@img/misc/blue.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fx:id="p2Img" fitHeight="20.0" fitWidth="20.0" layoutX="25.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@img/misc/yellow.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fx:id="p3Img" fitHeight="20.0" fitWidth="20.0" layoutX="50.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@img/misc/green.png" />
+                        </image>
+                    </ImageView>
+                    <ImageView fx:id="p4Img" fitHeight="20.0" fitWidth="20.0" layoutX="50.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@img/misc/red.png" />
+                        </image>
+                    </ImageView>
+                </children>
+                <GridPane.margin>
+                    <Insets left="20.0" />
+                </GridPane.margin>
+            </AnchorPane>
+        </children>
+    </GridPane>
+
+</VBox>
