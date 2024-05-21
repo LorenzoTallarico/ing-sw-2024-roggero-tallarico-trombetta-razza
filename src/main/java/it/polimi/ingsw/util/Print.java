@@ -2017,6 +2017,7 @@ public class Print {
         int cWidth = (width * 5) + 2;       //number of chars in a row
 
         //debugging
+        /*
         for(int row = north; row <= south; row++) {
             for(int col = west; col <= east; col++) {
                 space = area.getSpace(row, col);
@@ -2035,7 +2036,7 @@ public class Print {
             }
             System.out.println(";");
         }
-
+    */
     //initializing the stringbuilder array
         StringBuilder[] line = new StringBuilder[cHeight];
         for(int i = 0; i  < cHeight; i++)
