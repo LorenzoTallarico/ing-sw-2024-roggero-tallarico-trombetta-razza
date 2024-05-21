@@ -1,3 +1,4 @@
+
 package it.polimi.ingsw.networkingProva;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.rmi.VirtualView;
@@ -37,7 +38,7 @@ public class ClientRmi implements VirtualView {
     }
 
     @Override
-    public boolean getGui() {
+    public boolean getGui() throws RemoteException {
         return client.getGui();
     }
 

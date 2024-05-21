@@ -1,3 +1,4 @@
+
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.clientProva.Client;
@@ -38,7 +39,7 @@ public class WebServer implements VirtualServer {
         PORT_SOCKET = ports[1];
         start();
     }
-    
+
     public WebServer(GameController controller, int[] ports){
         this.controller = controller;
         PORT_RMI = ports[0];
@@ -167,9 +168,9 @@ public class WebServer implements VirtualServer {
                             break;
                     }
                 }
-                } catch(InterruptedException e){
-                    connectionFlagServer = false;
-                }
+            } catch(InterruptedException e){
+                connectionFlagServer = false;
+            }
 
         }
     }
