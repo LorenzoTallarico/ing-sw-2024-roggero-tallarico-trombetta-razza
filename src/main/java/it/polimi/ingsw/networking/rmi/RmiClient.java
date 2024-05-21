@@ -50,6 +50,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         state = State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
+
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
@@ -66,7 +67,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     }
 
     //Metodo che ci serve public, verrà usato una volta che viene lanciato un client e viene scelta la tecnologia RMI
-    /*
+
     public void init() throws RemoteException, NotBoundException{
         final String serverName = "GameServer";
         try {
@@ -78,7 +79,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
             System.exit(0);
         }
     }
-    */
+
 
     private void run() throws RemoteException {
         Scanner scan = new Scanner(System.in);
@@ -480,12 +481,12 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
 
     @Override
-    public boolean getOnline() {
+    public boolean getOnline() throws RemoteException  {
         return false;
     }
 
     @Override
-    public boolean getGui() {
+    public boolean getGui() throws RemoteException  {
         return false;
     }
 

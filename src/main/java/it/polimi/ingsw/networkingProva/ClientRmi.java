@@ -32,12 +32,12 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
-    public boolean getOnline() { //da aggiungere
+    public boolean getOnline() throws RemoteException  { //da aggiungere
         return false;
     }
 
     @Override
-    public boolean getGui() {
+    public boolean getGui() throws RemoteException {
         return client.getGui();
     }
 

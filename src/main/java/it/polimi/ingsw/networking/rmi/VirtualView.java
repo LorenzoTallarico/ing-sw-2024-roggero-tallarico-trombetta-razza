@@ -13,6 +13,6 @@ public interface VirtualView extends Remote {
     void showAction(Action act) throws IOException;
 
     String getNickname() throws RemoteException;
-    boolean getOnline();
-    boolean getGui();
+    boolean getOnline() throws RemoteException;
+    boolean getGui() throws RemoteException;
 }
