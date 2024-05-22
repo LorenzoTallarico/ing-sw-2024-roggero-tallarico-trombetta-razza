@@ -42,7 +42,7 @@
                 <children>
                     <ImageView fitHeight="332.0" fitWidth="340.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../../../img/misc/scoreboard.png" />
+                            <Image url="@gui/img/misc/scoreboard.png" />
                         </image>
                     </ImageView>
                     <RadioButton fx:id="p1Rad" layoutX="189.0" layoutY="52.0" mnemonicParsing="false" onAction="#onRadioButtonClick" text="Pietro" />
@@ -51,22 +51,22 @@
                     <RadioButton fx:id="p4Rad" layoutX="189.0" layoutY="124.0" mnemonicParsing="false" text="Michelangelo" />
                     <ImageView fx:id="p1Img" fitHeight="20.0" fitWidth="20.0" layoutX="25.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../../../img/misc/blue.png" />
+                            <Image url="@gui/img/misc/blue.png" />
                         </image>
                     </ImageView>
                     <ImageView fx:id="p2Img" fitHeight="20.0" fitWidth="20.0" layoutX="25.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../../../img/misc/yellow.png" />
+                            <Image url="@gui/img/misc/yellow.png" />
                         </image>
                     </ImageView>
                     <ImageView fx:id="p3Img" fitHeight="20.0" fitWidth="20.0" layoutX="50.0" layoutY="285.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../../../img/misc/green.png" />
+                            <Image url="@gui/img/misc/green.png" />
                         </image>
                     </ImageView>
                     <ImageView fx:id="p4Img" fitHeight="20.0" fitWidth="20.0" layoutX="50.0" layoutY="305.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../../../img/misc/red.png" />
+                            <Image url="@gui/img/misc/red.png" />
                         </image>
                     </ImageView>
                 </children>

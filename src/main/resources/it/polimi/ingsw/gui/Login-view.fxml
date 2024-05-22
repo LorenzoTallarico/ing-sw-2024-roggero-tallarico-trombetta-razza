@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.LoginController">
+   <children>
+      <TextField fx:id="nameFld" layoutX="208.0" layoutY="125.0" onAction="#onNameFldEnter" promptText="Enter your nickname" />
+      <Button id="nameBtn" fx:id="nameBtn" layoutX="358.0" layoutY="125.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onNameBtnClick" prefHeight="25.0" prefWidth="33.0">
+         <graphic>
+            <ImageView fx:id="nameBtnImg" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/check.png" />
+               </image>
+            </ImageView>
+         </graphic></Button>
+   </children>
+</AnchorPane>
