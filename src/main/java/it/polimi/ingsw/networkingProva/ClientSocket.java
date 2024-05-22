@@ -3,6 +3,7 @@ package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.networking.action.ActionType;
 import it.polimi.ingsw.networking.action.toclient.AskingStartAction;
+import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
 import it.polimi.ingsw.networking.action.toserver.SetNicknameAction;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.action.Action;
@@ -85,9 +86,10 @@ public class ClientSocket implements VirtualView, Runnable {
                 else if(action.getType().equals(ActionType.SETNICKNAME)) {
                     boolean checkAlreadyExists = false;
                     String tempNickname = ((SetNicknameAction) action).getNickname();
-                    for(VirtualView c : clients)
-                        if(tempNickname.equalsIgnoreCase(c.getNickname()))
+                    for(VirtualView c : clients) {
+                        if (tempNickname.equalsIgnoreCase(c.getNickname()))
                             checkAlreadyExists = true;
+                    }
                     if(checkAlreadyExists)// se ritorna il messaggio con null al client il nick non è valido, altrimenti se torna lo stesso nick al client è stato accettato
                         tempNickname = null;
                     Action response = new SetNicknameAction(tempNickname, false);
@@ -101,8 +103,9 @@ public class ClientSocket implements VirtualView, Runnable {
                     outputStream.flush();
                     outputStream.reset();
                     String destNickname = null;
-                    for(VirtualView v: clients)
-                        System.out.println("Nome: "+ v.getNickname());
+                    for(VirtualView v: clients) {
+                        System.out.println("Nome: " + v.getNickname());
+                    }
                     for(int i=0; i<clients.size() && destNickname == null; i++) {
                         if(clients.get(i).getOnline()) {
                             destNickname = clients.get(i).getNickname();
@@ -115,7 +118,13 @@ public class ClientSocket implements VirtualView, Runnable {
                     }
                     Action act = new AskingStartAction(destNickname, count);
                     clientActions.put(act);
-                    //aggiungere il messaggio fake di aggiunta di un client
+
+                    act = new JoiningPlayerAction(nickname, count, 4);
+                    try{
+                        clientActions.put(act);
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

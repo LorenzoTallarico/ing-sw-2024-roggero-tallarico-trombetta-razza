@@ -44,7 +44,7 @@ public class WebServer implements VirtualServer {
         this.controller = controller;
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
-
+        this.clients = clients;
     }
 
     public void startRmiServer() {
@@ -58,7 +58,7 @@ public class WebServer implements VirtualServer {
             final String serverName = "GameServer";
 
             //VirtualServer server = new RmiServer(new GameController);
-            VirtualServer server = new WebServer(this.controller, ports); //al posto di GameController
+            VirtualServer server = this; //al posto di GameController
             //VirtualServer server = this; //al posto di GameController
             VirtualServer stub = (VirtualServer) UnicastRemoteObject.exportObject(server, 0);
             Registry registry = LocateRegistry.createRegistry(PORT_RMI);
@@ -110,7 +110,6 @@ public class WebServer implements VirtualServer {
                 Action action = serverActions.take();
                 System.out.println("> Handling action, action type \"" + action.getType().toString() + "\".");
                 Action newAction = null;
-                if (gameStarted) {
                     switch (action.getType()) {
                         case CHOSENPLAYERSNUMBER:
                             this.controller.setPlayersNumber(((ChosenPlayersNumberAction) action).getPlayersNumber());
@@ -138,25 +137,28 @@ public class WebServer implements VirtualServer {
                         case CHOSENDRAWCARD:
                             this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
                             break;
-                        default:
-                            break;
-                    }
-                }
-                else{
-                    switch (action.getType()) {
                         case START:
-                            if(countOnlinePlayer()!=0){//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
-                                this.controller.setPlayersNumber(countOnlinePlayer());
-                                for(VirtualView client : clients){
-                                    if(client.getOnline())
-                                        addPlayer(new Player(client.getNickname(), false), client);
+                            System.out.println("Start Arrivata");
+                            if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
+                                String firstNickname = null;
+                                for (int i = 0; i < clients.size() && firstNickname == null; i++) {
+                                    if (clients.get(i).getOnline()) {
+                                        firstNickname = clients.get(i).getNickname();
+                                    }
                                 }
-                                gameStarted = true;
-                            }
-                            else{
+                                if (((StartAction) action).getAuthor().equalsIgnoreCase(firstNickname)) {
+                                    this.controller.setPlayersNumber(countOnlinePlayer());
+                                    for (VirtualView client : clients) {
+                                        if (client.getOnline())
+                                            addPlayer(new Player(client.getNickname(), client.getGui()), client);
+                                    }
+                                    System.out.println("Utenti Aggiunti al game");
+                                    gameStarted = true;
+                                }
+                            } else {
                                 String nickname = null;
-                                for(int i=0; i<clients.size() && nickname == null; i++) {
-                                    if(clients.get(i).getOnline()) {
+                                for (int i = 0; i < clients.size() && nickname == null; i++) {
+                                    if (clients.get(i).getOnline()) {
                                         nickname = clients.get(i).getNickname();
                                     }
                                 }
@@ -167,7 +169,6 @@ public class WebServer implements VirtualServer {
                         default:
                             break;
                     }
-                }
             } catch(InterruptedException e){
                 connectionFlagServer = false;
             }
@@ -265,16 +266,14 @@ public class WebServer implements VirtualServer {
                 clients.add((VirtualView) client);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
                 for(VirtualView v : this.clients) {
-                    System.out.println("Fuori l'if getOnline()");
-                    System.out.println("Questo è il nickname del client:" + v.getNickname());
-                    if(v.getOnline()){
-                        System.out.println("Il Client è online");
-                    } else {
-                        System.out.println("Il Client NON è online");
-                    }
                     if(v.getOnline() && v.getNickname()!=null) {
-                        System.out.println("Dentro l'if getOnline()");
                         Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer()+1);
+                        try{
+                            clientActions.put(act);
+                        }catch(InterruptedException e){
+                            e.printStackTrace();
+                        }
+                        act = new JoiningPlayerAction(nick, countOnlinePlayer()+1, 4);
                         try{
                             clientActions.put(act);
                         }catch(InterruptedException e){

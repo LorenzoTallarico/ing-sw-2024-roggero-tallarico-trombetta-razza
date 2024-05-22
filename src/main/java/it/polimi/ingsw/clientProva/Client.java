@@ -57,7 +57,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
     private BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
     private boolean gui;
-    private boolean connected = true;
+    private boolean connected = false;
     private boolean connectionFlagServer=true;
     private boolean connectionFlagClient=true; //da sistemare
 
@@ -100,6 +100,14 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         new Thread(() -> {
             try {
                 clientUpdateThread();
+            } catch (RemoteException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            try {
+                serverUpdateThread();
             } catch (RemoteException | InterruptedException e) {
                 e.printStackTrace();
             }
@@ -187,6 +195,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     }
                     break;
                 case "startgame":
+                    System.out.print("Azione Start inserita nella coda");
                     a = new StartAction(nickname);
                     clientActionsToSend.put(a);
                     break;
