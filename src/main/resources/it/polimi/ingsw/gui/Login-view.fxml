@@ -3,11 +3,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.LoginController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.LoginController">
    <children>
-      <TextField fx:id="nameFld" layoutX="208.0" layoutY="125.0" onAction="#onNameFldEnter" promptText="Enter your nickname" />
-      <Button id="nameBtn" fx:id="nameBtn" layoutX="358.0" layoutY="125.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onNameBtnClick" prefHeight="25.0" prefWidth="33.0">
+      <TextField fx:id="nameFld" layoutX="208.0" layoutY="222.0" onKeyPressed="#onNameFldEnter" promptText="Enter your nickname" AnchorPane.topAnchor="222.0" />
+      <Button id="nameBtn" fx:id="nameBtn" layoutX="358.0" layoutY="222.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#onNameBtnClick" prefHeight="25.0" prefWidth="33.0" AnchorPane.topAnchor="222.0">
          <graphic>
             <ImageView fx:id="nameBtnImg" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -15,5 +16,59 @@
                </image>
             </ImageView>
          </graphic></Button>
+      <ImageView fitHeight="153.0" fitWidth="265.0" layoutX="150.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="36.0">
+         <image>
+            <Image url="@img/misc/title.png" />
+         </image></ImageView>
+      <SplitMenuButton fx:id="pnumSMB" layoutX="231.0" layoutY="286.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Choose game's size" visible="false" AnchorPane.bottomAnchor="88.66666666666667">
+        <items>
+          <MenuItem fx:id="option2" mnemonicParsing="false" onAction="#showConfirm" text="2 players" />
+          <MenuItem fx:id="option3" mnemonicParsing="false" onAction="#showConfirm" text="3 players" />
+            <MenuItem fx:id="option4" mnemonicParsing="false" onAction="#showConfirm" text="4 players" />
+        </items>
+      </SplitMenuButton>
+      <Button fx:id="confirmBtn" layoutX="277.0" layoutY="338.0" mnemonicParsing="false" onAction="#onConfirmBtnClick" text="Confirm" visible="false" AnchorPane.bottomAnchor="36.66666666666667" />
+      <ImageView fitHeight="100.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@img/misc/topleft-edge.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="100.0" fitWidth="77.0" layoutX="484.0" layoutY="23.0" pickOnBounds="true" preserveRatio="true" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
+         <image>
+            <Image url="@img/misc/topright-edge.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="100.0" fitWidth="77.0" layoutX="457.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.rightAnchor="-1.0">
+         <image>
+            <Image url="@img/misc/bottomright-edge.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="100.0" fitWidth="77.0" layoutX="14.0" layoutY="190.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="-1.0" AnchorPane.leftAnchor="0.0">
+         <image>
+            <Image url="@img/misc/bottomleft-edge.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="avatarsGroup2Img" fitHeight="150.0" fitWidth="200.0" layoutX="400.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@img/misc/2avatarsgroup.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="avatarsGroup3Img" fitHeight="150.0" fitWidth="200.0" layoutX="400.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@img/misc/3avatarsgroup.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="avatarsGroup4Img" fitHeight="150.0" fitWidth="200.0" layoutX="400.0" layoutY="160.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@img/misc/4avatarsgroup.png" />
+         </image>
+      </ImageView>
+      <Label fx:id="errorLbl" layoutX="85.0" layoutY="258.0" onMouseEntered="#onMouseEnteredError" onMouseExited="#onMouseExitedError" text="Connection failed: max number of players already reached or name already taken" textAlignment="CENTER" textFill="#be1515" visible="false" />
+      <ImageView fx:id="loadingImg" fitHeight="25.0" fitWidth="33.0" layoutX="357.0" layoutY="254.0" pickOnBounds="true" preserveRatio="true" visible="false">
+         <image>
+            <Image url="@img/icons/loading.gif" />
+         </image>
+      </ImageView>
+      <TextFlow fx:id="playersTextFlow" layoutX="22.0" layoutY="185.0" prefHeight="124.0" prefWidth="181.0" />
    </children>
 </AnchorPane>

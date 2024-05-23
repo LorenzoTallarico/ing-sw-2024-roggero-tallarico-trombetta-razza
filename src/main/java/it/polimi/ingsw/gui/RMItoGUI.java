@@ -1,13 +1,17 @@
 package it.polimi.ingsw.gui;
 
+
 import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
+import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
-import it.polimi.ingsw.networking.rmi.*;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -16,7 +20,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
-public class CopiaRmiClient1 extends UnicastRemoteObject implements VirtualView {
+public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
 
 
     enum State {
@@ -45,25 +49,50 @@ public class CopiaRmiClient1 extends UnicastRemoteObject implements VirtualView 
     boolean repeatDraw;
     private static final String LOCAL_HOST = "127.0.0.1";
 
+    private final GUIView guiView;
+    private final LoginController loginController;
+    private PlayController playController;
 
-
-    public CopiaRmiClient1(VirtualServer server) throws RemoteException {
+    public RMItoGUI(VirtualServer server) throws RemoteException {
         this.server = server;
         this.p = new Player();
         this.nickname = "";
         state = State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
-
+        guiView = new GUIView();
+        try {
+            guiView.init();
+        } catch (Exception e) {
+            System.out.println("!!! ERROR INIT GUI-VIEW !!!");
+            throw new RuntimeException(e);
+        }
+        Platform.startup(() -> {
+            Stage stage = new Stage();
+            try {
+                guiView.start(stage);
+            } catch (IOException e) {
+                System.out.println("!!! ERROR START GUI-VIEW !!!");
+                throw new RuntimeException(e);
+            }
+        });
+        do {
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+            }
+        } while (guiView.getLoginController() == null);
+        loginController = guiView.getLoginController();
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
-        // qui teoricamente non ci sarà più un main perché il client verrà lanciato da ClientApp, quindi si userà direttamente il metodo "init()" quando si istanzierà CopiaRmiClient1
+        // qui teoricamente non ci sarà più un main perché il client verrà lanciato da ClientApp, quindi si userà direttamente il metodo "init()" quando si istanzierà RMItoGUI
         final String serverName = "GameServer";
         try {
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
             VirtualServer server = (VirtualServer) registry.lookup(serverName);
-            new CopiaRmiClient1(server).run();
+            new RMItoGUI(server).run();
         } catch(ConnectException | NotBoundException e) {
             System.out.println(Print.ANSI_RED + "> Server might be down." + Print.ANSI_RESET);
             System.exit(0);
@@ -71,31 +100,32 @@ public class CopiaRmiClient1 extends UnicastRemoteObject implements VirtualView 
     }
 
     //Metodo che ci serve public, verrà usato una volta che viene lanciato un client e viene scelta la tecnologia RMI
-
+/*
     public void init() throws RemoteException, NotBoundException{
         final String serverName = "GameServer";
         try {
             Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
             VirtualServer server = (VirtualServer) registry.lookup(serverName);
-            new CopiaRmiClient1(server).run();
+            new RMItoGUI(server).run();
         } catch(ConnectException | NotBoundException e) {
             System.out.println(Print.ANSI_RED + "> Server might be down." + Print.ANSI_RESET);
             System.exit(0);
         }
     }
-
+*/
 
     private void run() throws RemoteException {
-        Scanner scan = new Scanner(System.in);
-        do {
-            System.out.print("> Enter nickname: ");
-            nickname = scan.nextLine().trim();
-        } while(nickname.isEmpty());
-        if(!this.server.connect(this)) {
-            System.out.println(Print.ANSI_RED + "> Connection failed, max number of players already reached or name already taken." + Print.ANSI_RESET);
-            System.exit(0);
+        boolean repeat = true;
+        while(repeat) {
+            do {
+                this.nickname = loginController.getNickname();
+            } while (this.nickname.isEmpty());
+            if(this.server.connect(this))
+                repeat = false;
+            else
+                loginController.invalidNickname();
         }
-
+        Platform.runLater(loginController::waitForOtherPlayers);
         this.runCli();
     }
 
@@ -365,11 +395,25 @@ public class CopiaRmiClient1 extends UnicastRemoteObject implements VirtualView 
                 break;
             case JOININGPLAYER:
                 System.out.println("> Player " + ((JoiningPlayerAction)act).getPlayer() + " joined the game. " + ((JoiningPlayerAction)act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction)act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction)act).getGameSize()));
+                Platform.runLater(() -> loginController.notifyJoiningPlayer(((JoiningPlayerAction)act).getPlayer(), ((JoiningPlayerAction)act).getCurrentPlayersNumber(), ((JoiningPlayerAction)act).getGameSize()));
                 break;
             case ASKINGPLAYERSNUMBER:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     state = State.GAMESIZE;
+                    int playnum;
                     System.out.println("> Enter desired players number with command \"gamesize x\".");
+                    loginController.showPlayersNumberMenu();
+                    do {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            System.out.println("!!! ERROR SLEEP GETPLAYERSNUMBER !!!");
+                        }
+                    } while(loginController.getPlayersNumber() == 0);
+                    playnum = loginController.getPlayersNumber();
+                    server.sendAction(new ChosenPlayersNumberAction(playnum));
+                    Platform.runLater(loginController::waitForOtherPlayers);
+                    state = State.COMMANDS;
                 }
                 break;
             case CHATMESSAGE:
@@ -394,6 +438,15 @@ public class CopiaRmiClient1 extends UnicastRemoteObject implements VirtualView 
                         p = ((ChooseSideStarterCardAction) act).getPlayer();
                     }
                     System.out.println("> Choose the side you want to place your starter card with command \"start\".");
+                    Platform.runLater(() -> guiView.playScene(nickname));
+                    do {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+                        }
+                    } while (guiView.getPlayController() == null);
+                    playController = guiView.getPlayController();
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }
