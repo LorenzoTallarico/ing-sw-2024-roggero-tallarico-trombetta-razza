@@ -6,7 +6,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
 
 import java.util.Objects;
 
@@ -37,15 +37,25 @@ public class LoginController {
     private ImageView avatarsGroup4Img;
     @FXML
     private ImageView loadingImg;
+    @FXML
+    private ImageView join1Img;
+    @FXML
+    private ImageView join2Img;
+    @FXML
+    private ImageView join3Img;
 
     @FXML
     private SplitMenuButton pnumSMB;
 
     @FXML
     private Label errorLbl;
-
     @FXML
-    private TextFlow playersTextFlow;
+    private Label join1Lbl;
+    @FXML
+    private Label join2Lbl;
+    @FXML
+    private Label join3Lbl;
+
 
     @FXML
     protected void onNameBtnClick() {
@@ -125,16 +135,88 @@ public class LoginController {
         }
     }
 
+    @FXML
+    protected void onJoin1MouseIn() {
+        Font font = join1Lbl.getFont();
+        join1Lbl.setFont(new Font(font.getName(), font.getSize()+2));
+        join1Lbl.setLayoutY(join1Lbl.getLayoutY() - 1);
+        join1Img.setFitHeight(join1Img.getFitHeight()+2);
+        join1Img.setFitWidth(join1Img.getFitWidth()+2);
+        join1Img.setLayoutY(join1Img.getLayoutY() - 1);
+    }
+
+    @FXML
+    protected void onJoin1MouseOut() {
+        Font font = join1Lbl.getFont();
+        join1Lbl.setFont(new Font(font.getName(), font.getSize()-2));
+        join1Lbl.setLayoutY(join1Lbl.getLayoutY() + 1);
+        join1Img.setFitHeight(join1Img.getFitHeight()-2);
+        join1Img.setFitWidth(join1Img.getFitWidth()-2);
+        join1Img.setLayoutY(join1Img.getLayoutY() + 1);
+    }
+
+    @FXML
+    protected void onJoin2MouseIn() {
+        Font font = join2Lbl.getFont();
+        join2Lbl.setFont(new Font(font.getName(), font.getSize()+2));
+        join2Lbl.setLayoutY(join2Lbl.getLayoutY() - 1);
+        join2Img.setFitHeight(join2Img.getFitHeight()+2);
+        join2Img.setFitWidth(join2Img.getFitWidth()+2);
+        join2Img.setLayoutY(join2Img.getLayoutY() - 1);
+    }
+
+    @FXML
+    protected void onJoin2MouseOut() {
+        Font font = join2Lbl.getFont();
+        join2Lbl.setFont(new Font(font.getName(), font.getSize()-2));
+        join2Lbl.setLayoutY(join2Lbl.getLayoutY() + 1);
+        join2Img.setFitHeight(join2Img.getFitHeight()-2);
+        join2Img.setFitWidth(join2Img.getFitWidth()-2);
+        join2Img.setLayoutY(join2Img.getLayoutY() + 1);
+    }
+
+    @FXML
+    protected void onJoin3MouseIn() {
+        Font font = join3Lbl.getFont();
+        join3Lbl.setFont(new Font(font.getName(), font.getSize()+2));
+        join3Lbl.setLayoutY(join3Lbl.getLayoutY() - 1);
+        join3Img.setFitHeight(join3Img.getFitHeight()+2);
+        join3Img.setFitWidth(join3Img.getFitWidth()+2);
+        join3Img.setLayoutY(join3Img.getLayoutY() - 1);
+    }
+
+    @FXML
+    protected void onJoin3MouseOut() {
+        Font font = join3Lbl.getFont();
+        join3Lbl.setFont(new Font(font.getName(), font.getSize()-2));
+        join3Lbl.setLayoutY(join3Lbl.getLayoutY() + 1);
+        join3Img.setFitHeight(join3Img.getFitHeight()-2);
+        join3Img.setFitWidth(join3Img.getFitWidth()-2);
+        join3Img.setLayoutY(join3Img.getLayoutY() + 1);
+    }
+    
     //public methods
 
     public void notifyJoiningPlayer(String nick, int curr, int size) {
-        Text line = new Text(nick + " joined " + curr + "/" + (size == 0 ? "?" : size));
-        line.setFill(Color.GREEN);
-        playersTextFlow.getChildren().add(line);
-        ImageView playaIcon = new ImageView(plusUser);
-        playaIcon.setLayoutX(0);
-        playaIcon.setLayoutY(line.getLayoutY());
-        playaIcon.setVisible(true);
+        String line;
+        if(size > 0)
+            line = nick + " joined " + curr + "/" + size;
+        else
+            line = "You are the first player";
+        if(!join1Img.isVisible()) {
+            join1Img.setVisible(true);
+            join1Lbl.setText(line);
+            join1Lbl.setVisible(true);
+        } else if(!join2Img.isVisible()) {
+            join2Img.setVisible(true);
+            join2Lbl.setText(line);
+            join2Lbl.setVisible(true);
+        } else if(!join3Img.isVisible()) {
+            join3Img.setVisible(true);
+            join3Lbl.setText(line);
+            join3Lbl.setVisible(true);
+        }
+
     }
 
     public void invalidNickname() {
