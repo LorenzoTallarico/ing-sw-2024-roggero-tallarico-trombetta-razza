@@ -5,6 +5,7 @@ import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
+import it.polimi.ingsw.networking.rmi.RmiServer;
 import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
@@ -52,6 +53,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     private final GUIView guiView;
     private final LoginController loginController;
     private PlayController playController;
+    private final Thread threadChatListener;
 
     public RMItoGUI(VirtualServer server) throws RemoteException {
         this.server = server;
@@ -84,6 +86,31 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             }
         } while (guiView.getLoginController() == null);
         loginController = guiView.getLoginController();
+        threadChatListener = new Thread(() -> {
+            while (playController == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GETCONTROLLER FOR CHAT !!!");
+                }
+            }
+            boolean listenToChat = true;
+            while(listenToChat) {
+                try {
+                    if(!playController.messagesToSendQueue.isEmpty()) {
+                        Message message = playController.messagesToSendQueue.get(0);
+                        playController.messagesToSendQueue.remove(0);
+                        server.sendAction(new ChatMessageAction(nickname, message.getRecipient(), message));
+                    } else {
+                        Thread.sleep(200);
+                    }
+                } catch(InterruptedException | RemoteException e) {
+                    listenToChat = false;
+                }
+            }
+            System.out.println("!!! ERROR STOP LISTENING CHAT !!!");
+        });
+
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
@@ -424,6 +451,9 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     } else {
                         System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
                     }
+                    if(playController != null) {
+                        playController.displayChatMessage(m);
+                    }
                 }
                 break;
             case CHOOSESIDESTARTERCARD:
@@ -447,8 +477,13 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                         }
                     } while (guiView.getPlayController() == null);
                     playController = guiView.getPlayController();
+                    playController.setNickname(nickname);
+                    threadChatListener.start();
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
+                }
+                if(playController != null) {
+                    playController.initializeChatOptions(allPlayers);
                 }
                 break;
             case CHOOSEABLEACHIEVEMENTS:

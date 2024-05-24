@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.PlayController">
    <children>
@@ -12,13 +12,35 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TextArea fx:id="chatOutput" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="302.0" promptText="Chat messages will be shown here" />
+                        <TextArea fx:id="chatTextArea" editable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="302.0" promptText="Chat messages will be shown here" wrapText="true" />
                      </children>
                   </AnchorPane>
                </content>
             </ScrollPane>
-            <TextField fx:id="chatInput" layoutY="200.0" maxHeight="41.0" maxWidth="267.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#onEnterKeyPressedChatInput" prefHeight="25.0" prefWidth="257.0" promptText="Write here to chat with others" />
-            <Button layoutX="260.0" layoutY="200.0" mnemonicParsing="false" onAction="#onInviaButtonClick" text="Invia" />
+            <TextField fx:id="chatFld" layoutY="200.0" maxHeight="41.0" maxWidth="267.0" minHeight="-Infinity" minWidth="-Infinity" onKeyPressed="#onEnterKeyPressedChatFld" prefHeight="28.0" prefWidth="207.0" promptText="Write here to chat with others" />
+            <Button alignment="CENTER" contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="206.0" layoutY="200.0" mnemonicParsing="false" onAction="#onSendMessageButtonClick" text="send">
+               <graphic>
+                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/comments.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <SplitMenuButton contentDisplay="GRAPHIC_ONLY" layoutX="242.0" layoutY="200.0" mnemonicParsing="false">
+              <items>
+                <MenuItem fx:id="everyoneItem" mnemonicParsing="false" onAction="#onChatOptionsEvent" text="All" />
+                <MenuItem fx:id="p1Item" mnemonicParsing="false" onAction="#onChatOptionsEvent" text="p1" visible="false" />
+                  <MenuItem fx:id="p2Item" mnemonicParsing="false" onAction="#onChatOptionsEvent" text="p2" visible="false" />
+                  <MenuItem fx:id="p3Item" mnemonicParsing="false" onAction="#onChatOptionsEvent" text="p3" visible="false" />
+              </items>
+               <graphic>
+                  <ImageView fx:id="chooseRecipientImg" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/multiple-users.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </SplitMenuButton>
          </children>
       </AnchorPane>
    </children>

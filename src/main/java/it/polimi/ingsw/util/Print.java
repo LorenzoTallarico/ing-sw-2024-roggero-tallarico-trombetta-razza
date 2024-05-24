@@ -17,6 +17,7 @@ public class Print {
     public static final String ANSI_WHITE = "\u001B[37m";
     public static final String ANSI_BOLD = "\033[1m";
     public static final String ANSI_BOLD_RESET = "\033[0m";
+    public static final String ANSI_ITALIC = "\u001B[3m";
 
     /**
      * Custom printer for Text User Interface, when initialized resets the color on the terminal
