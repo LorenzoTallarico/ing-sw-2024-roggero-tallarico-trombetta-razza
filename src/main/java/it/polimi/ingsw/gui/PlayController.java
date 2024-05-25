@@ -97,20 +97,16 @@ public class PlayController {
         otherPlayers = players;
         switch(otherPlayers.size()) {
             case 3:
-                System.out.println("- adding " + otherPlayers.get(2).getName() + "@3;");
                 p3Item.setText(otherPlayers.get(2).getName());
                 p3Item.setVisible(true);
             case 2:
-                System.out.println("- adding " + otherPlayers.get(1).getName() + "@2;");
                 p2Item.setText(otherPlayers.get(1).getName());
                 p2Item.setVisible(true);
             case 1:
-                System.out.println("- adding " + otherPlayers.get(0).getName() + "@1;");
                 p1Item.setText(otherPlayers.get(0).getName());
                 p1Item.setVisible(true);
                 break;
             default:
-                System.out.println("- !!!!!!!! shouldn't happen !!!!!!!!");
                 break;
         }
     }
