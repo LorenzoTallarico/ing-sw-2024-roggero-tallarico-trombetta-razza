@@ -22,10 +22,12 @@ public class PlayController {
     public int achievementChoice = 0;
     private ArrayList<AchievementCard> choosableAchievements;
     private ArrayList<AchievementCard> achievements;
+    public boolean canPlace = false;
+    public boolean canDraw = false;
     public ArrayList<Message> messagesToSendQueue = new ArrayList<>();
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
-
+    private ArrayList<Image> frontHand, backHand;
 
 
     @FXML
@@ -35,7 +37,7 @@ public class PlayController {
     private TextArea chatTextArea;
 
     @FXML
-    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img;
+    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img;
 
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
@@ -44,7 +46,7 @@ public class PlayController {
     private AnchorPane cardChoicePane, scoreboardPane;
 
     @FXML
-    private  Label selectCardLbl;
+    private Label selectCardLbl;
 
     @FXML
     protected void onSendMessageButtonClick() {
@@ -150,7 +152,6 @@ public class PlayController {
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
-        System.out.println("GUI | schoice: " + starterChoice + ", achoice " + achievementChoice);
     }
 
     @FXML
@@ -163,12 +164,172 @@ public class PlayController {
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
-        System.out.println("GUI | schoice: " + starterChoice + ", achoice " + achievementChoice);
     }
 
+    @FXML
+    protected void onFlipCardsClick() {
+        if(myPlayer.getHand().isEmpty())
+            return;
+        boolean tempSide = !myPlayer.getHand().get(0).isFront();
+        switch(myPlayer.getHand().size()) {
+            case 3:
+                myPlayer.getHand().get(2).setFront(tempSide);
+                handCard3Img.setImage(tempSide ? frontHand.get(2) : backHand.get(2));
+            case 2:
+                myPlayer.getHand().get(1).setFront(tempSide);
+                handCard2Img.setImage(tempSide ? frontHand.get(1) : backHand.get(1));
+            case 1:
+                myPlayer.getHand().get(0).setFront(tempSide);
+                handCard1Img.setImage(tempSide ? frontHand.get(0) : backHand.get(0));
+                break;
+            default: //shouldn't happen
+                break;
+        }
+
+    }
+
+    @FXML
+    protected void onHandCard1Click() {
+        if(canPlace) {
+            //to do
+        }
+    }
+    
+    @FXML
+    protected void onHandCard1In() {
+        handCard1Img.setLayoutY(handCard1Img.getLayoutY() - 6);
+        handCard1Img.setLayoutX(handCard1Img.getLayoutX() - 9);
+        handCard1Img.setFitHeight(handCard1Img.getFitHeight() + 12);
+        handCard1Img.setFitWidth(handCard1Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        handCard2Img.setEffect(colorAdjust);
+        handCard3Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onHandCard1Out() {
+        handCard1Img.setLayoutY(handCard1Img.getLayoutY() + 6);
+        handCard1Img.setLayoutX(handCard1Img.getLayoutX() + 9);
+        handCard1Img.setFitHeight(handCard1Img.getFitHeight() - 12);
+        handCard1Img.setFitWidth(handCard1Img.getFitWidth() - 18);
+        handCard2Img.setEffect(null);
+        handCard3Img.setEffect(null);
+    }
+    
+    @FXML
+    protected void onHandCard1Scroll() {
+        myPlayer.getHand().get(0).setFront(!myPlayer.getHand().get(0).isFront());
+        handCard1Img.setImage(myPlayer.getHand().get(0).isFront() ? frontHand.get(0) : backHand.get(0));
+    }
+
+    @FXML
+    protected void onHandCard2Click() {
+        if(canPlace) {
+            //to do
+        }
+    }
+
+    @FXML
+    protected void onHandCard2In() {
+        handCard2Img.setLayoutY(handCard2Img.getLayoutY() - 6);
+        handCard2Img.setLayoutX(handCard2Img.getLayoutX() - 9);
+        handCard2Img.setFitHeight(handCard2Img.getFitHeight() + 12);
+        handCard2Img.setFitWidth(handCard2Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        handCard1Img.setEffect(colorAdjust);
+        handCard3Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onHandCard2Out() {
+        handCard2Img.setLayoutY(handCard2Img.getLayoutY() + 6);
+        handCard2Img.setLayoutX(handCard2Img.getLayoutX() + 9);
+        handCard2Img.setFitHeight(handCard2Img.getFitHeight() - 12);
+        handCard2Img.setFitWidth(handCard2Img.getFitWidth() - 18);
+        handCard1Img.setEffect(null);
+        handCard3Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onHandCard2Scroll() {
+        myPlayer.getHand().get(1).setFront(!myPlayer.getHand().get(1).isFront());
+        handCard2Img.setImage(myPlayer.getHand().get(1).isFront() ? frontHand.get(1) : backHand.get(1));
+    }
+
+    @FXML
+    protected void onHandCard3Click() {
+        if(canPlace) {
+            //to do
+        }
+    }
+
+    @FXML
+    protected void onHandCard3In() {
+        handCard3Img.setLayoutY(handCard3Img.getLayoutY() - 6);
+        handCard3Img.setLayoutX(handCard3Img.getLayoutX() - 9);
+        handCard3Img.setFitHeight(handCard3Img.getFitHeight() + 12);
+        handCard3Img.setFitWidth(handCard3Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        handCard1Img.setEffect(colorAdjust);
+        handCard2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onHandCard3Out() {
+        handCard3Img.setLayoutY(handCard3Img.getLayoutY() + 6);
+        handCard3Img.setLayoutX(handCard3Img.getLayoutX() + 9);
+        handCard3Img.setFitHeight(handCard3Img.getFitHeight() - 12);
+        handCard3Img.setFitWidth(handCard3Img.getFitWidth() - 18);
+        handCard1Img.setEffect(null);
+        handCard2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onHandCard3Scroll() {
+        myPlayer.getHand().get(2).setFront(!myPlayer.getHand().get(2).isFront());
+        handCard3Img.setImage(myPlayer.getHand().get(2).isFront() ? frontHand.get(2) : backHand.get(2));
+    }
+    
     private void initializeScoreboard() {
         cardChoicePane.setVisible(false);
         scoreboardPane.setVisible(true);
+    }
+
+    private void updatePlayerRelated() {
+        //hand cards
+        frontHand = new ArrayList<>();
+        backHand = new ArrayList<>();
+        for(Card card : myPlayer.getHand()) {
+            card.setFront(true);
+            if(card.getClass() == ResourceCard.class) {
+                frontHand.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ((ResourceCard) card).getSideID(true) + ".png"))));
+                backHand.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + ((ResourceCard) card).getSideID(false) + ".png"))));
+            } else if(card.getClass() == GoldCard.class) {
+                frontHand.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ((GoldCard) card).getSideID(true) + ".png"))));
+                backHand.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + ((GoldCard) card).getSideID(false) + ".png"))));
+            }
+        }
+        switch(myPlayer.getHand().size()) {
+            case 3:
+                handCard3Img.setImage(myPlayer.getHand().get(2).isFront() ? frontHand.get(2) : backHand.get(2));
+                handCard3Img.setEffect(null);
+                handCard3Img.setVisible(true);
+            case 2:
+                handCard2Img.setImage(myPlayer.getHand().get(1).isFront() ? frontHand.get(1) : backHand.get(1));
+                handCard2Img.setEffect(null);
+                handCard2Img.setVisible(true);
+            case 1:
+                handCard1Img.setImage(myPlayer.getHand().get(0).isFront() ? frontHand.get(0) : backHand.get(0));
+                handCard1Img.setEffect(null);
+                handCard1Img.setVisible(true);
+                break;
+            default:
+                System.out.println("shouldn't happen");
+                break;
+        }
     }
 
     private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
@@ -204,6 +365,7 @@ public class PlayController {
 
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         myPlayer = self;
+        updatePlayerRelated();
         updateTableCards(commonGold, goldDeck, commonResource, resourceDeck);
         Image frontSide = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + str.getID() + ".png")));
         Image backSide = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + str.getID() + ".png")));

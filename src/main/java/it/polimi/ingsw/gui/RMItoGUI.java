@@ -455,7 +455,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     threadChatListener.start();
                     Platform.runLater(() ->playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck));
                     threadStartListener.start();
-                    System.out.println("> - dopo il lo start del thread starter");
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }
@@ -600,7 +599,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
         });
 
         threadStartListener = new Thread(() -> {
-            System.out.println(">SSS> - partenza thread starter choice");
             do {
                 try {
                     Thread.sleep(500);
@@ -608,7 +606,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     System.out.println("!!! ERROR SLEEP GET STARTER CHOICE !!!");
                 }
             } while (playController.starterChoice == 0);
-            System.out.println(">SSS> - dopo il while sleep per starterchoice = 0");
             try {
                 server.sendAction(new ChosenSideStarterCardAction(nickname, (playController.starterChoice == 1)));
             } catch (RemoteException e) {
