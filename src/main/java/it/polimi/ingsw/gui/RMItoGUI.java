@@ -480,6 +480,14 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     playController.setNickname(nickname);
                     threadChatListener.start();
                     playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck);
+                    do {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            System.out.println("!!! ERROR SLEEP GET STARTER CHOICE !!!");
+                        }
+                    } while (playController.starterChoice == 0);
+                    server.sendAction(new ChosenSideStarterCardAction(nickname, (playController.starterChoice == 1)));
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }
@@ -493,6 +501,17 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
                     state = State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
+                    Platform.runLater(() ->playController.passAchievement(choosableAchievements, achievements));
+                    do {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            System.out.println("!!! ERROR SLEEP GET ACHIEVEMENT CHOICE !!!");
+                        }
+                    } while (playController.achievementChoice == 0);
+                    server.sendAction(new ChosenAchievementAction(nickname, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1)));
+                    achievements.add(0, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
+
                 }
                 break;
             case ASKINGPLACE:

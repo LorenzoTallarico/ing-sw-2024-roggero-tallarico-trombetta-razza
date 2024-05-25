@@ -12,4 +12,5 @@ module it.polimi.ingsw {
     opens it.polimi.ingsw.networking.rmi to java.rmi;
     exports it.polimi.ingsw.gui;
     opens it.polimi.ingsw.gui to javafx.fxml;
+    exports it.polimi.ingsw.networking.rmi;
 }

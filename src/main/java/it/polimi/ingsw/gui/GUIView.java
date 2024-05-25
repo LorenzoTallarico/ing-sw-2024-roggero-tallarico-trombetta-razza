@@ -54,7 +54,6 @@ public class GUIView extends Application {
         }
         playController = fxmlLoader.getController();
         stage.setMaximized(true);
-        System.out.println("largo: " + stage.getWidth() + ", alto: " + stage.getHeight());
     }
     
     public static void main(String[] args) {

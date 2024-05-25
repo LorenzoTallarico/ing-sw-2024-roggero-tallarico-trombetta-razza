@@ -18,6 +18,10 @@ public class PlayController {
     private Player myPlayer;
     private String currentRecipient = "";
     private ArrayList<Player> otherPlayers;
+    public int starterChoice = 0;
+    public int achievementChoice = 0;
+    private ArrayList<AchievementCard> choosableAchievements;
+    private ArrayList<AchievementCard> achievements;
     public ArrayList<Message> messagesToSendQueue = new ArrayList<>();
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
@@ -102,7 +106,7 @@ public class PlayController {
         selectCard1Img.setFitHeight(selectCard1Img.getFitHeight() + 12);
         selectCard1Img.setFitWidth(selectCard1Img.getFitWidth() + 18);
         ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-20);
+        colorAdjust.setBrightness(-0.2);
         selectCard2Img.setEffect(colorAdjust);
     }
 
@@ -122,7 +126,7 @@ public class PlayController {
         selectCard2Img.setFitHeight(selectCard2Img.getFitHeight() + 12);
         selectCard2Img.setFitWidth(selectCard2Img.getFitWidth() + 18);
         ColorAdjust colorAdjust = new ColorAdjust();
-        colorAdjust.setBrightness(-20);
+        colorAdjust.setBrightness(-0.2);
         selectCard1Img.setEffect(colorAdjust);
     }
 
@@ -133,6 +137,32 @@ public class PlayController {
         selectCard2Img.setFitHeight(selectCard2Img.getFitHeight() - 12);
         selectCard2Img.setFitWidth(selectCard2Img.getFitWidth() - 18);
         selectCard1Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onSelectCard1Click() {
+        if(selectCardLbl.getText().equals("Choose the side of your starter card"))
+            starterChoice = 1;
+        else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
+            achievementChoice = 1;
+            cardChoicePane.setDisable(true);
+            cardChoicePane.setVisible(false);
+        }
+        selectCard1Img.setDisable(true);
+        selectCard2Img.setDisable(true);
+    }
+
+    @FXML
+    protected void onSelectCard2Click() {
+        if(selectCardLbl.getText().equals("Choose the side of your starter card"))
+            starterChoice = 2;
+        else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
+            achievementChoice = 2;
+            cardChoicePane.setDisable(true);
+            cardChoicePane.setVisible(false);
+        }
+        selectCard1Img.setDisable(true);
+        selectCard2Img.setDisable(true);
     }
 
     private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
@@ -173,16 +203,23 @@ public class PlayController {
         selectCardLbl.setText("Choose the side of your starter card");
         selectCard1Img.setImage(frontSide);
         selectCard2Img.setImage(backSide);
+        selectCard1Img.setDisable(false);
+        selectCard2Img.setDisable(false);
         cardChoicePane.setVisible(true);
     }
 
-    public void passAchievement(ArrayList<AchievementCard> ach) {
+    public void passAchievement(ArrayList<AchievementCard> ach, ArrayList<AchievementCard> achievements) {
+        this.achievements = achievements;
+        choosableAchievements = ach;
         Image ach1 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(0).getID() + ".png")));
         Image ach2 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(1).getID() + ".png")));
-        selectCardLbl.setText("Choose your personal secret achievement");
+        selectCardLbl.setText("Choose your own secret achievement");
         selectCard1Img.setImage(ach1);
         selectCard2Img.setImage(ach2);
+        selectCard1Img.setDisable(false);
+        selectCard2Img.setDisable(false);
         cardChoicePane.setVisible(true);
+
     }
 
     //getters and setters
