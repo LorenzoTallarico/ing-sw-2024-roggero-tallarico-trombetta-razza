@@ -147,7 +147,7 @@ public class temp4 {
             ArrayList<AchievementCard> ach = new ArrayList<AchievementCard>();
             // print cards
             for(int j = 0; j < achi.length; j++){
-                ach.add(new AchievementCard(achi[j].getPoints(), achi[j].getResource(), achi[j].getStrategyType(), achi[j].getItem()));
+                ach.add(new AchievementCard(achi[j].getPoints(), achi[j].getResource(), achi[j].getStrategyType(), achi[j].getItem(), achi[j].getID()));
                 System.out.println("------------ LETTURA CARTA OBIETTIVO " + (j+1));
                 System.out.println("resource: " + ach.get(j).getResource() + "\nitem: " + ((AchievementCard)ach.get(j)).getItem()  + "\npoints: " + ach.get(j).getPoints());
                 System.out.print("strategy: ");

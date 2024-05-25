@@ -41,8 +41,8 @@ public class PlayerTest {
         assertFalse(p.isWinner());
         assertEquals(0, p.getPoints());
 
-        AchievementCard achi1 = new AchievementCard(3, Resource.BUTTERFLY, "ConcreteStrategyDiagonal", Item.SCROLL);
-        AchievementCard achi2 = new AchievementCard(2, Resource.WOLF, "ConcreteStrategyMixed", Item.PLUME);
+        AchievementCard achi1 = new AchievementCard(3, Resource.BUTTERFLY, "ConcreteStrategyDiagonal", Item.SCROLL, "090");
+        AchievementCard achi2 = new AchievementCard(2, Resource.WOLF, "ConcreteStrategyMixed", Item.PLUME, "099");
         ArrayList<AchievementCard> achiList = new ArrayList<AchievementCard>();
         achiList.add(achi1);
         achiList.add(achi2);
@@ -83,11 +83,11 @@ public class PlayerTest {
         frontAng[2]= c2;
         frontAng[3]= c3;
 
-        Card card1 = new ResourceCard(2, Resource.LEAF, frontAng, backAng);
-        Card card2 = new ResourceCard(2, Resource.WOLF, frontAng, backAng);
-        Card card3 = new ResourceCard(2, Resource.MUSHROOM, frontAng, backAng);
-        Card card4 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng);
-        Card card5 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng);
+        Card card1 = new ResourceCard(2, Resource.LEAF, frontAng, backAng, "000");
+        Card card2 = new ResourceCard(2, Resource.WOLF, frontAng, backAng, "000");
+        Card card3 = new ResourceCard(2, Resource.MUSHROOM, frontAng, backAng, "000");
+        Card card4 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng, "000");
+        Card card5 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng, "000");
 
 
 
@@ -139,7 +139,7 @@ public class PlayerTest {
         backAngS[1]= c1s;
         backAngS[2]= c2s;
         backAngS[3]= c3s;
-        Card startCard = new StarterCard(Resource.BUTTERFLY, null, null, frontAngS, backAngS);
+        Card startCard = new StarterCard(Resource.BUTTERFLY, null, null, frontAngS, backAngS, "081");
         System.out.println("Print Starter Card:");
         Print.cardPrinter(startCard, false);
 

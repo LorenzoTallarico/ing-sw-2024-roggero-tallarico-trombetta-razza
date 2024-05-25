@@ -142,7 +142,7 @@ public class LoginController {
         join1Lbl.setLayoutY(join1Lbl.getLayoutY() - 1);
         join1Img.setFitHeight(join1Img.getFitHeight()+2);
         join1Img.setFitWidth(join1Img.getFitWidth()+2);
-        join1Img.setLayoutY(join1Img.getLayoutY() - 1);
+        join1Img.setLayoutX(join1Img.getLayoutX() - 1);
     }
 
     @FXML
@@ -150,9 +150,9 @@ public class LoginController {
         Font font = join1Lbl.getFont();
         join1Lbl.setFont(new Font(font.getName(), font.getSize()-2));
         join1Lbl.setLayoutY(join1Lbl.getLayoutY() + 1);
-        join1Img.setFitHeight(join1Img.getFitHeight()-2);
-        join1Img.setFitWidth(join1Img.getFitWidth()-2);
-        join1Img.setLayoutY(join1Img.getLayoutY() + 1);
+        join1Img.setFitHeight(join1Img.getFitHeight() - 2);
+        join1Img.setFitWidth(join1Img.getFitWidth() - 2);
+        join1Img.setLayoutX(join1Img.getLayoutX() + 1);
     }
 
     @FXML
@@ -160,9 +160,9 @@ public class LoginController {
         Font font = join2Lbl.getFont();
         join2Lbl.setFont(new Font(font.getName(), font.getSize()+2));
         join2Lbl.setLayoutY(join2Lbl.getLayoutY() - 1);
-        join2Img.setFitHeight(join2Img.getFitHeight()+2);
-        join2Img.setFitWidth(join2Img.getFitWidth()+2);
-        join2Img.setLayoutY(join2Img.getLayoutY() - 1);
+        join2Img.setFitHeight(join2Img.getFitHeight() + 2);
+        join2Img.setFitWidth(join2Img.getFitWidth() + 2);
+        join2Img.setLayoutX(join2Img.getLayoutX() - 1);
     }
 
     @FXML
@@ -172,7 +172,7 @@ public class LoginController {
         join2Lbl.setLayoutY(join2Lbl.getLayoutY() + 1);
         join2Img.setFitHeight(join2Img.getFitHeight()-2);
         join2Img.setFitWidth(join2Img.getFitWidth()-2);
-        join2Img.setLayoutY(join2Img.getLayoutY() + 1);
+        join2Img.setLayoutX(join2Img.getLayoutX() + 1);
     }
 
     @FXML
@@ -182,7 +182,7 @@ public class LoginController {
         join3Lbl.setLayoutY(join3Lbl.getLayoutY() - 1);
         join3Img.setFitHeight(join3Img.getFitHeight()+2);
         join3Img.setFitWidth(join3Img.getFitWidth()+2);
-        join3Img.setLayoutY(join3Img.getLayoutY() - 1);
+        join3Img.setLayoutX(join3Img.getLayoutX() - 1);
     }
 
     @FXML
@@ -192,7 +192,7 @@ public class LoginController {
         join3Lbl.setLayoutY(join3Lbl.getLayoutY() + 1);
         join3Img.setFitHeight(join3Img.getFitHeight()-2);
         join3Img.setFitWidth(join3Img.getFitWidth()-2);
-        join3Img.setLayoutY(join3Img.getLayoutY() + 1);
+        join3Img.setLayoutX(join3Img.getLayoutX() + 1);
     }
     
     //public methods

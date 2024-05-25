@@ -117,7 +117,7 @@ public class Game implements Serializable {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             ArrayList<AchievementCard> tempDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
-                tempDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
+                tempDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem(), achievementCard.getID()));
             return tempDeck;
         } catch (IOException e) {
             return null;
@@ -233,7 +233,7 @@ public class Game implements Serializable {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             achievementDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
-                achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem()));
+                achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem(), achievementCard.getID()));
         } catch (IOException e) {
             System.err.println("> Error: JSON files not found.");
         }

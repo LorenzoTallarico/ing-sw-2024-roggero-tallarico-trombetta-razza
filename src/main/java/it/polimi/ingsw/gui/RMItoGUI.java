@@ -458,10 +458,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 break;
             case CHOOSESIDESTARTERCARD:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
-                    this.commonGold = ((ChooseSideStarterCardAction)act).getCommonGold();
-                    this.goldDeck = ((ChooseSideStarterCardAction)act).getGoldDeck();
-                    this.commonResource = ((ChooseSideStarterCardAction)act).getCommonResource();
-                    this.resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
+                    commonGold = ((ChooseSideStarterCardAction)act).getCommonGold();
+                    goldDeck = ((ChooseSideStarterCardAction)act).getGoldDeck();
+                    commonResource = ((ChooseSideStarterCardAction)act).getCommonResource();
+                    resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
                     synchronized(p) {
@@ -479,6 +479,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     playController = guiView.getPlayController();
                     playController.setNickname(nickname);
                     threadChatListener.start();
+                    playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck);
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }

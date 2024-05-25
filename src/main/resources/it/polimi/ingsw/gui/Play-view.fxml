@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1100.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.PlayController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="1294.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.PlayController">
    <children>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="227.0" prefWidth="302.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="227.0" prefWidth="302.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
             <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="302.0">
                <content>
@@ -25,7 +27,10 @@
                         <Image url="@img/icons/comments.png" />
                      </image>
                   </ImageView>
-               </graphic></Button>
+               </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></Button>
             <SplitMenuButton contentDisplay="GRAPHIC_ONLY" layoutX="242.0" layoutY="200.0" mnemonicParsing="false">
               <items>
                 <MenuItem fx:id="everyoneItem" mnemonicParsing="false" onAction="#onChatOptionsEvent" text="All" />
@@ -40,10 +45,33 @@
                      </image>
                   </ImageView>
                </graphic>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
             </SplitMenuButton>
          </children>
       </AnchorPane>
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="51.0" layoutY="276.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fitHeight="150.0" fitWidth="200.0" layoutX="51.0" layoutY="448.0" pickOnBounds="true" preserveRatio="true" />
+      <AnchorPane fx:id="cardChoicePane" layoutY="260.0" minHeight="0.0" minWidth="0.0" prefHeight="371.0" prefWidth="247.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+         <children>
+            <Label fx:id="selectCardLbl" layoutX="8.0" prefHeight="22.0" prefWidth="231.0" text="Choose the side of your starter card">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
+            <ImageView fx:id="selectCard1Img" fitHeight="154.0" fitWidth="231.0" layoutX="8.0" layoutY="36.0" onMouseDragEntered="#onSelectCard1In" onMouseDragExited="#onSelectCard1Out" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/front/081.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></ImageView>
+            <ImageView fx:id="selectCard2Img" fitHeight="154.0" fitWidth="231.0" layoutX="8.0" layoutY="211.0" onMouseDragEntered="#onSelectCard2In" onMouseDragExited="#onSelectCard2Out" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/081.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></ImageView>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>

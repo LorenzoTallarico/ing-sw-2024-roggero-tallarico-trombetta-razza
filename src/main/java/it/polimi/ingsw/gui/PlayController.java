@@ -4,8 +4,10 @@ import it.polimi.ingsw.model.*;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
+import javafx.scene.layout.*;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -20,6 +22,8 @@ public class PlayController {
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
 
+
+
     @FXML
     private TextField chatFld;
 
@@ -27,10 +31,16 @@ public class PlayController {
     private TextArea chatTextArea;
 
     @FXML
-    private ImageView chooseRecipientImg;
+    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img;
 
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
+
+    @FXML
+    private AnchorPane cardChoicePane;
+
+    @FXML
+    private  Label selectCardLbl;
 
     @FXML
     protected void onSendMessageButtonClick() {
@@ -84,6 +94,50 @@ public class PlayController {
                 break;
         }
     }
+    
+    @FXML
+    protected void onSelectCard1In() {
+        selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() - 6);
+        selectCard1Img.setLayoutX(selectCard1Img.getLayoutX() - 9);
+        selectCard1Img.setFitHeight(selectCard1Img.getFitHeight() + 12);
+        selectCard1Img.setFitWidth(selectCard1Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-20);
+        selectCard2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onSelectCard1Out() {
+        selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() + 6);
+        selectCard1Img.setLayoutX(selectCard1Img.getLayoutX() + 9);
+        selectCard1Img.setFitHeight(selectCard1Img.getFitHeight() - 12);
+        selectCard1Img.setFitWidth(selectCard1Img.getFitWidth() - 18);
+        selectCard2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onSelectCard2In() {
+        selectCard2Img.setLayoutY(selectCard2Img.getLayoutY() - 6);
+        selectCard2Img.setLayoutX(selectCard2Img.getLayoutX() - 9);
+        selectCard2Img.setFitHeight(selectCard2Img.getFitHeight() + 12);
+        selectCard2Img.setFitWidth(selectCard2Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-20);
+        selectCard1Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onSelectCard2Out() {
+        selectCard2Img.setLayoutY(selectCard2Img.getLayoutY() + 6);
+        selectCard2Img.setLayoutX(selectCard2Img.getLayoutX() + 9);
+        selectCard2Img.setFitHeight(selectCard2Img.getFitHeight() - 12);
+        selectCard2Img.setFitWidth(selectCard2Img.getFitWidth() - 18);
+        selectCard1Img.setEffect(null);
+    }
+
+    private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+        //to do
+    }
 
     //public method
     public void displayChatMessage(Message m) {
@@ -109,6 +163,26 @@ public class PlayController {
             default:
                 break;
         }
+    }
+
+    public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+        myPlayer = self;
+        updateTableCards(commonGold, goldDeck, commonResource, resourceDeck);
+        Image frontSide = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + str.getID() + ".png")));
+        Image backSide = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + str.getID() + ".png")));
+        selectCardLbl.setText("Choose the side of your starter card");
+        selectCard1Img.setImage(frontSide);
+        selectCard2Img.setImage(backSide);
+        cardChoicePane.setVisible(true);
+    }
+
+    public void passAchievement(ArrayList<AchievementCard> ach) {
+        Image ach1 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(0).getID() + ".png")));
+        Image ach2 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(1).getID() + ".png")));
+        selectCardLbl.setText("Choose your personal secret achievement");
+        selectCard1Img.setImage(ach1);
+        selectCard2Img.setImage(ach2);
+        cardChoicePane.setVisible(true);
     }
 
     //getters and setters

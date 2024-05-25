@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -14,7 +15,10 @@
                   <Image url="@img/icons/check.png" />
                </image>
             </ImageView>
-         </graphic></Button>
+         </graphic>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
       <ImageView fitHeight="153.0" fitWidth="265.0" layoutX="150.0" layoutY="36.0" pickOnBounds="true" preserveRatio="true" AnchorPane.topAnchor="36.0">
          <image>
             <Image url="@img/misc/title.png" />
@@ -25,8 +29,14 @@
           <MenuItem fx:id="option3" mnemonicParsing="false" onAction="#showConfirm" text="3 players" />
             <MenuItem fx:id="option4" mnemonicParsing="false" onAction="#showConfirm" text="4 players" />
         </items>
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
       </SplitMenuButton>
-      <Button fx:id="confirmBtn" layoutX="277.0" layoutY="338.0" mnemonicParsing="false" onAction="#onConfirmBtnClick" text="Confirm" visible="false" AnchorPane.bottomAnchor="36.66666666666667" />
+      <Button fx:id="confirmBtn" layoutX="277.0" layoutY="338.0" mnemonicParsing="false" onAction="#onConfirmBtnClick" text="Confirm" visible="false" AnchorPane.bottomAnchor="36.66666666666667">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor></Button>
       <ImageView fitHeight="100.0" fitWidth="77.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <image>
             <Image url="@img/misc/topleft-edge.png" />
