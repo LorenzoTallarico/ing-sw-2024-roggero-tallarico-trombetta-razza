@@ -7,6 +7,9 @@ public class StarterCard extends Card implements Serializable {
     private final Resource secondResource;
     private final Resource thirdResource;
 
+    /**
+     * Default constructor for an empty starter card
+     */
     public StarterCard() {
         secondResource = null;
         thirdResource = null;
@@ -15,6 +18,7 @@ public class StarterCard extends Card implements Serializable {
         resource = null;
         frontCorners = null;
         backCorners = null;
+        id = "";
     }
 
 
@@ -25,8 +29,9 @@ public class StarterCard extends Card implements Serializable {
      * @param thirdResource The type of potential third resource of the card
      * @param frontCorners Corners of the front side of the card
      * @param backCorners Corners of the back side of the card
+     * @param id String representing the id of the card, used for images
      */
-     public StarterCard(Resource resource, Resource secondResource, Resource thirdResource, Corner[] frontCorners, Corner[] backCorners) {
+     public StarterCard(Resource resource, Resource secondResource, Resource thirdResource, Corner[] frontCorners, Corner[] backCorners, String id) {
         this.secondResource = secondResource;
         this.thirdResource = thirdResource;
         this.resource = resource;
@@ -36,6 +41,7 @@ public class StarterCard extends Card implements Serializable {
         for (int i = 0; i < backCorners.length; i++) {
             this.backCorners[i] = backCorners[i];
         }
+        this.id = id;
     }
 
 

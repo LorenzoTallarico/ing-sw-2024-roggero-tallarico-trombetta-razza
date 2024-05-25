@@ -1,5 +1,6 @@
 [
   {
+    "id": "087",
     "front": null,
     "points": 2,
     "resource": "MUSHROOM",
@@ -10,6 +11,7 @@
     "item": null
   },
   {
+    "id": "088",
     "front": null,
     "points": 2,
     "resource": "LEAF",
@@ -20,6 +22,7 @@
     "item": null
   },
   {
+    "id": "089",
     "front": null,
     "points": 2,
     "resource": "WOLF",
@@ -30,6 +33,7 @@
     "item": null
   },
   {
+    "id": "090",
     "front": null,
     "points": 2,
     "resource": "BUTTERFLY",
@@ -40,6 +44,7 @@
     "item": null
   },
   {
+    "id": "091",
     "front": null,
     "points": 3,
     "resource": "MUSHROOM",
@@ -50,6 +55,7 @@
     "item": null
   },
   {
+    "id": "092",
     "front": null,
     "points": 3,
     "resource": "LEAF",
@@ -60,6 +66,7 @@
     "item": null
   },
   {
+    "id": "093",
     "front": null,
     "points": 3,
     "resource": "WOLF",
@@ -70,6 +77,7 @@
     "item": null
   },
   {
+    "id": "094",
     "front": null,
     "points": 3,
     "resource": "BUTTERFLY",
@@ -80,6 +88,7 @@
     "item": null
   },
   {
+    "id": "095",
     "front": null,
     "points": 2,
     "resource": "MUSHROOM",
@@ -90,6 +99,7 @@
     "item": null
   },
   {
+    "id": "096",
     "front": null,
     "points": 2,
     "resource": "LEAF",
@@ -100,6 +110,7 @@
     "item": null
   },
   {
+    "id": "097",
     "front": null,
     "points": 2,
     "resource": "WOLF",
@@ -110,6 +121,7 @@
     "item": null
   },
   {
+    "id": "098",
     "front": null,
     "points": 2,
     "resource": "BUTTERFLY",
@@ -120,6 +132,7 @@
     "item": null
   },
   {
+    "id": "099",
     "front": null,
     "points": 3,
     "resource": null,
@@ -130,6 +143,7 @@
     "item": null
   },
   {
+    "id": "100",
     "front": null,
     "points": 2,
     "resource": null,
@@ -140,6 +154,7 @@
     "item": "SCROLL"
   },
   {
+    "id": "101",
     "front": null,
     "points": 2,
     "resource": null,
@@ -150,6 +165,7 @@
     "item": "JAR"
   },
   {
+    "id": "102",
     "front": null,
     "points": 2,
     "resource": null,

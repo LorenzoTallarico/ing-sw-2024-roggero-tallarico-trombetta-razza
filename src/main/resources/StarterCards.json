@@ -1,5 +1,6 @@
 [
   {
+    "id": "081",
     "front": null,
     "resource": "BUTTERFLY",
     "frontCorners": [
@@ -56,6 +57,7 @@
     ]
   },
   {
+    "id": "082",
     "front": null,
     "resource": "MUSHROOM",
     "frontCorners": [
@@ -112,6 +114,7 @@
     ]
   },
   {
+    "id": "083",
     "front": null,
     "resource": "LEAF",
     "secondResource": "MUSHROOM",
@@ -169,6 +172,7 @@
     ]
   },
   {
+    "id": "084",
     "front": null,
     "resource": "WOLF",
     "secondResource": "BUTTERFLY",
@@ -226,6 +230,7 @@
     ]
   },
   {
+    "id": "085",
     "front": null,
     "resource": "WOLF",
     "secondResource": "BUTTERFLY",
@@ -284,6 +289,7 @@
     ]
   },
   {
+    "id": "086",
     "front": null,
     "resource": "LEAF",
     "secondResource": "WOLF",

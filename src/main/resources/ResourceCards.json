@@ -1,5 +1,6 @@
 [
   {
+    "id": "001",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -57,6 +58,7 @@
     ]
   },
   {
+    "id": "002",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -114,6 +116,7 @@
     ]
   },
   {
+    "id": "003",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -171,6 +174,7 @@
     ]
   },
   {
+    "id": "004",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -228,6 +232,7 @@
     ]
   },
   {
+    "id": "005",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -285,6 +290,7 @@
     ]
   },
   {
+    "id": "006",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -342,6 +348,7 @@
     ]
   },
   {
+    "id": "007",
     "front": null,
     "points": 0,
     "resource": "MUSHROOM",
@@ -399,6 +406,7 @@
     ]
   },
   {
+    "id": "008",
     "front": null,
     "points": 1,
     "resource": "MUSHROOM",
@@ -456,6 +464,7 @@
     ]
   },
   {
+    "id": "009",
     "front": null,
     "points": 1,
     "resource": "MUSHROOM",
@@ -513,6 +522,7 @@
     ]
   },
   {
+    "id": "010",
     "front": null,
     "points": 1,
     "resource": "MUSHROOM",
@@ -570,6 +580,7 @@
     ]
   },
   {
+    "id": "011",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -627,6 +638,7 @@
     ]
   },
   {
+    "id": "012",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -684,6 +696,7 @@
     ]
   },
   {
+    "id": "013",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -741,6 +754,7 @@
     ]
   },
   {
+    "id": "014",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -798,6 +812,7 @@
     ]
   },
   {
+    "id": "015",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -855,6 +870,7 @@
     ]
   },
   {
+    "id": "016",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -912,6 +928,7 @@
     ]
   },
   {
+    "id": "017",
     "front": null,
     "points": 0,
     "resource": "LEAF",
@@ -969,6 +986,7 @@
     ]
   },
   {
+    "id": "018",
     "front": null,
     "points": 1,
     "resource": "LEAF",
@@ -1026,6 +1044,7 @@
     ]
   },
   {
+    "id": "019",
     "front": null,
     "points": 1,
     "resource": "LEAF",
@@ -1083,6 +1102,7 @@
     ]
   },
   {
+    "id": "020",
     "front": null,
     "points": 1,
     "resource": "LEAF",
@@ -1140,6 +1160,7 @@
     ]
   },
   {
+    "id": "021",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1197,6 +1218,7 @@
     ]
   },
   {
+    "id": "022",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1254,6 +1276,7 @@
     ]
   },
   {
+    "id": "023",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1311,6 +1334,7 @@
     ]
   },
   {
+    "id": "024",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1368,6 +1392,7 @@
     ]
   },
   {
+    "id": "025",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1425,6 +1450,7 @@
     ]
   },
   {
+    "id": "026",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1482,6 +1508,7 @@
     ]
   },
   {
+    "id": "027",
     "front": null,
     "points": 0,
     "resource": "WOLF",
@@ -1539,6 +1566,7 @@
     ]
   },
   {
+    "id": "028",
     "front": null,
     "points": 1,
     "resource": "WOLF",
@@ -1596,6 +1624,7 @@
     ]
   },
   {
+    "id": "029",
     "front": null,
     "points": 1,
     "resource": "WOLF",
@@ -1653,6 +1682,7 @@
     ]
   },
   {
+    "id": "030",
     "front": null,
     "points": 1,
     "resource": "WOLF",
@@ -1710,6 +1740,7 @@
     ]
   },
   {
+    "id": "031",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -1767,6 +1798,7 @@
     ]
   },
   {
+    "id": "032",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -1824,6 +1856,7 @@
     ]
   },
   {
+    "id": "033",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -1881,6 +1914,7 @@
     ]
   },
   {
+    "id": "034",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -1938,6 +1972,7 @@
     ]
   },
   {
+    "id": "035",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -1995,6 +2030,7 @@
     ]
   },
   {
+    "id": "036",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -2052,6 +2088,7 @@
     ]
   },
   {
+    "id": "037",
     "front": null,
     "points": 0,
     "resource": "BUTTERFLY",
@@ -2109,6 +2146,7 @@
     ]
   },
   {
+    "id": "038",
     "front": null,
     "points": 1,
     "resource": "BUTTERFLY",
@@ -2166,6 +2204,7 @@
     ]
   },
   {
+    "id": "039",
     "front": null,
     "points": 1,
     "resource": "BUTTERFLY",
@@ -2223,6 +2262,7 @@
     ]
   },
   {
+    "id": "040",
     "front": null,
     "points": 1,
     "resource": "BUTTERFLY",

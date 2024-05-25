@@ -10,6 +10,9 @@ public class GoldCard extends Card implements Serializable {
     private Item reqItem;
     private ReqPoint reqPoints;
 
+    /**
+     * Default constructor for an empty gold card
+     */
     public GoldCard(){
         reqResources = null;
         reqItem = null;
@@ -19,6 +22,7 @@ public class GoldCard extends Card implements Serializable {
         resource = null;
         frontCorners = null;
         backCorners = null;
+        id = "";
     }
 
     /**
@@ -30,8 +34,9 @@ public class GoldCard extends Card implements Serializable {
      * @param reqResources Array of int counting the number of each resource required to place the card (?)
      * @param reqItem Item required to place the card if reqPoints is equal to Item
      * @param reqPoints The type of requirement needed to obtain the points
+     * @param id String representing the id of the card, used for images
      */
-    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints) {
+    public GoldCard(int points, Resource resource, Corner[] frontCorners, Corner[] backCorners, int[] reqResources, Item reqItem, ReqPoint reqPoints, String id) {
         this.points = points;
         this.resource = resource;
         for(int i = 0; i < frontCorners.length; i++) {
@@ -47,6 +52,46 @@ public class GoldCard extends Card implements Serializable {
         this.reqResources.put(Resource.MUSHROOM, reqResources[3]);
         this.reqItem = reqItem;
         this.reqPoints = reqPoints;
+        this.id = id;
+    }
+
+    /**
+     * Method that returns the ID of the current side of the card
+     * used to identify the corresponding image
+     * @return the string representing the current card&side ID
+     */
+    public String getSideID() {
+        return getSideID(this.front);
+    }
+
+    /**
+     * Overloading of the previous method, it returns the ID of a
+     * specific side of the card, used to identify the corresponding image
+     * @param front boolean representing the side, true = front, false = back
+     * @return the string representing the wanted card&side ID
+     */
+    public String getSideID(boolean front) {
+        if(front)
+            return id;
+        String result;
+        switch(this.resource) {
+            case MUSHROOM:
+                result = "041";
+                break;
+            case LEAF:
+                result = "051";
+                break;
+            case WOLF:
+                result = "061";
+                break;
+            case BUTTERFLY:
+                result = "071";
+                break;
+            default:
+                result = "";
+                break;
+        }
+        return result;
     }
 
     public boolean equals(GoldCard gol){

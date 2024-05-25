@@ -8,6 +8,7 @@ public abstract class Card implements Serializable {
     protected Resource resource;
     protected Corner[] frontCorners = new Corner[4];
     protected Corner[] backCorners = new Corner[4];
+    protected String id;
 
 //GETTER
 
@@ -50,6 +51,15 @@ public abstract class Card implements Serializable {
     public Corner[] getBackCorners() {
         return backCorners;
     }
+
+    /**
+     * Method that returns the ID of the card used to identify the image
+     * @return the string representing the card's ID
+     */
+    public String getID() {
+        return id;
+    }
+
 //SETTER
 
     /**
