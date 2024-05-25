@@ -53,7 +53,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     private final GUIView guiView;
     private final LoginController loginController;
     private PlayController playController;
-    private final Thread threadChatListener;
+    private Thread threadChatListener, threadStartListener, threadAchievementListener;
 
     public RMItoGUI(VirtualServer server) throws RemoteException {
         this.server = server;
@@ -86,31 +86,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             }
         } while (guiView.getLoginController() == null);
         loginController = guiView.getLoginController();
-        threadChatListener = new Thread(() -> {
-            while (playController == null) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    System.out.println("!!! ERROR SLEEP GETCONTROLLER FOR CHAT !!!");
-                }
-            }
-            boolean listenToChat = true;
-            while(listenToChat) {
-                try {
-                    if(!playController.messagesToSendQueue.isEmpty()) {
-                        Message message = playController.messagesToSendQueue.get(0);
-                        playController.messagesToSendQueue.remove(0);
-                        server.sendAction(new ChatMessageAction(nickname, message.getRecipient(), message));
-                    } else {
-                        Thread.sleep(200);
-                    }
-                } catch(InterruptedException | RemoteException e) {
-                    listenToChat = false;
-                }
-            }
-            System.out.println("!!! ERROR STOP LISTENING CHAT !!!");
-        });
-
+        initializeThreads();
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
@@ -406,6 +382,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public void showAction(Action act) throws RemoteException{
+        System.out.println(Print.ANSI_YELLOW + ">>>>>>> Client " + Print.ANSI_RESET + nickname + Print.ANSI_YELLOW  + " handling " + Print.ANSI_RED + act.getType() + Print.ANSI_RESET + Print.ANSI_YELLOW  + " -> " + Print.ANSI_RESET + act.getRecipient());
         switch(act.getType()){
             case WHOLECHAT:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
@@ -464,10 +441,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     resourceDeck = ((ChooseSideStarterCardAction)act).getResourceDeck();
                     starterCard = ((ChooseSideStarterCardAction)act).getCard();
                     state = State.STARTERCARD;
-                    synchronized(p) {
-                        p = ((ChooseSideStarterCardAction) act).getPlayer();
-                    }
-                    System.out.println("> Choose the side you want to place your starter card with command \"start\".");
+                    p = ((ChooseSideStarterCardAction) act).getPlayer();
                     Platform.runLater(() -> guiView.playScene(nickname));
                     do {
                         try {
@@ -479,15 +453,9 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     playController = guiView.getPlayController();
                     playController.setNickname(nickname);
                     threadChatListener.start();
-                    playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck);
-                    do {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            System.out.println("!!! ERROR SLEEP GET STARTER CHOICE !!!");
-                        }
-                    } while (playController.starterChoice == 0);
-                    server.sendAction(new ChosenSideStarterCardAction(nickname, (playController.starterChoice == 1)));
+                    Platform.runLater(() ->playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck));
+                    threadStartListener.start();
+                    System.out.println("> - dopo il lo start del thread starter");
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
                 }
@@ -501,17 +469,8 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
                     state = State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
-                    Platform.runLater(() ->playController.passAchievement(choosableAchievements, achievements));
-                    do {
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            System.out.println("!!! ERROR SLEEP GET ACHIEVEMENT CHOICE !!!");
-                        }
-                    } while (playController.achievementChoice == 0);
-                    server.sendAction(new ChosenAchievementAction(nickname, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1)));
-                    achievements.add(0, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
-
+                    Platform.runLater(() -> playController.passAchievement(choosableAchievements, achievements));
+                    threadAchievementListener.start();
                 }
                 break;
             case ASKINGPLACE:
@@ -591,7 +550,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
         return nickname;
     }
 
-
     @Override
     public boolean getOnline() throws RemoteException  {
         return false;
@@ -614,5 +572,68 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
         if(!check) //the player is being refreshed for the first time
             allPlayers.add(player);
     }
+
+    private void initializeThreads() {
+        threadChatListener = new Thread(() -> {
+            while (playController == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GETCONTROLLER FOR CHAT !!!");
+                }
+            }
+            boolean listenToChat = true;
+            while(listenToChat) {
+                try {
+                    if(!playController.messagesToSendQueue.isEmpty()) {
+                        Message message = playController.messagesToSendQueue.get(0);
+                        playController.messagesToSendQueue.remove(0);
+                        server.sendAction(new ChatMessageAction(nickname, message.getRecipient(), message));
+                    } else {
+                        Thread.sleep(200);
+                    }
+                } catch(InterruptedException | RemoteException e) {
+                    listenToChat = false;
+                }
+            }
+            System.out.println("!!! ERROR STOP LISTENING CHAT !!!");
+        });
+
+        threadStartListener = new Thread(() -> {
+            System.out.println(">SSS> - partenza thread starter choice");
+            do {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GET STARTER CHOICE !!!");
+                }
+            } while (playController.starterChoice == 0);
+            System.out.println(">SSS> - dopo il while sleep per starterchoice = 0");
+            try {
+                server.sendAction(new ChosenSideStarterCardAction(nickname, (playController.starterChoice == 1)));
+            } catch (RemoteException e) {
+                System.out.println("!!! ERROR THREAD STARTER CHOICE couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+        });
+
+        threadAchievementListener = new Thread(() -> {
+            do {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GET ACHIEVEMENT CHOICE !!!");
+                }
+            } while (playController.achievementChoice == 0);
+            try {
+                server.sendAction(new ChosenAchievementAction(nickname, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1)));
+            } catch (RemoteException e) {
+                System.out.println("!!! ERROR THREAD ACHIEVEMENT CHOICE couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+            achievements.add(0, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
+        });
+    }
+
 
 }

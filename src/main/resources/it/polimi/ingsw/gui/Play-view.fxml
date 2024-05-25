@@ -51,7 +51,7 @@
             </SplitMenuButton>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="cardChoicePane" layoutY="260.0" minHeight="0.0" minWidth="0.0" prefHeight="371.0" prefWidth="264.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+      <AnchorPane fx:id="cardChoicePane" layoutY="260.0" minHeight="0.0" minWidth="0.0" prefHeight="371.0" prefWidth="264.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
          <children>
             <Label fx:id="selectCardLbl" layoutX="8.0" prefHeight="22.0" prefWidth="231.0" text="Choose the side of your starter card">
                <font>
@@ -71,6 +71,14 @@
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor></ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="scoreboardPane" layoutX="6.0" layoutY="247.0" prefHeight="415.0" prefWidth="302.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+         <children>
+            <ImageView fitHeight="415.0" fitWidth="282.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/misc/scoreboard.png" />
+               </image></ImageView>
          </children>
       </AnchorPane>
    </children>

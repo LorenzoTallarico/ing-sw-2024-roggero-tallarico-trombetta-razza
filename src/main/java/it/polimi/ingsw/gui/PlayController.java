@@ -41,7 +41,7 @@ public class PlayController {
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
 
     @FXML
-    private AnchorPane cardChoicePane;
+    private AnchorPane cardChoicePane, scoreboardPane;
 
     @FXML
     private  Label selectCardLbl;
@@ -98,7 +98,7 @@ public class PlayController {
                 break;
         }
     }
-    
+
     @FXML
     protected void onSelectCard1In() {
         selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() - 6);
@@ -145,11 +145,12 @@ public class PlayController {
             starterChoice = 1;
         else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 1;
-            cardChoicePane.setDisable(true);
             cardChoicePane.setVisible(false);
+            scoreboardPane.setVisible(true);
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
+        System.out.println("GUI | schoice: " + starterChoice + ", achoice " + achievementChoice);
     }
 
     @FXML
@@ -158,18 +159,24 @@ public class PlayController {
             starterChoice = 2;
         else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 2;
-            cardChoicePane.setDisable(true);
-            cardChoicePane.setVisible(false);
+            initializeScoreboard();
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
+        System.out.println("GUI | schoice: " + starterChoice + ", achoice " + achievementChoice);
+    }
+
+    private void initializeScoreboard() {
+        cardChoicePane.setVisible(false);
+        scoreboardPane.setVisible(true);
     }
 
     private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         //to do
     }
 
-    //public method
+    //public methods
+
     public void displayChatMessage(Message m) {
         String s = m.toString() + "\n";
         if(m.getRecipient().equalsIgnoreCase(myNickname))
@@ -206,6 +213,7 @@ public class PlayController {
         selectCard1Img.setDisable(false);
         selectCard2Img.setDisable(false);
         cardChoicePane.setVisible(true);
+        scoreboardPane.setVisible(false);
     }
 
     public void passAchievement(ArrayList<AchievementCard> ach, ArrayList<AchievementCard> achievements) {
@@ -219,7 +227,7 @@ public class PlayController {
         selectCard1Img.setDisable(false);
         selectCard2Img.setDisable(false);
         cardChoicePane.setVisible(true);
-
+        scoreboardPane.setVisible(false);
     }
 
     //getters and setters
