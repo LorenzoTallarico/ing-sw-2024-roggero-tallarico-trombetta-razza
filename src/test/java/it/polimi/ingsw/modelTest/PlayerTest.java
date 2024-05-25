@@ -19,11 +19,16 @@ public class PlayerTest {
 
     @Test
     @DisplayName("Integrity Test")
-    void integrityTest(){
-        Player noArgs = new Player();
-        //checks if everything is correctly initialized in "noArgs"
-
+    void integrityTest() throws RemoteException {
+        Game testGame = Game.getInstance();
         Player p = new Player("gigi", false);
+        ArrayList<Player> playersList = new ArrayList<>();
+        playersList.add(p);
+        VirtualView cli = new RmiClient(null);
+        ArrayList<VirtualView> clients = new ArrayList<>();
+        clients.add(cli);
+        testGame.addPlayers(playersList, clients);
+
         p.setColor(Color.YELLOW);
         assertEquals(Color.YELLOW, p.getColor());
         System.out.println("Color yellow: " + p.getColor().toString());
@@ -49,6 +54,12 @@ public class PlayerTest {
 
         p.setSecretAchievement(achiList);
         assertEquals(achiList, p.getSecretAchievement());
+
+
+        //to reset singleton
+        testGame.end();
+        testGame.nextState();
+
     }
 
 
@@ -61,8 +72,7 @@ public class PlayerTest {
 
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
-        VirtualServer server = null;
-        VirtualView cli = new RmiClient(server);
+        VirtualView cli = new RmiClient(null);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(playersList, clients);
