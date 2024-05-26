@@ -283,7 +283,10 @@ public class Game implements Serializable {
     public void setStarterCard(String playerName, boolean front) throws RemoteException {
         for(Player player : players) {
             if(player.getName().equalsIgnoreCase(playerName)) {
-                player.getArea().getSpace(40, 40).getCard().setFront(front);
+                StarterCard tempSC = (StarterCard) player.getArea().getSpace(40, 40).getCard();
+                tempSC.setFront(front);
+                player.setArea(new Playground());
+                player.getArea().setSpace(tempSC, 40, 40);
                 bigListener.notifyAchievementChoice(playerName, player.getSecretAchievement(), commonAchievement);
             }
         }

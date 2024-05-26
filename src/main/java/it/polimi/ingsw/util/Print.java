@@ -34,7 +34,7 @@ public class Print {
      * @param spaces Boolean to set true if we want 2 empty rows and 2 empty columns
      * at the borders of the grid
      */
-    public static void playgroundPrinter(Playground area, boolean coords, boolean spaces) {
+    public static void playgroundPrinter(Playground area, boolean coords, boolean spaces, boolean summary) {
         int east, west, north, south;
         if(spaces) {
             east = area.getEastBound() == 0 ? 80 : area.getEastBound() + 1;
@@ -120,16 +120,30 @@ public class Print {
                 result = result.concat(resultArr[i] + "\n");
             }
         }
+        if(summary) {
+            if(coords)
+                result = result.concat("      ");
+            result = result.concat(ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_BLUE + "W " + area.countResources(Resource.WOLF) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_PURPLE + "B " + area.countResources(Resource.BUTTERFLY) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_GREEN + "L " + area.countResources(Resource.LEAF) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_RED + "M " + area.countResources(Resource.MUSHROOM) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_YELLOW + "J " + area.countItems(Item.JAR) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_YELLOW + "S " + area.countItems(Item.SCROLL) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_YELLOW + "P " + area.countItems(Item.PLUME) + ANSI_RESET + ANSI_BOLD +
+                    " | " + ANSI_RESET);
+            result = result.concat("\n");
+        }
         System.out.print(result);
     }
 
     /**
-     * Printing function for text user interface, it prints the whole playground with row's
-     * and column's indexes and border space, it's an overloading of the previous method
+     * Printing function for text user interface, it prints the whole playground with row's and column's
+     * indexes, border space and resources / items summary, it's an overloading of the previous method
      * @param area The playground object with bounds and the matrix of the space
      */
     public static void playgroundPrinter(Playground area) {
-        playgroundPrinter(area, true, true);
+        playgroundPrinter(area, true, true, true);
     }
 
     /**
@@ -3311,8 +3325,10 @@ public class Print {
     public static void scoreboardPrinter(ArrayList<Player> players) {
         int[] pos = new int[players.size()];
         String[] x = new String[players.size()];
+        int[] realPoints = new int[players.size()];
         for(int i = 0; i < players.size(); i++) {
-            pos[i] = players.get(i).getPoints();
+            realPoints[i] = players.get(i).getPoints();
+            pos[i] = Math.min(realPoints[i], 29);
             switch(players.get(i).getColor()) {
                 case YELLOW:
                     x[i] = ANSI_YELLOW + "╳" + ANSI_RESET;
@@ -3432,7 +3448,7 @@ public class Print {
         lines[10] = lines[10].concat("╚═══════════════════════════════════════════════════════════════════════════╝");
     //names on the right
         for(int i = 0; i < players.size(); i++)
-            lines[2+(i*2)] = lines[2+(i*2)].concat("   "+ x[i] + " " + players.get(i).getName() + ": " + pos[i] + "pts");
+            lines[2+(i*2)] = lines[2+(i*2)].concat("   "+ x[i] + " " + players.get(i).getName() + ": " + realPoints[i] + "pts");
     //printing all together
         String result = "\n";
         for(int i = 0; i < 11; i++)

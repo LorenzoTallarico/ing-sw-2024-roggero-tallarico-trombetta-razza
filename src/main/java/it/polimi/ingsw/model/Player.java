@@ -104,6 +104,9 @@ public class Player implements Serializable {
 
     //SETTER
 
+    public void setArea(Playground area) {
+        this.area = area;
+    }
 
     /**
      * Method that sets the secret achievement of the player

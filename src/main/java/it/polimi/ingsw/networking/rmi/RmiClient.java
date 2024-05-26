@@ -226,6 +226,7 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
                         else
                             starterCard.setFront(false);
                         server.sendAction(new ChosenSideStarterCardAction(nickname, starterCard.isFront()));
+                        p.setArea(new Playground());
                         p.getArea().setSpace(starterCard, 40, 40);
                         state = State.COMMANDS;
                     } else {
