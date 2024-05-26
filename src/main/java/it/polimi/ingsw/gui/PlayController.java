@@ -28,6 +28,9 @@ public class PlayController {
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
     private ArrayList<Image> frontHand, backHand;
+    private Image backAchievement = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/087.png")));
+    private ArrayList<Image> frontAchievements;
+    private ToggleGroup toggleGroup;
 
 
     @FXML
@@ -37,16 +40,28 @@ public class PlayController {
     private TextArea chatTextArea;
 
     @FXML
-    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img;
+    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img;
 
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
 
     @FXML
-    private AnchorPane cardChoicePane, scoreboardPane;
+    private AnchorPane cardChoicePane, scoreboardPane, handPane, achievementPane;
 
     @FXML
     private Label selectCardLbl;
+
+    @FXML
+    private ToggleButton tableBtn, handBtn, achievementBtn;
+
+    @FXML
+    public void initialize() {
+        toggleGroup = new ToggleGroup();
+        tableBtn.setToggleGroup(toggleGroup);
+        handBtn.setToggleGroup(toggleGroup);
+        achievementBtn.setToggleGroup(toggleGroup);
+        handBtn.setSelected(true);
+    }
 
     @FXML
     protected void onSendMessageButtonClick() {
@@ -147,8 +162,15 @@ public class PlayController {
             starterChoice = 1;
         else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 1;
-            cardChoicePane.setVisible(false);
-            scoreboardPane.setVisible(true);
+            initializeScoreboard();
+            achievements.add(0,choosableAchievements.get(achievementChoice-1));
+            for(AchievementCard achCard : achievements)
+                achCard.setFront(true);
+            frontAchievements.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + achievements.get(0).getSideID() + ".png"))));
+            achievementCard3Img.setImage(frontAchievements.get(2));
+            achievementCard2Img.setImage(frontAchievements.get(1));
+            achievementCard1Img.setImage(frontAchievements.get(0));
+            achievementCard3Img.setVisible(true);
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
@@ -161,6 +183,14 @@ public class PlayController {
         else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 2;
             initializeScoreboard();
+            achievements.add(0,choosableAchievements.get(achievementChoice-1));
+            for(AchievementCard achCard : achievements)
+                achCard.setFront(true);
+            frontAchievements.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + achievements.get(0).getSideID() + ".png"))));
+            achievementCard3Img.setImage(frontAchievements.get(2));
+            achievementCard2Img.setImage(frontAchievements.get(1));
+            achievementCard1Img.setImage(frontAchievements.get(0));
+            achievementCard3Img.setVisible(true);
         }
         selectCard1Img.setDisable(true);
         selectCard2Img.setDisable(true);
@@ -185,7 +215,6 @@ public class PlayController {
             default: //shouldn't happen
                 break;
         }
-
     }
 
     @FXML
@@ -292,6 +321,142 @@ public class PlayController {
         myPlayer.getHand().get(2).setFront(!myPlayer.getHand().get(2).isFront());
         handCard3Img.setImage(myPlayer.getHand().get(2).isFront() ? frontHand.get(2) : backHand.get(2));
     }
+
+    @FXML
+    protected void onFlipAchievementsClick() {
+        if(achievements.isEmpty())
+            return;
+        boolean tempSide = !achievements.get(0).isFront();
+        switch(achievements.size()) {
+            case 3:
+                achievements.get(2).setFront(tempSide);
+                achievementCard3Img.setImage(tempSide ? frontAchievements.get(2) : backAchievement);
+            case 2:
+                achievements.get(1).setFront(tempSide);
+                achievementCard2Img.setImage(tempSide ? frontAchievements.get(1) : backAchievement);
+            case 1:
+                achievements.get(0).setFront(tempSide);
+                achievementCard1Img.setImage(tempSide ? frontAchievements.get(0) : backAchievement);
+                break;
+            default: //shouldn't happen
+                break;
+        }
+    }
+
+    @FXML
+    protected void onAchievementCard1In() {
+        achievementCard1Img.setLayoutY(achievementCard1Img.getLayoutY() - 6);
+        achievementCard1Img.setLayoutX(achievementCard1Img.getLayoutX() - 9);
+        achievementCard1Img.setFitHeight(achievementCard1Img.getFitHeight() + 12);
+        achievementCard1Img.setFitWidth(achievementCard1Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        achievementCard2Img.setEffect(colorAdjust);
+        if(achievements.size() > 2)
+            achievementCard3Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onAchievementCard1Out() {
+        achievementCard1Img.setLayoutY(achievementCard1Img.getLayoutY() + 6);
+        achievementCard1Img.setLayoutX(achievementCard1Img.getLayoutX() + 9);
+        achievementCard1Img.setFitHeight(achievementCard1Img.getFitHeight() - 12);
+        achievementCard1Img.setFitWidth(achievementCard1Img.getFitWidth() - 18);
+        achievementCard2Img.setEffect(null);
+        if(achievements.size() > 2)
+            achievementCard3Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onAchievementCard1Scroll() {
+        achievements.get(0).setFront(!achievements.get(0).isFront());
+        achievementCard1Img.setImage(achievements.get(0).isFront() ? frontAchievements.get(0) : backAchievement);
+    }
+    
+    @FXML
+    protected void onAchievementCard2In() {
+        achievementCard2Img.setLayoutY(achievementCard2Img.getLayoutY() - 6);
+        achievementCard2Img.setLayoutX(achievementCard2Img.getLayoutX() - 9);
+        achievementCard2Img.setFitHeight(achievementCard2Img.getFitHeight() + 12);
+        achievementCard2Img.setFitWidth(achievementCard2Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        achievementCard1Img.setEffect(colorAdjust);
+        achievementCard3Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onAchievementCard2Out() {
+        achievementCard2Img.setLayoutY(achievementCard2Img.getLayoutY() + 6);
+        achievementCard2Img.setLayoutX(achievementCard2Img.getLayoutX() + 9);
+        achievementCard2Img.setFitHeight(achievementCard2Img.getFitHeight() - 12);
+        achievementCard2Img.setFitWidth(achievementCard2Img.getFitWidth() - 18);
+        achievementCard1Img.setEffect(null);
+        achievementCard3Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onAchievementCard2Scroll() {
+        achievements.get(1).setFront(!achievements.get(1).isFront());
+        achievementCard2Img.setImage(achievements.get(1).isFront() ? frontAchievements.get(1) : backAchievement);
+    }
+
+    @FXML
+    protected void onAchievementCard3In() {
+        achievementCard3Img.setLayoutY(achievementCard3Img.getLayoutY() - 6);
+        achievementCard3Img.setLayoutX(achievementCard3Img.getLayoutX() - 9);
+        achievementCard3Img.setFitHeight(achievementCard3Img.getFitHeight() + 12);
+        achievementCard3Img.setFitWidth(achievementCard3Img.getFitWidth() + 18);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        achievementCard1Img.setEffect(colorAdjust);
+        achievementCard2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onAchievementCard3Out() {
+        achievementCard3Img.setLayoutY(achievementCard3Img.getLayoutY() + 6);
+        achievementCard3Img.setLayoutX(achievementCard3Img.getLayoutX() + 9);
+        achievementCard3Img.setFitHeight(achievementCard3Img.getFitHeight() - 12);
+        achievementCard3Img.setFitWidth(achievementCard3Img.getFitWidth() - 18);
+        achievementCard1Img.setEffect(null);
+        achievementCard2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onAchievementCard3Scroll() {
+        achievements.get(2).setFront(!achievements.get(2).isFront());
+        achievementCard3Img.setImage(achievements.get(2).isFront() ? frontAchievements.get(2) : backAchievement);
+    }
+    
+    @FXML
+    protected void onTableButtonClick() {
+        if(!handBtn.isSelected() && !achievementBtn.isSelected())
+            tableBtn.setSelected(true);
+        //to do add tablePane.setVisible(true);
+        handPane.setVisible(false);
+        achievementPane.setVisible(false);
+    }
+
+    @FXML
+    protected void onHandButtonClick() {
+        if(!tableBtn.isSelected() && !achievementBtn.isSelected())
+            handBtn.setSelected(true);
+        handPane.setVisible(true);
+        //table.setVisible(false);
+        achievementPane.setVisible(false);
+    }
+
+    @FXML
+    protected void onAchievementButtonClick() {
+        if(!tableBtn.isSelected() && !handBtn.isSelected())
+            achievementBtn.setSelected(true);
+        achievementPane.setVisible(true);
+        //table.setVisible(false);
+        handPane.setVisible(false);
+    }
+
+    //private methods
     
     private void initializeScoreboard() {
         cardChoicePane.setVisible(false);
@@ -332,6 +497,19 @@ public class PlayController {
         }
     }
 
+    private void updateAchievement() {
+        achievementBtn.setDisable(false);
+        frontAchievements = new ArrayList<>();
+        for(AchievementCard achCard: achievements) {
+            achCard.setFront(true);
+            frontAchievements.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + achCard.getSideID() + ".png"))));
+        } 
+        achievementCard1Img.setImage(frontAchievements.get(0));
+        achievementCard2Img.setImage(frontAchievements.get(1));
+        achievementCard1Img.setVisible(true);
+        achievementCard2Img.setVisible(true);
+    }
+
     private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         //to do
     }
@@ -365,6 +543,7 @@ public class PlayController {
 
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         myPlayer = self;
+        achievementBtn.setDisable(true);
         updatePlayerRelated();
         updateTableCards(commonGold, goldDeck, commonResource, resourceDeck);
         Image frontSide = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + str.getID() + ".png")));
@@ -381,6 +560,7 @@ public class PlayController {
     public void passAchievement(ArrayList<AchievementCard> ach, ArrayList<AchievementCard> achievements) {
         this.achievements = achievements;
         choosableAchievements = ach;
+        updateAchievement();
         Image ach1 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(0).getID() + ".png")));
         Image ach2 = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + ach.get(1).getID() + ".png")));
         selectCardLbl.setText("Choose your own secret achievement");

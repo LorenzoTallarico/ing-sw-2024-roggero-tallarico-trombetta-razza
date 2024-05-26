@@ -88,7 +88,7 @@
                </image></ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="532.0" layoutY="524.0" prefHeight="200.0" prefWidth="755.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+      <AnchorPane fx:id="handPane" layoutX="532.0" layoutY="524.0" prefHeight="200.0" prefWidth="912.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
          <children>
             <ImageView fx:id="handCard1Img" fitHeight="154.0" fitWidth="231.0" layoutX="14.0" layoutY="38.0" onMouseClicked="#onHandCard1Click" onMouseEntered="#onHandCard1In" onMouseExited="#onHandCard1Out" onScroll="#onHandCard1Scroll" pickOnBounds="true" preserveRatio="true">
                <image>
@@ -98,7 +98,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fx:id="handCard2Img" fitHeight="154.0" fitWidth="231.0" layoutX="264.0" layoutY="38.0" onMouseClicked="#onHandCard2Click" onMouseEntered="#onHandCard2In" onMouseExited="#onHandCard2Out" onScroll="#onHandCard2Scroll" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="handCard2Img" fitHeight="154.0" fitWidth="231.0" layoutX="315.0" layoutY="38.0" onMouseClicked="#onHandCard2Click" onMouseEntered="#onHandCard2In" onMouseExited="#onHandCard2Out" onScroll="#onHandCard2Scroll" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@img/cards/front/001.png" />
                </image>
@@ -106,7 +106,7 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <ImageView fx:id="handCard3Img" fitHeight="154.0" fitWidth="231.0" layoutX="510.0" layoutY="38.0" onMouseClicked="#onHandCard3Click" onMouseEntered="#onHandCard3In" onMouseExited="#onHandCard3Out" onScroll="#onHandCard3Scroll" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="handCard3Img" fitHeight="154.0" fitWidth="231.0" layoutX="616.0" layoutY="38.0" onMouseClicked="#onHandCard3Click" onMouseEntered="#onHandCard3In" onMouseExited="#onHandCard3Out" onScroll="#onHandCard3Scroll" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@img/cards/front/001.png" />
                </image>
@@ -114,12 +114,12 @@
                   <Cursor fx:constant="HAND" />
                </cursor>
             </ImageView>
-            <Label layoutX="14.0" layoutY="3.0" prefHeight="28.0" prefWidth="506.0" text="Hover to select | Scroll to switch side | Click to place">
+            <Label layoutX="277.0" layoutY="4.0" prefHeight="28.0" prefWidth="466.0" text="Hover to select | Scroll to switch side | Click to place">
                <font>
                   <Font name="System Bold" size="19.0" />
                </font>
             </Label>
-            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="681.0" layoutY="4.0" mnemonicParsing="false" onAction="#onFlipCardsClick" prefHeight="28.0" prefWidth="60.0" text="Flip cards">
+            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="838.0" layoutY="4.0" mnemonicParsing="false" onAction="#onFlipCardsClick" prefHeight="28.0" prefWidth="60.0" text="Flip cards">
                <cursor>
                   <Cursor fx:constant="HAND" />
                </cursor>
@@ -136,5 +136,80 @@
             </Button>
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="achievementPane" layoutX="532.0" layoutY="524.0" prefHeight="200.0" prefWidth="912.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+         <children>
+            <ImageView fx:id="achievementCard1Img" fitHeight="154.0" fitWidth="231.0" layoutX="14.0" layoutY="38.0" onMouseEntered="#onAchievementCard1In" onMouseExited="#onAchievementCard1Out" onScroll="#onAchievementCard1Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/087.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="achievementCard2Img" fitHeight="154.0" fitWidth="231.0" layoutX="315.0" layoutY="38.0" onMouseEntered="#onAchievementCard2In" onMouseExited="#onAchievementCard2Out" onScroll="#onAchievementCard2Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/087.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="achievementCard3Img" fitHeight="154.0" fitWidth="231.0" layoutX="616.0" layoutY="38.0" onMouseEntered="#onAchievementCard3In" onMouseExited="#onAchievementCard3Out" onScroll="#onAchievementCard3Scroll" pickOnBounds="true" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@img/cards/back/087.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <Label layoutX="277.0" layoutY="4.0" prefHeight="28.0" prefWidth="466.0" text="Hover to select | Scroll to switch side">
+               <font>
+                  <Font name="System Bold" size="19.0" />
+               </font>
+            </Label>
+            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="838.0" layoutY="4.0" mnemonicParsing="false" onAction="#onFlipAchievementsClick" prefHeight="28.0" prefWidth="60.0" text="Flip cards">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/flip-card.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Flip all the cards" />
+               </tooltip>
+            </Button>
+         </children>
+      </AnchorPane>
+      <ToggleButton fx:id="tableBtn" layoutX="387.0" layoutY="529.0" mnemonicParsing="false" onAction="#onTableButtonClick" text="Table" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="838.7">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/round-table2.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
+      <ToggleButton fx:id="handBtn" layoutX="458.0" layoutY="529.0" mnemonicParsing="false" onAction="#onHandButtonClick" text="Hand" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="768.0">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/card-hand.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
+      <ToggleButton fx:id="achievementBtn" disable="true" layoutX="529.0" layoutY="529.0" mnemonicParsing="false" onAction="#onAchievementButtonClick" text="Achievement" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="656.0">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/target.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
    </children>
 </AnchorPane>
