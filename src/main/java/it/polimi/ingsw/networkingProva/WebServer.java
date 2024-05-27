@@ -19,6 +19,8 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -27,6 +29,9 @@ public class WebServer implements VirtualServer {
     private static int PORT_RMI= 6969;
     private static int PORT_SOCKET= 7171;
     private GameController controller = null;
+    private Map<VirtualView, String> nicknamesMap = new HashMap<>();  //mappa client-nickname
+    private Map<VirtualView, Boolean> onlineMap = new HashMap<>();    //mappa client-isOnline
+    private Map<VirtualView, Boolean> pingMap = new HashMap<>();      //mappa client-ping
     private ArrayList<VirtualView> clients = new ArrayList<>();
     private BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
     private BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
@@ -78,8 +83,10 @@ public class WebServer implements VirtualServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 //qui si è attaccato un nuovo client
-                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients);
+                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap);
                 clients.add(actualSocket);
+                onlineMap.put(actualSocket, true);
+                nicknamesMap.put(actualSocket, actualSocket.getNickname());
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
             }
@@ -207,6 +214,16 @@ public class WebServer implements VirtualServer {
         };
         Thread serverUpdateThread = new Thread(serverUpdateRunnable);
         serverUpdateThread.start();
+        Runnable checkAliveRunnable = () -> {
+            try {
+                webServer.checkAliveThread();
+            } catch (InterruptedException e) {
+                // Gestione dell'eccezione
+                e.printStackTrace();
+            }
+        };
+        Thread checkAliveThread = new Thread(checkAliveRunnable);
+        checkAliveThread.start();
     }
 
     @Override
@@ -238,6 +255,8 @@ public class WebServer implements VirtualServer {
                             e.printStackTrace();
                         }
                         act = new JoiningPlayerAction(nick, countOnlinePlayer()+1, 4);
+                        onlineMap.put(client, true);
+                        nicknamesMap.put(client, nick);
                         try{
                             clientActions.put(act);
                         }catch(InterruptedException e){
@@ -255,7 +274,7 @@ public class WebServer implements VirtualServer {
     private int countOnlinePlayer() throws RemoteException {
         int count = 0;
         for(VirtualView v : this.clients) {
-            if(v.getOnline() && v.getNickname() != null)
+            if(onlineMap.get(v))
                 count ++;
         }
         return count;
@@ -280,9 +299,59 @@ public class WebServer implements VirtualServer {
     public void sendAction(Action action) throws RemoteException {
         try {
             System.out.println("> Received action, type \"" + action.getType().toString() +"\".");
+            if(action.getType().equals(ActionType.PONG)) {
+                for(VirtualView c : nicknamesMap.keySet()){
+                    if(nicknamesMap.get(c).equals(action.getAuthor())) {
+                        pingMap.replace(c, true);
+                    }
+                }
+            }
             serverActions.put(action);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void checkAliveThread() throws InterruptedException {
+        boolean startActionRequired;
+        ArrayList<Boolean> check = new ArrayList<Boolean>();
+        Action act;
+        while(true){
+            startActionRequired = false;
+            for(VirtualView c : onlineMap.keySet()){
+                if(onlineMap.get(c))
+                    sendAction(new PingAction(nicknamesMap.get(c)));
+            }
+            wait(5000);
+            for(VirtualView c : clients){
+                if(!pingMap.get(c)){
+                    //Entriamo se non ha pingato c
+                    if(!gameStarted){
+                        startActionRequired = true;
+                        for(VirtualView v : this.clients) {
+                            act = new DisconnectedPlayerAction(nicknamesMap.get(v));
+                                onlineMap.put(client, true);
+                                nicknamesMap.put(client, nick);
+                                try{
+                                    clientActions.put(act);
+                                }catch(InterruptedException e){
+                                    e.printStackTrace();
+                                }
+
+                        }
+                    }
+                } else {
+                    onlineMap.replace(c, false);
+                }
+            }
+
+            Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer()+1);
+            try{
+                clientActions.put(act);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            }
         }
     }
     /*

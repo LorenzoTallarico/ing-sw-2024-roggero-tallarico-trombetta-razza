@@ -15,6 +15,8 @@ import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientSocket implements VirtualView, Runnable {
@@ -27,14 +29,16 @@ public class ClientSocket implements VirtualView, Runnable {
     private String nickname = null;
     private boolean connected = true;
     private boolean gui;
+    private Map<VirtualView, Boolean> pingMap;
 
-    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients) throws IOException {
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, Map<VirtualView, Boolean> pingMap) throws IOException {
         this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
         this.clientActions = clientActions;
         this.clients = clients;
+        this.pingMap = pingMap;
     }
 
     @Override
@@ -81,6 +85,9 @@ public class ClientSocket implements VirtualView, Runnable {
             }
             try {
                 if(nickname != null ) {
+                    if(action.getType().equals(ActionType.PONG)){
+                        pingMap.replace((VirtualView)this, true);
+                    }
                     serverActions.put(action);
                 }
                 else if(action.getType().equals(ActionType.SETNICKNAME)) {
