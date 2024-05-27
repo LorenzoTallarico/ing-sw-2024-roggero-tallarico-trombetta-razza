@@ -630,6 +630,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             }
         });
     }
-
+//**
 
 }

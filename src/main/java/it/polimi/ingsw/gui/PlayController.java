@@ -910,9 +910,9 @@ public class PlayController {
         achievementCard2Img.setVisible(true);
     }
 
-    
 
-    //public methods
+
+//---------------- PUBLIC MISC METHODS ---------------------
 
     public void displayChatMessage(Message m) {
         String s = m.toString() + "\n";
