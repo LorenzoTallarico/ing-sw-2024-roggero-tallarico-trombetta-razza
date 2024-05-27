@@ -123,7 +123,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             }
             connected = true;
             System.out.println("Login successful " + nickname);
-            runCommandLine();
         } else{
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
@@ -543,7 +542,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     case ASKINGSTART:
                         if(((AskingStartAction)act).getRecipient().equalsIgnoreCase(nickname)){
                             System.out.println("> Players online: " +((AskingStartAction)act).getPlayerNumber());
-                            System.out.println("> Type \"start\" to start the game");
+                            System.out.println("> Type \"startgame\" to start the game");
                         }
                     default:
                         break;
