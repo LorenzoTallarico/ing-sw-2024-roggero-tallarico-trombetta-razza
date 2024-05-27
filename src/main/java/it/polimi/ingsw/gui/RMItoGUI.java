@@ -628,7 +628,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 System.out.println("!!! ERROR THREAD ACHIEVEMENT CHOICE couldn't send action !!!");
                 throw new RuntimeException(e);
             }
-            achievements.add(0, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1));
         });
     }
 

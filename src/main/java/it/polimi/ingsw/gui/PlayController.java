@@ -28,10 +28,14 @@ public class PlayController {
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
     private ArrayList<Image> frontHand, backHand;
-    private Image backAchievement = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/087.png")));
+    private final Image backAchievement = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/087.png")));
     private ArrayList<Image> frontAchievements;
     private ToggleGroup toggleGroup;
-
+    private ArrayList<GoldCard> commonGold;
+    private Resource goldDeck, resourceDeck;
+    private ArrayList<ResourceCard> commonResource;
+    private ArrayList<Image> frontCommonGold, frontCommonResource, backCommonGold, backCommonResource;
+    private Image backGoldDeck, backResourceDeck;
 
     @FXML
     private TextField chatFld;
@@ -40,13 +44,13 @@ public class PlayController {
     private TextArea chatTextArea;
 
     @FXML
-    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img;
+    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img, tableGold1Img, tableGold2Img, tableResource1Img, tableResource2Img, tableGoldDeckImg, tableResourceDeckImg, tableBackDeck1Img, tableBackDeck2Img;
 
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
 
     @FXML
-    private AnchorPane cardChoicePane, scoreboardPane, handPane, achievementPane;
+    private AnchorPane cardChoicePane, scoreboardPane, handPane, achievementPane, tablePane;
 
     @FXML
     private Label selectCardLbl;
@@ -63,6 +67,8 @@ public class PlayController {
         handBtn.setSelected(true);
     }
 
+    
+//---------------- CHAT FXML METHODS ---------------------
     @FXML
     protected void onSendMessageButtonClick() {
         String s = chatFld.getText().trim();
@@ -116,6 +122,8 @@ public class PlayController {
         }
     }
 
+//---------------- SELECT STARTER & ACHIVEMENT CARDS FXML METHODS ---------------------
+    
     @FXML
     protected void onSelectCard1In() {
         selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() - 6);
@@ -196,6 +204,8 @@ public class PlayController {
         selectCard2Img.setDisable(true);
     }
 
+//---------------- HAND PANE METHODS ---------------------
+    
     @FXML
     protected void onFlipCardsClick() {
         if(myPlayer.getHand().isEmpty())
@@ -232,8 +242,10 @@ public class PlayController {
         handCard1Img.setFitWidth(handCard1Img.getFitWidth() + 18);
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.2);
-        handCard2Img.setEffect(colorAdjust);
-        handCard3Img.setEffect(colorAdjust);
+        if(handCard2Img.isVisible())
+            handCard2Img.setEffect(colorAdjust);
+        if(handCard3Img.isVisible())
+            handCard3Img.setEffect(colorAdjust);
     }
 
     @FXML
@@ -242,8 +254,10 @@ public class PlayController {
         handCard1Img.setLayoutX(handCard1Img.getLayoutX() + 9);
         handCard1Img.setFitHeight(handCard1Img.getFitHeight() - 12);
         handCard1Img.setFitWidth(handCard1Img.getFitWidth() - 18);
-        handCard2Img.setEffect(null);
-        handCard3Img.setEffect(null);
+        if(handCard2Img.isVisible())
+            handCard2Img.setEffect(null);
+        if(handCard3Img.isVisible())
+            handCard3Img.setEffect(null);
     }
     
     @FXML
@@ -268,7 +282,8 @@ public class PlayController {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.2);
         handCard1Img.setEffect(colorAdjust);
-        handCard3Img.setEffect(colorAdjust);
+        if(handCard3Img.isVisible())
+            handCard3Img.setEffect(colorAdjust);
     }
 
     @FXML
@@ -278,7 +293,8 @@ public class PlayController {
         handCard2Img.setFitHeight(handCard2Img.getFitHeight() - 12);
         handCard2Img.setFitWidth(handCard2Img.getFitWidth() - 18);
         handCard1Img.setEffect(null);
-        handCard3Img.setEffect(null);
+        if(handCard3Img.isVisible())
+            handCard3Img.setEffect(null);
     }
 
     @FXML
@@ -322,6 +338,8 @@ public class PlayController {
         handCard3Img.setImage(myPlayer.getHand().get(2).isFront() ? frontHand.get(2) : backHand.get(2));
     }
 
+//---------------- ACHIEVEMENTS PANE METHODS ---------------------
+    
     @FXML
     protected void onFlipAchievementsClick() {
         if(achievements.isEmpty())
@@ -352,7 +370,7 @@ public class PlayController {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.2);
         achievementCard2Img.setEffect(colorAdjust);
-        if(achievements.size() > 2)
+        if(achievementCard3Img.isVisible())
             achievementCard3Img.setEffect(colorAdjust);
     }
 
@@ -363,7 +381,7 @@ public class PlayController {
         achievementCard1Img.setFitHeight(achievementCard1Img.getFitHeight() - 12);
         achievementCard1Img.setFitWidth(achievementCard1Img.getFitWidth() - 18);
         achievementCard2Img.setEffect(null);
-        if(achievements.size() > 2)
+        if(achievementCard3Img.isVisible())
             achievementCard3Img.setEffect(null);
     }
 
@@ -382,7 +400,8 @@ public class PlayController {
         ColorAdjust colorAdjust = new ColorAdjust();
         colorAdjust.setBrightness(-0.2);
         achievementCard1Img.setEffect(colorAdjust);
-        achievementCard3Img.setEffect(colorAdjust);
+        if(achievementCard3Img.isVisible())
+            achievementCard3Img.setEffect(colorAdjust);
     }
 
     @FXML
@@ -392,7 +411,8 @@ public class PlayController {
         achievementCard2Img.setFitHeight(achievementCard2Img.getFitHeight() - 12);
         achievementCard2Img.setFitWidth(achievementCard2Img.getFitWidth() - 18);
         achievementCard1Img.setEffect(null);
-        achievementCard3Img.setEffect(null);
+        if(achievementCard3Img.isVisible())
+            achievementCard3Img.setEffect(null);
     }
 
     @FXML
@@ -433,7 +453,7 @@ public class PlayController {
     protected void onTableButtonClick() {
         if(!handBtn.isSelected() && !achievementBtn.isSelected())
             tableBtn.setSelected(true);
-        //to do add tablePane.setVisible(true);
+        tablePane.setVisible(true);
         handPane.setVisible(false);
         achievementPane.setVisible(false);
     }
@@ -443,7 +463,7 @@ public class PlayController {
         if(!tableBtn.isSelected() && !achievementBtn.isSelected())
             handBtn.setSelected(true);
         handPane.setVisible(true);
-        //table.setVisible(false);
+        tablePane.setVisible(false);
         achievementPane.setVisible(false);
     }
 
@@ -452,11 +472,392 @@ public class PlayController {
         if(!tableBtn.isSelected() && !handBtn.isSelected())
             achievementBtn.setSelected(true);
         achievementPane.setVisible(true);
-        //table.setVisible(false);
+        tablePane.setVisible(false);
         handPane.setVisible(false);
     }
 
-    //private methods
+//---------------- TABLE CARD PANE METHODS ---------------------
+
+    @FXML
+    protected void onFlipTableClick() {
+        boolean tempSide;
+        if(!commonGold.isEmpty())
+            tempSide = !commonGold.get(0).isFront();
+        else if(!commonResource.isEmpty())
+            tempSide = !commonResource.get(0).isFront();
+        else
+            return;
+        for(GoldCard gc : commonGold)
+            gc.setFront(tempSide);
+        for(ResourceCard rc : commonResource)
+            rc.setFront(tempSide);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setImage(commonGold.get(0).isFront() ? frontCommonGold.get(0) : backCommonGold.get(0));
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setImage(commonGold.get(1).isFront() ? frontCommonGold.get(1) : backCommonGold.get(1));
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setImage(commonResource.get(0).isFront() ? frontCommonResource.get(0) : backCommonResource.get(0));
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setImage(commonResource.get(1).isFront() ? frontCommonResource.get(1) : backCommonResource.get(1));
+    }
+    
+    @FXML
+    protected void onTableGold1Click() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+
+    @FXML
+    protected void onTableGold1In() {
+        tableGold1Img.setFitWidth(tableGold1Img.getFitWidth() + 12);
+        tableGold1Img.setFitHeight(tableGold1Img.getFitHeight() + 8);
+        tableGold1Img.setLayoutX(tableGold1Img.getLayoutX() - 6);
+        tableGold1Img.setLayoutY(tableGold1Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(colorAdjust);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(colorAdjust);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(colorAdjust);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(colorAdjust);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(colorAdjust);            
+    }
+
+    @FXML
+    protected void onTableGold1Out() {
+        tableGold1Img.setFitWidth(tableGold1Img.getFitWidth() - 12);
+        tableGold1Img.setFitHeight(tableGold1Img.getFitHeight() - 8);
+        tableGold1Img.setLayoutX(tableGold1Img.getLayoutX() + 6);
+        tableGold1Img.setLayoutY(tableGold1Img.getLayoutY() + 4);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(null);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(null);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(null);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(null);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(null);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(null);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(null);
+    }
+    
+    @FXML
+    protected void onTableGold1Scroll() {
+        commonGold.get(0).setFront(!commonGold.get(0).isFront());
+        tableGold1Img.setImage(commonGold.get(0).isFront() ? frontCommonGold.get(0) : backCommonGold.get(0));
+    }
+
+    @FXML
+    protected void onTableGold2Click() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+    
+    @FXML
+    protected void onTableGold2In() {
+        tableGold2Img.setFitWidth(tableGold2Img.getFitWidth() + 12);
+        tableGold2Img.setFitHeight(tableGold2Img.getFitHeight() + 8);
+        tableGold2Img.setLayoutX(tableGold2Img.getLayoutX() - 6);
+        tableGold2Img.setLayoutY(tableGold2Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(colorAdjust);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(colorAdjust);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(colorAdjust);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(colorAdjust);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onTableGold2Out() {
+        tableGold2Img.setFitWidth(tableGold2Img.getFitWidth() - 12);
+        tableGold2Img.setFitHeight(tableGold2Img.getFitHeight() - 8);
+        tableGold2Img.setLayoutX(tableGold2Img.getLayoutX() + 6);
+        tableGold2Img.setLayoutY(tableGold2Img.getLayoutY() + 4);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(null);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(null);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(null);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(null);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(null);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(null);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onTableGold2Scroll() {
+        commonGold.get(1).setFront(!commonGold.get(1).isFront());
+        tableGold2Img.setImage(commonGold.get(1).isFront() ? frontCommonGold.get(1) : backCommonGold.get(1));
+    }
+    
+    @FXML
+    protected void onTableResource1Click() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+
+    @FXML
+    protected void onTableResource1In() {
+        tableResource1Img.setFitWidth(tableResource1Img.getFitWidth() + 12);
+        tableResource1Img.setFitHeight(tableResource1Img.getFitHeight() + 8);
+        tableResource1Img.setLayoutX(tableResource1Img.getLayoutX() - 6);
+        tableResource1Img.setLayoutY(tableResource1Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(colorAdjust);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(colorAdjust);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(colorAdjust);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(colorAdjust);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onTableResource1Out() {
+        tableResource1Img.setFitWidth(tableResource1Img.getFitWidth() - 12);
+        tableResource1Img.setFitHeight(tableResource1Img.getFitHeight() - 8);
+        tableResource1Img.setLayoutX(tableResource1Img.getLayoutX() + 6);
+        tableResource1Img.setLayoutY(tableResource1Img.getLayoutY() + 4);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(null);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(null);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(null);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(null);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(null);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(null);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onTableResource1Scroll() {
+        commonResource.get(0).setFront(!commonResource.get(0).isFront());
+        tableResource1Img.setImage(commonResource.get(0).isFront() ? frontCommonResource.get(0) : backCommonResource.get(0));
+    }
+
+    @FXML
+    protected void onTableResource2Click() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+
+    @FXML
+    protected void onTableResource2In() {
+        tableResource2Img.setFitWidth(tableResource2Img.getFitWidth() + 12);
+        tableResource2Img.setFitHeight(tableResource2Img.getFitHeight() + 8);
+        tableResource2Img.setLayoutX(tableResource2Img.getLayoutX() - 6);
+        tableResource2Img.setLayoutY(tableResource2Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(colorAdjust);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(colorAdjust);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(colorAdjust);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(colorAdjust);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onTableResource2Out() {
+        tableResource2Img.setFitWidth(tableResource2Img.getFitWidth() - 12);
+        tableResource2Img.setFitHeight(tableResource2Img.getFitHeight() - 8);
+        tableResource2Img.setLayoutX(tableResource2Img.getLayoutX() + 6);
+        tableResource2Img.setLayoutY(tableResource2Img.getLayoutY() + 4);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(null);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(null);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(null);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(null);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(null);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(null);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onTableResource2Scroll() {
+        commonResource.get(1).setFront(!commonResource.get(1).isFront());
+        tableResource2Img.setImage(commonResource.get(1).isFront() ? frontCommonResource.get(1) : backCommonResource.get(1));
+    }
+
+    @FXML
+    protected void onTableGoldDeckClick() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+
+    @FXML
+    protected void onTableGoldDeckIn() {
+        tableGoldDeckImg.setFitWidth(tableGoldDeckImg.getFitWidth() + 12);
+        tableGoldDeckImg.setFitHeight(tableGoldDeckImg.getFitHeight() + 8);
+        tableGoldDeckImg.setLayoutX(tableGoldDeckImg.getLayoutX() - 6);
+        tableGoldDeckImg.setLayoutY(tableGoldDeckImg.getLayoutY() - 4);
+        tableBackDeck1Img.setFitWidth(tableBackDeck1Img.getFitWidth() + 12);
+        tableBackDeck1Img.setFitHeight(tableBackDeck1Img.getFitHeight() + 8);
+        tableBackDeck1Img.setLayoutX(tableBackDeck1Img.getLayoutX() - 6);
+        tableBackDeck1Img.setLayoutY(tableBackDeck1Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(colorAdjust);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(colorAdjust);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(colorAdjust);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(colorAdjust);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onTableGoldDeckOut() {
+        tableGoldDeckImg.setFitWidth(tableGoldDeckImg.getFitWidth() - 12);
+        tableGoldDeckImg.setFitHeight(tableGoldDeckImg.getFitHeight() - 8);
+        tableGoldDeckImg.setLayoutX(tableGoldDeckImg.getLayoutX() + 6);
+        tableGoldDeckImg.setLayoutY(tableGoldDeckImg.getLayoutY() + 4);
+        tableBackDeck1Img.setFitWidth(tableBackDeck1Img.getFitWidth() - 12);
+        tableBackDeck1Img.setFitHeight(tableBackDeck1Img.getFitHeight() - 8);
+        tableBackDeck1Img.setLayoutX(tableBackDeck1Img.getLayoutX() + 6);
+        tableBackDeck1Img.setLayoutY(tableBackDeck1Img.getLayoutY() + 4);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(null);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(null);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(null);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(null);
+        if(tableResourceDeckImg.isVisible())
+            tableResourceDeckImg.setEffect(null);
+        if(tableBackDeck2Img.isVisible())
+            tableBackDeck2Img.setEffect(null);
+    }
+
+    @FXML
+    protected void onTableResourceDeckClick() {
+        if(canDraw) {
+            //to do
+            return;
+        }
+    }
+
+    @FXML
+    protected void onTableResourceDeckIn() {
+        tableResourceDeckImg.setFitWidth(tableResourceDeckImg.getFitWidth() + 12);
+        tableResourceDeckImg.setFitHeight(tableResourceDeckImg.getFitHeight() + 8);
+        tableResourceDeckImg.setLayoutX(tableResourceDeckImg.getLayoutX() - 6);
+        tableResourceDeckImg.setLayoutY(tableResourceDeckImg.getLayoutY() - 4);
+        tableBackDeck2Img.setFitWidth(tableBackDeck2Img.getFitWidth() + 12);
+        tableBackDeck2Img.setFitHeight(tableBackDeck2Img.getFitHeight() + 8);
+        tableBackDeck2Img.setLayoutX(tableBackDeck2Img.getLayoutX() - 6);
+        tableBackDeck2Img.setLayoutY(tableBackDeck2Img.getLayoutY() - 4);
+        ColorAdjust colorAdjust = new ColorAdjust();
+        colorAdjust.setBrightness(-0.2);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(colorAdjust);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(colorAdjust);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(colorAdjust);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(colorAdjust);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(colorAdjust);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(colorAdjust);
+    }
+
+    @FXML
+    protected void onTableResourceDeckOut() {
+        tableResourceDeckImg.setFitWidth(tableResourceDeckImg.getFitWidth() - 12);
+        tableResourceDeckImg.setFitHeight(tableResourceDeckImg.getFitHeight() - 8);
+        tableResourceDeckImg.setLayoutX(tableResourceDeckImg.getLayoutX() + 6);
+        tableResourceDeckImg.setLayoutY(tableResourceDeckImg.getLayoutY() + 4);
+        tableBackDeck2Img.setFitWidth(tableBackDeck2Img.getFitWidth() - 12);
+        tableBackDeck2Img.setFitHeight(tableBackDeck2Img.getFitHeight() - 8);
+        tableBackDeck2Img.setLayoutX(tableBackDeck2Img.getLayoutX() + 6);
+        tableBackDeck2Img.setLayoutY(tableBackDeck2Img.getLayoutY() + 4);
+        if(tableGold1Img.isVisible())
+            tableGold1Img.setEffect(null);
+        if(tableGold2Img.isVisible())
+            tableGold2Img.setEffect(null);
+        if(tableResource1Img.isVisible())
+            tableResource1Img.setEffect(null);
+        if(tableResource2Img.isVisible())
+            tableResource2Img.setEffect(null);
+        if(tableGoldDeckImg.isVisible())
+            tableGoldDeckImg.setEffect(null);
+        if(tableBackDeck1Img.isVisible())
+            tableBackDeck1Img.setEffect(null);
+    }
+    
+//---------------- PRIVATE MISC METHODS ---------------------
     
     private void initializeScoreboard() {
         cardChoicePane.setVisible(false);
@@ -492,7 +893,6 @@ public class PlayController {
                 handCard1Img.setVisible(true);
                 break;
             default:
-                System.out.println("shouldn't happen");
                 break;
         }
     }
@@ -510,9 +910,7 @@ public class PlayController {
         achievementCard2Img.setVisible(true);
     }
 
-    private void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
-        //to do
-    }
+    
 
     //public methods
 
@@ -572,6 +970,121 @@ public class PlayController {
         scoreboardPane.setVisible(false);
     }
 
+    public void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+        //updating values from client
+        this.commonGold = commonGold;
+        this.goldDeck = goldDeck;
+        this.commonResource = commonResource;
+        this.resourceDeck = resourceDeck;
+        //updating images and setting cards to front
+        frontCommonGold = new ArrayList<>();
+        backCommonGold = new ArrayList<>();
+        frontCommonResource = new ArrayList<>();
+        backCommonResource = new ArrayList<>();
+        for(GoldCard gc : commonGold) {
+            gc.setFront(true);
+            frontCommonGold.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + gc.getSideID(true) + ".png"))));
+            backCommonGold.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + gc.getSideID(false) + ".png"))));
+        }
+        for(ResourceCard rc : commonResource) {
+            rc.setFront(true);
+            frontCommonResource.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + rc.getSideID(true) + ".png"))));
+            backCommonResource.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + rc.getSideID(false) + ".png"))));
+        }
+        // gold deck
+        if(goldDeck != null) {
+            String gcId;
+            switch(goldDeck) {
+                case WOLF:
+                    gcId = "061";
+                    break;
+                case LEAF:
+                    gcId = "051";
+                    break;
+                case MUSHROOM:
+                    gcId = "041";
+                    break;
+                case BUTTERFLY:
+                    gcId = "071";
+                    break;
+                default: //shouldn't happen
+                    gcId = "099";
+                    break;
+            }
+            backGoldDeck = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + gcId + ".png")));
+            tableGoldDeckImg.setImage(backGoldDeck);
+            tableResourceDeckImg.setVisible(true);
+            tableBackDeck1Img.setVisible(true);
+        } else {
+            tableGoldDeckImg.setVisible(false);
+            tableBackDeck1Img.setVisible(false);
+        }
+        // resource deck
+        if(resourceDeck != null) {
+            String gcId;
+            switch(resourceDeck) {
+                case WOLF:
+                    gcId = "021";
+                    break;
+                case LEAF:
+                    gcId = "011";
+                    break;
+                case MUSHROOM:
+                    gcId = "001";
+                    break;
+                case BUTTERFLY:
+                    gcId = "031";
+                    break;
+                default: //shouldn't happen
+                    gcId = "099";
+                    break;
+            }
+            backResourceDeck = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/" + gcId + ".png")));
+            tableResourceDeckImg.setImage(backResourceDeck);
+            tableResourceDeckImg.setVisible(true);
+            tableBackDeck1Img.setVisible(true);
+        } else {
+            tableResourceDeckImg.setVisible(false);
+            tableBackDeck1Img.setVisible(false);
+        }
+        // common gold
+        switch(commonGold.size()) {
+            case 2:
+                tableGold1Img.setImage(frontCommonGold.get(0));
+                tableGold2Img.setImage(frontCommonGold.get(1));
+                tableGold1Img.setVisible(true);
+                tableGold2Img.setVisible(true);
+                break;
+            case 1:
+                tableGold1Img.setImage(frontCommonGold.get(0));
+                tableGold1Img.setVisible(true);
+                tableGold2Img.setVisible(false);
+                break;
+            default:
+                tableGold1Img.setVisible(false);
+                tableGold2Img.setVisible(false);
+                break;
+        }
+        // common resource
+        switch(commonResource.size()) {
+            case 2:
+                tableResource1Img.setImage(frontCommonResource.get(0));
+                tableResource2Img.setImage(frontCommonResource.get(1));
+                tableResource1Img.setVisible(true);
+                tableResource2Img.setVisible(true);
+                break;
+            case 1:
+                tableResource1Img.setImage(frontCommonResource.get(0));
+                tableResource1Img.setVisible(true);
+                tableResource2Img.setVisible(false);
+                break;
+            default:
+                tableResource1Img.setVisible(false);
+                tableResource2Img.setVisible(false);
+                break;
+        }
+    }
+    
     //getters and setters
     public void setNickname(String nick) {
         myNickname = nick;
