@@ -138,7 +138,6 @@ public class WebServer implements VirtualServer {
                             this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
                             break;
                         case START:
-                            System.out.println("Start Arrivata");
                             if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
                                 String firstNickname = null;
                                 for (int i = 0; i < clients.size() && firstNickname == null; i++) {
@@ -209,41 +208,6 @@ public class WebServer implements VirtualServer {
         Thread serverUpdateThread = new Thread(serverUpdateRunnable);
         serverUpdateThread.start();
     }
-
-
-   /* @Override
-    public boolean connect(VirtualView client) throws RemoteException {
-        //VirtualView client = new Client(cli);
-        synchronized (this.clients) {
-            System.err.println("> Join request received.");
-            String nick = client.getNickname();
-            if(!clients.isEmpty())
-                //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
-                for(VirtualView v : this.clients) {
-                    if(v.getNickname().equalsIgnoreCase(nick)) {
-                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
-                        return false;
-                    }
-                }
-            if(this.controller.getCurrPlayersNumber() != 0 && this.controller.getCurrPlayersNumber() == this.controller.getMaxPlayersNumber()) {
-                System.out.println("> Denied connection to a new client, max number of players already reached.");
-                return false;
-            } else {
-                this.clients.add(client);
-                System.out.println("> Allowed connection to a new client named \"" + nick + "\".");
-                addPlayer(new Player(nick, false), client);
-                if(this.controller.getCurrPlayersNumber() == 1) {
-                    try {
-                        System.out.println("> " + nick + " is the first player.");
-                        clientActions.put(new AskingPlayersNumberAction(nick));
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                return true;
-            }
-        }
-    }*/
 
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
@@ -321,5 +285,14 @@ public class WebServer implements VirtualServer {
             throw new RuntimeException(e);
         }
     }
+    /*
+    checkAliveThread()
+        se il gameStarted == false => l'utente che non risulta connesso viene eliminato e invio messaggio notificaDisconnessione e askingStart
+        se il gameStarted == true => setto solo il boolean connected == false e sarà da gestire la ricezione e invio e salto turno
+        per riconessione => modifica connection se gameStarted == true allora verra creata nuova VirtualView che verrà rimpiazzata e inviati tutti i dati della partita tramite un action
+        il thread sarà strutturato come:
+        invia Ping a tutti, aspetta tot ms e verifica quanti hanno risposto, magari con un campo check nella virtualView e riparte dopo aver gestito cancellazione client o set connected = false;
+     */
+
 
 }
