@@ -86,7 +86,8 @@ public class ClientSocket implements VirtualView, Runnable {
             try {
                 if(nickname != null ) {
                     if(action.getType().equals(ActionType.PONG)){
-                        pingMap.replace((VirtualView)this, true);
+                        pingMap.replace((VirtualView)this, Boolean.TRUE);
+
                     }
                     serverActions.put(action);
                 }
@@ -133,11 +134,7 @@ public class ClientSocket implements VirtualView, Runnable {
                         e.printStackTrace();
                     }
                 }
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (RemoteException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (InterruptedException | IOException e) {
                 throw new RuntimeException(e);
             }
         }

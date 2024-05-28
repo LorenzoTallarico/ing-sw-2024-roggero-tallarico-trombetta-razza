@@ -26,8 +26,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 //Ricezione info in webServer e gestione di tali info, invece invio al client tutto in VirtualView
 public class WebServer implements VirtualServer {
-    private static int PORT_RMI= 6969;
-    private static int PORT_SOCKET= 7171;
+    private static int PORT_RMI = 6969;
+    private static int PORT_SOCKET = 7171;
     private GameController controller = null;
     private Map<VirtualView, String> nicknamesMap = new HashMap<>();  //mappa client-nickname
     private Map<VirtualView, Boolean> onlineMap = new HashMap<>();    //mappa client-isOnline
@@ -45,7 +45,7 @@ public class WebServer implements VirtualServer {
         start();
     }
 
-    public WebServer(GameController controller, int[] ports){
+    public WebServer(GameController controller, int[] ports) {
         this.controller = controller;
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
@@ -75,6 +75,7 @@ public class WebServer implements VirtualServer {
         }
 
     }
+
     public void startSocketServer() {
         try (ServerSocket serverSocket = new ServerSocket(PORT_SOCKET)) {
             // ServerSocket è una classe predefinita di java, dovremmo cambiare nome perché si crea confusione
@@ -85,7 +86,7 @@ public class WebServer implements VirtualServer {
                 //qui si è attaccato un nuovo client
                 VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap);
                 clients.add(actualSocket);
-                onlineMap.put(actualSocket, true);
+                onlineMap.put(actualSocket, Boolean.TRUE);
                 nicknamesMap.put(actualSocket, actualSocket.getNickname());
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
@@ -112,70 +113,70 @@ public class WebServer implements VirtualServer {
     }
 
     public void serverUpdateThread() throws InterruptedException, RemoteException {
-        while(connectionFlagServer) {
+        while (connectionFlagServer) {
             try {
                 Action action = serverActions.take();
                 System.out.println("> Handling action, action type \"" + action.getType().toString() + "\".");
                 Action newAction = null;
-                    switch (action.getType()) {
-                        case CHOSENPLAYERSNUMBER:
-                            this.controller.setPlayersNumber(((ChosenPlayersNumberAction) action).getPlayersNumber());
-                            break;
-                        case ASKINGCHAT:
-                            newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
+                switch (action.getType()) {
+                    case CHOSENPLAYERSNUMBER:
+                        this.controller.setPlayersNumber(((ChosenPlayersNumberAction) action).getPlayersNumber());
+                        break;
+                    case ASKINGCHAT:
+                        newAction = new WholeChatAction(action.getAuthor(), this.controller.getWholeChat());
+                        clientActions.put(newAction);
+                        break;
+                    case CHATMESSAGE:
+                        this.controller.sendChatMessage(((ChatMessageAction) action).getMessage());
+                        clientActions.put(action);
+                        break;
+                    case CHOSENSIDESTARTERCARD:
+                        this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction) action).getSide());
+                        break;
+                    case CHOSENACHIEVEMENT:
+                        this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction) action).getAchievement());
+                        break;
+                    case PLACINGCARD:
+                        if (!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction) action).getCardIndex(), ((PlacingCardAction) action).getSide(), ((PlacingCardAction) action).getRow(), ((PlacingCardAction) action).getColumn())) {
+                            newAction = new PlacedErrorAction(action.getAuthor());
                             clientActions.put(newAction);
-                            break;
-                        case CHATMESSAGE:
-                            this.controller.sendChatMessage(((ChatMessageAction) action).getMessage());
-                            clientActions.put(action);
-                            break;
-                        case CHOSENSIDESTARTERCARD:
-                            this.controller.setStarterCardSide(action.getAuthor(), ((ChosenSideStarterCardAction) action).getSide());
-                            break;
-                        case CHOSENACHIEVEMENT:
-                            this.controller.setSecretAchievement(action.getAuthor(), ((ChosenAchievementAction) action).getAchievement());
-                            break;
-                        case PLACINGCARD:
-                            if (!this.controller.placeCard(action.getAuthor(), ((PlacingCardAction) action).getCardIndex(), ((PlacingCardAction) action).getSide(), ((PlacingCardAction) action).getRow(), ((PlacingCardAction) action).getColumn())) {
-                                newAction = new PlacedErrorAction(action.getAuthor());
-                                clientActions.put(newAction);
+                        }
+                        break;
+                    case CHOSENDRAWCARD:
+                        this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
+                        break;
+                    case START:
+                        if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
+                            String firstNickname = null;
+                            for (int i = 0; i < clients.size() && firstNickname == null; i++) {
+                                if (clients.get(i).getOnline()) {
+                                    firstNickname = clients.get(i).getNickname();
+                                }
                             }
-                            break;
-                        case CHOSENDRAWCARD:
-                            this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
-                            break;
-                        case START:
-                            if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {//(((StartAction) action).getPlayerNumber() == countOnlinePlayer()){
-                                String firstNickname = null;
-                                for (int i = 0; i < clients.size() && firstNickname == null; i++) {
-                                    if (clients.get(i).getOnline()) {
-                                        firstNickname = clients.get(i).getNickname();
-                                    }
+                            if (((StartAction) action).getAuthor().equalsIgnoreCase(firstNickname)) {
+                                this.controller.setPlayersNumber(countOnlinePlayer());
+                                for (VirtualView client : clients) {
+                                    if (client.getOnline())
+                                        addPlayer(new Player(client.getNickname(), client.getGui()), client);
                                 }
-                                if (((StartAction) action).getAuthor().equalsIgnoreCase(firstNickname)) {
-                                    this.controller.setPlayersNumber(countOnlinePlayer());
-                                    for (VirtualView client : clients) {
-                                        if (client.getOnline())
-                                            addPlayer(new Player(client.getNickname(), client.getGui()), client);
-                                    }
-                                    System.out.println("Utenti Aggiunti al game");
-                                    gameStarted = true;
-                                }
-                            } else {
-                                String nickname = null;
-                                for (int i = 0; i < clients.size() && nickname == null; i++) {
-                                    if (clients.get(i).getOnline()) {
-                                        nickname = clients.get(i).getNickname();
-                                    }
-                                }
-                                Action act = new AskingStartAction(nickname, countOnlinePlayer());
-                                clientActions.put(act);
+                                System.out.println("Utenti Aggiunti al game");
+                                gameStarted = true;
                             }
-                            break;
-                        default:
-                            break;
-                    }
-            } catch(InterruptedException e){
+                        } else {
+                            String nickname = null;
+                            for (int i = 0; i < clients.size() && nickname == null; i++) {
+                                if (clients.get(i).getOnline()) {
+                                    nickname = clients.get(i).getNickname();
+                                }
+                            }
+                            Action act = new AskingStartAction(nickname, countOnlinePlayer());
+                            clientActions.put(act);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            } catch (InterruptedException e) {
                 connectionFlagServer = false;
             }
 
@@ -217,7 +218,7 @@ public class WebServer implements VirtualServer {
         Runnable checkAliveRunnable = () -> {
             try {
                 webServer.checkAliveThread();
-            } catch (InterruptedException e) {
+            } catch (InterruptedException | IOException e) {
                 // Gestione dell'eccezione
                 e.printStackTrace();
             }
@@ -232,34 +233,37 @@ public class WebServer implements VirtualServer {
         synchronized (this.clients) {
             System.err.println("> Join request received.");
             String nick = client.getNickname();
-            if(!clients.isEmpty())
+            if (!clients.isEmpty())
                 //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
-                for(VirtualView v : this.clients) {
-                    if(v.getNickname().equalsIgnoreCase(nick)) {
+                for (VirtualView v : this.clients) {
+                    if (v.getNickname().equalsIgnoreCase(nick)) {
                         System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
                         return false;
                     }
                 }
-            if(countOnlinePlayer()>=4) {
+            if (countOnlinePlayer() >= 4) {
                 System.out.println("> Denied connection to a new client, max number of players already reached.");
                 return false;
             } else {
                 clients.add((VirtualView) client);
+                onlineMap.put(client, Boolean.TRUE);
+                System.out.println(onlineMap.get(client).toString());
+                for(VirtualView c : onlineMap.keySet())
+                    System.out.println(c.getNickname());
+                nicknamesMap.put(client, nick);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
-                for(VirtualView v : this.clients) {
-                    if(v.getOnline() && v.getNickname()!=null) {
-                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer()+1);
-                        try{
+                for (VirtualView v : this.clients) {
+                    if (v.getOnline() && v.getNickname() != null) {
+                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());
+                        try {
                             clientActions.put(act);
-                        }catch(InterruptedException e){
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        act = new JoiningPlayerAction(nick, countOnlinePlayer()+1, 4);
-                        onlineMap.put(client, true);
-                        nicknamesMap.put(client, nick);
-                        try{
+                        act = new JoiningPlayerAction(nick, countOnlinePlayer() , 4);
+                        try {
                             clientActions.put(act);
-                        }catch(InterruptedException e){
+                        } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
                         return true;
@@ -273,19 +277,19 @@ public class WebServer implements VirtualServer {
 
     private int countOnlinePlayer() throws RemoteException {
         int count = 0;
-        for(VirtualView v : this.clients) {
-            if(onlineMap.get(v))
-                count ++;
+        for (VirtualView v : this.clients) {
+            if (onlineMap.get(v).booleanValue())
+                count++;
         }
         return count;
     }
 
     @Override
     public void addPlayer(Player p, VirtualView c) throws RemoteException {
-        synchronized (this.clients){
+        synchronized (this.clients) {
             try {
                 clientActions.put(new JoiningPlayerAction(p.getName(), this.controller.getCurrPlayersNumber() + 1, this.controller.getMaxPlayersNumber()));
-            } catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 throw new RuntimeException();
             }
             this.controller.addPlayer(p, c);
@@ -298,13 +302,14 @@ public class WebServer implements VirtualServer {
     @Override
     public void sendAction(Action action) throws RemoteException {
         try {
-            System.out.println("> Received action, type \"" + action.getType().toString() +"\".");
-            if(action.getType().equals(ActionType.PONG)) {
-                for(VirtualView c : nicknamesMap.keySet()){
-                    if(nicknamesMap.get(c).equals(action.getAuthor())) {
-                        pingMap.replace(c, true);
+            System.out.println("> Received action, type \"" + action.getType().toString() + "\".");
+            if (action.getType().equals(ActionType.PONG)) {
+                for (VirtualView c : nicknamesMap.keySet()) {
+                    if (nicknamesMap.get(c).equals(action.getAuthor())) {
+                        pingMap.replace(c, Boolean.TRUE);
                     }
                 }
+                return;
             }
             serverActions.put(action);
         } catch (InterruptedException e) {
@@ -312,48 +317,54 @@ public class WebServer implements VirtualServer {
         }
     }
 
-    public void checkAliveThread() throws InterruptedException {
-        boolean startActionRequired;
-        ArrayList<Boolean> check = new ArrayList<Boolean>();
+    public void checkAliveThread() throws InterruptedException, IOException {
         Action act;
-        while(true){
-            startActionRequired = false;
-            for(VirtualView c : onlineMap.keySet()){
-                if(onlineMap.get(c))
-                    sendAction(new PingAction(nicknamesMap.get(c)));
+        while (true) {
+            boolean startActionRequired = false;
+            pingMap.clear();
+            for (VirtualView c : onlineMap.keySet()) {
+                if (onlineMap.get(c).equals(Boolean.TRUE))
+                    pingMap.put(c, Boolean.FALSE);
             }
-            wait(5000);
-            for(VirtualView c : clients){
-                if(!pingMap.get(c)){
+            for (VirtualView c : pingMap.keySet()){
+                System.out.println("- Chiave");
+                c.showAction(new PingAction());
+            }
+            Thread.sleep(5000);
+            for (VirtualView c : pingMap.keySet()) {
+                if (pingMap.get(c).equals(Boolean.FALSE)) {
                     //Entriamo se non ha pingato c
-                    if(!gameStarted){
+                    if (!gameStarted) {
+                        //Gioco non startato, client in fase di connessione
                         startActionRequired = true;
-                        for(VirtualView v : this.clients) {
+                        for (VirtualView v : pingMap.keySet()) {
                             act = new DisconnectedPlayerAction(nicknamesMap.get(v));
-                                onlineMap.put(client, true);
-                                nicknamesMap.put(client, nick);
-                                try{
-                                    clientActions.put(act);
-                                }catch(InterruptedException e){
-                                    e.printStackTrace();
-                                }
-
+                            clientActions.put(act);
                         }
                     }
+                    clients.remove(c);
+                    onlineMap.remove(c);
+                    nicknamesMap.remove(c);
                 } else {
-                    onlineMap.replace(c, false);
+                    //gioco già startato
+                    onlineMap.replace(c, Boolean.FALSE);
                 }
             }
-
-            Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer()+1);
-            try{
-                clientActions.put(act);
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
+            if (startActionRequired) {
+                if (clients.get(0) != null) {
+                    try {
+                        clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
+                        System.out.println("Invio AskingStart");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
         }
     }
+}
     /*
     checkAliveThread()
         se il gameStarted == false => l'utente che non risulta connesso viene eliminato e invio messaggio notificaDisconnessione e askingStart
@@ -364,4 +375,4 @@ public class WebServer implements VirtualServer {
      */
 
 
-}
+

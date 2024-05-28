@@ -30,5 +30,10 @@ public enum ActionType {
     CHOOSESIDESTARTERCARD,
     CHOSENSIDESTARTERCARD,
 
+    DISCONNECTEDPLAYER,
+    PING,
+    PONG,
+
+
     WINNERS
 }

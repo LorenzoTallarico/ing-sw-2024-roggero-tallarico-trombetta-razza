@@ -545,6 +545,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             System.out.println("> Players online: " +((AskingStartAction)act).getPlayerNumber());
                             System.out.println("> Type \"startgame\" to start the game");
                         }
+                    case PING:
+                        server.sendAction(new PongAction(nickname));
+                        break;
+                    case DISCONNECTEDPLAYER:
+                        System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
+                        break;
                     default:
                         break;
                 }
