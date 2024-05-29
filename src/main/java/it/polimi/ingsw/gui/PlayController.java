@@ -1046,6 +1046,9 @@ public class PlayController {
 
     private void updatePlayerRelated() {
         //hand cards
+        handCard1Img.setVisible(false);
+        handCard2Img.setVisible(false);
+        handCard3Img.setVisible(false);
         frontHand = new ArrayList<>();
         backHand = new ArrayList<>();
         for(Card card : myPlayer.getHand()) {
@@ -1129,9 +1132,9 @@ public class PlayController {
             updatePlayerRelated();
             printPlayground();
             playgroundChoiceBox.setValue("You ");
-            alertLbl.setText("You placed the card!" + (score > 0 ? "+" + score + "pts" : ""));
+            alertLbl.setText("You placed the card! " + (score > 0 ? "+" + score + "pts" : ""));
         } else {
-            alertLbl.setText(recipient + "placed a card" + (score > 0 ? "+" + score + "pts" : ""));
+            alertLbl.setText(recipient + " placed a card " + (score > 0 ? "+" + score + "pts" : ""));
         }
     }
 
@@ -1358,5 +1361,8 @@ public class PlayController {
 
     public void setOtherPlayers(ArrayList<Player> otherPlayers) {
         this.otherPlayers = otherPlayers;
+        for(Player playa : otherPlayers)
+            if(playa.getName().equalsIgnoreCase(playgroundChoiceBox.getValue()))
+                printPlayground(playa);
     }
 }

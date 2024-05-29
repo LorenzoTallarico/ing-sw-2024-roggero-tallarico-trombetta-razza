@@ -86,7 +86,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             }
         } while (guiView.getLoginController() == null);
         loginController = guiView.getLoginController();
-        initializeThreads();
     }
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
@@ -452,8 +451,12 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     } while (guiView.getPlayController() == null);
                     playController = guiView.getPlayController();
                     playController.setNickname(nickname);
-                    threadChatListener.start();
+                    if(threadChatListener == null) {
+                        threadChatListener = createThreadChatListener();
+                        threadChatListener.start();
+                    }
                     Platform.runLater(() ->playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck));
+                    threadStartListener = createThreadStartListener();
                     threadStartListener.start();
                 } else {
                     refreshPlayers(((ChooseSideStarterCardAction)act).getPlayer());
@@ -469,6 +472,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     state = State.ACHIEVEMENTSCHOICE;
                     System.out.println("> Choose your secret achievement with the command \"achievement\".");
                     Platform.runLater(() -> playController.passAchievement(choosableAchievements, achievements));
+                    threadAchievementListener = createThreadAchievementListener();
                     threadAchievementListener.start();
                 }
                 break;
@@ -477,6 +481,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     p = ((AskingPlaceAction)act).getPlayer();
                     Platform.runLater(() -> playController.setPlayer(p));
                     state = State.PLACE;
+                    threadPlaceListener = createThreadPlaceListener();
                     threadPlaceListener.start();
                     System.out.println("> It's your time to play, enter \"place\" to place a card.");
                 } else {
@@ -503,6 +508,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname) && state.equals(State.COMMANDS)) {
                     System.out.println(((PlacedErrorAction)act).getError());
                     state = State.PLACE;
+                    threadRePlaceListener = createThreadRePlaceListener();
                     threadRePlaceListener.start();
                 }
                 break;
@@ -514,6 +520,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
+                    threadDrawListener = createThreadDrawListener();
                     threadDrawListener.start();
                 } else {
                     Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
@@ -585,8 +592,8 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             allPlayers.add(player);
     }
 
-    private void initializeThreads() {
-        threadChatListener = new Thread(() -> {
+    private Thread createThreadChatListener() {
+        return new Thread(() -> {
             while (playController == null) {
                 try {
                     Thread.sleep(1000);
@@ -610,8 +617,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             }
             System.out.println("!!! ERROR STOP LISTENING CHAT !!!");
         });
+    }
 
-        threadStartListener = new Thread(() -> {
+    private Thread createThreadStartListener() {
+        return new Thread(() -> {
             do {
                 try {
                     Thread.sleep(500);
@@ -626,8 +635,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 throw new RuntimeException(e);
             }
         });
+    }
 
-        threadAchievementListener = new Thread(() -> {
+    private Thread createThreadAchievementListener() {
+        return new Thread(() -> {
             do {
                 try {
                     Thread.sleep(200);
@@ -642,7 +653,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 throw new RuntimeException(e);
             }
         });
-        threadPlaceListener = new Thread(() -> {
+    }
+
+    private Thread createThreadPlaceListener() {
+        return new Thread(() -> {
             Platform.runLater(() -> playController.alertToPlace());
             PlacingCardAction a;
             do {
@@ -660,7 +674,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 throw new RuntimeException(e);
             }
         });
-        threadRePlaceListener = new Thread(() -> {
+    }
+
+    private Thread createThreadRePlaceListener() {
+        return new Thread(() -> {
             Platform.runLater(() -> playController.alertToRePlace());
             PlacingCardAction a;
             do {
@@ -678,7 +695,10 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 throw new RuntimeException(e);
             }
         });
-        threadDrawListener = new Thread(() -> {
+    }
+
+    private Thread createThreadDrawListener() {
+        return new Thread(() -> {
             Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
             Platform.runLater(() -> playController.alertToDraw());
             ChosenDrawCardAction a;
