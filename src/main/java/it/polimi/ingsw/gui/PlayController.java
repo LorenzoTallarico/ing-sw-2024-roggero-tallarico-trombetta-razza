@@ -1,9 +1,10 @@
 package it.polimi.ingsw.gui;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.networking.action.toclient.CardDrawnAction;
 import it.polimi.ingsw.networking.action.toserver.ChosenDrawCardAction;
 import it.polimi.ingsw.networking.action.toserver.PlacingCardAction;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.*;
 import javafx.fxml.FXML;
 import javafx.geometry.HPos;
@@ -50,7 +51,8 @@ public class PlayController {
     private Image backGoldDeck, backResourceDeck;
     private final Image borderCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/border-card.png")));
     private final Image anonymousCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/anonymous-card.png")));
-    private final int cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
+    private final int constCellWidth = 105, constCellHeight = 54, constPch = 90, constPcw = 135;
+    private double cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
     private ImageView[][] gridpaneArray = null;
     private PlacingCardAction placeAction;
 
@@ -86,6 +88,9 @@ public class PlayController {
     private ChoiceBox<String> playgroundChoiceBox;
 
     @FXML
+    private Slider zoomSlider;
+
+    @FXML
     public void initialize() {
         /*BackgroundSize bgSize = new BackgroundSize(fatherPane.getPrefHeight(), fatherPane.getPrefWidth(), false, false, false, true);
         BackgroundImage bgImg = new BackgroundImage(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/dust_texture.png"))),
@@ -93,6 +98,29 @@ public class PlayController {
                 bgSize);
         fatherPane.setBackground(new Background(bgImg));*/
         initializeGridpane();
+        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(
+                    ObservableValue<? extends Number> observableValue,
+                    Number oldValue,
+                    Number newValue) {
+                pch = constPch * newValue.doubleValue();
+                pcw = constPcw * newValue.doubleValue();
+                cellHeight = constCellHeight * newValue.doubleValue();
+                cellWidth = constCellWidth * newValue.doubleValue();
+                if(playgroundChoiceBox.getValue() == null) return;
+                if(playgroundChoiceBox.getValue().equalsIgnoreCase("You ")) {
+                    printPlayground();
+                    if(canPlace)
+                        placeablePlayground();
+                } else if(otherPlayers != null){
+                    for(Player ply : otherPlayers)
+                        if(ply.getName().equalsIgnoreCase(playgroundChoiceBox.getValue()))
+                            printPlayground(ply);
+                }
+
+            }
+        });
         toggleGroup = new ToggleGroup();
         tableBtn.setToggleGroup(toggleGroup);
         handBtn.setToggleGroup(toggleGroup);
@@ -101,24 +129,39 @@ public class PlayController {
         playgroundChoiceBox.getItems().add("You ");
     }
 
-//---------------- CHAT FXML METHODS ---------------------
+//---------------- PLAYGROUND FXML METHODS ---------------------
 
     @FXML
     protected void onChoiceBoxClick() {
         String targetPlayer = playgroundChoiceBox.getValue();
         boolean foundPlayer = false;
-        for(Player plyr : otherPlayers)
-            if(plyr.getName().equalsIgnoreCase(targetPlayer)) {
+        if(otherPlayers != null)
+            for(Player plyr : otherPlayers)
+                if(plyr.getName().equalsIgnoreCase(targetPlayer)) {
                 foundPlayer = true;
                 printPlayground(plyr);
                 break;
-            }
+                }
         if(!foundPlayer) {
             printPlayground();
             if(canPlace)
                 placeablePlayground();
         }
     }
+
+    @FXML
+    protected void onResetViewClick() {
+        /*
+        cellWidth = 105;
+        cellHeight = 54;
+        pch = 90;
+        pcw = 135;*/
+        playgroundScrollPane.setHvalue(playgroundScrollPane.getHmax() / 2);
+        playgroundScrollPane.setVvalue(playgroundScrollPane.getVmax() / 2);
+    }
+
+
+//---------------- CHAT FXML METHODS ---------------------
 
     @FXML
     protected void onSendMessageButtonClick() {
@@ -173,7 +216,7 @@ public class PlayController {
         }
     }
 
-//---------------- SELECT STARTER & ACHIVEMENT CARDS FXML METHODS ---------------------
+//---------------- SELECT STARTER & ACHIEVEMENT CARDS FXML METHODS ---------------------
 
     @FXML
     protected void onSelectCard1In() {
@@ -1003,8 +1046,29 @@ public class PlayController {
                                 ((ImageView)event.getSource()).setFitHeight(pch);
                                 ((ImageView)event.getSource()).setFitWidth(pcw);
                                 ((ImageView)event.getSource()).setOpacity(1);
-                                if(placeChoice != -1)
-                                    ((ImageView)event.getSource()).setEffect(new DropShadow(5, Color.BLACK));
+                                if(placeChoice != -1) {
+                                    boolean foundCell = false;
+                                    boolean canBePlacedHere = false;
+                                    for(int tCol = area.getWestBound() == 0 ? 0 : area.getWestBound() - 1 ; tCol <= (area.getEastBound() == 80 ? 80 : area.getEastBound() + 1) && !foundCell; tCol++) {
+                                        for (int tRow = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1; tRow <= (area.getSouthBound() == 80 ? 80 : area.getSouthBound() + 1) && !foundCell; tRow++) {
+                                            if (gridpaneArray[tCol][tRow] != null && gridpaneArray[tCol][tRow].equals((ImageView) event.getSource())) {
+                                                canBePlacedHere = myPlayer.placeable(myPlayer.getHand().get(placeChoice-1), tRow, tCol);
+                                                foundCell = true;
+                                            }
+                                        }
+                                    }
+                                    if(!canBePlacedHere) {
+                                        ColorAdjust blackAndWhite = new ColorAdjust();
+                                        blackAndWhite.setSaturation(-1);
+                                        blackAndWhite.setBrightness(-0.3);
+                                        DropShadow shadow = new DropShadow(5, Color.BLACK);
+                                        shadow.setInput(blackAndWhite);
+                                        ((ImageView) event.getSource()).setEffect(shadow);
+                                        ((ImageView) event.getSource()).setOpacity(0.8);
+                                    } else
+                                        ((ImageView) event.getSource()).setEffect(new DropShadow(5, Color.BLACK));
+
+                                }
                             }
                         }
                     });

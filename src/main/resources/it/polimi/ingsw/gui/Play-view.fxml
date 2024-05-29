@@ -342,7 +342,7 @@
             </ImageView>
          </graphic>
       </ToggleButton>
-      <ScrollPane fx:id="playgroundScrollPane" layoutX="612.0" layoutY="38.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="460.0" prefWidth="937.0" styleClass="mygridStyle" stylesheets="@custom-theme.css" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+      <ScrollPane fx:id="playgroundScrollPane" hbarPolicy="ALWAYS" layoutX="612.0" layoutY="38.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="460.0" prefWidth="937.0" styleClass="mygridStyle" stylesheets="@custom-theme.css" vbarPolicy="ALWAYS" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <content>
             <GridPane fx:id="playgroundGridPane" gridLinesVisible="true" />
          </content>
@@ -352,6 +352,19 @@
             <Font name="System Bold" size="16.0" />
          </font>
       </Label>
-      <ChoiceBox fx:id="playgroundChoiceBox" prefWidth="150.0" AnchorPane.rightAnchor="900.0" AnchorPane.topAnchor="10.0" onAction="#onChoiceBoxClick" />
+      <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onResetViewClick" text="Reset" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="10.0">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/refresh.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
+      <ChoiceBox fx:id="playgroundChoiceBox" onAction="#onChoiceBoxClick" prefWidth="150.0" AnchorPane.rightAnchor="797.0" AnchorPane.topAnchor="10.0" />
+      <Slider fx:id="zoomSlider" blockIncrement="0.25" majorTickUnit="0.25" max="3.0" min="0.25" minorTickCount="0" prefHeight="37.0" prefWidth="264.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" AnchorPane.rightAnchor="526.0" AnchorPane.topAnchor="12.0" />
    </children>
 </AnchorPane>
