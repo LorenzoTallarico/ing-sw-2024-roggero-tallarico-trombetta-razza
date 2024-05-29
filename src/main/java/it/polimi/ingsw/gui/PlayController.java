@@ -79,7 +79,7 @@ public class PlayController {
     private ScrollPane playgroundScrollPane;
 
     @FXML
-    private Label selectCardLbl, alertLbl;
+    private Label selectCardLbl, alertLbl, oldAlertLbl, jarCountLbl, scrollCountLbl, plumeCountLbl, wolfCountLbl, mushroomCountLbl, leafCountLbl, butterflyCountLbl;
 
     @FXML
     private ToggleButton tableBtn, handBtn, achievementBtn;
@@ -1004,6 +1004,14 @@ public class PlayController {
             cImg.setEffect(new DropShadow(5, Color.BLACK));
             playgroundGridPane.add(cImg, cCoords[1], cCoords[0]);
         }
+        //displaying values of available items and resources
+        jarCountLbl.setText(""+area.countItems(Item.JAR));
+        plumeCountLbl.setText(""+area.countItems(Item.PLUME));
+        scrollCountLbl.setText(""+area.countItems(Item.SCROLL));
+        wolfCountLbl.setText(""+area.countResources(Resource.WOLF));
+        mushroomCountLbl.setText(""+area.countResources(Resource.MUSHROOM));
+        butterflyCountLbl.setText(""+area.countResources(Resource.BUTTERFLY));
+        leafCountLbl.setText(""+area.countResources(Resource.LEAF));
     }
 
     private void printPlayground() {
@@ -1192,6 +1200,10 @@ public class PlayController {
     }
 
     public void displaySuccessfulPlace(String recipient, int score) {
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
         if(recipient.equalsIgnoreCase(myNickname)) {
             updatePlayerRelated();
             printPlayground();
@@ -1200,10 +1212,15 @@ public class PlayController {
         } else {
             alertLbl.setText(recipient + " placed a card " + (score > 0 ? "+" + score + "pts" : ""));
         }
+        alertLbl.setVisible(true);
     }
 
     public void displaySuccessfulDrawn(String recipient, Card drawnCard) {
         String drawText = " drew a " + (drawnCard.getClass() == GoldCard.class ? "gold" : "resource") + " card";
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
         if(recipient.equalsIgnoreCase(myNickname)) {
             updatePlayerRelated();
             handBtn.setSelected(true);
@@ -1212,6 +1229,7 @@ public class PlayController {
         } else {
             alertLbl.setText(recipient + drawText);
         }
+        alertLbl.setVisible(true);
     }
 
     public void alertToDraw() {
@@ -1219,7 +1237,12 @@ public class PlayController {
         canDraw = true;
         tableBtn.setSelected(true);
         onTableButtonClick();
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
         alertLbl.setText("Draw a card!");
+        alertLbl.setVisible(true);
     }
 
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
@@ -1376,6 +1399,10 @@ public class PlayController {
         printPlayground();
         placeablePlayground();
         playgroundChoiceBox.setValue("You ");
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
         alertLbl.setText("Place a card!");
         alertLbl.setVisible(true);
     }
@@ -1387,6 +1414,10 @@ public class PlayController {
         printPlayground();
         placeablePlayground();
         playgroundChoiceBox.setValue("You ");
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
         alertLbl.setText("You can't place it there!");
         alertLbl.setVisible(true);
     }

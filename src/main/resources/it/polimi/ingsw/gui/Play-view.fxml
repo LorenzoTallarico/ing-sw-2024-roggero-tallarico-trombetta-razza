@@ -80,16 +80,18 @@
                </cursor></ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="scoreboardPane" layoutX="6.0" layoutY="247.0" prefHeight="415.0" prefWidth="302.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+      <AnchorPane fx:id="scoreboardPane" layoutX="6.0" layoutY="247.0" prefHeight="339.0" prefWidth="303.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
          <children>
-            <ImageView fitHeight="415.0" fitWidth="282.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="393.0" fitWidth="177.0" layoutY="61.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
                <image>
                   <Image url="@img/misc/scoreboard.png" />
                </image></ImageView>
-            <GridPane layoutX="216.0" prefHeight="188.0" prefWidth="86.0">
+            <GridPane alignment="CENTER" hgap="3.0" layoutX="185.0" layoutY="61.0" prefHeight="154.0" prefWidth="117.0" AnchorPane.bottomAnchor="190.33333333333331" AnchorPane.leftAnchor="185.0">
               <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="58.0" minWidth="10.0" prefWidth="53.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="42.0" minWidth="10.0" prefWidth="33.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="58.0" minWidth="10.0" prefWidth="31.333333333333336" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="42.0" minWidth="10.0" prefWidth="25.333333333333336" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="58.0" minWidth="10.0" prefWidth="31.333333333333336" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="42.0" minWidth="10.0" prefWidth="25.333333333333336" />
               </columnConstraints>
               <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -98,41 +100,68 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <ImageView fitHeight="48.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
                      <image>
                         <Image url="@img/icons/wolf.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="wolfCountLbl" prefHeight="37.0" prefWidth="42.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                  <Label fx:id="wolfCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <font>
-                        <Font size="23.0" />
+                        <Font size="20.0" />
                      </font></Label>
-                  <ImageView fitHeight="48.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="1">
                      <image>
                         <Image url="@img/icons/mushroom.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="mushroomCountLbl" prefHeight="37.0" prefWidth="42.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="mushroomCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
-                        <Font size="23.0" />
+                        <Font size="20.0" />
                      </font></Label>
-                  <ImageView fitHeight="48.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="2">
                      <image>
                         <Image url="@img/icons/leaf.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="leafCountLbl" prefHeight="37.0" prefWidth="42.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label fx:id="leafCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
-                        <Font size="23.0" />
+                        <Font size="20.0" />
                      </font></Label>
-                  <ImageView fitHeight="48.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="3">
                      <image>
                         <Image url="@img/icons/butterfly.png" />
                      </image>
                   </ImageView>
-                  <Label fx:id="butterflyCountLbl" prefHeight="37.0" prefWidth="42.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Label fx:id="butterflyCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
-                        <Font size="23.0" />
+                        <Font size="20.0" />
+                     </font></Label>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                     <image>
+                        <Image url="@img/icons/scroll.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="scrollCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="0">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <image>
+                        <Image url="@img/icons/plume.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="plumeCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="20.0" />
+                     </font></Label>
+                  <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <image>
+                        <Image url="@img/icons/jar.png" />
+                     </image>
+                  </ImageView>
+                  <Label fx:id="jarCountLbl" prefHeight="37.0" prefWidth="30.0" text="0" textAlignment="CENTER" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="20.0" />
                      </font></Label>
                </children>
             </GridPane>
@@ -350,6 +379,11 @@
       <Label fx:id="alertLbl" layoutX="14.0" layoutY="240.0" prefHeight="28.0" prefWidth="302.0" text="ALERT SYSTEM ALERT SYSTEM" textFill="#d10000" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="240.0">
          <font>
             <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label fx:id="oldAlertLbl" layoutX="11.0" layoutY="268.0" opacity="0.37" prefHeight="28.0" prefWidth="302.0" text="ALERT SYSTEM ALERT SYSTEM" textFill="#d10000" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="260.0">
+         <font>
+            <Font name="System Bold" size="14.0" />
          </font>
       </Label>
       <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" mnemonicParsing="false" onAction="#onResetViewClick" text="Reset" AnchorPane.rightAnchor="25.0" AnchorPane.topAnchor="10.0">
