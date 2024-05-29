@@ -10,16 +10,16 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayController {
 
@@ -55,7 +55,23 @@ public class PlayController {
     private double cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
     private ImageView[][] gridpaneArray = null;
     private PlacingCardAction placeAction;
+    private final double[][] positions = {  {0.27935, 0.91866}, {0.5, 0.91866}, {0.72064, 0.91866},
+                                            {0.83603, 0.81438}, {0.61133, 0.81438}, {0.39068, 0.81438}, {0.16801, 0.81438},
+                                            {0.16801, 0.71011}, {0.39068, 0.71011}, {0.61133, 0.71011}, {0.83603, 0.71011},
+                                            {0.83603, 0.60583}, {0.61133, 0.60583}, {0.39068, 0.60583}, {0.16801, 0.60583},
+                                            {0.16801, 0.50156}, {0.39068, 0.50156}, {0.61133, 0.50156}, {0.83603, 0.50156},
+                                            {0.83603, 0.39728}, {0.5, 0.34410},  {0.16801, 0.39728},
+                                            {0.16801, 0.29301},
+                                            {0.16801, 0.18873},
+                                            {0.29554, 0.10114}, {0.5, 0.08342}, {0.70647, 0.10114},
+                                            {0.83603, 0.18873},
+                                            {0.83603, 0.29301}, {0.5, 0.20959}};
 
+    @FXML
+    private ImageView redPawnImg, greenPawnImg, yellowPawnImg, bluePawnImg, scoreboardImg;
+
+    private Map<it.polimi.ingsw.model.Color, ImageView> colorToPawns;
+    private Map<it.polimi.ingsw.model.Color, int[]> colorToOffset;
 
     @FXML
     private TextField chatFld;
@@ -73,7 +89,7 @@ public class PlayController {
     private AnchorPane fatherPane, cardChoicePane, scoreboardPane, handPane, achievementPane, tablePane;
 
     @FXML
-    private GridPane playgroundGridPane;
+    private GridPane playgroundGridPane, resourcesGrid, pawnPlayersGrid;
 
     @FXML
     private ScrollPane playgroundScrollPane;
@@ -127,6 +143,18 @@ public class PlayController {
         achievementBtn.setToggleGroup(toggleGroup);
         handBtn.setSelected(true);
         playgroundChoiceBox.getItems().add("You ");
+        colorToPawns = Map.of(
+                it.polimi.ingsw.model.Color.RED, redPawnImg,
+                it.polimi.ingsw.model.Color.BLUE, bluePawnImg,
+                it.polimi.ingsw.model.Color.GREEN, greenPawnImg,
+                it.polimi.ingsw.model.Color.YELLOW, yellowPawnImg
+        );
+        colorToOffset = Map.of(
+                it.polimi.ingsw.model.Color.RED, new int[]{-1, -1},
+                it.polimi.ingsw.model.Color.BLUE, new int[]{+1, -1},
+                it.polimi.ingsw.model.Color.GREEN, new int[]{+1, +1},
+                it.polimi.ingsw.model.Color.YELLOW, new int[]{-1, +1}
+        );
     }
 
 //---------------- PLAYGROUND FXML METHODS ---------------------
@@ -159,7 +187,27 @@ public class PlayController {
         playgroundScrollPane.setHvalue(playgroundScrollPane.getHmax() / 2);
         playgroundScrollPane.setVvalue(playgroundScrollPane.getVmax() / 2);
     }
+    
+//---------------- SCOREBOARD FXML METHODS ---------------------
 
+    @FXML
+    protected void onScoreboardImgIn() {
+        Glow glow = new Glow();
+        glow.setLevel(0.1);
+        scoreboardImg.setEffect(glow);
+        DropShadow dropShadow = new DropShadow();
+        dropShadow.setInput(glow);
+        scoreboardImg.setEffect(dropShadow);
+        resourcesGrid.setVisible(false);
+        pawnPlayersGrid.setVisible(true);
+    }
+
+    @FXML
+    protected void onScoreboardImgOut() {
+        scoreboardImg.setEffect(null);
+        resourcesGrid.setVisible(true);
+        pawnPlayersGrid.setVisible(false);
+    }
 
 //---------------- CHAT FXML METHODS ---------------------
 
@@ -1018,6 +1066,23 @@ public class PlayController {
         printPlayground(myPlayer);
     }
 
+    private void printScoreboard() {
+        ImageView tempPawn = colorToPawns.get(myPlayer.getColor());
+        tempPawn.setLayoutX(scoreboardImg.getFitWidth()*positions[Math.min(29, myPlayer.getPoints())][0] - 9);
+        tempPawn.setLayoutY(scoreboardImg.getFitHeight()*positions[Math.min(29, myPlayer.getPoints())][1] - 12);
+        tempPawn.setLayoutX(tempPawn.getLayoutX() + colorToOffset.get(myPlayer.getColor())[0]*((tempPawn.getFitWidth()/2) + 3));
+        tempPawn.setLayoutY(tempPawn.getLayoutY() + colorToOffset.get(myPlayer.getColor())[1]*((tempPawn.getFitHeight()/2) + 3));
+        tempPawn.setVisible(true);
+        for(Player pp : otherPlayers) {
+            tempPawn = colorToPawns.get(pp.getColor());
+            tempPawn.setLayoutX(scoreboardImg.getFitWidth()*positions[Math.min(29, pp.getPoints())][0] - 9);
+            tempPawn.setLayoutY(scoreboardImg.getFitHeight()*positions[Math.min(29, pp.getPoints())][1] - 12);
+            tempPawn.setLayoutX(tempPawn.getLayoutX() + colorToOffset.get(pp.getColor())[0]*((tempPawn.getFitWidth()/2) + 3));
+            tempPawn.setLayoutY(tempPawn.getLayoutY() + colorToOffset.get(pp.getColor())[1]*((tempPawn.getFitHeight()/2) + 3));
+            tempPawn.setVisible(true);
+        }
+    }
+    
     private void placeablePlayground() {
         Playground area = myPlayer.getArea();
         ImageView cell;
@@ -1111,9 +1176,31 @@ public class PlayController {
         }
     }
 
+    private void initializeScoreboard(boolean all) {
+        if(all) {
+            cardChoicePane.setVisible(false);
+            scoreboardPane.setVisible(true);
+        }
+        printScoreboard();
+        ImageView tempImg = new ImageView(colorToPawns.get(myPlayer.getColor()).getImage());
+        tempImg.setFitHeight(17);
+        tempImg.setFitWidth(17);
+        pawnPlayersGrid.add(tempImg, 0, 0);
+        Label tempLbl = new Label("(You) " + myPlayer.getName());
+        Font tempFont = new Font(14);
+        tempLbl.setFont(tempFont);
+        pawnPlayersGrid.add(tempLbl, 1, 0);
+        for(int i = 0; i < otherPlayers.size(); i++) {
+            tempImg = new ImageView(colorToPawns.get(otherPlayers.get(i).getColor()).getImage());
+            tempImg.setFitHeight(17);
+            tempImg.setFitWidth(17);
+            pawnPlayersGrid.add(tempImg, 0, 0);
+            tempLbl = new Label(otherPlayers.get(i).getName());
+            pawnPlayersGrid.add(tempLbl, 1, i+1);
+        }
+    }
     private void initializeScoreboard() {
-        cardChoicePane.setVisible(false);
-        scoreboardPane.setVisible(true);
+        initializeScoreboard(true);
     }
 
     private void updatePlayerRelated() {
@@ -1213,6 +1300,7 @@ public class PlayController {
             alertLbl.setText(recipient + " placed a card " + (score > 0 ? "+" + score + "pts" : ""));
         }
         alertLbl.setVisible(true);
+        printScoreboard();
     }
 
     public void displaySuccessfulDrawn(String recipient, Card drawnCard) {
@@ -1452,12 +1540,19 @@ public class PlayController {
     public void setPlayer(Player myPlayer) {
         this.myPlayer = myPlayer;
         updatePlayerRelated();
+        printScoreboard();
     }
 
     public void setOtherPlayers(ArrayList<Player> otherPlayers) {
+        boolean initScore = false;
+        if(this.otherPlayers.size() < otherPlayers.size())
+            initScore = true;
         this.otherPlayers = otherPlayers;
+        if(initScore)
+            initializeScoreboard(false);
         for(Player playa : otherPlayers)
             if(playa.getName().equalsIgnoreCase(playgroundChoiceBox.getValue()))
                 printPlayground(playa);
+        printScoreboard();
     }
 }

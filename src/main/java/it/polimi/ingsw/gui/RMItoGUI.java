@@ -673,6 +673,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 System.out.println("!!! ERROR THREAD PLACE CARD couldn't send action !!!");
                 throw new RuntimeException(e);
             }
+            state = State.COMMANDS;
         });
     }
 
@@ -694,6 +695,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 System.out.println("!!! ERROR THREAD REPLACE CARD couldn't send action !!!");
                 throw new RuntimeException(e);
             }
+            state = State.COMMANDS;
         });
     }
 
