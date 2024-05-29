@@ -13,4 +13,5 @@ module it.polimi.ingsw {
     exports it.polimi.ingsw.gui;
     opens it.polimi.ingsw.gui to javafx.fxml;
     exports it.polimi.ingsw.networking.rmi;
+    exports it.polimi.ingsw.networking.action.toserver;
 }

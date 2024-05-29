@@ -1,0 +1,5 @@
+.mygridStyle Line {
+    -fx-stroke: rgb(209, 203, 203);
+    -fx-stroke-dash-array: 5 5;
+    -fx-stroke-dash-offset: 6;
+}

@@ -1,15 +1,23 @@
 package it.polimi.ingsw.gui;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.networking.action.toclient.CardDrawnAction;
+import it.polimi.ingsw.networking.action.toserver.ChosenDrawCardAction;
+import it.polimi.ingsw.networking.action.toserver.PlacingCardAction;
 import javafx.event.*;
 import javafx.fxml.FXML;
+import javafx.geometry.HPos;
+import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 public class PlayController {
@@ -20,9 +28,13 @@ public class PlayController {
     private ArrayList<Player> otherPlayers;
     public int starterChoice = 0;
     public int achievementChoice = 0;
+    public int drawChoice = 0;
+    public int placeChoice = -1;
+    private StarterCard strCard;
     private ArrayList<AchievementCard> choosableAchievements;
     private ArrayList<AchievementCard> achievements;
     public boolean canPlace = false;
+    public boolean hasPlaced = false;
     public boolean canDraw = false;
     public ArrayList<Message> messagesToSendQueue = new ArrayList<>();
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
@@ -36,6 +48,12 @@ public class PlayController {
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<Image> frontCommonGold, frontCommonResource, backCommonGold, backCommonResource;
     private Image backGoldDeck, backResourceDeck;
+    private final Image borderCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/border-card.png")));
+    private final Image anonymousCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/anonymous-card.png")));
+    private final int cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
+    private ImageView[][] gridpaneArray = null;
+    private PlacingCardAction placeAction;
+
 
     @FXML
     private TextField chatFld;
@@ -50,25 +68,58 @@ public class PlayController {
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
 
     @FXML
-    private AnchorPane cardChoicePane, scoreboardPane, handPane, achievementPane, tablePane;
+    private AnchorPane fatherPane, cardChoicePane, scoreboardPane, handPane, achievementPane, tablePane;
 
     @FXML
-    private Label selectCardLbl;
+    private GridPane playgroundGridPane;
+
+    @FXML
+    private ScrollPane playgroundScrollPane;
+
+    @FXML
+    private Label selectCardLbl, alertLbl;
 
     @FXML
     private ToggleButton tableBtn, handBtn, achievementBtn;
 
     @FXML
+    private ChoiceBox<String> playgroundChoiceBox;
+
+    @FXML
     public void initialize() {
+        /*BackgroundSize bgSize = new BackgroundSize(fatherPane.getPrefHeight(), fatherPane.getPrefWidth(), false, false, false, true);
+        BackgroundImage bgImg = new BackgroundImage(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/dust_texture.png"))),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
+                bgSize);
+        fatherPane.setBackground(new Background(bgImg));*/
+        initializeGridpane();
         toggleGroup = new ToggleGroup();
         tableBtn.setToggleGroup(toggleGroup);
         handBtn.setToggleGroup(toggleGroup);
         achievementBtn.setToggleGroup(toggleGroup);
         handBtn.setSelected(true);
+        playgroundChoiceBox.getItems().add("You ");
     }
 
-    
 //---------------- CHAT FXML METHODS ---------------------
+
+    @FXML
+    protected void onChoiceBoxClick() {
+        String targetPlayer = playgroundChoiceBox.getValue();
+        boolean foundPlayer = false;
+        for(Player plyr : otherPlayers)
+            if(plyr.getName().equalsIgnoreCase(targetPlayer)) {
+                foundPlayer = true;
+                printPlayground(plyr);
+                break;
+            }
+        if(!foundPlayer) {
+            printPlayground();
+            if(canPlace)
+                placeablePlayground();
+        }
+    }
+
     @FXML
     protected void onSendMessageButtonClick() {
         String s = chatFld.getText().trim();
@@ -123,7 +174,7 @@ public class PlayController {
     }
 
 //---------------- SELECT STARTER & ACHIVEMENT CARDS FXML METHODS ---------------------
-    
+
     @FXML
     protected void onSelectCard1In() {
         selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() - 6);
@@ -166,9 +217,13 @@ public class PlayController {
 
     @FXML
     protected void onSelectCard1Click() {
-        if(selectCardLbl.getText().equals("Choose the side of your starter card"))
+        if(selectCardLbl.getText().equals("Choose the side of your starter card")) {
             starterChoice = 1;
-        else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
+            strCard.setFront(true);
+            myPlayer.setArea(new Playground());
+            myPlayer.getArea().setSpace(strCard, 40, 40);
+            printPlayground();
+        } else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 1;
             initializeScoreboard();
             achievements.add(0,choosableAchievements.get(achievementChoice-1));
@@ -186,9 +241,13 @@ public class PlayController {
 
     @FXML
     protected void onSelectCard2Click() {
-        if(selectCardLbl.getText().equals("Choose the side of your starter card"))
+        if(selectCardLbl.getText().equals("Choose the side of your starter card")) {
             starterChoice = 2;
-        else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
+            strCard.setFront(false);
+            myPlayer.setArea(new Playground());
+            myPlayer.getArea().setSpace(strCard, 40, 40);
+            printPlayground();
+        } else if(selectCardLbl.getText().equals("Choose your own secret achievement")) {
             achievementChoice = 2;
             initializeScoreboard();
             achievements.add(0,choosableAchievements.get(achievementChoice-1));
@@ -205,7 +264,7 @@ public class PlayController {
     }
 
 //---------------- HAND PANE METHODS ---------------------
-    
+
     @FXML
     protected void onFlipCardsClick() {
         if(myPlayer.getHand().isEmpty())
@@ -230,10 +289,10 @@ public class PlayController {
     @FXML
     protected void onHandCard1Click() {
         if(canPlace) {
-            //to do
+            placeChoice = 1;
         }
     }
-    
+
     @FXML
     protected void onHandCard1In() {
         handCard1Img.setLayoutY(handCard1Img.getLayoutY() - 6);
@@ -259,7 +318,7 @@ public class PlayController {
         if(handCard3Img.isVisible())
             handCard3Img.setEffect(null);
     }
-    
+
     @FXML
     protected void onHandCard1Scroll() {
         myPlayer.getHand().get(0).setFront(!myPlayer.getHand().get(0).isFront());
@@ -269,7 +328,7 @@ public class PlayController {
     @FXML
     protected void onHandCard2Click() {
         if(canPlace) {
-            //to do
+            placeChoice = 2;
         }
     }
 
@@ -306,7 +365,7 @@ public class PlayController {
     @FXML
     protected void onHandCard3Click() {
         if(canPlace) {
-            //to do
+            placeChoice = 3;
         }
     }
 
@@ -339,7 +398,7 @@ public class PlayController {
     }
 
 //---------------- ACHIEVEMENTS PANE METHODS ---------------------
-    
+
     @FXML
     protected void onFlipAchievementsClick() {
         if(achievements.isEmpty())
@@ -390,7 +449,7 @@ public class PlayController {
         achievements.get(0).setFront(!achievements.get(0).isFront());
         achievementCard1Img.setImage(achievements.get(0).isFront() ? frontAchievements.get(0) : backAchievement);
     }
-    
+
     @FXML
     protected void onAchievementCard2In() {
         achievementCard2Img.setLayoutY(achievementCard2Img.getLayoutY() - 6);
@@ -448,7 +507,9 @@ public class PlayController {
         achievements.get(2).setFront(!achievements.get(2).isFront());
         achievementCard3Img.setImage(achievements.get(2).isFront() ? frontAchievements.get(2) : backAchievement);
     }
-    
+
+//---------------- PANEL CHOICE BUTTONS ---------------------
+
     @FXML
     protected void onTableButtonClick() {
         if(!handBtn.isSelected() && !achievementBtn.isSelected())
@@ -500,12 +561,11 @@ public class PlayController {
         if(tableResource2Img.isVisible())
             tableResource2Img.setImage(commonResource.get(1).isFront() ? frontCommonResource.get(1) : backCommonResource.get(1));
     }
-    
+
     @FXML
     protected void onTableGold1Click() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 1;
         }
     }
 
@@ -530,7 +590,7 @@ public class PlayController {
         if(tableResourceDeckImg.isVisible())
             tableResourceDeckImg.setEffect(colorAdjust);
         if(tableBackDeck2Img.isVisible())
-            tableBackDeck2Img.setEffect(colorAdjust);            
+            tableBackDeck2Img.setEffect(colorAdjust);
     }
 
     @FXML
@@ -554,7 +614,7 @@ public class PlayController {
         if(tableBackDeck2Img.isVisible())
             tableBackDeck2Img.setEffect(null);
     }
-    
+
     @FXML
     protected void onTableGold1Scroll() {
         commonGold.get(0).setFront(!commonGold.get(0).isFront());
@@ -564,11 +624,10 @@ public class PlayController {
     @FXML
     protected void onTableGold2Click() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 2;
         }
     }
-    
+
     @FXML
     protected void onTableGold2In() {
         tableGold2Img.setFitWidth(tableGold2Img.getFitWidth() + 12);
@@ -620,12 +679,11 @@ public class PlayController {
         commonGold.get(1).setFront(!commonGold.get(1).isFront());
         tableGold2Img.setImage(commonGold.get(1).isFront() ? frontCommonGold.get(1) : backCommonGold.get(1));
     }
-    
+
     @FXML
     protected void onTableResource1Click() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 3;
         }
     }
 
@@ -684,8 +742,7 @@ public class PlayController {
     @FXML
     protected void onTableResource2Click() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 4;
         }
     }
 
@@ -744,8 +801,7 @@ public class PlayController {
     @FXML
     protected void onTableGoldDeckClick() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 5;
         }
     }
 
@@ -802,8 +858,7 @@ public class PlayController {
     @FXML
     protected void onTableResourceDeckClick() {
         if(canDraw) {
-            //to do
-            return;
+            drawChoice = 6;
         }
     }
 
@@ -856,9 +911,134 @@ public class PlayController {
         if(tableBackDeck1Img.isVisible())
             tableBackDeck1Img.setEffect(null);
     }
-    
+
 //---------------- PRIVATE MISC METHODS ---------------------
-    
+
+    private void initializeGridpane() {
+        ColumnConstraints colConst = new ColumnConstraints();
+        colConst.setHalignment(HPos.CENTER);
+        colConst.setMaxWidth(cellWidth);
+        colConst.setMinWidth(cellWidth);
+        colConst.setPrefWidth(cellWidth);
+        RowConstraints rowConst = new RowConstraints();
+        rowConst.setValignment(VPos.CENTER);
+        rowConst.setMinHeight(cellHeight);
+        rowConst.setMaxHeight(cellHeight);
+        rowConst.setPrefHeight(cellHeight);;
+        for(int i = 0; i < 81; i++) {
+            playgroundGridPane.getColumnConstraints().add(colConst);
+            playgroundGridPane.getRowConstraints().add(rowConst);
+        }
+        playgroundScrollPane.setHvalue(playgroundScrollPane.getHmax() / 2);
+        playgroundScrollPane.setVvalue(playgroundScrollPane.getVmax() / 2);
+    }
+
+    private void printPlayground(Player playa) {
+        Playground area = playa.getArea();
+        playgroundGridPane.getChildren().clear();
+        playgroundGridPane.getColumnConstraints().clear();
+        playgroundGridPane.getRowConstraints().clear();
+        initializeGridpane();
+        //placing cards on the grid
+        LinkedHashMap<Card, int[]> orderedCoords = (LinkedHashMap) area.getOrderedCoords();
+        ArrayList<Card> keys = new ArrayList<>(orderedCoords.keySet());
+        ImageView cImg;
+        String cPath;
+        int[] cCoords;
+        for(Card crd : keys) {
+            cCoords = orderedCoords.get(crd);
+            cPath = crd.isFront()  ? "front/" : "back/";
+            if(crd.getClass() == StarterCard.class)
+                cPath = cPath.concat(((StarterCard) crd).getID());
+            else if(crd.getClass() == ResourceCard.class)
+                cPath = cPath.concat(((ResourceCard) crd).getSideID());
+            else if(crd.getClass() == GoldCard.class)
+                cPath = cPath.concat(((GoldCard) crd).getSideID());
+            else return;
+            cImg = new ImageView(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/" + cPath + ".png"))));
+            cImg.setFitHeight(pch);
+            cImg.setFitWidth(pcw);
+            cImg.setEffect(new DropShadow(5, Color.BLACK));
+            playgroundGridPane.add(cImg, cCoords[1], cCoords[0]);
+        }
+    }
+
+    private void printPlayground() {
+        printPlayground(myPlayer);
+    }
+
+    private void placeablePlayground() {
+        Playground area = myPlayer.getArea();
+        ImageView cell;
+        gridpaneArray = new ImageView[80][80];
+        for(int i = area.getWestBound() == 0 ? 0 : area.getWestBound() - 1 ; i <= (area.getEastBound() == 80 ? 80 : area.getEastBound() + 1); i++) {
+            for(int j = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1; j <= (area.getSouthBound() == 80 ? 80 : area.getSouthBound() + 1); j++) {
+                if(area.getSpace(j, i).isFree() && !area.getSpace(j, i).isDead()) {
+                    cell = new ImageView(borderCard);
+                    cell.setPickOnBounds(true);
+                    cell.setOpacity(0.35);
+                    cell.setCursor(Cursor.HAND);
+                    cell.setFitWidth(pcw);
+                    cell.setFitHeight(pch);
+                    cell.setOnMouseEntered(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if(canPlace) {
+                                switch(placeChoice) {
+                                    case 1:
+                                        ((ImageView)event.getSource()).setImage(handCard1Img.getImage());
+                                        break;
+                                    case 2:
+                                        ((ImageView)event.getSource()).setImage(handCard2Img.getImage());
+                                        break;
+                                    case 3:
+                                        ((ImageView)event.getSource()).setImage(handCard3Img.getImage());
+                                        break;
+                                    case -1:
+                                        ((ImageView)event.getSource()).setImage(anonymousCard);
+                                        break;
+                                    default:
+                                        return;
+                                }
+                                ((ImageView)event.getSource()).setFitHeight(pch);
+                                ((ImageView)event.getSource()).setFitWidth(pcw);
+                                ((ImageView)event.getSource()).setOpacity(1);
+                                if(placeChoice != -1)
+                                    ((ImageView)event.getSource()).setEffect(new DropShadow(5, Color.BLACK));
+                            }
+                        }
+                    });
+                    cell.setOnMouseExited(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            ((ImageView)event.getSource()).setImage(borderCard);
+                            ((ImageView)event.getSource()).setOpacity(0.35);
+                            ((ImageView)event.getSource()).setEffect(null);
+                        }
+                    });
+                    cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            if(!canPlace || placeChoice == -1)
+                                return;
+                            for(int tCol = area.getWestBound() == 0 ? 0 : area.getWestBound() - 1 ; tCol <= (area.getEastBound() == 80 ? 80 : area.getEastBound() + 1); tCol++) {
+                                for(int tRow = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1; tRow <= (area.getSouthBound() == 80 ? 80 : area.getSouthBound() + 1); tRow++) {
+                                    if(gridpaneArray[tCol][tRow] != null && gridpaneArray[tCol][tRow].equals((ImageView) event.getSource())) {
+                                        System.out.println("--------GUI Place card_" + placeChoice + (myPlayer.getHand().get(placeChoice-1).isFront() ? "_front" : "_back") + " in row " + tRow + ", col " + tCol);
+                                        placeAction = new PlacingCardAction(placeChoice-1, myPlayer.getHand().get(placeChoice-1).isFront(), tRow, tCol, myNickname);
+                                        hasPlaced = true;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    playgroundGridPane.add(cell, i, j);
+                    gridpaneArray[i][j] = cell;
+                }
+            }
+        }
+    }
+
     private void initializeScoreboard() {
         cardChoicePane.setVisible(false);
         scoreboardPane.setVisible(true);
@@ -903,7 +1083,7 @@ public class PlayController {
         for(AchievementCard achCard: achievements) {
             achCard.setFront(true);
             frontAchievements.add(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/front/" + achCard.getSideID() + ".png"))));
-        } 
+        }
         achievementCard1Img.setImage(frontAchievements.get(0));
         achievementCard2Img.setImage(frontAchievements.get(1));
         achievementCard1Img.setVisible(true);
@@ -922,15 +1102,20 @@ public class PlayController {
     }
 
     public void initializeChatOptions(ArrayList<Player> players) {
+        playgroundChoiceBox.getItems().clear();
+        playgroundChoiceBox.getItems().add("You ");
         otherPlayers = players;
         switch(otherPlayers.size()) {
             case 3:
+                playgroundChoiceBox.getItems().add(otherPlayers.get(2).getName());
                 p3Item.setText(otherPlayers.get(2).getName());
                 p3Item.setVisible(true);
             case 2:
+                playgroundChoiceBox.getItems().add(otherPlayers.get(1).getName());
                 p2Item.setText(otherPlayers.get(1).getName());
                 p2Item.setVisible(true);
             case 1:
+                playgroundChoiceBox.getItems().add(otherPlayers.get(0).getName());
                 p1Item.setText(otherPlayers.get(0).getName());
                 p1Item.setVisible(true);
                 break;
@@ -939,8 +1124,40 @@ public class PlayController {
         }
     }
 
+    public void displaySuccessfulPlace(String recipient, int score) {
+        if(recipient.equalsIgnoreCase(myNickname)) {
+            updatePlayerRelated();
+            printPlayground();
+            playgroundChoiceBox.setValue("You ");
+            alertLbl.setText("You placed the card!" + (score > 0 ? "+" + score + "pts" : ""));
+        } else {
+            alertLbl.setText(recipient + "placed a card" + (score > 0 ? "+" + score + "pts" : ""));
+        }
+    }
+
+    public void displaySuccessfulDrawn(String recipient, Card drawnCard) {
+        String drawText = " drew a " + (drawnCard.getClass() == GoldCard.class ? "gold" : "resource") + " card";
+        if(recipient.equalsIgnoreCase(myNickname)) {
+            updatePlayerRelated();
+            handBtn.setSelected(true);
+            onHandButtonClick();
+            alertLbl.setText("You" + drawText);
+        } else {
+            alertLbl.setText(recipient + drawText);
+        }
+    }
+
+    public void alertToDraw() {
+        drawChoice = 0;
+        canDraw = true;
+        tableBtn.setSelected(true);
+        onTableButtonClick();
+        alertLbl.setText("Draw a card!");
+    }
+
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         myPlayer = self;
+        strCard = str;
         achievementBtn.setDisable(true);
         updatePlayerRelated();
         updateTableCards(commonGold, goldDeck, commonResource, resourceDeck);
@@ -1084,10 +1301,62 @@ public class PlayController {
                 break;
         }
     }
-    
+
+    public void alertToPlace() {
+        placeChoice = -1;
+        canPlace = true;
+        hasPlaced = false;
+        printPlayground();
+        placeablePlayground();
+        playgroundChoiceBox.setValue("You ");
+        alertLbl.setText("Place a card!");
+        alertLbl.setVisible(true);
+    }
+
+    public void alertToRePlace() {
+        placeChoice = -1;
+        canPlace = true;
+        hasPlaced = false;
+        printPlayground();
+        placeablePlayground();
+        playgroundChoiceBox.setValue("You ");
+        alertLbl.setText("You can't place it there!");
+        alertLbl.setVisible(true);
+    }
+
+    public PlacingCardAction discoverPlace() {
+        if(hasPlaced) {
+            PlacingCardAction a = placeAction;
+            placeAction = null;
+            canPlace = false;
+            hasPlaced = false;
+            placeChoice = -1;
+            return a;
+        } else
+            return null;
+    }
+
+    public ChosenDrawCardAction discoverDraw() {
+        if(canDraw && drawChoice != 0) {
+            ChosenDrawCardAction a = new ChosenDrawCardAction(myNickname, drawChoice);
+            drawChoice = 0;
+            canDraw = false;
+            return a;
+        } else
+            return null;
+    }
+
     //getters and setters
     public void setNickname(String nick) {
         myNickname = nick;
     }
 
+    public void setPlayer(Player myPlayer) {
+        this.myPlayer = myPlayer;
+        updatePlayerRelated();
+    }
+
+    public void setOtherPlayers(ArrayList<Player> otherPlayers) {
+        this.otherPlayers = otherPlayers;
+    }
 }

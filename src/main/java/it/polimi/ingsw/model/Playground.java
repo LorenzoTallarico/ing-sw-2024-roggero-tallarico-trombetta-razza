@@ -2,7 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+
 
 public class Playground implements Serializable {
 private final Space[][] table;
@@ -12,8 +14,12 @@ private int northBound;
 private int eastBound;
 private int westBound;
 private int southBound;
+private final LinkedHashMap<Card, int[]> orderedCoords;
+
+
 
     public Playground() {
+        orderedCoords = new LinkedHashMap<>();
         table = new Space[81][81];
         for(int x = 0; x < 81; x++) {
             for(int y = 0; y < 81; y++) {
@@ -215,8 +221,9 @@ private int southBound;
         } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE)){
             points = card.getPoints(); //simple gold card with no requirements
         }
-        if(card.getClass() == ResourceCard.class && card.getPoints() == 1)
+        if(card.getClass() == ResourceCard.class && card.getPoints() == 1 && card.isFront())
             points = 1;
+        orderedCoords.put(card, new int[]{row, column});
         return points;
     }
 
@@ -282,4 +289,11 @@ private int southBound;
         return southBound;
     }
 
+    /**
+     * Method that returns a map of cards in the order they've been place
+     * @return the Map: Card, int[2], first int is row (y), the second is column (x)
+     */
+    public Map<Card, int[]> getOrderedCoords() {
+        return orderedCoords;
+    }
 }

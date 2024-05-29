@@ -53,7 +53,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     private final GUIView guiView;
     private final LoginController loginController;
     private PlayController playController;
-    private Thread threadChatListener, threadStartListener, threadAchievementListener;
+    private Thread threadChatListener, threadStartListener, threadAchievementListener, threadPlaceListener, threadRePlaceListener, threadDrawListener;
 
     public RMItoGUI(VirtualServer server) throws RemoteException {
         this.server = server;
@@ -475,7 +475,9 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             case ASKINGPLACE:
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     p = ((AskingPlaceAction)act).getPlayer();
+                    Platform.runLater(() -> playController.setPlayer(p));
                     state = State.PLACE;
+                    threadPlaceListener.start();
                     System.out.println("> It's your time to play, enter \"place\" to place a card.");
                 } else {
                     refreshPlayers(((AskingPlaceAction)act).getPlayer());
@@ -487,6 +489,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     System.out.println("> You placed a " + (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
                             ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
                     p = ((PlacedCardAction)act).getPlayer();
+                    Platform.runLater(() -> playController.setPlayer(p));
                     Print.playgroundPrinter(p.getArea());
                 } else {
                     refreshPlayers(((PlacedCardAction)act).getPlayer());
@@ -494,11 +497,13 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                             (((PlacedCardAction)act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
                             ((PlacedCardAction)act).getRow() + "][" + ((PlacedCardAction)act).getColumn() + "]" + (((PlacedCardAction)act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction)act).getScore() + " pts")) + ".");
                 }
+                Platform.runLater(() -> playController.displaySuccessfulPlace(act.getRecipient(), ((PlacedCardAction)act).getScore()));
                 break;
             case PLACEDCARDERROR:
                 if(act.getRecipient().equalsIgnoreCase(nickname) && state.equals(State.COMMANDS)) {
                     System.out.println(((PlacedErrorAction)act).getError());
                     state = State.PLACE;
+                    threadRePlaceListener.start();
                 }
                 break;
             case ASKINGDRAW:
@@ -509,13 +514,16 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 if(act.getRecipient().equalsIgnoreCase(nickname)) {
                     System.out.println("> Choose the card you want to draw with the command \"draw\".");
                     state = State.DRAW;
+                    threadDrawListener.start();
                 } else {
+                    Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
                     System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
                 }
                 break;
             case CARDDRAWN:
                 if(act.getRecipient().equalsIgnoreCase(nickname)){
                     p = ((CardDrawnAction)act).getPlayer();
+                    Platform.runLater(() -> playController.setPlayer(p));
                     System.out.println("> You drew the following card:");
                     Print.largeCardBothSidesPrinter(((CardDrawnAction)act).getCard());
                     System.out.println("> Your turn is over.");
@@ -523,13 +531,16 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     refreshPlayers(((CardDrawnAction)act).getPlayer());
                     System.out.println("> " + act.getRecipient() + " drew a card.");
                 }
+                Platform.runLater(() -> playController.displaySuccessfulDrawn(act.getRecipient(), ((CardDrawnAction)act).getCard()));
                 break;
             case WINNERS:
                 for(Player tempPlayer : ((WinnersAction)act).getPlayers())
-                    if(nickname.equalsIgnoreCase(tempPlayer.getName()))
+                    if(nickname.equalsIgnoreCase(tempPlayer.getName())) {
                         p = tempPlayer;
-                    else
+                        Platform.runLater(() -> playController.setPlayer(p));
+                    } else {
                         refreshPlayers(tempPlayer);
+                    }
                 Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
                 Print.scoreboardPrinter(allPlayers, p);
                 break;
@@ -565,6 +576,8 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
             if(player.getName().equalsIgnoreCase(allPlayers.get(i).getName())) {
                 allPlayers.remove(i); //removing the outdated player from the list
                 allPlayers.add(player); //adding the update player to the list
+                if(playController != null)
+                    Platform.runLater(() -> playController.setOtherPlayers(allPlayers));
                 check = true;
             }
         }
@@ -629,7 +642,61 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                 throw new RuntimeException(e);
             }
         });
+        threadPlaceListener = new Thread(() -> {
+            Platform.runLater(() -> playController.alertToPlace());
+            PlacingCardAction a;
+            do {
+                a = playController.discoverPlace();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS PLACED !!!");
+                }
+            } while (a == null);
+            try {
+                server.sendAction(a);
+            } catch (RemoteException e) {
+                System.out.println("!!! ERROR THREAD PLACE CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+        });
+        threadRePlaceListener = new Thread(() -> {
+            Platform.runLater(() -> playController.alertToRePlace());
+            PlacingCardAction a;
+            do {
+                a = playController.discoverPlace();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS PLACED !!!");
+                }
+            } while (a == null);
+            try {
+                server.sendAction(a);
+            } catch (RemoteException e) {
+                System.out.println("!!! ERROR THREAD REPLACE CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+        });
+        threadDrawListener = new Thread(() -> {
+            Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
+            Platform.runLater(() -> playController.alertToDraw());
+            ChosenDrawCardAction a;
+            do {
+                a = playController.discoverDraw();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS DRAWN !!!");
+                }
+            } while (a == null);
+            try {
+                server.sendAction(a);
+            } catch (RemoteException e) {
+                System.out.println("!!! ERROR THREAD DRAW CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+        });
     }
-//**
 
 }
