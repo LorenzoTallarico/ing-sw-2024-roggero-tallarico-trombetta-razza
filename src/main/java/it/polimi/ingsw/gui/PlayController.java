@@ -10,7 +10,6 @@ import javafx.fxml.FXML;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
@@ -45,7 +44,6 @@ public class PlayController {
     private ArrayList<Image> frontAchievements;
     private ToggleGroup toggleGroup;
     private ArrayList<GoldCard> commonGold;
-    private Resource goldDeck, resourceDeck;
     private ArrayList<ResourceCard> commonResource;
     private ArrayList<Image> frontCommonGold, frontCommonResource, backCommonGold, backCommonResource;
     private Image backGoldDeck, backResourceDeck;
@@ -66,12 +64,11 @@ public class PlayController {
                                             {0.29554, 0.10114}, {0.5, 0.08342}, {0.70647, 0.10114},
                                             {0.83603, 0.18873},
                                             {0.83603, 0.29301}, {0.5, 0.20959}};
+    private Map<it.polimi.ingsw.model.Color, ImageView> colorToPawns;
+    private Map<it.polimi.ingsw.model.Color, int[]> colorToOffset;
 
     @FXML
     private ImageView redPawnImg, greenPawnImg, yellowPawnImg, bluePawnImg, scoreboardImg;
-
-    private Map<it.polimi.ingsw.model.Color, ImageView> colorToPawns;
-    private Map<it.polimi.ingsw.model.Color, int[]> colorToOffset;
 
     @FXML
     private TextField chatFld;
@@ -108,10 +105,10 @@ public class PlayController {
 
     @FXML
     public void initialize() {
-        /*BackgroundSize bgSize = new BackgroundSize(fatherPane.getPrefHeight(), fatherPane.getPrefWidth(), false, false, false, true);
-        BackgroundImage bgImg = new BackgroundImage(new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/dust_texture.png"))),
+        /*Image backgroundImage = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/flower-pattern.png")));
+        BackgroundImage bgImg = new BackgroundImage(backgroundImage,
                 BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-                bgSize);
+                new BackgroundSize(100, 100, false, false, false, false));
         fatherPane.setBackground(new Background(bgImg));*/
         initializeGridpane();
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -1194,9 +1191,11 @@ public class PlayController {
             tempImg = new ImageView(colorToPawns.get(otherPlayers.get(i).getColor()).getImage());
             tempImg.setFitHeight(17);
             tempImg.setFitWidth(17);
-            pawnPlayersGrid.add(tempImg, 0, 0);
+            pawnPlayersGrid.add(tempImg, 0, i+1);
             tempLbl = new Label(otherPlayers.get(i).getName());
+            tempLbl.setFont(tempFont);
             pawnPlayersGrid.add(tempLbl, 1, i+1);
+            tempLbl.setEffect(null);
         }
     }
     private void initializeScoreboard() {
@@ -1368,9 +1367,7 @@ public class PlayController {
     public void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         //updating values from client
         this.commonGold = commonGold;
-        this.goldDeck = goldDeck;
         this.commonResource = commonResource;
-        this.resourceDeck = resourceDeck;
         //updating images and setting cards to front
         frontCommonGold = new ArrayList<>();
         backCommonGold = new ArrayList<>();
@@ -1541,18 +1538,15 @@ public class PlayController {
         this.myPlayer = myPlayer;
         updatePlayerRelated();
         printScoreboard();
+        initializeScoreboard(false);
     }
 
     public void setOtherPlayers(ArrayList<Player> otherPlayers) {
-        boolean initScore = false;
-        if(this.otherPlayers.size() < otherPlayers.size())
-            initScore = true;
         this.otherPlayers = otherPlayers;
-        if(initScore)
-            initializeScoreboard(false);
         for(Player playa : otherPlayers)
             if(playa.getName().equalsIgnoreCase(playgroundChoiceBox.getValue()))
                 printPlayground(playa);
         printScoreboard();
+        initializeScoreboard(false);
     }
 }
