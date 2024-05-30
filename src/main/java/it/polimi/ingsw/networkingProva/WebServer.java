@@ -84,7 +84,7 @@ public class WebServer implements VirtualServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 //qui si è attaccato un nuovo client
-                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap);
+                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap, onlineMap, nicknamesMap);
                 clients.add(actualSocket);
                 onlineMap.put(actualSocket, Boolean.TRUE);
                 nicknamesMap.put(actualSocket, actualSocket.getNickname());
@@ -252,22 +252,21 @@ public class WebServer implements VirtualServer {
                     System.out.println(c.getNickname());
                 nicknamesMap.put(client, nick);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
+                boolean startSend=false;
                 for (VirtualView v : this.clients) {
-                    if (v.getOnline() && v.getNickname() != null) {
-                        Action act = new AskingStartAction(v.getNickname(), countOnlinePlayer());
+                    if (v.getOnline() && v.getNickname() != null && !startSend) {
+                        startSend = true;
                         try {
-                            clientActions.put(act);
+                            clientActions.put(new AskingStartAction(v.getNickname(), countOnlinePlayer()));
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        act = new JoiningPlayerAction(nick, countOnlinePlayer() , 4);
-                        try {
-                            clientActions.put(act);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        return true;
                     }
+                }
+                try {
+                    clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer() , 4));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
                 return true;
             }
@@ -304,8 +303,9 @@ public class WebServer implements VirtualServer {
         try {
             System.out.println("> Received action, type \"" + action.getType().toString() + "\".");
             if (action.getType().equals(ActionType.PONG)) {
-                for (VirtualView c : nicknamesMap.keySet()) {
+                for (VirtualView c : onlineMap.keySet()) {
                     if (nicknamesMap.get(c).equals(action.getAuthor())) {
+                        System.out.println("sostituito il boolean");
                         pingMap.replace(c, Boolean.TRUE);
                     }
                 }
@@ -328,38 +328,42 @@ public class WebServer implements VirtualServer {
             }
             for (VirtualView c : pingMap.keySet()){
                 System.out.println("- Chiave");
-                c.showAction(new PingAction());
+                try {
+                    c.showAction(new PingAction());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
             Thread.sleep(5000);
             for (VirtualView c : pingMap.keySet()) {
                 if (pingMap.get(c).equals(Boolean.FALSE)) {
-                    //Entriamo se non ha pingato c
+                    System.out.println("l'utente " + nicknamesMap.get(c) + " non ha pingato");
                     if (!gameStarted) {
                         //Gioco non startato, client in fase di connessione
                         startActionRequired = true;
                         for (VirtualView v : pingMap.keySet()) {
-                            act = new DisconnectedPlayerAction(nicknamesMap.get(v));
-                            clientActions.put(act);
+                            if (pingMap.get(v).booleanValue()) {
+                                 v.showAction(new DisconnectedPlayerAction(nicknamesMap.get(c)));
+                            }
                         }
+
+                        clients.remove(c);
+                        onlineMap.remove(c);
+                        nicknamesMap.remove(c);
+                    } else {
+                        //gioco già startato
+                        onlineMap.replace(c, Boolean.FALSE);
                     }
-                    clients.remove(c);
-                    onlineMap.remove(c);
-                    nicknamesMap.remove(c);
-                } else {
-                    //gioco già startato
-                    onlineMap.replace(c, Boolean.FALSE);
                 }
             }
             if (startActionRequired) {
-                if (clients.get(0) != null) {
-                    try {
-                        clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
-                        System.out.println("Invio AskingStart");
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
+                    System.out.println("Invio AskingStart");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }

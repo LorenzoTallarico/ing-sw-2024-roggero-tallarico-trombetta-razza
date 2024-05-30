@@ -30,8 +30,10 @@ public class ClientSocket implements VirtualView, Runnable {
     private boolean connected = true;
     private boolean gui;
     private Map<VirtualView, Boolean> pingMap;
+    private Map<VirtualView, Boolean> onlineMap;
+    private Map<VirtualView, String> nicknamesMap;
 
-    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, Map<VirtualView, Boolean> pingMap) throws IOException {
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, Map<VirtualView, Boolean> pingMap, Map<VirtualView, Boolean> onlineMap, Map<VirtualView, String> nicknamesMap) throws IOException {
         this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
@@ -39,6 +41,8 @@ public class ClientSocket implements VirtualView, Runnable {
         this.clientActions = clientActions;
         this.clients = clients;
         this.pingMap = pingMap;
+        this.onlineMap = onlineMap;
+        this.nicknamesMap = nicknamesMap;
     }
 
     @Override
@@ -86,8 +90,7 @@ public class ClientSocket implements VirtualView, Runnable {
             try {
                 if(nickname != null ) {
                     if(action.getType().equals(ActionType.PONG)){
-                        pingMap.replace((VirtualView)this, Boolean.TRUE);
-
+                        pingMap.replace(this, Boolean.TRUE);
                     }
                     serverActions.put(action);
                 }
@@ -104,6 +107,8 @@ public class ClientSocket implements VirtualView, Runnable {
                     if(tempNickname != null){
                         connected = true;
                         nickname = tempNickname;
+                        nicknamesMap.put(this, nickname);
+                        onlineMap.put(this, Boolean.TRUE);
                         gui = ((SetNicknameAction) action).getGui();
                         System.out.println(">Allowed Socket connection to a new client named \""+nickname+"\".");
                     }
@@ -131,7 +136,9 @@ public class ClientSocket implements VirtualView, Runnable {
                     try{
                         clientActions.put(act);
                     }catch(InterruptedException e){
-                        e.printStackTrace();
+                        e.printStackTrace();for(VirtualView v: clients) {
+                        System.out.println("Nome: " + v.getNickname());
+                    }
                     }
                 }
             } catch (InterruptedException | IOException e) {

@@ -3,6 +3,7 @@ package it.polimi.ingsw.clientProva;
 
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.ActionType;
 import it.polimi.ingsw.networking.action.ChatMessageAction;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
@@ -16,6 +17,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.net.SocketOption;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -437,7 +439,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case JOININGPLAYER:
-                        System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                        if(!((JoiningPlayerAction) act).getPlayer().equals(nickname))
+                            System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
                         break;
                     case ASKINGPLAYERSNUMBER:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
@@ -610,7 +613,13 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     public void showAction(Action actionFromServer) throws RemoteException {
         try {
-            serverActionsReceived.put(actionFromServer);
+            if(actionFromServer.getType().equals(ActionType.PING)){
+                server.sendAction(new PongAction(nickname));
+                System.out.println("Inviato Pong!");
+            }
+            else {
+                serverActionsReceived.put(actionFromServer);
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }

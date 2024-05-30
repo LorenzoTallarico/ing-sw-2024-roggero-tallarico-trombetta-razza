@@ -2,6 +2,8 @@ package it.polimi.ingsw.clientProva;
 
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.ActionType;
+import it.polimi.ingsw.networking.action.toserver.PongAction;
 import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 
@@ -54,8 +56,14 @@ public class ServerSocket implements VirtualServer, Runnable {
                 throw new RuntimeException(e);
             }
             try {
+                if(action.getType().equals(ActionType.PING)){
+                    sendAction(new PongAction("")); //da Sistemare il nickname
+
+                }
                 serverActionReceived.put(action);
             } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
         }
