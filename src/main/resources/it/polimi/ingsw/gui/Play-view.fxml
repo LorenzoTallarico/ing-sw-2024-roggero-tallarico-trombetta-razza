@@ -5,6 +5,7 @@
 <?import javafx.scene.effect.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
 <AnchorPane fx:id="fatherPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="734.0" prefWidth="1294.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="it.polimi.ingsw.gui.PlayController">
@@ -177,114 +178,6 @@
             </Button>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="tablePane" layoutX="532.0" layoutY="524.0" prefHeight="200.0" prefWidth="1024.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0">
-         <children>
-            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="838.0" layoutY="4.0" mnemonicParsing="false" onAction="#onFlipTableClick" prefHeight="28.0" prefWidth="60.0" text="Flip cards" AnchorPane.bottomAnchor="168.0" AnchorPane.rightAnchor="24.0">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-               <graphic>
-                  <ImageView fitHeight="18.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@img/icons/flip-card.png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Flip all the cards" />
-               </tooltip>
-            </Button>
-            <Label layoutX="373.5" layoutY="4.0" prefHeight="28.0" prefWidth="466.0" text="Hover to select | Click to draw" AnchorPane.bottomAnchor="168.0" AnchorPane.rightAnchor="179.0">
-               <font>
-                  <Font name="System Bold" size="19.0" />
-               </font>
-            </Label>
-            <ImageView fx:id="tableGold1Img" fitHeight="104.0" fitWidth="156.0" layoutX="9.0" layoutY="60.0" onMouseClicked="#onTableGold1Click" onMouseEntered="#onTableGold1In" onMouseExited="#onTableGold1Out" onScroll="#onTableGold1Scroll" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/061.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor></ImageView>
-            <ImageView fx:id="tableGold2Img" fitHeight="104.0" fitWidth="156.0" layoutX="175.0" layoutY="60.0" onMouseClicked="#onTableGold2Click" onMouseEntered="#onTableGold2In" onMouseExited="#onTableGold2Out" onScroll="#onTableGold2Scroll" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/071.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <ImageView fx:id="tableResource1Img" fitHeight="104.0" fitWidth="156.0" layoutX="341.0" layoutY="60.0" onMouseClicked="#onTableResource1Click" onMouseEntered="#onTableResource1In" onMouseExited="#onTableResource1Out" onScroll="#onTableResource1Scroll" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/001.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <ImageView fx:id="tableResource2Img" fitHeight="104.0" fitWidth="156.0" layoutX="507.0" layoutY="60.0" onMouseClicked="#onTableResource2Click" onMouseEntered="#onTableResource2In" onMouseExited="#onTableResource2Out" onScroll="#onTableResource2Scroll" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/011.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <ImageView fx:id="tableBackDeck1Img" fitHeight="107.0" fitWidth="161.0" layoutX="679.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/misc/backdeck.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableBackDeck2Img" fitHeight="107.0" fitWidth="161.0" layoutX="856.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/misc/backdeck.png" />
-               </image>
-            </ImageView>
-            <ImageView fx:id="tableGoldDeckImg" fitHeight="104.0" fitWidth="156.0" layoutX="673.0" layoutY="60.0" onMouseClicked="#onTableGoldDeckClick" onMouseEntered="#onTableGoldDeckIn" onMouseExited="#onTableGoldDeckOut" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/061.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-            <ImageView fx:id="tableResourceDeckImg" fitHeight="104.0" fitWidth="156.0" layoutX="850.0" layoutY="60.0" onMouseClicked="#onTableResourceDeckClick" onMouseEntered="#onTableResourceDeckIn" onMouseExited="#onTableResourceDeckOut" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/cards/back/001.png" />
-               </image>
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </ImageView>
-         </children>
-      </AnchorPane>
-      <ToggleButton fx:id="tableBtn" layoutX="387.0" layoutY="529.0" mnemonicParsing="false" onAction="#onTableButtonClick" text="Table" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="838.7">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/icons/round-table2.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </ToggleButton>
-      <ToggleButton fx:id="handBtn" layoutX="458.0" layoutY="529.0" mnemonicParsing="false" onAction="#onHandButtonClick" text="Hand" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="768.0">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/icons/card-hand.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </ToggleButton>
-      <ToggleButton fx:id="achievementBtn" disable="true" layoutX="529.0" layoutY="529.0" mnemonicParsing="false" onAction="#onAchievementButtonClick" text="Achievement" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="656.0">
-         <graphic>
-            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@img/icons/target.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </ToggleButton>
       <ScrollPane fx:id="playgroundScrollPane" hbarPolicy="ALWAYS" layoutX="612.0" layoutY="38.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="460.0" prefWidth="937.0" styleClass="mygridStyle" stylesheets="@custom-theme.css" vbarPolicy="ALWAYS" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <content>
             <GridPane fx:id="playgroundGridPane" gridLinesVisible="true" />
@@ -430,6 +323,114 @@
             </GridPane>
          </children>
       </AnchorPane>
+      <AnchorPane fx:id="tablePane" layoutX="532.0" layoutY="524.0" prefHeight="200.0" prefWidth="1024.0" visible="false" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="0.0">
+         <children>
+            <Button contentDisplay="GRAPHIC_ONLY" graphicTextGap="0.0" layoutX="838.0" layoutY="4.0" mnemonicParsing="false" onAction="#onFlipTableClick" prefHeight="28.0" prefWidth="60.0" text="Flip cards" AnchorPane.bottomAnchor="168.0" AnchorPane.rightAnchor="24.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <graphic>
+                  <ImageView fitHeight="18.0" fitWidth="43.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@img/icons/flip-card.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Flip all the cards" />
+               </tooltip>
+            </Button>
+            <Label layoutX="373.5" layoutY="4.0" prefHeight="28.0" prefWidth="466.0" text="Hover to select | Click to draw" AnchorPane.bottomAnchor="168.0" AnchorPane.rightAnchor="179.0">
+               <font>
+                  <Font name="System Bold" size="19.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="tableGold1Img" fitHeight="104.0" fitWidth="156.0" layoutX="9.0" layoutY="60.0" onMouseClicked="#onTableGold1Click" onMouseEntered="#onTableGold1In" onMouseExited="#onTableGold1Out" onScroll="#onTableGold1Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/061.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor></ImageView>
+            <ImageView fx:id="tableGold2Img" fitHeight="104.0" fitWidth="156.0" layoutX="175.0" layoutY="60.0" onMouseClicked="#onTableGold2Click" onMouseEntered="#onTableGold2In" onMouseExited="#onTableGold2Out" onScroll="#onTableGold2Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/071.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="tableResource1Img" fitHeight="104.0" fitWidth="156.0" layoutX="341.0" layoutY="60.0" onMouseClicked="#onTableResource1Click" onMouseEntered="#onTableResource1In" onMouseExited="#onTableResource1Out" onScroll="#onTableResource1Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/001.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="tableResource2Img" fitHeight="104.0" fitWidth="156.0" layoutX="507.0" layoutY="60.0" onMouseClicked="#onTableResource2Click" onMouseEntered="#onTableResource2In" onMouseExited="#onTableResource2Out" onScroll="#onTableResource2Scroll" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/011.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="tableBackDeck1Img" fitHeight="107.0" fitWidth="161.0" layoutX="679.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/misc/backdeck.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableBackDeck2Img" fitHeight="107.0" fitWidth="161.0" layoutX="856.0" layoutY="65.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/misc/backdeck.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="tableGoldDeckImg" fitHeight="104.0" fitWidth="156.0" layoutX="673.0" layoutY="60.0" onMouseClicked="#onTableGoldDeckClick" onMouseEntered="#onTableGoldDeckIn" onMouseExited="#onTableGoldDeckOut" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/061.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+            <ImageView fx:id="tableResourceDeckImg" fitHeight="104.0" fitWidth="156.0" layoutX="850.0" layoutY="60.0" onMouseClicked="#onTableResourceDeckClick" onMouseEntered="#onTableResourceDeckIn" onMouseExited="#onTableResourceDeckOut" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/cards/back/001.png" />
+               </image>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <ToggleButton fx:id="tableBtn" layoutX="387.0" layoutY="529.0" mnemonicParsing="false" onAction="#onTableButtonClick" text="Table" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="838.7">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/round-table2.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
+      <ToggleButton fx:id="handBtn" layoutX="458.0" layoutY="529.0" mnemonicParsing="false" onAction="#onHandButtonClick" text="Hand" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="768.0">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/card-hand.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
+      <ToggleButton fx:id="achievementBtn" disable="true" layoutX="529.0" layoutY="529.0" mnemonicParsing="false" onAction="#onAchievementButtonClick" text="Achievement" AnchorPane.bottomAnchor="177.0" AnchorPane.rightAnchor="656.0">
+         <graphic>
+            <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@img/icons/target.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </ToggleButton>
       <Label fx:id="alertLbl" layoutX="14.0" layoutY="240.0" prefHeight="28.0" prefWidth="302.0" text="ALERT SYSTEM ALERT SYSTEM" textFill="#d10000" visible="false" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="240.0">
          <font>
             <Font name="System Bold" size="16.0" />
@@ -454,5 +455,44 @@
       </Button>
       <ChoiceBox fx:id="playgroundChoiceBox" onAction="#onChoiceBoxClick" prefWidth="150.0" AnchorPane.rightAnchor="797.0" AnchorPane.topAnchor="10.0" />
       <Slider fx:id="zoomSlider" blockIncrement="0.25" majorTickUnit="0.25" max="3.0" min="0.25" minorTickCount="0" prefHeight="37.0" prefWidth="264.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" AnchorPane.rightAnchor="526.0" AnchorPane.topAnchor="12.0" />
+      <ImageView fx:id="resultImg" fitHeight="249.0" fitWidth="231.0" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="600.0" AnchorPane.topAnchor="100.0">
+         <image>
+            <Image url="@img/misc/award.png" />
+         </image>
+         <effect>
+            <DropShadow height="46.31" offsetX="2.0" offsetY="3.0" radius="17.3" width="24.89">
+               <color>
+                  <Color opacity="0.2865329086780548" />
+               </color>
+            </DropShadow>
+         </effect>
+      </ImageView>
+      <Label fx:id="resultLbl" text="YOU WON!" visible="false" AnchorPane.leftAnchor="600.0" AnchorPane.topAnchor="300.0">
+         <font>
+            <Font name="System Bold" size="46.0" />
+         </font>
+         <textFill>
+            <RadialGradient centerX="0.5" centerY="0.5220820429949354" cycleMethod="REPEAT" radius="0.08778628138185451">
+               <stops>
+                  <Stop>
+                     <color>
+                        <Color red="1.0" green="0.8854414820671082" />
+                     </color>
+                  </Stop>
+                  <Stop offset="1.0">
+                     <color>
+                        <Color red="0.859649121761322" green="0.7314977049827576" blue="0.3104288578033447" />
+                     </color>
+                  </Stop>
+               </stops>
+            </RadialGradient>
+         </textFill>
+         <effect>
+            <DropShadow height="46.31" offsetX="2.0" offsetY="3.0" radius="17.3" width="24.89">
+               <color>
+                  <Color opacity="0.2865329086780548" />
+               </color>
+            </DropShadow>         </effect>
+      </Label>
    </children>
 </AnchorPane>

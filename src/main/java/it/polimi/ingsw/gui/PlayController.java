@@ -77,7 +77,7 @@ public class PlayController {
     private TextArea chatTextArea;
 
     @FXML
-    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img, tableGold1Img, tableGold2Img, tableResource1Img, tableResource2Img, tableGoldDeckImg, tableResourceDeckImg, tableBackDeck1Img, tableBackDeck2Img;
+    private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img, tableGold1Img, tableGold2Img, tableResource1Img, tableResource2Img, tableGoldDeckImg, tableResourceDeckImg, tableBackDeck1Img, tableBackDeck2Img, resultImg;
 
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
@@ -92,7 +92,7 @@ public class PlayController {
     private ScrollPane playgroundScrollPane;
 
     @FXML
-    private Label selectCardLbl, alertLbl, oldAlertLbl, jarCountLbl, scrollCountLbl, plumeCountLbl, wolfCountLbl, mushroomCountLbl, leafCountLbl, butterflyCountLbl;
+    private Label selectCardLbl, alertLbl, oldAlertLbl, jarCountLbl, scrollCountLbl, plumeCountLbl, wolfCountLbl, mushroomCountLbl, leafCountLbl, butterflyCountLbl, resultLbl;
 
     @FXML
     private ToggleButton tableBtn, handBtn, achievementBtn;
@@ -1255,6 +1255,17 @@ public class PlayController {
 
 //---------------- PUBLIC MISC METHODS ---------------------
 
+    public void showResult() {
+        boolean win = myPlayer.isWinner();
+        Image rImg = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/" + (win ? "award" : "sad") + ".png")));
+        String rString = "YOU " + (win ? "WON!" : "LOST");
+        resultImg.setImage(rImg);
+        resultLbl.setText(rString);
+        resultImg.setVisible(true);
+        resultLbl.setVisible(true);
+
+    }
+
     public void displayChatMessage(Message m) {
         String s = m.toString() + "\n";
         if(m.getRecipient().equalsIgnoreCase(myNickname))
@@ -1333,6 +1344,8 @@ public class PlayController {
     }
 
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+        resultImg.setVisible(false);
+        resultLbl.setVisible(false);
         myPlayer = self;
         strCard = str;
         achievementBtn.setDisable(true);

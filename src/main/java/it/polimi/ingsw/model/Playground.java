@@ -107,18 +107,18 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 Corner[] tc = sc.isFront() ? sc.getFrontCorners() : sc.getBackCorners();
                 tc[1].cover();
                 //increase points if it's gold card with cover corner type
-                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
                     points += 2;
                 if (tc[1].getType().equals(CornerType.ITEM))
                     items.put(tc[1].getItem(), items.get(tc[1].getItem()) - 1);
                 if (tc[1].getType().equals(CornerType.RESOURCE))
                     resources.put(tc[1].getResource(), resources.get(tc[1].getResource()) - 1);
             } else {
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
+                    points += 2;
                 if (table[row - 1][column - 1].getCard().isFront()) { //the adjacent card is upside
                     table[row - 1][column - 1].getCard().getFrontCorners()[1].cover();
-                    //increase points if it's gold card with cover corner type
-                    if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
-                        points += 2;
                     if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.ITEM))
                         items.put(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem(), items.get(table[row - 1][column - 1].getCard().getFrontCorners()[1].getItem()) - 1);
                     if (table[row - 1][column - 1].getCard().getFrontCorners()[1].getType().equals(CornerType.RESOURCE))
@@ -136,18 +136,18 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 Corner[] tc = sc.isFront() ? sc.getFrontCorners() : sc.getBackCorners();
                 tc[2].cover();
                 //increase points if it's gold card with cover corner type
-                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
                     points += 2;
                 if (tc[2].getType().equals(CornerType.ITEM))
                     items.put(tc[2].getItem(), items.get(tc[2].getItem()) - 1);
                 if (tc[2].getType().equals(CornerType.RESOURCE))
                     resources.put(tc[2].getResource(), resources.get(tc[2].getResource()) - 1);
             } else {
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
+                    points += 2;
                 if (table[row - 1][column + 1].getCard().isFront()) { //the adjacent card is upside
                     table[row - 1][column + 1].getCard().getFrontCorners()[2].cover();
-                    //increase points if it's gold card with cover corner type
-                    if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
-                        points += 2;
                     if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.ITEM))
                         items.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem(), items.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getItem()) - 1);
                     if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.RESOURCE))
@@ -165,18 +165,18 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 Corner[] tc = sc.isFront() ? sc.getFrontCorners() : sc.getBackCorners();
                 tc[3].cover();
                 //increase points if it's gold card with cover corner type
-                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
                     points += 2;
                 if (tc[3].getType().equals(CornerType.ITEM))
                     items.put(tc[3].getItem(), items.get(tc[3].getItem()) - 1);
                 if (tc[3].getType().equals(CornerType.RESOURCE))
                     resources.put(tc[3].getResource(), resources.get(tc[3].getResource()) - 1);
             } else {
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
+                    points += 2;
                 if (table[row + 1][column + 1].getCard().isFront()) { //the adjacent card is upside
                     table[row + 1][column + 1].getCard().getFrontCorners()[3].cover();
-                    //increase points if it's gold card with cover corner type
-                    if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
-                        points += 2;
                     if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.ITEM))
                         items.put(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem(), items.get(table[row + 1][column + 1].getCard().getFrontCorners()[3].getItem()) - 1);
                     if (table[row + 1][column + 1].getCard().getFrontCorners()[3].getType().equals(CornerType.RESOURCE))
@@ -194,18 +194,18 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 Corner[] tc = sc.isFront() ? sc.getFrontCorners() : sc.getBackCorners();
                 tc[0].cover();
                 //increase points if it's gold card with cover corner type
-                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
                     points += 2;
                 if (tc[0].getType().equals(CornerType.ITEM))
                     items.put(tc[0].getItem(), items.get(tc[0].getItem()) - 1);
                 if (tc[0].getType().equals(CornerType.RESOURCE))
                     resources.put(tc[0].getResource(), resources.get(tc[0].getResource()) - 1);
             } else {
+                //increase points if it's gold card with cover corner type
+                if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER) && card.isFront())
+                    points += 2;
                 if (table[row + 1][column - 1].getCard().isFront()) { //the adjacent card is upside
                     table[row + 1][column - 1].getCard().getFrontCorners()[0].cover();
-                    //increase points if it's gold card with cover corner type
-                    if (card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.CORNER))
-                        points += 2;
                     if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.ITEM))
                         items.put(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem(), items.get(table[row + 1][column - 1].getCard().getFrontCorners()[0].getItem()) - 1);
                     if (table[row + 1][column - 1].getCard().getFrontCorners()[0].getType().equals(CornerType.RESOURCE))
@@ -216,9 +216,9 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
             }
         }
         //if the card is a gold card with item requirement, set the points to the available items on the area
-        if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM)) {
+        if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.ITEM) && card.isFront()) {
             points = items.get(((GoldCard) card).getItem());
-        } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE)){
+        } else if(card.getClass() == GoldCard.class && ((GoldCard) card).getPointsType().equals(ReqPoint.SIMPLE) && card.isFront()){
             points = card.getPoints(); //simple gold card with no requirements
         }
         if(card.getClass() == ResourceCard.class && card.getPoints() == 1 && card.isFront())

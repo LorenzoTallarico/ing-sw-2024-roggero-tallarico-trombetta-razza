@@ -548,6 +548,7 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
                     } else {
                         refreshPlayers(tempPlayer);
                     }
+                Platform.runLater(() -> playController.showResult());
                 Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
                 Print.scoreboardPrinter(allPlayers, p);
                 break;
