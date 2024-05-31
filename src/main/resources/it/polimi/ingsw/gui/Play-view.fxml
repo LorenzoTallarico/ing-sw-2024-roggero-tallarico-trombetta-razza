@@ -224,7 +224,7 @@
                   <DropShadow blurType="GAUSSIAN" height="17.0" radius="4.5" width="10.0" />
                </effect>
             </ImageView>
-            <GridPane fx:id="pawnPlayersGrid" alignment="CENTER" prefHeight="154.0" prefWidth="190.0" AnchorPane.leftAnchor="185.0" AnchorPane.topAnchor="0.0">
+            <GridPane fx:id="pawnPlayersGrid" visible="false" alignment="CENTER" prefHeight="154.0" prefWidth="190.0" AnchorPane.leftAnchor="185.0" AnchorPane.topAnchor="0.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="66.33333333333334" minWidth="10.0" prefWidth="28.666666666666664" />
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="160.66666666666666" minWidth="10.0" prefWidth="160.66666666666666" />
