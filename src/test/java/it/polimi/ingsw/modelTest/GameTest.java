@@ -298,6 +298,93 @@ public class GameTest {
         testGame.end();
         testGame.nextState();
     }
+
+    @Test
+    void generalTest() throws RemoteException {
+        Game testGame = Game.getInstance();
+        ArrayList<Player> players = new ArrayList<Player>();
+        Player fake1 = new Player("Marco", false);
+        players.add(fake1);
+        VirtualView cli = new RmiClient(null);
+        ArrayList<VirtualView> clients = new ArrayList<>();
+        clients.add(cli);
+        testGame.addPlayers(players, clients);
+        ArrayList<Card> hand = new ArrayList<Card>(testGame.getOrderedResourceDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        Card tempCard;
+        AchievementCard tempAchievement;
+        tempCard = hand.get(0);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 39, 41);
+        tempCard = hand.get(1);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 38, 42);
+        tempCard = hand.get(3);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 37, 43);
+        tempCard = hand.get(4);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 36, 44);
+        tempCard = hand.get(5);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 37, 45);
+        tempCard = hand.get(6);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 38, 46);
+        tempCard = hand.get(7);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 39, 47);
+        tempCard = hand.get(20);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 40, 46);
+        tempCard = hand.get(21);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 41, 45);
+        tempCard = hand.get(22);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 42, 46);
+        tempCard = hand.get(31);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 43, 47);
+        tempCard = hand.get(32);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 44, 48);
+        tempCard = hand.get(33);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 45, 47);
+        tempCard = hand.get(34);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 46, 48);
+        tempCard = hand.get(35);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 47, 49);
+        tempCard = hand.get(36);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 46, 50);
+        tempCard = hand.get(38);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 45, 49);
+        tempCard = hand.get(39);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 44, 50);
+        tempCard = hand.get(23);
+        tempCard.setFront(true);
+        fake1.getArea().setSpace(tempCard, 43, 51);
+        int n=0;
+        for(int i = 0; i < 16; i++){
+            tempAchievement = hand2.get(i);
+            tempAchievement.setPlayer(fake1);
+            n += tempAchievement.calculatePoints();
+        }
+        Print.playgroundPrinter(fake1.getArea());
+
+        System.out.println(fake1.getArea().countResources(Resource.MUSHROOM));
+
+        assertEquals(n , 100);
+        testGame.end();
+        testGame.nextState();
+    }
+
     @Test
     void lShapeTest() throws RemoteException {
         Game testGame = Game.getInstance();
