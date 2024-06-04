@@ -149,9 +149,9 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 if (table[row - 1][column + 1].getCard().isFront()) { //the adjacent card is upside
                     table[row - 1][column + 1].getCard().getFrontCorners()[2].cover();
                     if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.ITEM))
-                        items.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem(), items.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getItem()) - 1);
+                        items.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem(), items.get(table[row - 1][column + 1].getCard().getFrontCorners()[2].getItem()) - 1);
                     if (table[row - 1][column + 1].getCard().getFrontCorners()[2].getType().equals(CornerType.RESOURCE))
-                        resources.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getResource(), resources.get(table[row - 1][column + 1].getCard().getFrontCorners()[1].getResource()) - 1);
+                        resources.put(table[row - 1][column + 1].getCard().getFrontCorners()[2].getResource(), resources.get(table[row - 1][column + 1].getCard().getFrontCorners()[2].getResource()) - 1);
                 } else { //the adjacent card is downside
                     table[row - 1][column + 1].getCard().getBackCorners()[2].cover();
                 }
