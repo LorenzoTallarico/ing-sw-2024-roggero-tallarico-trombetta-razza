@@ -33,7 +33,7 @@ ROBE DA DIRE AL LAB 15/04
 - fare AchievementCard assegnamento a player e (scelta)
 - fare enum StatoGioco
 
-Placing[carta e cordinate] -->server
+Placing[carta e coordinate] -->server
 server fa check vero o falso se è piazzabile o meno
  se vero--> placedCard[coord player]
  se falso --> placedError
@@ -42,4 +42,31 @@ server fa check vero o falso se è piazzabile o meno
  server AskingDraw
 
  DRAW
+
+ -----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ Rete
+
+ - mettere nel model attributo lastCardPlaced (con pointsFromLastCard), che viene caricato quando c'è la conferma del place (prima di usare il listener), qui dentro
+   viene caricata la carta in modo che venga memorizzata nell'eventualità di disconnessione del client dopo place e prima di draw.
+
+ - nella draw invece il contrario: prima di inviare la conferma di pescaggio con il listener si metterà questo campo a null (il campo lastCardPlaced)
+
+ - salta turno:  passare onlineMap al controller il quale andrà automaticamente a vedere gli utenti online e gestirà su quella map
+
+ - SINCRONIZZAZIONE THREAD
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 

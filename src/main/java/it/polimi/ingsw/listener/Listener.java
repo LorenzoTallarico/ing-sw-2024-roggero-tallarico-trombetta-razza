@@ -18,6 +18,23 @@ public class Listener {
         this.clients = clients;
     }
 
+
+
+    public void notifyReconnection(String nickname, Game game) throws RemoteException {
+        System.out.println("> All clients notified by the reconnection of player " + nickname +".");
+        Action action = new ReconnectionSuccessAction(nickname, game);
+        for(VirtualView client : clients){
+            try {
+                client.showAction(action);
+            } catch(IOException e) {
+                System.out.println(Print.ANSI_RED + "Exception " + e.getClass() + " sending showAction to " + client.getNickname() + "." + Print.ANSI_RESET);
+            }
+        }
+
+
+
+    }
+
     public void notifyStarterCard(ArrayList<Player> players,  ArrayList<GoldCard> commonGold, ArrayList<ResourceCard> commonResource, Resource goldDeck, Resource resourceDeck) throws RemoteException {
         System.out.println("> All clients notified by starter card listener.");
         for(Player p : players) {

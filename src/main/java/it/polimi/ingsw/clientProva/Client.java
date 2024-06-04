@@ -120,12 +120,14 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private void finalizeConnection(int connectionChoice) throws RemoteException {
         if (connectionChoice == 1) {
             if (!this.server.connect(this)) {
+                //qui per la (ri)connessione RMi
                 System.err.println("> Connection failed, max number of players already reached or name already taken.");
                 System.exit(0);
             }
             connected = true;
             System.out.println("Login successful " + nickname);
         } else{
+            //qui per la (ri)connessione Socket
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
         }
@@ -424,7 +426,29 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             Action act = serverActionsReceived.take();
             if (connected) {
                 switch (act.getType()) {
+                    case RECONNECTIONSUCCESS:
+                        if(((ReconnectionSuccessAction) act).getNickname().equalsIgnoreCase(nickname)){
+                            Game game = ((ReconnectionSuccessAction) act).getGame();
+                            for(Player player : game.getPlayers()){
+                                if(player.getName().equalsIgnoreCase(nickname)){
+                                    p = player;
+                                }
+                            }
+                            //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
+                            state = State.COMMANDS;
+                            allPlayers = game.getPlayers();
+                            starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
+                            achievements = game.getCommonAchievement();
+                            achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
+                            commonGold = game.getCommonGold();
+                            commonResource = game.getCommonResource();
 
+
+                        }
+                        else{
+                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getNickname() + " reconnected!");
+                        }
+                        break;
                     case WHOLECHAT:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
                             ArrayList<Message> chat = ((WholeChatAction) act).getMessages();
@@ -559,6 +583,29 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 }
             } else {
                 switch (act.getType()) {
+                    case RECONNECTIONSUCCESS:
+                        if(((ReconnectionSuccessAction) act).getNickname().equalsIgnoreCase(nickname)){
+                            Game game = ((ReconnectionSuccessAction) act).getGame();
+                            for(Player player : game.getPlayers()){
+                                if(player.getName().equalsIgnoreCase(nickname)){
+                                    p = player;
+                                }
+                            }
+                            //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
+                            state = State.COMMANDS;
+                            allPlayers = game.getPlayers();
+                            starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
+                            achievements = game.getCommonAchievement();
+                            achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
+                            commonGold = game.getCommonGold();
+                            commonResource = game.getCommonResource();
+
+
+                        }
+                        else{
+                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getNickname() + " reconnected!");
+                        }
+                        break;
                     case SETNICKNAME: //only for Socket
                         if (((SetNicknameAction)act).getNickname()!= null) {
                             nickname = ((SetNicknameAction)act).getNickname();
@@ -615,7 +662,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         try {
             if(actionFromServer.getType().equals(ActionType.PING)){
                 server.sendAction(new PongAction(nickname));
-                System.out.println("Inviato Pong!");
+                //System.out.println("Inviato Pong!");
             }
             else {
                 serverActionsReceived.put(actionFromServer);

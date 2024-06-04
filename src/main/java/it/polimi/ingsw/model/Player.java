@@ -15,8 +15,10 @@ public class Player implements Serializable {
     private ArrayList<Card> hand;
     private Playground area;
     private Color color;
+    private boolean isOnline;
     private ArrayList<AchievementCard> secretAchievement;
-
+    private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
+    private int pointsFromLastCard;
 
     public Player(){
         name = "";
@@ -24,7 +26,10 @@ public class Player implements Serializable {
         hand = new ArrayList<>();
         area = new Playground();
         color = Color.NONE;
+        isOnline = true;
         secretAchievement = new ArrayList<>();
+        lastCardPlaced = null;
+        pointsFromLastCard = 0;
     }
 
     /**
@@ -35,11 +40,14 @@ public class Player implements Serializable {
     public Player(String name, boolean gui) {
         this.name = name;
         color = Color.NONE;
+        isOnline = true;
         winner = false;
         area = new Playground();
         hand = new ArrayList<>();
         points = 0;
         secretAchievement = new ArrayList<>();
+        lastCardPlaced = null;
+        pointsFromLastCard = 0;
         //this.gui=gui;
     }
 
@@ -102,7 +110,19 @@ public class Player implements Serializable {
         return secretAchievement;
     }
 
+    public Card getLastCardPlaced() {
+        return lastCardPlaced;
+    }
+
+    public int getPointsFromLastCard() {
+        return pointsFromLastCard;
+    }
+
+
     //SETTER
+    public void setOnline(boolean b){
+        this.isOnline = b;
+    }
 
     public void setArea(Playground area) {
         this.area = area;
@@ -114,6 +134,14 @@ public class Player implements Serializable {
      */
     public void setSecretAchievement(ArrayList<AchievementCard> secretAchievement) {
         this.secretAchievement = secretAchievement;
+    }
+
+    public void setLastCardPlaced(Card card){
+        this.lastCardPlaced = card;
+    }
+
+    public void setPointsFromLastCard(int pointsFromLastCard){
+        this.pointsFromLastCard = pointsFromLastCard;
     }
 
     public void setColor(Color color) {
@@ -175,6 +203,8 @@ public class Player implements Serializable {
             hand.remove(cardIndex);
             int score = area.setSpace(card, row, column);
             points += score;
+            setLastCardPlaced(card); //sets the card placed for client disconnections
+            setPointsFromLastCard(score);  //sets the points obtained from the last card placed for client disconnections
             if(points >= 20)
                 Game.getInstance().setGameState(GameState.LASTROUND);
             Game.getInstance().getListener().notifyCardPlacement(this.name, this, card, row, column, score);

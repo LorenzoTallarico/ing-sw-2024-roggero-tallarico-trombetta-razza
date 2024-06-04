@@ -173,6 +173,9 @@ public class WebServer implements VirtualServer {
                             clientActions.put(act);
                         }
                         break;
+                    case RECONNECTEDPLAYER:
+                        this.controller.reconnection(((ReconnectedPlayerAction)action).getNick(), ((ReconnectedPlayerAction)action).getOldVirtualView(), ((ReconnectedPlayerAction)action).getNewVirtualview());
+                        break;
                     default:
                         break;
                 }
@@ -233,18 +236,22 @@ public class WebServer implements VirtualServer {
         synchronized (this.clients) {
             System.err.println("> Join request received.");
             String nick = client.getNickname();
-            if (!clients.isEmpty())
-                //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
-                for (VirtualView v : this.clients) {
-                    if (v.getNickname().equalsIgnoreCase(nick)) {
-                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing.");
+            if(!gameStarted) { //connessione Lobby
+                if (!clients.isEmpty()) {
+                    //Da gestire anche in Socket, aggiungere nome a VirtualViewSocket
+                    for (VirtualView v : this.clients) {
+                        //controlla anche se il client è online o meno sulla mappa
+                        if (v.getNickname().equalsIgnoreCase(nick) && onlineMap.get(v) /* è valido il return della get()??????*/) {
+                            System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
+                            return false;
+                        }
+                    }
+                    if (countOnlinePlayer() >= 4) {
+                        System.out.println("> Denied connection to a new client, max number of players already reached.");
                         return false;
                     }
                 }
-            if (countOnlinePlayer() >= 4) {
-                System.out.println("> Denied connection to a new client, max number of players already reached.");
-                return false;
-            } else {
+                //il client è la prima volta che si connette
                 clients.add((VirtualView) client);
                 onlineMap.put(client, Boolean.TRUE);
                 System.out.println(onlineMap.get(client).toString());
@@ -252,7 +259,7 @@ public class WebServer implements VirtualServer {
                     System.out.println(c.getNickname());
                 nicknamesMap.put(client, nick);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
-                boolean startSend=false;
+                boolean startSend = false;
                 for (VirtualView v : this.clients) {
                     if (v.getOnline() && v.getNickname() != null && !startSend) {
                         startSend = true;
@@ -267,6 +274,42 @@ public class WebServer implements VirtualServer {
                     clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer() , 4));
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }
+                return true;
+            }
+            else {  //Reconnect
+                //Ricerca VirtualView Vecchia
+                VirtualView oldVirtualView = null;
+                for(VirtualView c : clients){
+                    if(nicknamesMap.get(c).equalsIgnoreCase(nick)){
+                        oldVirtualView = c;
+                        break;
+                    }
+                }
+                if(oldVirtualView!= null && !(onlineMap.get(oldVirtualView).booleanValue())) {
+                    // il client si è già connesso in precedenza e deve recuperare i dati
+
+                    // mando maction "reconnect" che manda nickname e la nuova virtualview
+                    try {
+                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, client));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    //aggiornamento mappe
+                    int index = clients.indexOf(oldVirtualView);
+                    clients.remove(index);
+                    clients.add(index, client);
+
+                    onlineMap.remove(oldVirtualView);
+                    onlineMap.put(client, Boolean.TRUE);
+
+                    nicknamesMap.remove(oldVirtualView);
+                    nicknamesMap.put(client, nick);
+                }
+                else{
+                    System.out.println("> User " + nick + " already online or doesn't exist");
+                    return false;
                 }
                 return true;
             }
@@ -343,7 +386,11 @@ public class WebServer implements VirtualServer {
                         startActionRequired = true;
                         for (VirtualView v : pingMap.keySet()) {
                             if (pingMap.get(v).booleanValue()) {
-                                 v.showAction(new DisconnectedPlayerAction(nicknamesMap.get(c)));
+                                try {
+                                    v.showAction(new DisconnectedPlayerAction(nicknamesMap.get(c)));
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
                             }
                         }
 
@@ -353,6 +400,15 @@ public class WebServer implements VirtualServer {
                     } else {
                         //gioco già startato
                         onlineMap.replace(c, Boolean.FALSE);
+                        for (VirtualView v : pingMap.keySet()) {
+                            if (pingMap.get(v).booleanValue()) {
+                                try {
+                                    v.showAction(new DisconnectedPlayerAction(nicknamesMap.get(c)));
+                                } catch (Exception e){
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
                     }
                 }
             }

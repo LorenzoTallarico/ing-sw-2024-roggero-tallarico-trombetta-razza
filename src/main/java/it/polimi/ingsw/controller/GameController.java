@@ -26,7 +26,12 @@ public class GameController {
 
 
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
-
+    public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
+        int index = clients.indexOf(oldVirtualView);
+        clients.remove(index);
+        clients.add(index, newVirtualView);
+        model.reconnection(nickname, oldVirtualView, newVirtualView);
+    }
     public void setStarterCardSide(String playerName, boolean front) throws RemoteException {
         model.setStarterCard(playerName, front);
     }

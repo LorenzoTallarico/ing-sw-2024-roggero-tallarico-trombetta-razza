@@ -30,7 +30,9 @@ public class Game implements Serializable {
     private ArrayList<VirtualView> clients;
     private it.polimi.ingsw.listener.Listener bigListener;
 
-//Constructor
+
+
+    //Constructor
     private Game() {
         players = new ArrayList<>();
         createGoldDeck();
@@ -39,6 +41,28 @@ public class Game implements Serializable {
         createStarterDeck();
         gameState = GameState.LOBBY;
     }
+
+
+
+    public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
+        if(clients.contains(oldVirtualView)){
+            System.out.println("Vecchia virtual view c'è e siamo fottuti");
+        }
+        if(clients.contains(newVirtualView)){
+            System.out.println("Nuova virtual view c'è e siamo a cavallo");
+        }
+        for(Player p :players){
+            if(nickname.equalsIgnoreCase(p.getName())){
+                p.setOnline(true);
+                bigListener.notifyReconnection(p.getName(), instance);
+            }
+        }
+    }
+
+
+
+
+
 
 //Singleton Methods
     /**
@@ -66,6 +90,10 @@ public class Game implements Serializable {
 
 
 //GET
+
+    public ArrayList<AchievementCard> getCommonAchievement() {
+        return commonAchievement;
+    }
 
     public ArrayList<GoldCard> getCommonGold(){
         return this.commonGold;
@@ -421,6 +449,8 @@ public class Game implements Serializable {
                 return null;
         }
         tempPlayer.getHand().add(drawCard);
+        tempPlayer.setLastCardPlaced(null);      //player terminated his turn, last card reset (disconnections)
+        tempPlayer.setPointsFromLastCard(0);     //player terminated his turn, last card's points reset (disconnections)
         bigListener.notifyDrawCompleted(tempPlayer, drawCard);
         return drawCard;
     }
