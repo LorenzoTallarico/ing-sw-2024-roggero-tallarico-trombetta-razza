@@ -54,7 +54,7 @@ public class Game implements Serializable {
         for(Player p :players){
             if(nickname.equalsIgnoreCase(p.getName())){
                 p.setOnline(true);
-                bigListener.notifyReconnection(p.getName(), instance);
+                bigListener.notifyReconnection(nickname,players, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
             }
         }
     }

@@ -427,26 +427,25 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             if (connected) {
                 switch (act.getType()) {
                     case RECONNECTIONSUCCESS:
-                        if(((ReconnectionSuccessAction) act).getNickname().equalsIgnoreCase(nickname)){
-                            Game game = ((ReconnectionSuccessAction) act).getGame();
-                            for(Player player : game.getPlayers()){
+                        if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)){
+                            this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
+                            this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
+                            this.commonResource = ((ReconnectionSuccessAction) act).getCommonResource();
+                            this.resourceDeck = ((ReconnectionSuccessAction) act).getResourceDeck();
+                            this.allPlayers = ((ReconnectionSuccessAction) act).getPlayers();
+                            state = State.COMMANDS;
+                            for(Player player : allPlayers){
                                 if(player.getName().equalsIgnoreCase(nickname)){
                                     p = player;
+                                    starterCard = (StarterCard) p.getArea().getSpace(40, 40).getCard();
                                 }
                             }
                             //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
-                            state = State.COMMANDS;
-                            allPlayers = game.getPlayers();
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
-                            achievements = game.getCommonAchievement();
                             achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
-                            commonGold = game.getCommonGold();
-                            commonResource = game.getCommonResource();
-
-
                         }
                         else{
-                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getNickname() + " reconnected!");
+                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
                         }
                         break;
                     case WHOLECHAT:
@@ -584,26 +583,25 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             } else {
                 switch (act.getType()) {
                     case RECONNECTIONSUCCESS:
-                        if(((ReconnectionSuccessAction) act).getNickname().equalsIgnoreCase(nickname)){
-                            Game game = ((ReconnectionSuccessAction) act).getGame();
-                            for(Player player : game.getPlayers()){
+                        if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)){
+                            this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
+                            this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
+                            this.commonResource = ((ReconnectionSuccessAction) act).getCommonResource();
+                            this.resourceDeck = ((ReconnectionSuccessAction) act).getResourceDeck();
+                            this.allPlayers = ((ReconnectionSuccessAction) act).getPlayers();
+                            state = State.COMMANDS;
+                            for(Player player : allPlayers){
                                 if(player.getName().equalsIgnoreCase(nickname)){
                                     p = player;
+                                    starterCard = (StarterCard) p.getArea().getSpace(40, 40).getCard();
                                 }
                             }
                             //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
-                            state = State.COMMANDS;
-                            allPlayers = game.getPlayers();
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
-                            achievements = game.getCommonAchievement();
                             achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
-                            commonGold = game.getCommonGold();
-                            commonResource = game.getCommonResource();
-
-
                         }
                         else{
-                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getNickname() + " reconnected!");
+                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
                         }
                         break;
                     case SETNICKNAME: //only for Socket

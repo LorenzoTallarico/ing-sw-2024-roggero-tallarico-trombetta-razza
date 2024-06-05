@@ -20,9 +20,9 @@ public class Listener {
 
 
 
-    public void notifyReconnection(String nickname, Game game) throws RemoteException {
+    public void notifyReconnection(String nickname, ArrayList<Player> players,  ArrayList<GoldCard> commonGold, ArrayList<ResourceCard> commonResource, Resource goldDeck, Resource resourceDeck) throws RemoteException {
         System.out.println("> All clients notified by the reconnection of player " + nickname +".");
-        Action action = new ReconnectionSuccessAction(nickname, game);
+        Action action = new ReconnectionSuccessAction(nickname, players, commonGold, goldDeck, commonResource, resourceDeck);
         for(VirtualView client : clients){
             try {
                 client.showAction(action);
