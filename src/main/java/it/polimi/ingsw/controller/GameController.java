@@ -32,6 +32,7 @@ public class GameController {
         clients.add(index, newVirtualView);
         model.reconnection(nickname, oldVirtualView, newVirtualView);
     }
+
     public void setStarterCardSide(String playerName, boolean front) throws RemoteException {
         model.setStarterCard(playerName, front);
     }

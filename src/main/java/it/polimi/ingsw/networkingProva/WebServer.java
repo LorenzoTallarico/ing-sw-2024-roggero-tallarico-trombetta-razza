@@ -49,17 +49,11 @@ public class WebServer implements VirtualServer {
         this.controller = controller;
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
-        this.clients = clients;
     }
 
     public void startRmiServer() {
         //Creazione RmiServer
         try {
-            int rmiPort = PORT_RMI;
-            int socketPort = PORT_SOCKET;
-            int[] ports = {rmiPort, socketPort};
-
-
             final String serverName = "GameServer";
 
             //VirtualServer server = new RmiServer(new GameController);
@@ -84,10 +78,10 @@ public class WebServer implements VirtualServer {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 //qui si è attaccato un nuovo client
-                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap, onlineMap, nicknamesMap);
+                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, pingMap, onlineMap, nicknamesMap, gameStarted);
                 clients.add(actualSocket);
                 onlineMap.put(actualSocket, Boolean.TRUE);
-                nicknamesMap.put(actualSocket, actualSocket.getNickname());
+                //nicknamesMap.put(actualSocket, actualSocket.getNickname());
                 Thread clientSocketThread = new Thread((Runnable) actualSocket); // Crea un nuovo thread per ogni client handler
                 clientSocketThread.start();
             }
@@ -277,42 +271,42 @@ public class WebServer implements VirtualServer {
                 }
                 return true;
             }
-            else {  //Reconnect
-                //Ricerca VirtualView Vecchia
-                VirtualView oldVirtualView = null;
-                for(VirtualView c : clients){
-                    if(nicknamesMap.get(c).equalsIgnoreCase(nick)){
-                        oldVirtualView = c;
-                        break;
+                else {  //Reconnect
+                    //Ricerca VirtualView Vecchia
+                    VirtualView oldVirtualView = null;
+                    for(VirtualView c : clients){
+                        if(nicknamesMap.get(c).equalsIgnoreCase(nick)){
+                            oldVirtualView = c;
+                            break;
+                        }
                     }
-                }
-                if(oldVirtualView!= null && !(onlineMap.get(oldVirtualView).booleanValue())) {
-                    // il client si è già connesso in precedenza e deve recuperare i dati
+                    if(oldVirtualView!= null && !(onlineMap.get(oldVirtualView).booleanValue())) {
+                        // il client si è già connesso in precedenza e deve recuperare i dati
 
-                    // mando maction "reconnect" che manda nickname e la nuova virtualview
-                    try {
-                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, client));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        // mando maction "reconnect" che manda nickname e la nuova virtualview
+                        try {
+                            serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, client));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        //aggiornamento mappe
+                        int index = clients.indexOf(oldVirtualView);
+                        clients.remove(index);
+                        clients.add(index, client);
+
+                        onlineMap.remove(oldVirtualView);
+                        onlineMap.put(client, Boolean.TRUE);
+
+                        nicknamesMap.remove(oldVirtualView);
+                        nicknamesMap.put(client, nick);
                     }
-
-                    //aggiornamento mappe
-                    int index = clients.indexOf(oldVirtualView);
-                    clients.remove(index);
-                    clients.add(index, client);
-
-                    onlineMap.remove(oldVirtualView);
-                    onlineMap.put(client, Boolean.TRUE);
-
-                    nicknamesMap.remove(oldVirtualView);
-                    nicknamesMap.put(client, nick);
+                    else{
+                        System.out.println("> User " + nick + " already online or doesn't exist");
+                        return false;
+                    }
+                    return true;
                 }
-                else{
-                    System.out.println("> User " + nick + " already online or doesn't exist");
-                    return false;
-                }
-                return true;
-            }
         }
     }
 
@@ -370,7 +364,6 @@ public class WebServer implements VirtualServer {
                     pingMap.put(c, Boolean.FALSE);
             }
             for (VirtualView c : pingMap.keySet()){
-                System.out.println("- Chiave");
                 try {
                     c.showAction(new PingAction());
                 }catch (Exception e){
