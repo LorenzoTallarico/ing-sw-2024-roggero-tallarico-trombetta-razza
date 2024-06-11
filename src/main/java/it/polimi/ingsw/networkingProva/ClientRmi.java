@@ -8,10 +8,10 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientRmi implements VirtualView {
+public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     private VirtualView client = null;
     private String nickname = null;
-    private boolean ping;
+    private boolean ping = true;
     private boolean online;
 
 
@@ -65,6 +65,7 @@ public class ClientRmi implements VirtualView {
     @Override
     public void showAction(Action act) throws IOException {
         client.showAction(act);
+
     }
 
 

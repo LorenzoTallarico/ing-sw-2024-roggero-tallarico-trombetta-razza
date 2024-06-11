@@ -1,6 +1,7 @@
 
 package it.polimi.ingsw.networkingProva;
 
+import it.polimi.ingsw.clientProva.Client;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.*;
@@ -227,7 +228,7 @@ public class WebServer implements VirtualServer {
             if (!gameStarted) { // connection to Lobby
                 if (!clients.isEmpty()) {
                     for (VirtualView v : this.clients) {
-                        if (nick != null && v.getNickname().equalsIgnoreCase(nick) && v.getOnline()) {
+                        if (nick != null && v.getNickname().equalsIgnoreCase(nick)) {
                             System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
                             return false;
                         }
@@ -317,14 +318,14 @@ public class WebServer implements VirtualServer {
         try {
             System.out.println("> Received action, type \"" + action.getType().toString() + "\".");
             if (action.getType().equals(ActionType.PONG)) {
-                synchronized (clients) {
+                //synchronized (clients) {
                     for (VirtualView c : clients) {
                         if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
                             System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
                             c.setPing(true);
                         }
                     }
-                }
+
                 return;
             }
             serverActions.put(action);
@@ -336,7 +337,6 @@ public class WebServer implements VirtualServer {
     public void checkAliveThread() throws InterruptedException, IOException {
         while (true) {
             boolean startActionRequired = false;
-
             synchronized (clients) {
                 for (VirtualView c : clients) {
                     if (c.getOnline()) {
@@ -352,19 +352,20 @@ public class WebServer implements VirtualServer {
             }
             Thread.sleep(5000);
             synchronized (clients) {
-                Iterator<VirtualView> iterator = clients.iterator();
-                while (iterator.hasNext()) {
-                    VirtualView c = iterator.next();
+                for(VirtualView c : clients){
                     if (!c.getPing() && c.getOnline()) {
                         System.out.println("User " + c.getNickname() + " did not respond to ping");
                         if (!gameStarted) {
                             startActionRequired = true;
-                            try {
-                                clientActions.put(new DisconnectedPlayerAction(c.getNickname()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            for(VirtualView v : clients ) {
+                                try {
+                                    if(v.getPing() && v.getOnline())
+                                        v.showAction(new DisconnectedPlayerAction(c.getNickname()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                clients.remove(c);
                             }
-                            iterator.remove();
                         } else {
                             c.setOnline(false);
                             try {

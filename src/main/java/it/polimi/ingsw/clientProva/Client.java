@@ -10,6 +10,7 @@ import it.polimi.ingsw.networking.action.toserver.*;
 import it.polimi.ingsw.networking.rmi.RmiClient;
 import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networkingProva.ClientRmi;
 import it.polimi.ingsw.util.Print;
 
 import java.io.IOException;
@@ -119,7 +120,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     private void finalizeConnection(int connectionChoice) throws RemoteException {
         if (connectionChoice == 1) {
-            if (!this.server.connect(this)) {
+            if (!this.server.connect(new ClientRmi((VirtualView) this))) {
                 //qui per la (ri)connessione RMi
                 System.err.println("> Connection failed, max number of players already reached or name already taken.");
                 System.exit(0);
