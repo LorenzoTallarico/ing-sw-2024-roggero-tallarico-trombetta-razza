@@ -1,4 +1,3 @@
-
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.networking.action.ActionType;
@@ -9,58 +8,37 @@ import it.polimi.ingsw.networking.action.toserver.SetNicknameAction;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.action.Action;
 
-
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientSocket implements VirtualView, Runnable {
-    private Socket serSocket = null;
     private final ObjectOutputStream outputStream;
-    private BlockingQueue<Action> serverActions;
-    private BlockingQueue<Action> clientActions;
     private final ObjectInputStream inputStream;
-    private ArrayList<VirtualView> clients;
-    private String nickname = null;
-    private boolean connected = true;
-    private boolean gui;
-    private Map<VirtualView, Boolean> pingMap;
-    private Map<VirtualView, Boolean> onlineMap;
-    private Map<VirtualView, String> nicknamesMap;
-    private boolean gamestarted;
+    private final BlockingQueue<Action> serverActions;
+    private final BlockingQueue<Action> clientActions;
+    private final ArrayList<VirtualView> clients;
 
-    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, Map<VirtualView, Boolean> pingMap, Map<VirtualView, Boolean> onlineMap, Map<VirtualView, String> nicknamesMap, boolean gameStarted) throws IOException {
-        this.serSocket = serSocket;
+    private boolean gui;
+    private boolean ping;
+    private boolean online;
+    private String nickname = null;
+    private final boolean gameStarted;
+
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted) throws IOException {
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
         this.clientActions = clientActions;
         this.clients = clients;
-        this.pingMap = pingMap;
-        this.onlineMap = onlineMap;
-        this.nicknamesMap = nicknamesMap;
-        this.gamestarted = gameStarted;
+        this.gameStarted = gameStarted;
     }
 
-    @Override
-    public void reportError(String details) throws RemoteException {
-
-    }
-
-    @Override
-    public void showAction(Action act) throws IOException {
-        //qui il server sta MANDANDO l'azione al client
-        outputStream.writeObject(act);
-        outputStream.flush();
-        outputStream.reset();
-    }
-
+    //GETTER & SETTER
     @Override
     public String getNickname() {
         return nickname;
@@ -68,7 +46,7 @@ public class ClientSocket implements VirtualView, Runnable {
 
     @Override
     public boolean getOnline() {
-        return connected;
+        return online;
     }
 
     @Override
@@ -76,121 +54,146 @@ public class ClientSocket implements VirtualView, Runnable {
         return gui;
     }
 
+    @Override
+    public boolean getPing() {
+        return ping;
+    }
 
-    public void setNickname(String nickname){
+    @Override
+    public String getNicknameFirst() throws RemoteException {
+        return "";
+    }
+
+    public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
+    }
+
+    @Override
+    public void setPing(boolean b) {
+        ping = b;
+    }
+
+    @Override
+    public void reportError(String details) throws RemoteException {
+        // Error reporting logic (to be implemented if needed)
+    }
+
+    @Override
+    public void showAction(Action act) throws IOException {
+        outputStream.writeObject(act);
+        outputStream.flush();
+        outputStream.reset();
     }
 
     @Override
     public void run() {
-        while(true) {
-            Action action = null;
+        while (true) {
             try {
-                action = (Action) inputStream.readObject();
+                Action action = (Action) inputStream.readObject();
+                handleAction(action);
             } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                if(nickname != null ) {
-                    if(action.getType().equals(ActionType.PONG)){
-                        pingMap.replace(this, Boolean.TRUE);
-                    }
-                    serverActions.put(action);
-                }
-                else if(action.getType().equals(ActionType.SETNICKNAME)) {
-                    if(!gamestarted) {
-                        boolean checkAlreadyExists = false;
-                        String tempNickname = ((SetNicknameAction) action).getNickname();
-                        for (VirtualView c : clients) {
-                            if (tempNickname.equalsIgnoreCase(c.getNickname()))
-                                checkAlreadyExists = true;
-                        }
-                        if (checkAlreadyExists)// se ritorna il messaggio con null al client il nick non è valido, altrimenti se torna lo stesso nick al client è stato accettato
-                            tempNickname = null;
-                        Action response = new SetNicknameAction(tempNickname, false);
-                        if (tempNickname != null) {
-                            connected = true;
-                            nickname = tempNickname;
-                            nicknamesMap.put(this, nickname);
-                            onlineMap.put(this, Boolean.TRUE);
-                            gui = ((SetNicknameAction) action).getGui();
-                            System.out.println(">Allowed Socket connection to a new client named \"" + nickname + "\".");
-                        }
-                        outputStream.writeObject(response);
-                        outputStream.flush();
-                        outputStream.reset();
-
-                        String destNickname = null;
-                        for (int i = 0; i < clients.size() && destNickname == null; i++) {
-                            if (clients.get(i).getOnline()) {
-                                destNickname = clients.get(i).getNickname();
-                            }
-                        }
-                        int count = 0;
-                        for (VirtualView v : this.clients) {
-                            if (v.getOnline() && v.getNickname() != null)
-                                count++;
-                        }
-                        Action act = new AskingStartAction(destNickname, count);
-                        clientActions.put(act);
-
-                        act = new JoiningPlayerAction(nickname, count, 4);
-                        try {
-                            clientActions.put(act);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            for (VirtualView v : clients) {
-                                System.out.println("Nome: " + v.getNickname());
-                            }
-                        }
-                    } else {
-                        {  //Reconnect
-                            //Ricerca VirtualView Vecchia
-                            nickname = ((SetNicknameAction) action).getNickname();
-                            VirtualView oldVirtualView = null;
-                            for(VirtualView c : clients){
-                                if(nicknamesMap.get(c).equalsIgnoreCase(nickname)){
-                                    oldVirtualView = c;
-                                    break;
-                                }
-                            }
-                            if(oldVirtualView!= null && !(onlineMap.get(oldVirtualView).booleanValue())) {
-                                // il client si è già connesso in precedenza e deve recuperare i dati
-
-                                // mando maction "reconnect" che manda nickname e la nuova virtualview
-                                try {
-                                    serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-
-                                //aggiornamento mappe
-                                int index = clients.indexOf(oldVirtualView);
-                                clients.remove(index);
-                                clients.add(index, this);
-
-                                onlineMap.remove(oldVirtualView);
-                                onlineMap.put(this, Boolean.TRUE);
-
-                                nicknamesMap.remove(oldVirtualView);
-                                nicknamesMap.put(this, nickname);
-                                outputStream.writeObject(new SetNicknameAction(nickname, false));
-                                outputStream.flush();
-                                outputStream.reset();
-                            }
-                            else{
-                                outputStream.writeObject(new SetNicknameAction(null, false));
-                                outputStream.flush();
-                                outputStream.reset();
-                                System.out.println("> User " + nickname + " already online or doesn't exist");
-                            }
-                        }
-                    }
-                }
-            } catch (InterruptedException | IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+                break; // Exit loop on error
             }
         }
+    }
 
+    private void handleAction(Action action) {
+        try {
+            if (nickname != null) {
+                if (action.getType().equals(ActionType.PONG)) {
+                    ping = true;
+                } else {
+                    serverActions.put(action);
+                }
+            } else if (action.getType().equals(ActionType.SETNICKNAME)) {
+                handleSetNicknameAction((SetNicknameAction) action);
+            }
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleSetNicknameAction(SetNicknameAction action) throws IOException, InterruptedException {
+        if (!gameStarted) {
+            String tempNickname = checkNickname(action);
+            Action response = new SetNicknameAction(tempNickname, false);
+            if (tempNickname != null) {
+                online = true;
+                nickname = tempNickname;
+                gui = action.getGui();
+                System.out.println(">Allowed Socket connection to a new client named \"" + nickname + "\".");
+            }
+            outputStream.writeObject(response);
+            outputStream.flush();
+            outputStream.reset();
+
+            sendLobbyUpdates(tempNickname);
+        } else {
+            handleReconnection(action);
+        }
+    }
+
+    private void handleReconnection(SetNicknameAction action) throws IOException, InterruptedException {
+        nickname = action.getNickname();
+        VirtualView oldVirtualView = null;
+        synchronized (clients) {
+            for (VirtualView c : clients) {
+                if (c.getNickname().equals(nickname)) {
+                    oldVirtualView = c;
+                    break;
+                }
+            }
+            if (oldVirtualView != null && !oldVirtualView.getOnline()) {
+                serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
+                int index = clients.indexOf(oldVirtualView);
+                clients.set(index, this);
+
+                outputStream.writeObject(new SetNicknameAction(nickname, false));
+                outputStream.flush();
+                outputStream.reset();
+            } else {
+                outputStream.writeObject(new SetNicknameAction(null, false));
+                outputStream.flush();
+                outputStream.reset();
+                System.out.println("> User " + nickname + " already online or doesn't exist");
+            }
+        }
+    }
+
+
+    private void sendLobbyUpdates(String tempNickname) throws InterruptedException, RemoteException {
+        synchronized (clients) {
+            String destNickname = null;
+            for (VirtualView client : clients) {
+                if (client.getOnline() && destNickname == null) {
+                    destNickname = client.getNickname();
+                }
+            }
+            int count = 0;
+            for (VirtualView client : clients) {
+                if (client.getOnline()) {
+                    count++;
+                }
+            }
+            clientActions.put(new AskingStartAction(destNickname, count));
+            clientActions.put(new JoiningPlayerAction(tempNickname, count, 4));
+        }
+    }
+
+    private String checkNickname(SetNicknameAction action) throws RemoteException {
+        String tempNickname = action.getNickname();
+        synchronized (clients) {
+            for (VirtualView c : clients) {
+                if (tempNickname.equalsIgnoreCase(c.getNickname())) {
+                    return null; // Nickname already exists
+                }
+            }
+        }
+        return tempNickname;
     }
 }

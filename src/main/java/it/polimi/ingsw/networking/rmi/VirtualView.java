@@ -4,7 +4,7 @@ package it.polimi.ingsw.networking.rmi;
 import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.*;
 
 public interface VirtualView extends Remote {
 
@@ -15,4 +15,14 @@ public interface VirtualView extends Remote {
     String getNickname() throws RemoteException;
     boolean getOnline() throws RemoteException;
     boolean getGui() throws RemoteException;
+
+    void setOnline(boolean b) throws RemoteException;
+
+    void setNickname(String nick) throws RemoteException;
+
+    void setPing(boolean b) throws RemoteException;
+
+    boolean getPing() throws RemoteException;
+
+    String getNicknameFirst() throws RemoteException;
 }

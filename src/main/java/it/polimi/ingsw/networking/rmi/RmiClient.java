@@ -480,6 +480,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         return nickname;
     }
 
+    public String getNicknameFirst() {
+        return nickname;
+    }
+
 
     @Override
     public boolean getOnline() throws RemoteException  {
@@ -488,6 +492,26 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public boolean getGui() throws RemoteException  {
+        return false;
+    }
+
+    @Override
+    public void setOnline(boolean b) {
+
+    }
+
+    @Override
+    public void setNickname(String nick) {
+
+    }
+
+    @Override
+    public void setPing(boolean b) {
+
+    }
+
+    @Override
+    public boolean getPing() {
         return false;
     }
 

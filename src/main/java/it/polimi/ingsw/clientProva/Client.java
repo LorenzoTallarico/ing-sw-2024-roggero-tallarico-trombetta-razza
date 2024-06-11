@@ -571,6 +571,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             System.out.println("> Players online: " +((AskingStartAction)act).getPlayerNumber());
                             System.out.println("> Type \"startgame\" to start the game");
                         }
+                        break;
                     case PING:
                         server.sendAction(new PongAction(nickname));
                         break;
@@ -615,6 +616,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             System.exit(0);
                         }
                         break;
+                    case PING:
+                        server.sendAction(new PongAction(nickname));
+                        break;
                     default:
                         break;
                 }
@@ -641,6 +645,31 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     @Override
     public boolean getGui() {
         return gui;
+    }
+
+    @Override
+    public void setOnline(boolean b) {
+        connected=b;
+    }
+
+    @Override
+    public void setNickname(String nick) {
+        nickname = nick;
+    }
+
+    @Override
+    public void setPing(boolean b) {
+
+    }
+
+    @Override
+    public boolean getPing() {
+        return false;
+    }
+
+    @Override
+    public String getNicknameFirst() throws RemoteException {
+        return nickname;
     }
 
     private void refreshPlayers(Player player) {

@@ -578,6 +578,31 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
         return false;
     }
 
+    @Override
+    public void setOnline(boolean b) {
+
+    }
+
+    @Override
+    public void setNickname(String nick) {
+
+    }
+
+    @Override
+    public void setPing(boolean b) {
+
+    }
+
+    @Override
+    public boolean getPing() {
+        return false;
+    }
+
+    @Override
+    public String getNicknameFirst() throws RemoteException {
+        return "";
+    }
+
     private void refreshPlayers(Player player) {
         boolean check = false;
         for(int i = 0; i < allPlayers.size() && !check; i++) {
