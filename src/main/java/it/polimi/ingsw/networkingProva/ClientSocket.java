@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientSocket implements VirtualView, Runnable {
+    private Socket serSocket;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
     private BlockingQueue<Action> serverActions;
@@ -32,6 +33,7 @@ public class ClientSocket implements VirtualView, Runnable {
     private boolean gameStarted;
 
     public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted) throws IOException {
+        this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
@@ -88,9 +90,12 @@ public class ClientSocket implements VirtualView, Runnable {
     @Override
     public void showAction(Action act) throws IOException {
         //qui il server sta MANDANDO l'azione al client
-        outputStream.writeObject(act);
-        outputStream.flush();
-        outputStream.reset();
+        synchronized (outputStream) {
+            System.out.println("Sending action to client");
+            outputStream.writeObject(act);
+            outputStream.flush();
+            outputStream.reset();
+        }
     }
 
 
@@ -104,7 +109,7 @@ public class ClientSocket implements VirtualView, Runnable {
                 throw new RuntimeException(e);
             }
             try {
-                if(nickname != null ) {
+                if(nickname != null) {
                     if(action.getType().equals(ActionType.PONG)){
                         ping = true;
                     }
@@ -116,15 +121,31 @@ public class ClientSocket implements VirtualView, Runnable {
                     if(!gameStarted) {
                         String tempNickname = checkNickname((SetNicknameAction) action);
                         Action response = new SetNicknameAction(tempNickname, false);
+
                         if (tempNickname != null) {
                             online = true;
                             nickname = tempNickname;
                             gui = ((SetNicknameAction) action).getGui();
-                            System.out.println(">Allowed Socket connection to a new client named \"" + nickname + "\".");
+                            System.out.println("> Allowed Socket connection to a new client named \"" + nickname + "\".");
+                        } else {
+                            System.err.println("> Denied connection to a new client, name already in use");
+                            outputStream.writeObject(response);
+                            outputStream.flush();
+                            outputStream.reset();
+                            closeResources();
+                            return;
                         }
                         outputStream.writeObject(response);
                         outputStream.flush();
                         outputStream.reset();
+
+                        // lo faccio qui perché va aggiunto per ultimo dopo tutti i controlli
+//                        synchronized (clients) {
+//                            setOnline(true);
+//                            setPing(true);
+//                            clients.add(this);
+//                        }
+
 
                         String destNickname = null;
                         for (int i = 0; i < clients.size() && destNickname == null; i++) {
@@ -149,6 +170,8 @@ public class ClientSocket implements VirtualView, Runnable {
                                 System.out.println("Nome: " + v.getNickname());
                             }
                         }
+
+
                     } else {
                         {  //Reconnect
                             //Ricerca VirtualView Vecchia
@@ -205,6 +228,20 @@ public class ClientSocket implements VirtualView, Runnable {
         if (checkAlreadyExists)// se ritorna il messaggio con null al client il nick non è valido, altrimenti se torna lo stesso nick al client è stato accettato
             tempNickname = null;
         return tempNickname;
+    }
+
+
+    private void closeResources() {
+        try {
+            if (inputStream != null)
+                inputStream.close();
+            if (outputStream != null)
+                outputStream.close();
+//            if (serSocket != null && !serSocket.isClosed())
+//                serSocket.close();
+        } catch (IOException e) {
+            System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
+        }
     }
 
 }

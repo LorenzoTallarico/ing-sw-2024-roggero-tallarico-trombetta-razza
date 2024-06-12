@@ -245,7 +245,8 @@ public class WebServer implements VirtualServer {
                 clients.add(client);
                 boolean startSend = false;
                 for (VirtualView v : this.clients) {
-                    if (v.getOnline() && v.getNickname() != null && !startSend) {
+                    //manda solo al primo client AskingStartAction (se sono connessi almeno 2 client)
+                    if (v.getOnline() && v.getNickname() != null && !startSend && clients.size()>=2) {
                         startSend = true;
                         try {
                             clientActions.put(new AskingStartAction(v.getNickname(), countOnlinePlayer()));

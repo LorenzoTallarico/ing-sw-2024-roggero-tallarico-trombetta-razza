@@ -121,14 +121,14 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private void finalizeConnection(int connectionChoice) throws RemoteException {
         if (connectionChoice == 1) {
             if (!this.server.connect(new ClientRmi((VirtualView) this))) {
-                //qui per la (ri)connessione RMi
+                //connessione/riconnessione RMI
                 System.err.println("> Connection failed, max number of players already reached or name already taken.");
                 System.exit(0);
             }
             connected = true;
             System.out.println("Login successful " + nickname);
         } else{
-            //qui per la (ri)connessione Socket
+            //connessione/riconnessione Socket
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
         }
@@ -463,8 +463,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case JOININGPLAYER:
-                        if(!((JoiningPlayerAction) act).getPlayer().equals(nickname))
-                            System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                        if(((JoiningPlayerAction) act).getPlayer() != null){
+                            if(!((JoiningPlayerAction) act).getPlayer().equals(nickname))
+                                System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                        }
                         break;
                     case ASKINGPLAYERSNUMBER:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
