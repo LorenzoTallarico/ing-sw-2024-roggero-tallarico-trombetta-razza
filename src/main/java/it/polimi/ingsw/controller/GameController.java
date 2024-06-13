@@ -79,7 +79,11 @@ public class GameController {
             return false;
         }
     }
-
+    public void disconnection(String playerName){
+        synchronized (this.model) {
+            model.disconnection(playerName);
+        }
+    }
     public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {
         ArrayList<AchievementCard> secretAch = new ArrayList<>();
         secretAch.add(achievement);

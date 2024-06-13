@@ -59,6 +59,17 @@ public class Game implements Serializable {
         }
     }
 
+    public void disconnection(String playerName){
+        for(Player p: players) {
+            if (p.getName().equalsIgnoreCase(playerName)) {
+                p.disconnection();
+                if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
+                    nextPlayer(true);
+                }
+                break;
+            }
+        }
+    }
 
 
 

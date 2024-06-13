@@ -186,7 +186,23 @@ public class Player implements Serializable {
             System.out.println("Cannot add card because Player's hand is null");
         }
     }
-
+    public void disconnection(){
+        if(lastCardPlaced != null){
+            boolean find= false;
+            for(int i= area.getWestBound(); i<=area.getEastBound() && !find; i++) {
+                for(int j= area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
+                    if(area.getSpace(i, j).getCard().equals(lastCardPlaced)){
+                        find=true;
+                        hand.add(lastCardPlaced);
+                        area.getSpace(i, j).setFree(true);
+                        area.setSpace(null, i, j);
+                        area.getSpace(i,j).setFree(true);
+                        area.getSpace(i,j).setDead(false);
+                    }
+                }
+            }
+        }
+    }
     /**
      * Method that places the card in the space indicated, if possible
      * @param cardIndex inter representing the position in the hand of the card to place

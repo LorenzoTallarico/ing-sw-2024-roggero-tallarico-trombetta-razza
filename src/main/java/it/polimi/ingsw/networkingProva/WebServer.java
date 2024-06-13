@@ -371,6 +371,7 @@ public class WebServer implements VirtualServer {
                             }
                         } else {
                             c.setOnline(false);
+                            controller.disconnection(c.getNickname());
                             try {
                                 clientActions.put(new DisconnectedPlayerAction(c.getNickname()));
                             } catch (Exception e) {

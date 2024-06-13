@@ -3,14 +3,13 @@ package it.polimi.ingsw.networkingProva;
 import it.polimi.ingsw.networking.action.Action;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 public class Consumer {
+    private String nickname = null;
+    private boolean ping;
+    private boolean online;
 
-
-    public void showAction(Action act) throws IOException{
-
-    }
+    public void showAction(Action act) throws IOException{}
 
     public String getNickname(){
         return "";
