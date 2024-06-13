@@ -238,11 +238,12 @@ public class WebServer implements VirtualServer {
                         return false;
                     }
                 }
-                client.setOnline(true);
-                client.setPing(true);
-                client.setNickname(nick);
+                ClientRmi c= new ClientRmi(client);
+                c.setOnline(true);
+                c.setPing(true);
+                c.setNickname(nick);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
-                clients.add(client);
+                clients.add(c);
                 boolean startSend = false;
                 for (VirtualView v : this.clients) {
                     //manda solo al primo client AskingStartAction (se sono connessi almeno 2 client)
@@ -278,10 +279,11 @@ public class WebServer implements VirtualServer {
 
                     int index = clients.indexOf(oldVirtualView);
                     clients.remove(index);
-                    client.setNickname(nick);
-                    client.setOnline(true);
-                    client.setPing(true);
-                    clients.add(index, client);
+                    ClientRmi c= new ClientRmi(client);
+                    c.setOnline(true);
+                    c.setPing(true);
+                    c.setNickname(nick);
+                    clients.add(index, c);
                 } else {
                     System.out.println("> User " + nick + " already online or doesn't exist");
                     return false;

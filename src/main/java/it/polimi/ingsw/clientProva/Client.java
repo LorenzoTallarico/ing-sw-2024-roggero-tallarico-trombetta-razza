@@ -120,7 +120,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     private void finalizeConnection(int connectionChoice) throws RemoteException {
         if (connectionChoice == 1) {
-            if (!this.server.connect(new ClientRmi((VirtualView) this))) {
+            if (!this.server.connect(this)) {
                 //connessione/riconnessione RMI
                 System.err.println("> Connection failed, max number of players already reached or name already taken.");
                 System.exit(0);
