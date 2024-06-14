@@ -64,8 +64,15 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public void showAction(Action act) throws IOException {
-        client.showAction(act);
-
+        if (online) {
+            try {
+                client.showAction(act);
+            } catch (RemoteException e) {
+                // Gestione della disconnessione del client
+                System.out.println("Eccezione showAction di client (ping settato a false)");
+                ping = false;
+            }
+        }
     }
 
 

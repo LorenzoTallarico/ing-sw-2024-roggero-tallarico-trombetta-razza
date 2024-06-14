@@ -187,10 +187,11 @@ public class Player implements Serializable {
         }
     }
     public void disconnection(){
+        //this.isOnline = false;
         if(lastCardPlaced != null){
-            boolean find= false;
-            for(int i= area.getWestBound(); i<=area.getEastBound() && !find; i++) {
-                for(int j= area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
+            boolean find=false;
+            for(int i=area.getWestBound(); i<=area.getEastBound() && !find; i++) {
+                for(int j=area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
                     if(area.getSpace(i, j).getCard().equals(lastCardPlaced)){
                         find=true;
                         hand.add(lastCardPlaced);

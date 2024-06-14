@@ -7,12 +7,18 @@ import it.polimi.ingsw.networking.action.ActionType;
 public class DisconnectedPlayerAction extends Action {
 
     private String nickname;
-    public DisconnectedPlayerAction(String nick) {
+    private int numberOnline;
+    public DisconnectedPlayerAction(String nick, int playersOnline) {
         super(ActionType.DISCONNECTEDPLAYER, null, null);
         this.nickname = nick;
+        this.numberOnline = playersOnline;
     }
 
     public String getNickname() {
         return nickname;
+    }
+
+    public int getNumberOnline() {
+        return numberOnline;
     }
 }

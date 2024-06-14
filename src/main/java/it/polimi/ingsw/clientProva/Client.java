@@ -537,6 +537,11 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             state = Client.State.PLACE;
                         }
                         break;
+                    case STARTERROR:
+                        if(act.getRecipient().equalsIgnoreCase(nickname)){
+                            System.out.println(((StartErrorAction) act).getError());
+                        }
+                        break;
                     case ASKINGDRAW:
                         this.commonGold = ((AskingDrawAction) act).getCommonGold();
                         this.goldDeck = ((AskingDrawAction) act).getGoldDeck();
@@ -571,8 +576,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
                     case ASKINGSTART:
                         if(((AskingStartAction)act).getRecipient().equalsIgnoreCase(nickname)){
-                            System.out.println("> Players online: " +((AskingStartAction)act).getPlayerNumber());
-                            System.out.println("> Type \"startgame\" to start the game");
+                            System.out.println("> Players online: " + ((AskingStartAction)act).getPlayerNumber() + " - Type \"startgame\" to start the game");
                         }
                         break;
                     case PING:
@@ -580,6 +584,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
                     case DISCONNECTEDPLAYER:
                         System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
+                        System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         break;
                     default:
                         break;

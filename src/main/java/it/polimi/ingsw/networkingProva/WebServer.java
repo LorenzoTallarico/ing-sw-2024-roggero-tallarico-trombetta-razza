@@ -19,6 +19,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -81,7 +82,7 @@ public class WebServer implements VirtualServer {
     public void clientsUpdateThread() throws InterruptedException, RemoteException {
         try {
             while (connectionFlagClient) {
-                if(!clientActions.isEmpty()) {
+                if (!clientActions.isEmpty()) {
                     Action a = clientActions.take();
                     synchronized (clients) {
                         for (VirtualView handler : clients) {
@@ -160,7 +161,9 @@ public class WebServer implements VirtualServer {
                                     }
                                 }
                             }
-                            Action act = new AskingStartAction(nickname, countOnlinePlayer());
+                            System.out.println("sono nell'else");
+                            //Action act = new AskingStartAction(nickname, countOnlinePlayer());
+                            Action act = new StartErrorAction(action.getAuthor());
                             clientActions.put(act);
                         }
                         break;
@@ -238,7 +241,7 @@ public class WebServer implements VirtualServer {
                         return false;
                     }
                 }
-                ClientRmi c= new ClientRmi(client);
+                ClientRmi c = new ClientRmi(client);
                 c.setOnline(true);
                 c.setPing(true);
                 c.setNickname(nick);
@@ -247,7 +250,7 @@ public class WebServer implements VirtualServer {
                 boolean startSend = false;
                 for (VirtualView v : this.clients) {
                     //manda solo al primo client AskingStartAction (se sono connessi almeno 2 client)
-                    if (v.getOnline() && v.getNickname() != null && !startSend && clients.size()>=2) {
+                    if (v.getOnline() && v.getNickname() != null && !startSend && clients.size() >= 2) {
                         startSend = true;
                         try {
                             clientActions.put(new AskingStartAction(v.getNickname(), countOnlinePlayer()));
@@ -279,7 +282,7 @@ public class WebServer implements VirtualServer {
 
                     int index = clients.indexOf(oldVirtualView);
                     clients.remove(index);
-                    ClientRmi c= new ClientRmi(client);
+                    ClientRmi c = new ClientRmi(client);
                     c.setOnline(true);
                     c.setPing(true);
                     c.setNickname(nick);
@@ -322,12 +325,12 @@ public class WebServer implements VirtualServer {
             System.out.println("> Received action, type \"" + action.getType().toString() + "\".");
             if (action.getType().equals(ActionType.PONG)) {
                 //synchronized (clients) {
-                    for (VirtualView c : clients) {
-                        if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
-                            System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
-                            c.setPing(true);
-                        }
+                for (VirtualView c : clients) {
+                    if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
+                        System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
+                        c.setPing(true);
                     }
+                }
 
                 return;
             }
@@ -338,6 +341,9 @@ public class WebServer implements VirtualServer {
     }
 
     public void checkAliveThread() throws InterruptedException, IOException {
+        ArrayList<String> disconnectedClient = new ArrayList<>();
+        //HashSet<String> alreadyDisconnected = new HashSet<>();
+        boolean newDisconnection = false;
         while (true) {
             boolean startActionRequired = false;
             synchronized (clients) {
@@ -353,47 +359,102 @@ public class WebServer implements VirtualServer {
                     }
                 }
             }
+
             Thread.sleep(5000);
+            disconnectedClient.clear();
             synchronized (clients) {
+                for (VirtualView c : clients) {
+                    if (!c.getPing() && c.getOnline()){
+                        disconnectedClient.add(c.getNickname());
+                        c.setOnline(false);
+                        newDisconnection = true;
+                    }
+
+                }
+            }
+            for (String c : disconnectedClient) {
+                clientActions.put(new DisconnectedPlayerAction(c, countOnlinePlayer()));
+               // alreadyDisconnected.add(c);
+            }
+            if (!gameStarted) {
+                ArrayList<VirtualView> clientsToRemove = new ArrayList<>();
+                for (VirtualView c : clients) {
+                    if (disconnectedClient.contains(c.getNickname()))
+                        clientsToRemove.add(c);
+                }
+
+                if (!disconnectedClient.isEmpty() ) {
+                    synchronized (clients) {
+                        clients.removeAll(clientsToRemove);
+                        startActionRequired = true;
+                    }
+                }
+                if (countOnlinePlayer() > 1 && startActionRequired) {
+                    try {
+                        clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
+                        System.out.println("Invio AskingStart");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }/*
                 for(VirtualView c : clients){
                     if (!c.getPing() && c.getOnline()) {
                         System.out.println("User " + c.getNickname() + " did not respond to ping");
-                        if (!gameStarted) {
                             startActionRequired = true;
                             for(VirtualView v : clients ) {
                                 try {
-                                    if(v.getPing() && v.getOnline())
+                                    if(v.getPing() && v.getOnline()){
                                         v.showAction(new DisconnectedPlayerAction(c.getNickname()));
+                                        System.out.println("Sono dentro all'if --->>>>>> v.getPing() && v.getOnline()");
+                                    }
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                                clients.remove(c);
+                                clientsToRemove.add(c);
                             }
-                        } else {
-                            c.setOnline(false);
-                            controller.disconnection(c.getNickname());
+
+                    }
+                }
+
+                if (startActionRequired) {
+                    synchronized (clients) {
+                        if (countOnlinePlayer() > 0) {
                             try {
-                                clientActions.put(new DisconnectedPlayerAction(c.getNickname()));
-                            } catch (Exception e) {
+                                clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
+                                System.out.println("Invio AskingStart");
+                            } catch (RemoteException e) {
                                 e.printStackTrace();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
                             }
                         }
                     }
                 }
+
+                newDisconnection = false;
+                */
             }
-            if (startActionRequired) {
-                synchronized (clients) {
-                    if (countOnlinePlayer() > 0) {
+            else {
+                // game is started
+                for(VirtualView c : clients){
+                    if (!c.getPing() && c.getOnline()) {
+                        c.setOnline(false);
+                        controller.disconnection(c.getNickname());
                         try {
-                            clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
-                            System.out.println("Invio AskingStart");
-                        } catch (RemoteException e) {
+                            clientActions.put(new DisconnectedPlayerAction(c.getNickname(), countOnlinePlayer()));
+                            //alreadyDisconnected.add(c.getNickname()); // Segnala il giocatore come disconnesso
+                        } catch (Exception e) {
                             e.printStackTrace();
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
                         }
                     }
                 }
+
+
+
+
             }
         }
     }
