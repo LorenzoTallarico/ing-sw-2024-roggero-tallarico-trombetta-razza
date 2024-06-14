@@ -77,7 +77,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname)  throws IOException, NotBoundException {
         this.p = new Player();
         this.nickname = nickname;
-        state = Client.State.COMMANDS;
+        //state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
         this.gui = gui;
@@ -172,6 +172,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         Action a;
 
         while(connectionFlagClient) {
+
             String line = scan.nextLine();
             if (line.trim().isEmpty())
                 continue;
