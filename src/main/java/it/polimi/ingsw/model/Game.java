@@ -45,8 +45,9 @@ public class Game implements Serializable {
 
 
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
+        //non servono sti due if qua sotto credo (e quindi nemmeno i parametri)
         if(clients.contains(oldVirtualView)){
-            System.out.println("Vecchia virtual view c'è e siamo fottuti");
+            System.out.println("Vecchia virtual view c'è e siamo x(");
         }
         if(clients.contains(newVirtualView)){
             System.out.println("Nuova virtual view c'è e siamo a cavallo");
@@ -54,17 +55,18 @@ public class Game implements Serializable {
         for(Player p :players){
             if(nickname.equalsIgnoreCase(p.getName())){
                 p.setOnline(true);
-                bigListener.notifyReconnection(nickname,players, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
+                bigListener.notifyReconnection(nickname, players, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
             }
         }
     }
 
-    public void disconnection(String playerName){
+    public void disconnection(String playerName) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
+                System.err.println("dentro Game disconnection");
                 p.disconnection();
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
-                    nextPlayer(true);
+                    nextPlayer();
                 }
                 break;
             }
@@ -365,14 +367,26 @@ public class Game implements Serializable {
             } else
                 currPlayer = 0;
         }
+        if(!players.get(currPlayer).isOnline()) {
+            //player offline skips turn
+            currPlayer++;
+            System.out.println(" ---------------------->>>>>>    nextplayer() dentro if offline");
+            if (currPlayer >= playersNumber)
+                currPlayer = 0;
+        }
+
         bigListener.notifyToPlace(players.get(currPlayer));
     }
 
-
+    //NB: SOLO PER TESTING!!!!
     public void nextPlayer(boolean nextState) {
         currPlayer++;
         if(currPlayer >= playersNumber) {
             currPlayer = 0;
+            if(!players.get(currPlayer).isOnline()) {     //player offline skips turn
+                currPlayer++;
+                System.out.println(" ---------------------->>>>>>    nextplayer(nexstate) dentro if offline");
+            }
             if(nextState) {
                 if(gameState == GameState.GAME) {
                     for(Player p : players) {
@@ -554,7 +568,7 @@ public class Game implements Serializable {
 
 
 
-    //**********  METODI PER TESTARE SOCKET ***********
+    //**********  METODI PER TESTARE SOCKET (da togliere)  ***********
     Integer state = 0;
 
     public boolean add(Integer number) {

@@ -21,6 +21,7 @@ import java.net.Socket;
 import java.net.SocketOption;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -47,6 +48,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private Player p;
     private String nickname;
     private Client.State state;
+    private Client.State stateBeforeDisconnection;
     private VirtualServer server;
     private ArrayList<Player> allPlayers;
     private StarterCard starterCard;
@@ -77,7 +79,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname)  throws IOException, NotBoundException {
         this.p = new Player();
         this.nickname = nickname;
-        //state = Client.State.COMMANDS;
+        //check
+        state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
         this.gui = gui;
@@ -85,19 +88,27 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             // new RmiClient(server).init();
 
             final String serverName = "GameServer";
-            //try-catch
-            Registry registry = LocateRegistry.getRegistry(ip, portChoice);
-            VirtualServer server = (VirtualServer) registry.lookup(serverName);
-            this.server = server;
+            try {
+                Registry registry = LocateRegistry.getRegistry(ip, portChoice);
+                VirtualServer server = (VirtualServer) registry.lookup(serverName);
+                this.server = server;
+            } catch (UnknownHostException e) {
+                System.err.println("\nWrong ip address or port");
+                System.exit(0);
+            }
         }
         else { //Socket
 
-            //
-            Socket socket = new Socket(ip, portChoice);
-            VirtualServer serverSocket = (VirtualServer) new ServerSocket(socket, serverActionsReceived);
-            this.server = serverSocket;
-            Thread serverSocketThread = new Thread((Runnable) serverSocket); // Crea un nuovo thread di ascolto per i messaggi in arrivo dal server
-            serverSocketThread.start();
+            try {
+                Socket socket = new Socket(ip, portChoice);
+                VirtualServer serverSocket = (VirtualServer) new ServerSocket(socket, serverActionsReceived);
+                this.server = serverSocket;
+                Thread serverSocketThread = new Thread((Runnable) serverSocket); // Crea un nuovo thread di ascolto per i messaggi in arrivo dal server
+                serverSocketThread.start();
+            } catch (java.net.UnknownHostException e) {
+                System.err.println("\nWrong ip address or port");
+                System.exit(0);
+            }
         }
 
         new Thread(() -> {
@@ -127,6 +138,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             }
             connected = true;
             System.out.println("Login successful " + nickname);
+
         } else{
             //connessione/riconnessione Socket
             Action act = new SetNicknameAction(nickname, gui);
@@ -244,6 +256,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     Print.largeHandPrinter(p.getHand(), achievements);
                     break;
                 case "place":
+                    //qui quando si riconnette il client state si ha "this.state = null"
                     if(state.equals(Client.State.PLACE)) {
                         System.out.println("> This is your playground:");
                         Print.playgroundPrinter(p.getArea());
@@ -581,11 +594,11 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case PING:
-                        server.sendAction(new PongAction(nickname));
+                        server.sendAction(new PongAction(nickname, state.toString()));
                         break;
                     case DISCONNECTEDPLAYER:
                         System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
-                        System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
+                        //System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         break;
                     default:
                         break;
@@ -626,7 +639,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case PING:
-                        server.sendAction(new PongAction(nickname));
+                        server.sendAction(new PongAction(nickname, state.toString()));
                         break;
                     default:
                         break;
@@ -634,6 +647,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             }
         }
     }
+
+
+
+    // DA SISTEMARE
 
 
     @Override
@@ -677,6 +694,16 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void setInTurn(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getInTurn() throws RemoteException {
+        return false;
+    }
+
+    @Override
     public String getNicknameFirst() throws RemoteException {
         return nickname;
     }
@@ -697,15 +724,24 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     public void showAction(Action actionFromServer) throws RemoteException {
         try {
             if(actionFromServer.getType().equals(ActionType.PING)){
-                server.sendAction(new PongAction(nickname));
+                server.sendAction(new PongAction(nickname, state.toString()));
                 //System.out.println("Inviato Pong!");
             }
             else {
                 serverActionsReceived.put(actionFromServer);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException | NullPointerException e) {
+            //da controllare
+//            System.err.println("NULL POINTER EXCEPTION - Only player connected disconnected, terminating task...");
+//            System.exit(0);
             throw new RuntimeException(e);
         }
+
+
+// era così:
+//        } catch (InterruptedException e) {                    r3 -> r2 -> r1
+//            throw new RuntimeException(e);
+//        }
     }
     //Invio delle action al server
     public void serverUpdateThread() throws InterruptedException, RemoteException {

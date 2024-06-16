@@ -28,6 +28,14 @@ public class GameController {
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
         int index = clients.indexOf(oldVirtualView);
+        System.out.println("\n\nDentro reconnection in GameController, elenco delle virtualview:");
+        System.out.println("oldvirtualview --> " + oldVirtualView);
+        System.out.println("newvirtualview --> " + newVirtualView);
+        System.out.println("Elenco delle virtualview dentro clients:");
+        for(VirtualView v : clients){
+            System.out.println(v);
+        }
+        System.out.println("\n\n");
         clients.remove(index);
         clients.add(index, newVirtualView);
         model.reconnection(nickname, oldVirtualView, newVirtualView);
@@ -79,9 +87,14 @@ public class GameController {
             return false;
         }
     }
-    public void disconnection(String playerName){
+    public void disconnection(String playerName, boolean wasInTurn) throws RemoteException {
         synchronized (this.model) {
+            if(wasInTurn){
+                System.out.println("  -------      Dentro if(wasInTurn)     -------> chiamo model.nextplayer()");
+                model.nextPlayer();
+            }
             model.disconnection(playerName);
+            System.err.println("Dentro GameController disconnection");
         }
     }
     public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {
@@ -134,7 +147,7 @@ public class GameController {
     }
 */
 
-    public  int getCurrPlayersNumber() {
+    public int getCurrPlayersNumber() {
         synchronized(this.players) {
             if (!players.isEmpty())
                 return players.size();

@@ -515,6 +515,16 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         return false;
     }
 
+    @Override
+    public void setInTurn(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getInTurn() throws RemoteException {
+        return false;
+    }
+
     private void refreshPlayers(Player player) {
         boolean check = false;
         for(int i = 0; i < allPlayers.size() && !check; i++) {

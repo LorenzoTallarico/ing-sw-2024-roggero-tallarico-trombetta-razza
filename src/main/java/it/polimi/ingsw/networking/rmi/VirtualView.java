@@ -24,5 +24,9 @@ public interface VirtualView extends Remote {
 
     boolean getPing() throws RemoteException;
 
+    void setInTurn(boolean b) throws RemoteException;
+
+    boolean getInTurn() throws RemoteException;
+
     String getNicknameFirst() throws RemoteException;
 }

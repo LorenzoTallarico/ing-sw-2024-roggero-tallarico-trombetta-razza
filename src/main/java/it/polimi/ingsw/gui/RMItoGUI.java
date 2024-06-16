@@ -599,6 +599,16 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void setInTurn(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getInTurn() throws RemoteException {
+        return false;
+    }
+
+    @Override
     public String getNicknameFirst() throws RemoteException {
         return "";
     }

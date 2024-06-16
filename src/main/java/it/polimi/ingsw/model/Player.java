@@ -15,7 +15,7 @@ public class Player implements Serializable {
     private ArrayList<Card> hand;
     private Playground area;
     private Color color;
-    private boolean isOnline;
+    private boolean online;
     private ArrayList<AchievementCard> secretAchievement;
     private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
     private int pointsFromLastCard;
@@ -26,7 +26,7 @@ public class Player implements Serializable {
         hand = new ArrayList<>();
         area = new Playground();
         color = Color.NONE;
-        isOnline = true;
+        online = true;
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
@@ -40,7 +40,7 @@ public class Player implements Serializable {
     public Player(String name, boolean gui) {
         this.name = name;
         color = Color.NONE;
-        isOnline = true;
+        online = true;
         winner = false;
         area = new Playground();
         hand = new ArrayList<>();
@@ -110,6 +110,14 @@ public class Player implements Serializable {
         return secretAchievement;
     }
 
+    /**
+     * Method that returns a boolean that indicates if a player is online or not
+     * @return online or offline player state
+     */
+    public boolean isOnline() {
+        return online;
+    }
+
     public Card getLastCardPlaced() {
         return lastCardPlaced;
     }
@@ -121,7 +129,7 @@ public class Player implements Serializable {
 
     //SETTER
     public void setOnline(boolean b){
-        this.isOnline = b;
+        this.online = b;
     }
 
     public void setArea(Playground area) {
@@ -186,17 +194,22 @@ public class Player implements Serializable {
             System.out.println("Cannot add card because Player's hand is null");
         }
     }
+
     public void disconnection(){
-        //this.isOnline = false;
+        this.online = false;
+        System.err.println("Dentro Player disconnection");
         if(lastCardPlaced != null){
-            boolean find=false;
+            boolean find = false;
             for(int i=area.getWestBound(); i<=area.getEastBound() && !find; i++) {
                 for(int j=area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
-                    if(area.getSpace(i, j).getCard().equals(lastCardPlaced)){
+                    if(area.getSpace(i, j).getCard() != null && area.getSpace(i, j).getCard().equals(lastCardPlaced)){
                         find=true;
                         hand.add(lastCardPlaced);
-                        area.getSpace(i, j).setFree(true);
-                        area.setSpace(null, i, j);
+                        points -= pointsFromLastCard;
+                        lastCardPlaced = null;
+                        pointsFromLastCard = 0;
+                        //area.setSpace(null, i, j);
+                        area.getSpace(i,j).setCard(null);
                         area.getSpace(i,j).setFree(true);
                         area.getSpace(i,j).setDead(false);
                     }

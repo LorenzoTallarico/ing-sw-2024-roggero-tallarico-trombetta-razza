@@ -5,8 +5,15 @@ import it.polimi.ingsw.networking.action.ActionType;
 
 public class PongAction extends Action {
 
-    public PongAction(String nick) {
+    private String state;
+
+    public PongAction(String nick, String state) {
         super(ActionType.PONG, nick, null);
+        this.state = state;
+    }
+
+    public String getIsInTurn() {
+        return state;
     }
 
 }

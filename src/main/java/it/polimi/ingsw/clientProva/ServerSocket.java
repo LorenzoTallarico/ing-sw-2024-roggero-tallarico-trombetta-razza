@@ -61,7 +61,7 @@ public class ServerSocket implements VirtualServer, Runnable {
                     if (obj instanceof Action) {
                         Action action = (Action) obj;
                         if (action.getType().equals(ActionType.PING)) {
-                            sendAction(new PongAction("")); // Da sistemare il nickname
+                            sendAction(new PongAction("", null)); // Da sistemare
                         }
                         serverActionReceived.put(action);
                     } else {

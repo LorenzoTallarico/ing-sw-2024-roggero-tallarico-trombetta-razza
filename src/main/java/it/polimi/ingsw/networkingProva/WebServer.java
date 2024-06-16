@@ -130,6 +130,7 @@ public class WebServer implements VirtualServer {
                         break;
                     case CHOSENDRAWCARD:
                         this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
+                        //newAction = new AskingPlaceAction();
                         break;
                     case START:
                         if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {
@@ -149,7 +150,7 @@ public class WebServer implements VirtualServer {
                                             addPlayer(new Player(client.getNickname(), client.getGui()), client);
                                     }
                                 }
-                                System.out.println("Utenti Aggiunti al game");
+                                System.err.println("Utenti Aggiunti al game");
                                 gameStarted = true;
                             }
                         } else {
@@ -286,6 +287,8 @@ public class WebServer implements VirtualServer {
                     c.setOnline(true);
                     c.setPing(true);
                     c.setNickname(nick);
+                    //if(c.getInTurn())
+                        //va settato lo stato del client a PLACE
                     clients.add(index, c);
                 } else {
                     System.out.println("> User " + nick + " already online or doesn't exist");
@@ -329,6 +332,8 @@ public class WebServer implements VirtualServer {
                     if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
                         System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
                         c.setPing(true);
+                        //sets if player is in turn
+                        c.setInTurn(((PongAction) action).getIsInTurn().equals("DRAW") || ((PongAction) action).getIsInTurn().equals("FALSE"));
                     }
                 }
 
@@ -374,8 +379,10 @@ public class WebServer implements VirtualServer {
             }
             for (String c : disconnectedClient) {
                 clientActions.put(new DisconnectedPlayerAction(c, countOnlinePlayer()));
+                System.err.println("appena fatta put di action Disconnected, ");
                // alreadyDisconnected.add(c);
             }
+
             if (!gameStarted) {
                 ArrayList<VirtualView> clientsToRemove = new ArrayList<>();
                 for (VirtualView c : clients) {
@@ -398,7 +405,9 @@ public class WebServer implements VirtualServer {
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
-                }/*
+                }
+
+                /*
                 for(VirtualView c : clients){
                     if (!c.getPing() && c.getOnline()) {
                         System.out.println("User " + c.getNickname() + " did not respond to ping");
@@ -435,20 +444,37 @@ public class WebServer implements VirtualServer {
                 }
 
                 newDisconnection = false;
+
+                giro test:
+                /r2/ -> r3 -> r1
+
                 */
             }
             else {
                 // game is started
+                System.err.println("Sono nell'else di !gamestarted");
                 for(VirtualView c : clients){
-                    if (!c.getPing() && c.getOnline()) {
+
+                    System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
+                    System.out.println(c.getNickname() + ": ping --> " + c.getPing() + "         online --> " + c.getOnline());
+                    if (!c.getPing() && !c.getOnline()) {
+                        System.err.println("Dentro if (!c.getPing() && !c.getOnline()) dopo else di !gamestarted");
                         c.setOnline(false);
-                        controller.disconnection(c.getNickname());
-                        try {
-                            clientActions.put(new DisconnectedPlayerAction(c.getNickname(), countOnlinePlayer()));
-                            //alreadyDisconnected.add(c.getNickname()); // Segnala il giocatore come disconnesso
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if(c.getInTurn()) {
+                            // FARE COSE PER SKIPPARE TURNO DEL PLAYER DISCONNESSO (non so se qui)
                         }
+                        //questa sarebbe da gestire con una azione da mandare al server e poi chiamare il controller come gli altri
+                        System.err.println("Per chiamare controller.disconnection");
+                        //passa il bool per definire se il player si è disconnesso nel suo turno
+                        controller.disconnection(c.getNickname(), c.getInTurn());
+
+                        //non dovrebbe servire qui sotto
+//                        try {
+//                            clientActions.put(new DisconnectedPlayerAction(c.getNickname(), countOnlinePlayer()));
+//                            //alreadyDisconnected.add(c.getNickname()); // Segnala il giocatore come disconnesso
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
                     }
                 }
 

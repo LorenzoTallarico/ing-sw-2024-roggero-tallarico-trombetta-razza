@@ -13,10 +13,12 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     private String nickname = null;
     private boolean ping = true;
     private boolean online;
+    private boolean inTurn;
 
 
     public ClientRmi(VirtualView client) throws RemoteException{
         this.client = client;
+        //sarebbero da inizializzare tutti
     }
 
     @Override
@@ -35,6 +37,10 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     @Override
     public boolean getPing() {
         return ping;
+    }
+
+    public boolean getInTurn() {
+        return inTurn;
     }
 
     @Override
@@ -57,6 +63,10 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
         ping = b;
     }
 
+    public void setInTurn(boolean b) {
+        inTurn = b;
+    }
+
     @Override
     public void reportError(String details) throws RemoteException {
 
@@ -69,7 +79,7 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
                 client.showAction(act);
             } catch (RemoteException e) {
                 // Gestione della disconnessione del client
-                System.out.println("Eccezione showAction di client (ping settato a false)");
+                System.err.println("Eccezione showAction di ClientRmi (ping settato a false)");
                 ping = false;
             }
         }
