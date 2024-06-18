@@ -55,7 +55,7 @@ public class Game implements Serializable {
         for(Player p :players){
             if(nickname.equalsIgnoreCase(p.getName())){
                 p.setOnline(true);
-                bigListener.notifyReconnection(nickname, players, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
+                bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
             }
         }
     }
@@ -367,7 +367,7 @@ public class Game implements Serializable {
             } else
                 currPlayer = 0;
         }
-        if(!players.get(currPlayer).isOnline()) {
+        if(!players.get(currPlayer).isOnline()) {   //player offline skips turn
             //player offline skips turn
             currPlayer++;
             System.out.println(" ---------------------->>>>>>    nextplayer() dentro if offline");
@@ -383,7 +383,7 @@ public class Game implements Serializable {
         currPlayer++;
         if(currPlayer >= playersNumber) {
             currPlayer = 0;
-            if(!players.get(currPlayer).isOnline()) {     //player offline skips turn
+            if(!players.get(currPlayer).isOnline()) {
                 currPlayer++;
                 System.out.println(" ---------------------->>>>>>    nextplayer(nexstate) dentro if offline");
             }

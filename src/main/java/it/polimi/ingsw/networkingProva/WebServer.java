@@ -454,10 +454,9 @@ public class WebServer implements VirtualServer {
                 // game is started
                 System.err.println("Sono nell'else di !gamestarted");
                 for(VirtualView c : clients){
-
                     System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
                     System.out.println(c.getNickname() + ": ping --> " + c.getPing() + "         online --> " + c.getOnline());
-                    if (!c.getPing() && !c.getOnline()) {
+                    if (!c.getPing() && !c.getOnline() && newDisconnection) {
                         System.err.println("Dentro if (!c.getPing() && !c.getOnline()) dopo else di !gamestarted");
                         c.setOnline(false);
                         if(c.getInTurn()) {
@@ -467,7 +466,7 @@ public class WebServer implements VirtualServer {
                         System.err.println("Per chiamare controller.disconnection");
                         //passa il bool per definire se il player si è disconnesso nel suo turno
                         controller.disconnection(c.getNickname(), c.getInTurn());
-
+                        newDisconnection = false;
                         //non dovrebbe servire qui sotto
 //                        try {
 //                            clientActions.put(new DisconnectedPlayerAction(c.getNickname(), countOnlinePlayer()));

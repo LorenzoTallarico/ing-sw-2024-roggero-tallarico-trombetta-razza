@@ -448,6 +448,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             this.commonResource = ((ReconnectionSuccessAction) act).getCommonResource();
                             this.resourceDeck = ((ReconnectionSuccessAction) act).getResourceDeck();
                             this.allPlayers = ((ReconnectionSuccessAction) act).getPlayers();
+                            this.achievements = ((ReconnectionSuccessAction) act).getCommonAchievement();
                             state = State.COMMANDS;
                             for(Player player : allPlayers){
                                 if(player.getName().equalsIgnoreCase(nickname)){
@@ -717,8 +718,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 check = true;
             }
         }
-        if(!check) //the player is being refreshed for the first time
+        if(!check) {//the player is being refreshed for the first time
+            //proviamo a
             allPlayers.add(player);
+        }
     }
 
     public void showAction(Action actionFromServer) throws RemoteException {
@@ -739,7 +742,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
 
 // era così:
-//        } catch (InterruptedException e) {                    r3 -> r2 -> r1
+//        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
     }

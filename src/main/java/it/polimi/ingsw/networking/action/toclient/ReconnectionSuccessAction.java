@@ -13,8 +13,10 @@ public class ReconnectionSuccessAction extends Action {
     private final Resource goldDeck;
     private final  ArrayList<ResourceCard> commonResource;
     private final Resource resourceDeck;
+    private final ArrayList<AchievementCard> commonAchievement;
 
-    public ReconnectionSuccessAction(String recipient, ArrayList<Player> players, ArrayList<GoldCard> commonGold, Resource goldDeck, ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+    public ReconnectionSuccessAction(String recipient, ArrayList<Player> players, ArrayList<GoldCard> commonGold, Resource goldDeck,
+                                     ArrayList<ResourceCard> commonResource, Resource resourceDeck, ArrayList<AchievementCard> commonAchievement) {
         super(ActionType.RECONNECTIONSUCCESS, null, recipient);
 
         this.players = players;
@@ -22,6 +24,7 @@ public class ReconnectionSuccessAction extends Action {
         this.goldDeck = goldDeck;
         this.commonResource = commonResource;
         this.resourceDeck = resourceDeck;
+        this.commonAchievement = commonAchievement;
     }
 
 
@@ -39,6 +42,10 @@ public class ReconnectionSuccessAction extends Action {
 
     public Resource getResourceDeck() {
         return resourceDeck;
+    }
+
+    public ArrayList<AchievementCard> getCommonAchievement() {
+        return commonAchievement;
     }
 
     public ArrayList<Player> getPlayers() {

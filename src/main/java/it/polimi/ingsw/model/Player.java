@@ -19,6 +19,7 @@ public class Player implements Serializable {
     private ArrayList<AchievementCard> secretAchievement;
     private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
     private int pointsFromLastCard;
+    private Playground playgroundBeforeDraw;
 
     public Player(){
         name = "";
@@ -30,6 +31,7 @@ public class Player implements Serializable {
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
+        playgroundBeforeDraw = null;
     }
 
     /**
