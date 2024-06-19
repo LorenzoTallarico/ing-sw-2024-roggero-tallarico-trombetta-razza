@@ -69,4 +69,15 @@ public class Corner implements Serializable {
     public void cover() {
         visible = false;
     }
+
+    /**
+     * Method that sets true to the flag 'visible' meaning that the corner is
+     * not covered by another card anymore, and it's now visible
+     */
+    public void uncover() {
+        visible = true;
+    }
+
+
+
 }

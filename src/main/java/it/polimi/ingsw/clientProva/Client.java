@@ -36,11 +36,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     enum State {
         COMMANDS,
-        GAMESIZE,
+        GAMESIZE,       //lo uso come stato quando si deve chiamare "startgame"
         STARTERCARD,
         DRAW,
         PLACE,
         ACHIEVEMENTSCHOICE,
+        WAIT,   //QAUNDO RIMANE SOLO 1 CLIENT CONNESSO (DEVE PARTIRE UN TIMER???)
         END
     }
 
@@ -212,9 +213,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     }
                     break;
                 case "startgame":
-                    System.out.print("Azione Start inserita nella coda");
-                    a = new StartAction(nickname);
-                    clientActionsToSend.put(a);
+                    if(state.equals(Client.State.GAMESIZE)){
+                        a = new StartAction(nickname);
+                        clientActionsToSend.put(a);
+                    } else {
+                        System.out.println(Print.ANSI_RED + "> Permission denied, you can't start a game." + Print.ANSI_RESET);
+                    }
                     break;
                 case "chat":
                     if (line.length() > 5) {
@@ -592,6 +596,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     case ASKINGSTART:
                         if(((AskingStartAction)act).getRecipient().equalsIgnoreCase(nickname)){
                             System.out.println("> Players online: " + ((AskingStartAction)act).getPlayerNumber() + " - Type \"startgame\" to start the game");
+                            state = Client.State.GAMESIZE;
                         }
                         break;
                     case PING:
@@ -626,6 +631,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         else{
                             System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
+                            for(Player player : allPlayers){
+                                if(player.getName().equalsIgnoreCase(nickname))
+                                    refreshPlayers(player);
+                            }
                         }
                         break;
                     case SETNICKNAME: //only for Socket

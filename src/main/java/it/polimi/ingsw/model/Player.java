@@ -19,7 +19,7 @@ public class Player implements Serializable {
     private ArrayList<AchievementCard> secretAchievement;
     private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
     private int pointsFromLastCard;
-    private Playground playgroundBeforeDraw;
+    private boolean disconnectedBeforeDraw;
 
     public Player(){
         name = "";
@@ -31,7 +31,7 @@ public class Player implements Serializable {
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
-        playgroundBeforeDraw = null;
+        disconnectedBeforeDraw = false;
     }
 
     /**
@@ -50,6 +50,7 @@ public class Player implements Serializable {
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
+        disconnectedBeforeDraw = false;
         //this.gui=gui;
     }
 
@@ -197,7 +198,7 @@ public class Player implements Serializable {
         }
     }
 
-    public void disconnection(){
+    public void disconnection(boolean wasInTurn){
         this.online = false;
         System.err.println("Dentro Player disconnection");
         if(lastCardPlaced != null){
@@ -206,19 +207,30 @@ public class Player implements Serializable {
                 for(int j=area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
                     if(area.getSpace(i, j).getCard() != null && area.getSpace(i, j).getCard().equals(lastCardPlaced)){
                         find=true;
+                        // Da qui bisogna ripulire bene lo space in cui è stata piazzata (oltre a tutti gli aspetti del playground)
+                        area.setPlaygroundBeforePlace(i, j, lastCardPlaced);
                         hand.add(lastCardPlaced);
                         points -= pointsFromLastCard;
                         lastCardPlaced = null;
                         pointsFromLastCard = 0;
-                        //area.setSpace(null, i, j);
-                        area.getSpace(i,j).setCard(null);
-                        area.getSpace(i,j).setFree(true);
-                        area.getSpace(i,j).setDead(false);
+//                        //area.setSpace(null, i, j);
+//                        area.getSpace(i,j).setCard(null);
+//                        area.getSpace(i,j).setFree(true);
+//                        area.getSpace(i,j).setDead(false);
                     }
                 }
             }
         }
     }
+
+
+
+
+
+
+
+
+
     /**
      * Method that places the card in the space indicated, if possible
      * @param cardIndex inter representing the position in the hand of the card to place

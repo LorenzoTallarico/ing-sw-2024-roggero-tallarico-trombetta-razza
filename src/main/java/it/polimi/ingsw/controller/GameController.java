@@ -93,7 +93,8 @@ public class GameController {
                 System.out.println("  -------      Dentro if(wasInTurn)     -------> chiamo model.nextplayer()");
                 model.nextPlayer();
             }
-            model.disconnection(playerName);
+            //da qui in poi "wasInTurn" è superfluo
+            model.disconnection(playerName, wasInTurn);
             System.err.println("Dentro GameController disconnection");
         }
     }

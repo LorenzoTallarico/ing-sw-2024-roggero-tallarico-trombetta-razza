@@ -227,6 +227,145 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         return points;
     }
 
+
+    public void setPlaygroundBeforePlace(int row, int column, Card card) {
+        System.err.println("INSIDE setPlaygroundBeforePlace ***************************************************************************************");
+        boolean side = getSpace(row, column).getCard().isFront();       //true = front      false = back
+        getSpace(row, column).setCard(null);     //controllare se inizializzati così gli space
+        getSpace(row, column).setFree(true);
+        //getSpace(row, column).setChecked(?????);       //da gestire con un metodo apposito
+
+        //Remove elements from items/resources maps
+        int oldValue = 0;
+        if(side){
+            //front side
+            for(int i=0; i<4; i++){
+                if(card.getFrontCorners()[i].getType().equals(CornerType.RESOURCE)){
+                    oldValue = resources.get(card.getFrontCorners()[i].getResource());
+                    resources.put(card.getFrontCorners()[i].getResource(), oldValue-1);
+                } else if (card.getFrontCorners()[i].getType().equals(CornerType.ITEM)) {
+                    oldValue = items.get(card.getFrontCorners()[i].getItem());
+                    items.put(card.getFrontCorners()[i].getItem(), oldValue-1);
+                }
+            }
+        } else {
+            //back side (just removes the resource obtained from the back of the card)
+            oldValue = resources.get(card.getResource());
+            resources.put(card.getResource(), oldValue-1);
+        }
+
+        //CORNERS VISIBLE FIX
+        Corner corner = null;
+        oldValue = 0;
+        //top-left
+        if(!getSpace(row-1, column-1).isFree() && !getSpace(row-1, column-1).isDead()){
+            if(getSpace(row-1, column-1).getCard().isFront()){
+                getSpace(row-1, column-1).getCard().getFrontCorners()[1].uncover();
+                if(getSpace(row-1, column-1).getCard().getFrontCorners()[1].getType().equals(CornerType.RESOURCE)){
+                    oldValue = resources.get(getSpace(row-1, column-1).getCard().getFrontCorners()[1].getResource());
+                    resources.put(getSpace(row-1, column-1).getCard().getFrontCorners()[1].getResource(), oldValue+1);
+                } else if (getSpace(row-1, column-1).getCard().getFrontCorners()[1].getType().equals(CornerType.ITEM)) {
+                    oldValue = items.get(getSpace(row-1, column-1).getCard().getFrontCorners()[1].getItem());
+                    items.put(getSpace(row-1, column-1).getCard().getFrontCorners()[1].getItem(), oldValue+1);
+                }
+            }
+            else {
+                getSpace(row-1, column-1).getCard().getBackCorners()[1].uncover();
+            }
+        }
+
+
+        //top-right
+        if(!getSpace(row-1, column+1).isFree() && !getSpace(row-1, column+1).isDead()){
+            if(getSpace(row-1, column+1).getCard().isFront()){
+                getSpace(row-1, column+1).getCard().getFrontCorners()[2].uncover();
+                if(getSpace(row-1, column+1).getCard().getFrontCorners()[2].getType().equals(CornerType.RESOURCE)){
+                    oldValue = resources.get(getSpace(row-1, column+1).getCard().getFrontCorners()[2].getResource());
+                    resources.put(getSpace(row-1, column+1).getCard().getFrontCorners()[2].getResource(), oldValue+1);
+                } else if (getSpace(row-1, column+1).getCard().getFrontCorners()[2].getType().equals(CornerType.ITEM)) {
+                    oldValue = items.get(getSpace(row-1, column+1).getCard().getFrontCorners()[2].getItem());
+                    items.put(getSpace(row-1, column+1).getCard().getFrontCorners()[2].getItem(), oldValue+1);
+                }
+            }
+            else {
+                getSpace(row-1, column+1).getCard().getBackCorners()[2].uncover();
+            }
+        }
+
+
+        //bottom-left
+        if(!getSpace(row+1, column-1).isFree() && !getSpace(row+1, column-1).isDead()){
+            if(getSpace(row+1, column-1).getCard().isFront()){
+                getSpace(row+1, column-1).getCard().getFrontCorners()[0].uncover();
+                if(getSpace(row+1, column-1).getCard().getFrontCorners()[0].getType().equals(CornerType.RESOURCE)){
+                    oldValue = resources.get(getSpace(row+1, column-1).getCard().getFrontCorners()[0].getResource());
+                    resources.put(getSpace(row+1, column-1).getCard().getFrontCorners()[0].getResource(), oldValue+1);
+                } else if (getSpace(row+1, column-1).getCard().getFrontCorners()[0].getType().equals(CornerType.ITEM)) {
+                    oldValue = items.get(getSpace(row+1, column-1).getCard().getFrontCorners()[0].getItem());
+                    items.put(getSpace(row+1, column-1).getCard().getFrontCorners()[0].getItem(), oldValue+1);
+                }
+            }
+            else {
+                getSpace(row+1, column-1).getCard().getBackCorners()[0].uncover();
+            }
+        }
+
+
+
+        //bottom-right
+        if(!getSpace(row+1, column+1).isFree() && !getSpace(row+1, column+1).isDead()){
+            if(getSpace(row+1, column+1).getCard().isFront()){
+                getSpace(row+1, column+1).getCard().getFrontCorners()[3].uncover();
+                if(getSpace(row+1, column+1).getCard().getFrontCorners()[3].getType().equals(CornerType.RESOURCE)){
+                    oldValue = resources.get(getSpace(row+1, column+1).getCard().getFrontCorners()[3].getResource());
+                    resources.put(getSpace(row+1, column+1).getCard().getFrontCorners()[3].getResource(), oldValue+1);
+                } else if (getSpace(row+1, column+1).getCard().getFrontCorners()[3].getType().equals(CornerType.ITEM)) {
+                    oldValue = items.get(getSpace(row+1, column+1).getCard().getFrontCorners()[3].getItem());
+                    items.put(getSpace(row+1, column+1).getCard().getFrontCorners()[3].getItem(), oldValue+1);
+                }
+            }
+            else {
+                getSpace(row+1, column+1).getCard().getBackCorners()[3].uncover();
+            }
+        }
+
+
+        //BOUNDS FIXING
+        if(row == northBound)
+            northBound = row+1;
+
+        if(row == southBound)
+            southBound = row-1;
+
+        if(column == westBound)
+            westBound = column+1;
+
+        if(column == eastBound)
+            eastBound = column-1;
+
+
+        //removes last card placed from queue
+        removeLastOrderedCoord();
+
+        System.err.println("END OF METHOD INN PLAYGROUND ------------------------------------------------------------------");
+
+    }
+
+    public void removeLastOrderedCoord() {
+        System.err.println("INSIDE REMOVE LAST COORD *********************************************");
+        if (!orderedCoords.isEmpty()) {
+            Card lastKey = null;
+            for (Card key : orderedCoords.keySet()) {
+                lastKey = key;
+            }
+            if (lastKey != null) {
+                orderedCoords.remove(lastKey);
+            }
+        }
+    }
+
+
+
     //getters
 
     /**

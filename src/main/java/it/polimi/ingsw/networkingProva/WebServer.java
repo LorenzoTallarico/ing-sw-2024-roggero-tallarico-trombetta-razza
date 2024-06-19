@@ -34,6 +34,7 @@ public class WebServer implements VirtualServer {
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
     private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
     private boolean gameStarted = false;
+    private int offlineNumber = 0;
 
     public WebServer(int[] ports) {
         PORT_RMI = ports[0];
@@ -332,7 +333,7 @@ public class WebServer implements VirtualServer {
                     if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
                         System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
                         c.setPing(true);
-                        //sets if player is in turn
+                        //sets if player is in turn (between draw and place)
                         c.setInTurn(((PongAction) action).getIsInTurn().equals("DRAW") || ((PongAction) action).getIsInTurn().equals("FALSE"));
                     }
                 }
@@ -483,6 +484,13 @@ public class WebServer implements VirtualServer {
             }
         }
     }
+
+
+    //butta giù clients e server
+
+
+
+
 }
     /*
     checkAliveThread()

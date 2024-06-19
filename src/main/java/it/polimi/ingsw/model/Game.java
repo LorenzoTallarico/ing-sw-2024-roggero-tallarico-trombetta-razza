@@ -60,11 +60,11 @@ public class Game implements Serializable {
         }
     }
 
-    public void disconnection(String playerName) throws RemoteException {
+    public void disconnection(String playerName, boolean wasInTurn) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
                 System.err.println("dentro Game disconnection");
-                p.disconnection();
+                p.disconnection(wasInTurn);
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
                     nextPlayer();
                 }
@@ -104,9 +104,9 @@ public class Game implements Serializable {
 
 //GET
 
-    public ArrayList<AchievementCard> getCommonAchievement() {
-        return commonAchievement;
-    }
+//    public ArrayList<AchievementCard> getCommonAchievement() {
+//        return commonAchievement;
+//    }
 
     public ArrayList<GoldCard> getCommonGold(){
         return this.commonGold;
