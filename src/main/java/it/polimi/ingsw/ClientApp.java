@@ -46,10 +46,9 @@ public class ClientApp {
         int guiChoice = 0;
         System.out.println(AsciiArt);
         do {
-            System.out.println("> Select the graphic:");
+            System.out.println("> Choose the interface:");
             System.out.println("   [1] TUI");
             System.out.println("   [2] GUI");
-
             try {
                 scan = new Scanner(System.in);
                 line = scan.nextLine();
@@ -64,7 +63,7 @@ public class ClientApp {
         checkChoice = false;
 
         do {
-            System.out.println("> Select connection method:");
+            System.out.println("> Choose the connection method:");
             System.out.println("   [1] RMI Connection");
             System.out.println("   [2] Socket Connection");
             try {
@@ -120,25 +119,13 @@ public class ClientApp {
             System.out.println("> Enter Nickname: ");
             try {
                 scan = new Scanner(System.in);
-                line = scan.nextLine();
-                st = new StringTokenizer(line);
-                nickname = st.nextToken();
-                checkChoice = true;
+                nickname = scan.nextLine().trim();
+                checkChoice = !nickname.isEmpty();
             } catch (NoSuchElementException | NumberFormatException ignored) { }
         } while(!checkChoice);
 
-        if(guiChoice == 1){
-            //TUI
-            Client c = new Client(connectionChoice, portChoice, ipChoice, false, nickname);
-
-        }
-        else {
-            //GUI
-            Client c = new Client(connectionChoice, portChoice, ipChoice, true, nickname);
-        }
-
-
-        }
+        Client c = new Client(connectionChoice, portChoice, ipChoice, (guiChoice != 1), nickname);
+    }
 
 }
 

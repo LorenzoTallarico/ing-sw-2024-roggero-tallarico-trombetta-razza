@@ -1,6 +1,7 @@
 
 package it.polimi.ingsw.clientProva;
 
+import it.polimi.ingsw.gui.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ActionType;
@@ -12,6 +13,11 @@ import it.polimi.ingsw.networking.rmi.VirtualServer;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networkingProva.ClientRmi;
 import it.polimi.ingsw.util.Print;
+import it.polimi.ingsw.gui.GUIView;
+import it.polimi.ingsw.gui.PlayController;
+import it.polimi.ingsw.gui.LoginController;
+import javafx.application.Platform;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -67,6 +73,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private boolean connectionFlagServer=true;
     private boolean connectionFlagClient=true; //da sistemare
 
+    private GUIView guiView;
+    private LoginController loginController;
+    private PlayController playController;
+    private Thread threadChatListener, threadStartListener, threadAchievementListener, threadPlaceListener, threadRePlaceListener, threadDrawListener;
+
+
 
     /*public Client(VirtualServer server) throws RemoteException {
         this.server = server;
@@ -84,10 +96,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         state = Client.State.COMMANDS;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
-        this.gui = gui;
+        //connection
         if(connectionChoice == 1){ //RMI
             // new RmiClient(server).init();
-
             final String serverName = "GameServer";
             try {
                 Registry registry = LocateRegistry.getRegistry(ip, portChoice);
@@ -97,9 +108,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 System.err.println("\nWrong ip address or port");
                 System.exit(0);
             }
-        }
-        else { //Socket
-
+        } else { //Socket
             try {
                 Socket socket = new Socket(ip, portChoice);
                 VirtualServer serverSocket = (VirtualServer) new ServerSocket(socket, serverActionsReceived);
@@ -111,7 +120,36 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 System.exit(0);
             }
         }
-
+        //gui
+        this.gui = gui;
+        if(gui) {
+            guiView = new GUIView();
+            try {
+                guiView.init();
+            } catch (Exception e) {
+                System.out.println("!!! ERROR INIT GUI-VIEW !!!");
+                throw new RuntimeException(e);
+            }
+            Platform.startup(() -> {
+                Stage stage = new Stage();
+                try {
+                    guiView.start(stage);
+                } catch (IOException e) {
+                    System.out.println("!!! ERROR START GUI-VIEW !!!");
+                    throw new RuntimeException(e);
+                }
+            });
+            do {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+                }
+            } while (guiView.getLoginController() == null);
+            loginController = guiView.getLoginController();
+            Platform.runLater(() -> loginController.setNickname(nickname));
+        }
+        //update threads
         new Thread(() -> {
             try {
                 clientUpdateThread();
@@ -119,7 +157,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 e.printStackTrace();
             }
         }).start();
-
         new Thread(() -> {
             try {
                 serverUpdateThread();
@@ -127,21 +164,31 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 e.printStackTrace();
             }
         }).start();
+        // connecting
         finalizeConnection(connectionChoice);
+
     }
 
     private void finalizeConnection(int connectionChoice) throws RemoteException {
         if (connectionChoice == 1) {
-            if (!this.server.connect(this)) {
-                //connessione/riconnessione RMI
-                System.err.println("> Connection failed, max number of players already reached or name already taken.");
+            if(!this.server.connect(this)) {
+                // connection / reconnection RMI
+                if(gui) {
+                    Platform.runLater(loginController::invalidNickname);
+                    Platform.exit();
+                } else {
+                    System.err.println("> Connection failed, max number of players already reached or name already taken.");
+                }
                 System.exit(0);
             }
             connected = true;
-            System.out.println("Login successful " + nickname);
-
-        } else{
-            //connessione/riconnessione Socket
+            if(gui) {
+                Platform.runLater(loginController::waitForOtherPlayers);
+            } else {
+                System.out.println("> Login successful " + nickname);
+            }
+        } else {
+            // connection / reconnection Socket
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
         }
@@ -168,6 +215,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         this.runCli();
     }*/
 
+
     private void runCommandLine() throws RemoteException {
         // Start runCli Thread
         new Thread(() -> {
@@ -185,7 +233,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         Action a;
 
         while(connectionFlagClient) {
-
             String line = scan.nextLine();
             if (line.trim().isEmpty())
                 continue;
@@ -483,23 +530,48 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
                     case JOININGPLAYER:
                         if(((JoiningPlayerAction) act).getPlayer() != null){
-                            if(!((JoiningPlayerAction) act).getPlayer().equals(nickname))
-                                System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                            if(!gui) {
+                                if (!((JoiningPlayerAction) act).getPlayer().equals(nickname))
+                                    System.out.println("> Player " + ((JoiningPlayerAction) act).getPlayer() + " joined the game. " + ((JoiningPlayerAction) act).getCurrentPlayersNumber() + "/" + (((JoiningPlayerAction) act).getGameSize() == 0 ? "?" : ((JoiningPlayerAction) act).getGameSize()));
+                            } else {
+                                Platform.runLater(() -> loginController.notifyJoiningPlayer(((JoiningPlayerAction)act).getPlayer(), ((JoiningPlayerAction)act).getCurrentPlayersNumber(), ((JoiningPlayerAction)act).getGameSize()));
+                            }
                         }
                         break;
                     case ASKINGPLAYERSNUMBER:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
-                            state = Client.State.GAMESIZE;
-                            System.out.println("> Enter desired players number with command \"gamesize x\".");
+                            state = State.GAMESIZE;
+                            if(!gui) {
+                                System.out.println("> Enter desired players number with command \"gamesize x\".");
+                            } else {
+                                loginController.showPlayersNumberMenu();
+                                do {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        System.out.println("!!! ERROR SLEEP GETPLAYERSNUMBER !!!");
+                                    }
+                                } while(loginController.getPlayersNumber() == 0);
+                                int playnum = loginController.getPlayersNumber();
+                                server.sendAction(new ChosenPlayersNumberAction(playnum));
+                                Platform.runLater(loginController::waitForOtherPlayers);
+                                state = State.COMMANDS;
+                            }
                         }
                         break;
                     case CHATMESSAGE:
                         if (act.getRecipient().isEmpty() || act.getRecipient().equalsIgnoreCase(nickname)) {
                             Message m = ((ChatMessageAction) act).getMessage();
-                            if (m.getRecipient().isEmpty()) {
-                                System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
+                            if(!gui) {
+                                if (m.getRecipient().isEmpty()) {
+                                    System.out.println(Print.ANSI_BOLD + ">>> " + m.toString() + Print.ANSI_BOLD_RESET);
+                                } else {
+                                    System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
+                                }
                             } else {
-                                System.out.println(Print.ANSI_BOLD + ">>> PRIVATE > " + m.toString() + Print.ANSI_BOLD_RESET);
+                                if(playController != null) {
+                                    playController.displayChatMessage(m);
+                                }
                             }
                         }
                         break;
@@ -510,50 +582,97 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             this.commonResource = ((ChooseSideStarterCardAction) act).getCommonResource();
                             this.resourceDeck = ((ChooseSideStarterCardAction) act).getResourceDeck();
                             starterCard = ((ChooseSideStarterCardAction) act).getCard();
-                            state = Client.State.STARTERCARD;
-                            synchronized (p) {
-                                p = ((ChooseSideStarterCardAction) act).getPlayer();
+                            state = State.STARTERCARD;
+                            p = ((ChooseSideStarterCardAction) act).getPlayer();
+                            if(gui) {
+                                Platform.runLater(() -> guiView.playScene(nickname));
+                                do {
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+                                    }
+                                } while (guiView.getPlayController() == null);
+                                playController = guiView.getPlayController();
+                                playController.setNickname(nickname);
+                                if(threadChatListener == null) {
+                                    threadChatListener = createThreadChatListener();
+                                    threadChatListener.start();
+                                }
+                                Platform.runLater(() -> playController.passStarterCard(starterCard, p, commonGold, goldDeck, commonResource, resourceDeck));
+                                threadStartListener = createThreadStartListener();
+                                threadStartListener.start();
+                            } else {
+                                System.out.println("> Choose the side you want to place your starter card with command \"start\".");
                             }
-                            System.out.println("> Choose the side you want to place your starter card with command \"start\".");
                         } else {
                             refreshPlayers(((ChooseSideStarterCardAction) act).getPlayer());
+                        }
+                        if(gui && playController != null) {
+                            playController.initializeChatOptions(allPlayers);
                         }
                         break;
                     case CHOOSEABLEACHIEVEMENTS:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
                             choosableAchievements = ((ChooseableAchievementsAction) act).getAchievements();
                             achievements.addAll(((ChooseableAchievementsAction) act).getCommonGoals());
-                            state = Client.State.ACHIEVEMENTSCHOICE;
-                            System.out.println("> Choose your secret achievement with the command \"achievement\".");
+                            state = State.ACHIEVEMENTSCHOICE;
+                            if(!gui) {
+                                System.out.println("> Choose your secret achievement with the command \"achievement\".");
+                            } else {
+                                Platform.runLater(() -> playController.passAchievement(choosableAchievements, achievements));
+                                threadAchievementListener = createThreadAchievementListener();
+                                threadAchievementListener.start();
+                            }
                         }
                         break;
                     case ASKINGPLACE:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
                             p = ((AskingPlaceAction) act).getPlayer();
-                            state = Client.State.PLACE;
-                            System.out.println("> It's your time to play, enter \"place\" to place a card.");
+                            state = State.PLACE;
+                            if(gui) {
+                                Platform.runLater(() -> playController.setPlayer(p));
+                                threadPlaceListener = createThreadPlaceListener();
+                                threadPlaceListener.start();
+                            } else {
+                                System.out.println("> It's your time to play, enter \"place\" to place a card.");
+                            }
                         } else {
                             refreshPlayers(((AskingPlaceAction) act).getPlayer());
-                            System.out.println("> It's " + act.getRecipient() + "'s turn to place a card.");
+                            if(!gui)
+                                System.out.println("> It's " + act.getRecipient() + "'s turn to place a card.");
                         }
                         break;
                     case PLACEDCARD:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
-                            System.out.println("> You placed a " + (((PlacedCardAction) act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
-                                    ((PlacedCardAction) act).getRow() + "][" + ((PlacedCardAction) act).getColumn() + "]" + (((PlacedCardAction) act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction) act).getScore() + " pts")) + ".");
                             p = ((PlacedCardAction) act).getPlayer();
-                            Print.playgroundPrinter(p.getArea());
+                            if(!gui) {
+                                System.out.println("> You placed a " + (((PlacedCardAction) act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
+                                        ((PlacedCardAction) act).getRow() + "][" + ((PlacedCardAction) act).getColumn() + "]" + (((PlacedCardAction) act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction) act).getScore() + " pts")) + ".");
+                                Print.playgroundPrinter(p.getArea());
+                            } else {
+                                Platform.runLater(() -> playController.setPlayer(p));
+                            }
                         } else {
                             refreshPlayers(((PlacedCardAction) act).getPlayer());
-                            System.out.println("> " + ((PlacedCardAction) act).getPlayer().getName() + " just placed a " +
+                            if(!gui)
+                                System.out.println("> " + ((PlacedCardAction) act).getPlayer().getName() + " just placed a " +
                                     (((PlacedCardAction) act).getCard().getClass() == ResourceCard.class ? "resource" : "gold") + " card in [" +
                                     ((PlacedCardAction) act).getRow() + "][" + ((PlacedCardAction) act).getColumn() + "]" + (((PlacedCardAction) act).getScore() == 0 ? "" : (" gaining " + ((PlacedCardAction) act).getScore() + " pts")) + ".");
+                        }
+                        if(gui) {
+                            Platform.runLater(() -> playController.displaySuccessfulPlace(act.getRecipient(), ((PlacedCardAction)act).getScore()));
                         }
                         break;
                     case PLACEDCARDERROR:
                         if (act.getRecipient().equalsIgnoreCase(nickname) && state.equals(Client.State.COMMANDS)) {
-                            System.out.println(((PlacedErrorAction) act).getError());
                             state = Client.State.PLACE;
+                            if(!gui) {
+                                System.out.println(((PlacedErrorAction) act).getError());
+                            } else {
+                                threadRePlaceListener = createThreadRePlaceListener();
+                                threadRePlaceListener.start();
+                            }
                         }
                         break;
                     case STARTERROR:
@@ -567,31 +686,54 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         this.commonResource = ((AskingDrawAction) act).getCommonResource();
                         this.resourceDeck = ((AskingDrawAction) act).getResourceDeck();
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
-                            System.out.println("> Choose the card you want to draw with the command \"draw\".");
                             state = Client.State.DRAW;
+                            if(!gui) {
+                                System.out.println("> Choose the card you want to draw with the command \"draw\".");
+                            } else {
+                                threadDrawListener = createThreadDrawListener();
+                                threadDrawListener.start();
+                            }
                         } else {
-                            System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
+                            if(!gui) {
+                                System.out.println("> It's " + act.getRecipient() + "'s turn to draw a card.");
+                            } else {
+                                Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
+                            }
                         }
                         break;
                     case CARDDRAWN:
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
                             p = ((CardDrawnAction) act).getPlayer();
-                            System.out.println("> You drew the following card:");
-                            Print.largeCardBothSidesPrinter(((CardDrawnAction) act).getCard());
-                            System.out.println("> Your turn is over.");
+                            if(gui) {
+                                Platform.runLater(() -> playController.setPlayer(p));
+                            } else {
+                                System.out.println("> You drew the following card:");
+                                Print.largeCardBothSidesPrinter(((CardDrawnAction) act).getCard());
+                                System.out.println("> Your turn is over.");
+                            }
                         } else {
                             refreshPlayers(((CardDrawnAction) act).getPlayer());
-                            System.out.println("> " + act.getRecipient() + " drew a card.");
+                            if(!gui)
+                                System.out.println("> " + act.getRecipient() + " drew a card.");
+                        }
+                        if(gui) {
+                            Platform.runLater(() -> playController.displaySuccessfulDrawn(act.getRecipient(), ((CardDrawnAction)act).getCard()));
                         }
                         break;
                     case WINNERS:
                         for (Player tempPlayer : ((WinnersAction) act).getPlayers())
-                            if (nickname.equalsIgnoreCase(tempPlayer.getName()))
+                            if (nickname.equalsIgnoreCase(tempPlayer.getName())) {
                                 p = tempPlayer;
-                            else
+                                if(gui)
+                                    Platform.runLater(() -> playController.setPlayer(p));
+                            } else
                                 refreshPlayers(tempPlayer);
-                        Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
-                        Print.scoreboardPrinter(allPlayers, p);
+                        if(!gui) {
+                            Print.resultAsciiArt(p.isWinner(), Print.getPlayerColor(nickname, allPlayers, p));
+                            Print.scoreboardPrinter(allPlayers, p);
+                        } else {
+                            Platform.runLater(() -> playController.showResult());
+                        }
                         break;
                     case ASKINGSTART:
                         if(((AskingStartAction)act).getRecipient().equalsIgnoreCase(nickname)){
@@ -640,7 +782,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     case SETNICKNAME: //only for Socket
                         if (((SetNicknameAction)act).getNickname()!= null) {
                             nickname = ((SetNicknameAction)act).getNickname();
-                            connected =true;
+                            connected = true;
                             System.out.println("Login successful " + nickname);
                         }
                         else{
@@ -748,16 +890,15 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 //            System.exit(0);
             throw new RuntimeException(e);
         }
-
-
 // era così:
 //        } catch (InterruptedException e) {
 //            throw new RuntimeException(e);
 //        }
     }
-    //Invio delle action al server
+
+    // Sending actions to server
     public void serverUpdateThread() throws InterruptedException, RemoteException {
-        // Invia l'azione al server appena la trova in coda
+        // It sends all the actions in the queue to the server
         try {
             while (connectionFlagServer) {
                 Action a = clientActionsToSend.take();
@@ -770,5 +911,137 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         }
     }
 
+    //listening threads for gui
+
+    private Thread createThreadChatListener() {
+        return new Thread(() -> {
+            while (playController == null) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GETCONTROLLER FOR CHAT !!!");
+                }
+            }
+            boolean listenToChat = true;
+            while(listenToChat) {
+                try {
+                    if(!playController.messagesToSendQueue.isEmpty()) {
+                        Message message = playController.messagesToSendQueue.get(0);
+                        playController.messagesToSendQueue.remove(0);
+                        clientActionsToSend.put(new ChatMessageAction(nickname, message.getRecipient(), message));
+                    } else {
+                        Thread.sleep(200);
+                    }
+                } catch(InterruptedException e) {
+                    listenToChat = false;
+                }
+            }
+            System.out.println("!!! ERROR STOP LISTENING CHAT !!!");
+        });
+    }
+
+    private Thread createThreadStartListener() {
+        return new Thread(() -> {
+            do {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GET STARTER CHOICE !!!");
+                }
+            } while (playController.starterChoice == 0);
+            try {
+                clientActionsToSend.put(new ChosenSideStarterCardAction(nickname, (playController.starterChoice == 1)));
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR THREAD STARTER CHOICE couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+            state = State.COMMANDS;
+        });
+    }
+
+    private Thread createThreadAchievementListener() {
+        return new Thread(() -> {
+            do {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP GET ACHIEVEMENT CHOICE !!!");
+                }
+            } while (playController.achievementChoice == 0);
+            try {
+                clientActionsToSend.put(new ChosenAchievementAction(nickname, playController.achievementChoice == 1 ? choosableAchievements.get(0) : choosableAchievements.get(1)));
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR THREAD ACHIEVEMENT CHOICE couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+            state = State.COMMANDS;
+        });
+    }
+
+    private Thread createThreadPlaceListener() {
+        return new Thread(() -> {
+            Platform.runLater(() -> playController.alertToPlace());
+            PlacingCardAction a;
+            do {
+                a = playController.discoverPlace();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS PLACED !!!");
+                }
+            } while (a == null);
+            try {
+                clientActionsToSend.put(a);
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR THREAD PLACE CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+            state = State.COMMANDS;
+        });
+    }
+
+    private Thread createThreadRePlaceListener() {
+        return new Thread(() -> {
+            Platform.runLater(() -> playController.alertToRePlace());
+            PlacingCardAction a;
+            do {
+                a = playController.discoverPlace();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS PLACED !!!");
+                }
+            } while (a == null);
+            try {
+                clientActionsToSend.put(a);
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR THREAD REPLACE CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+            state = State.COMMANDS;
+        });
+    }
+
+    private Thread createThreadDrawListener() {
+        return new Thread(() -> {
+            Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
+            Platform.runLater(() -> playController.alertToDraw());
+            ChosenDrawCardAction a;
+            do {
+                a = playController.discoverDraw();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    System.out.println("!!! ERROR SLEEP HAS DRAWN !!!");
+                }
+            } while (a == null);
+            try {
+                clientActionsToSend.put(a);
+            } catch (InterruptedException e) {
+                System.out.println("!!! ERROR THREAD DRAW CARD couldn't send action !!!");
+                throw new RuntimeException(e);
+            }
+        });
+    }
 
 }

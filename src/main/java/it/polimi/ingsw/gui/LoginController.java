@@ -197,6 +197,10 @@ public class LoginController {
     
     //public methods
 
+    public void setNickname(String nick) {
+        nameFld.setText(nick);
+    }
+
     public void notifyJoiningPlayer(String nick, int curr, int size) {
         String line;
         if(size > 0)
