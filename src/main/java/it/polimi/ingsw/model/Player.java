@@ -198,7 +198,7 @@ public class Player implements Serializable {
         }
     }
 
-    public void disconnection(boolean wasInTurn){
+    public void disconnection(){
         this.online = false;
         System.err.println("Dentro Player disconnection");
         if(lastCardPlaced != null){

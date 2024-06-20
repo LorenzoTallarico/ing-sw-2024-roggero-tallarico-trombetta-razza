@@ -36,6 +36,7 @@ public enum ActionType {
     RECONNECTEDPLAYER,
     PING,
     PONG,
+    WAIT,
 
 
     WINNERS

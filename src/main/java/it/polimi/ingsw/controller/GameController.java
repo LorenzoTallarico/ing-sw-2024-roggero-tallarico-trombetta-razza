@@ -87,14 +87,9 @@ public class GameController {
             return false;
         }
     }
-    public void disconnection(String playerName, boolean wasInTurn) throws RemoteException {
+    public void disconnection(String playerName) throws RemoteException {
         synchronized (this.model) {
-            if(wasInTurn){
-                System.out.println("  -------      Dentro if(wasInTurn)     -------> chiamo model.nextplayer()");
-                model.nextPlayer();
-            }
-            //da qui in poi "wasInTurn" è superfluo
-            model.disconnection(playerName, wasInTurn);
+            model.disconnection(playerName);
             System.err.println("Dentro GameController disconnection");
         }
     }

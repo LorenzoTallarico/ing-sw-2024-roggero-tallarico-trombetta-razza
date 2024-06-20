@@ -60,11 +60,11 @@ public class Game implements Serializable {
         }
     }
 
-    public void disconnection(String playerName, boolean wasInTurn) throws RemoteException {
+    public void disconnection(String playerName) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
                 System.err.println("dentro Game disconnection");
-                p.disconnection(wasInTurn);
+                p.disconnection();
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
                     nextPlayer();
                 }

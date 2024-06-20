@@ -255,8 +255,7 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         }
 
         //CORNERS VISIBLE FIX
-        Corner corner = null;
-        oldValue = 0;
+        //oldValue = 0;
         //top-left
         if(!getSpace(row-1, column-1).isFree() && !getSpace(row-1, column-1).isDead()){
             if(getSpace(row-1, column-1).getCard().isFront()){
