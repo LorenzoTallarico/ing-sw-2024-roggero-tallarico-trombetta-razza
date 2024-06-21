@@ -2,10 +2,13 @@
 package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.networking.action.ActionType;
+import it.polimi.ingsw.networking.action.toclient.AskingPlayersNumberAction;
 import it.polimi.ingsw.networking.action.toclient.AskingStartAction;
+import it.polimi.ingsw.networking.action.toclient.ErrorAction;
 import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
 import it.polimi.ingsw.networking.action.toserver.ReconnectedPlayerAction;
 import it.polimi.ingsw.networking.action.toserver.SetNicknameAction;
+import it.polimi.ingsw.networking.action.toserver.StartAction;
 import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.networking.action.Action;
 
@@ -31,8 +34,9 @@ public class ClientSocket implements VirtualView, Runnable {
     private boolean online;
     private String nickname = null;
     private boolean gameStarted;
+    private int playersNumber;
 
-    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted) throws IOException {
+    public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted, int playersNumber) throws IOException {
         this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
@@ -40,6 +44,7 @@ public class ClientSocket implements VirtualView, Runnable {
         this.clientActions = clientActions;
         this.clients = clients;
         this.gameStarted = gameStarted;
+        this.playersNumber = playersNumber;
     }
 
     //GETTER & SETTER
@@ -78,10 +83,12 @@ public class ClientSocket implements VirtualView, Runnable {
         return "";
     }
 
+    @Override
     public void setNickname(String nickname){
         this.nickname = nickname;
     }
 
+    @Override
     public void setOnline(boolean online) {
         this.online = online;
     }
@@ -101,7 +108,7 @@ public class ClientSocket implements VirtualView, Runnable {
     public void showAction(Action act) throws IOException {
         //qui il server sta MANDANDO l'azione al client
         synchronized (outputStream) {
-            System.out.println("Sending action to client");
+            System.out.println("Sending action to client" + act.getType());
             outputStream.writeObject(act);
             outputStream.flush();
             outputStream.reset();
@@ -111,123 +118,151 @@ public class ClientSocket implements VirtualView, Runnable {
 
     @Override
     public void run() {
-        while(true) {
-            Action action = null;
-            try {
-                action = (Action) inputStream.readObject();
-            } catch (IOException | ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            try {
-                if(nickname != null) {
-                    if(action.getType().equals(ActionType.PONG)){
-                        ping = true;
-                    }
-                    else {
-                        serverActions.put(action);
-                    }
+        try {
+            while (true) {
+                Action action = null;
+                //vedere se serve sincronizzare anche su inputStream
+                try {
+                    action = (Action) inputStream.readObject();
+                    System.out.println("Messaggio Arrivato: " + action.getType());
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
-                else if(action.getType().equals(ActionType.SETNICKNAME)) {
-                    if(!gameStarted) {
-                        String tempNickname = checkNickname((SetNicknameAction) action);
-                        Action response = new SetNicknameAction(tempNickname, false);
+                try {
+                    System.out.println("Stampo in ordine: nickname, online, ping" + nickname + online + ping);
 
-                        if (tempNickname != null) {
-                            online = true;
-                            nickname = tempNickname;
-                            gui = ((SetNicknameAction) action).getGui();
-                            System.out.println("> Allowed Socket connection to a new client named \"" + nickname + "\".");
+
+                    if (nickname != null) {
+                        if (action.getType().equals(ActionType.PONG)) {
+                            this.ping = true;
+                            System.out.println("ho settato il ping a true di " + nickname);
                         } else {
-                            System.err.println("> Denied connection to a new client, name already in use");
-                            outputStream.writeObject(response);
-                            outputStream.flush();
-                            outputStream.reset();
-                            closeResources();
-                            return;
-                        }
-                        outputStream.writeObject(response);
-                        outputStream.flush();
-                        outputStream.reset();
-
-                        // lo faccio qui perché va aggiunto per ultimo dopo tutti i controlli
-//                        synchronized (clients) {
-//                            setOnline(true);
-//                            setPing(true);
-//                            clients.add(this);
-//                        }
-
-
-                        String destNickname = null;
-                        for (int i = 0; i < clients.size() && destNickname == null; i++) {
-                            if (clients.get(i).getOnline()) {
-                                destNickname = clients.get(i).getNickname();
+                            try {
+                                serverActions.put(action);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
                             }
                         }
-                        int count = 0;
-                        for (VirtualView v : this.clients) {
-                            if (v.getOnline() && v.getNickname() != null)
-                                count++;
-                        }
-                        Action act = new AskingStartAction(destNickname, count);
-                        clientActions.put(act);
+                    } else if (action.getType().equals(ActionType.SETNICKNAME)) {
 
-                        act = new JoiningPlayerAction(nickname, count, 4);
-                        try {
-                            clientActions.put(act);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            for (VirtualView v : clients) {
-                                System.out.println("Nome: " + v.getNickname());
+                        if (!gameStarted) { // connection to Lobby
+                            String nick = ((SetNicknameAction) action).getNickname();
+                            System.out.println("Nick: " + nick);
+                            boolean sizeRequest = false;
+                            if (!clients.isEmpty()) {
+                                for (VirtualView v : this.clients) {
+                                    if (nick != null && v.getNickname() != null && v.getNickname().equalsIgnoreCase(nick)) {
+                                        System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
+                                        try {
+                                            showAction(new ErrorAction(nick, "Denied connection to a new client, user \"" + nick + "\" already existing and now online."));
+                                            showAction(new SetNicknameAction(null, false));
+                                            return;
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                                if (countOnlinePlayer() >= 4) {
+                                    System.out.println("> Denied connection to a new client, max number of players already reached.");
+                                    try {
+                                        showAction(new ErrorAction(nick, "Numero utenti massimo Raggiunto"));
+                                        showAction(new SetNicknameAction(null, false));
+                                        return;
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+                                }
                             }
-                        }
-
-
-                    } else {
-                        {  //Reconnect
+                            if (clients.size() == 1 && playersNumber == 0) {
+                                try {
+                                    showAction(new ErrorAction(nick, "GameSize non ancora settata dal primo utente, Impossibile accedere!"));
+                                    showAction(new SetNicknameAction(null, false));
+                                    return;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            if (clients.isEmpty()) {
+                                sizeRequest = true;
+                            }
+                            online = true;
+                            ping = true;
+                            nickname = nick;
+                            System.out.println("nickname: " + nickname);
+                            System.out.println("> Allowed Socket connection to a new client named \"" + nick + "\".");
+                            clients.add(this);
+                            showAction(new SetNicknameAction(nickname, false));
+                            if (sizeRequest) {
+                                try {
+                                    clientActions.put(new AskingPlayersNumberAction(nick));
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            try {
+                                if (clients.size() > 1) {
+                                    clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer(), playersNumber));
+                                    serverActions.put(new StartAction(null));
+                                }
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            //return;
+                        } else {
+                            //Reconnect
                             //Ricerca VirtualView Vecchia
                             nickname = ((SetNicknameAction) action).getNickname();
                             VirtualView oldVirtualView = null;
-                            for(VirtualView c : clients){
-                                if(c.getNickname().equals(nickname)){
+                            for (VirtualView c : clients) {
+                                if (c.getNickname().equals(nickname)) {
                                     oldVirtualView = c;
                                     break;
                                 }
                             }
-                            if(oldVirtualView!= null && !oldVirtualView.getOnline()) {
-                                // il client si è già connesso in precedenza e deve recuperare i dati
 
-                                // mando maction "reconnect" che manda nickname e la nuova virtualview
-                                try {
-                                    serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
+                            synchronized (outputStream) {
+                                if (oldVirtualView != null && !oldVirtualView.getOnline()) {
+                                    // il client si è già connesso in precedenza e deve recuperare i dati
+
+                                    // mando maction "reconnect" che manda nickname e la nuova virtualview
+                                    try {
+                                        serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    //aggiornamento mappe
+                                    int index = clients.indexOf(oldVirtualView);
+                                    clients.remove(index);
+                                    clients.add(index, this);
+
+                                    outputStream.writeObject(new SetNicknameAction(nickname, false));
+                                    outputStream.flush();
+                                    outputStream.reset();
+                                } else {
+                                    outputStream.writeObject(new SetNicknameAction(null, false));
+                                    outputStream.flush();
+                                    outputStream.reset();
+                                    System.out.println("> User " + nickname + " already online or doesn't exist");
                                 }
-
-                                //aggiornamento mappe
-                                int index = clients.indexOf(oldVirtualView);
-                                clients.remove(index);
-                                clients.add(index, this);
-
-                                outputStream.writeObject(new SetNicknameAction(nickname, false));
-                                outputStream.flush();
-                                outputStream.reset();
-                            }
-                            else{
-                                outputStream.writeObject(new SetNicknameAction(null, false));
-                                outputStream.flush();
-                                outputStream.reset();
-                                System.out.println("> User " + nickname + " already online or doesn't exist");
                             }
                         }
+
+
                     }
+
+                } catch (IOException e) {           //eventualmente da aggiungere una eccezione
+                    e.printStackTrace();
                 }
-            } catch (InterruptedException | IOException e) {
-                throw new RuntimeException(e);
             }
+        }catch(Exception e){
+            e.printStackTrace();
         }
 
     }
 
+    //serve???
     private String checkNickname(SetNicknameAction action) throws RemoteException {
         boolean checkAlreadyExists = false;
         String tempNickname = action.getNickname();
@@ -252,6 +287,17 @@ public class ClientSocket implements VirtualView, Runnable {
         } catch (IOException e) {
             System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
         }
+    }
+
+    private int countOnlinePlayer() throws RemoteException {
+        int count = 0;
+        synchronized (clients) {
+            for (VirtualView c : this.clients) {
+                if (c.getOnline())
+                    count++;
+            }
+        }
+        return count;
     }
 
 }

@@ -191,6 +191,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             // connection / reconnection Socket
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
+            System.err.println("Ho appena chiamato server.sendAction(act)");
         }
         if(!gui)
             runCommandLine();
@@ -742,11 +743,18 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case PING:
-                        server.sendAction(new PongAction(nickname, state.toString()));
+                        server.sendAction(new PongAction(nickname));
                         break;
                     case DISCONNECTEDPLAYER:
                         System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
                         //System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
+                        break;
+                    case ERROR:
+                        System.out.println(">" + ((ErrorAction) act).getMessage());
+                        if(((ErrorAction) act).getEndConnection()){
+                            System.out.println("> System Exit");
+                            System.exit(0);
+                        }
                         break;
                     default:
                         break;
@@ -780,8 +788,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case SETNICKNAME: //only for Socket
-                        if (((SetNicknameAction)act).getNickname()!= null) {
-                            nickname = ((SetNicknameAction)act).getNickname();
+                        if (((SetNicknameAction)act).getNickname()!= null /*|| ((SetNicknameAction)act).getNickname().equals("No size")*/) {
+                            //nickname = ((SetNicknameAction)act).getNickname();
                             connected = true;
                             System.out.println("Login successful " + nickname);
                         }
@@ -791,7 +799,14 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case PING:
-                        server.sendAction(new PongAction(nickname, state.toString()));
+                        server.sendAction(new PongAction(nickname));
+                        break;
+                    case ERROR:
+                        System.out.println(">" + ((ErrorAction) act).getMessage());
+                        if(((ErrorAction) act).getEndConnection()){
+                            System.out.println("> System Exit");
+                            System.exit(0);
+                        }
                         break;
                     default:
                         break;
@@ -878,8 +893,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     public void showAction(Action actionFromServer) throws RemoteException {
         try {
             if(actionFromServer.getType().equals(ActionType.PING)){
-                server.sendAction(new PongAction(nickname, state.toString()));
-                //System.out.println("Inviato Pong!");
+                server.sendAction(new PongAction(nickname));
+                System.out.println("Inviato Pong!");
             }
             else {
                 serverActionsReceived.put(actionFromServer);

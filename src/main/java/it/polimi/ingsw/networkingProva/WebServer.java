@@ -64,28 +64,24 @@ public class WebServer implements VirtualServer {
             System.out.println("Server Socket ready.");
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, gameStarted);
-                /*if (playersNumber==0 && clients.size()==1) {
+                VirtualView actualSocket = (VirtualView) new ClientSocket(clientSocket, serverActions, clientActions, clients, gameStarted, playersNumber);
+                Thread clientSocketThread = new Thread((Runnable) actualSocket);
+                clientSocketThread.start();
+                /*if(!clients.isEmpty() && playersNumber==0){
                     try {
-                        outputStream = new ObjectOutputStream(clientSocket.getOutputStream());
-                        outputStream.writeObject(new ErrorAction(null, "GameSize non ancora settata dal primo utente, Impossibile accedere!", true));
-                        outputStream.flush();
-                        outputStream.reset();
-                        outputStream.close();
-                    }catch (Exception e){
+                        //actualSocket.showAction(new ErrorAction(null, "GameSize non ancora settata dal primo utente, Impossibile accedere!"));
+                        actualSocket.showAction(new SetNicknameAction("No Size", false));
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-                else {
-                    synchronized (clients) {
-                        actualSocket.setOnline(true);
-                        actualSocket.setPing(true);
-                        clients.add(actualSocket);
-                    }
-
+                synchronized (clients) {
+                    actualSocket.setOnline(true);
+                    actualSocket.setPing(true);
+                    clients.add(actualSocket);
                 }*/
-                Thread clientSocketThread = new Thread((Runnable) actualSocket);
-                clientSocketThread.start();
+
+
             }
         } catch (IOException e) {
             System.err.println("Errore durante l'avvio del server Socket: " + e.getMessage());
@@ -221,10 +217,16 @@ public class WebServer implements VirtualServer {
             System.err.println("> Join request received.");
             String nick = client.getNicknameFirst();
             if (!gameStarted) { // connection to Lobby
+                boolean sizeRequest=false;
                 if (!clients.isEmpty()) {
                     for (VirtualView v : this.clients) {
                         if (nick != null && v.getNickname().equalsIgnoreCase(nick)) {
                             System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
+                            try {
+                                client.showAction(new ErrorAction(nick, "Denied connection to a new client, user \"" + nick + "\" already existing and now online."));
+                            }catch(Exception e){
+                                e.printStackTrace();
+                            }
                             return false;
                         }
                     }
@@ -321,11 +323,13 @@ public class WebServer implements VirtualServer {
     }
 
     //NB: controllare la sincronizzazione qui su "this"
-    private synchronized int countOnlinePlayer() throws RemoteException {
+    private int countOnlinePlayer() throws RemoteException {
         int count = 0;
-        for (VirtualView c : this.clients) {
-            if (c.getOnline())
-                count++;
+        synchronized (clients) {
+            for (VirtualView c : this.clients) {
+                if (c.getOnline())
+                    count++;
+            }
         }
         return count;
     }
@@ -370,7 +374,7 @@ public class WebServer implements VirtualServer {
             boolean startActionRequired = false;
             synchronized (clients) {
                 for (VirtualView c : clients) {
-                    if (c.getOnline()) {
+                    if (c.getOnline() && c.getNickname()!=null) {
                         c.setPing(false);
                         try {
                             System.out.println("invio ping a " + c.getNickname());
@@ -386,7 +390,9 @@ public class WebServer implements VirtualServer {
             disconnectedClient.clear();
             synchronized (clients) {
                 for (VirtualView c : clients) {
+                    System.out.println("Client: " + c.getNickname() + " Online: " + c.getOnline() + " ping: " + c.getPing());
                     if (!c.getPing() && c.getOnline()){
+                        System.err.println("Sono entrato in !c.getPing() && c.getOnline() ---> mi mette nella lista per disconnettere");
                         disconnectedClient.add(c.getNickname());
                         c.setOnline(false);
                         newDisconnection = true;
@@ -394,6 +400,7 @@ public class WebServer implements VirtualServer {
 
                 }
             }
+
             for (String c : disconnectedClient) {
                 clientActions.put(new DisconnectedPlayerAction(c, countOnlinePlayer()));
                 //offlineNumber++;

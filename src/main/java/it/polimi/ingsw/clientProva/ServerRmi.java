@@ -7,6 +7,7 @@ import it.polimi.ingsw.networking.rmi.VirtualView;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.SQLOutput;
 
 public class ServerRmi implements VirtualServer {
     private VirtualServer server = null;
@@ -19,6 +20,7 @@ public class ServerRmi implements VirtualServer {
 
     @Override
     public void sendAction(Action act) throws RemoteException {
+        System.out.println("******************** Sono dentro ");
         server.sendAction(act);
     }
 

@@ -123,7 +123,7 @@ public class ClientApp {
                 checkChoice = !nickname.isEmpty();
             } catch (NoSuchElementException | NumberFormatException ignored) { }
         } while(!checkChoice);
-
+        System.out.println(nickname);
         Client c = new Client(connectionChoice, portChoice, ipChoice, (guiChoice != 1), nickname);
     }
 

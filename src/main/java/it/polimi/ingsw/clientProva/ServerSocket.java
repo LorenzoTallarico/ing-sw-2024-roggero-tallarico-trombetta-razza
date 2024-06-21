@@ -33,14 +33,17 @@ public class ServerSocket implements VirtualServer, Runnable {
     }
 
     @Override
-    public /*NBBBB*/ synchronized void sendAction(Action action) throws RemoteException {
-        try{
-            outputStream.writeObject(action);
-            outputStream.flush();
-            outputStream.reset();
-            //Thread.sleep(10); // Piccola pausa per sincronizzare il flusso
-        }catch (IOException /*| /*InterruptedException */ e){
-            e.printStackTrace();
+    public  void sendAction(Action action) throws RemoteException {
+        synchronized (outputStream){
+            try{
+                System.out.println("Invio messaggio: " + action.getType());
+                outputStream.writeObject(action);
+                outputStream.flush();
+                outputStream.reset();
+                //Thread.sleep(10); // Piccola pausa per sincronizzare il flusso
+            }catch (IOException /*| /*InterruptedException */ e){
+                e.printStackTrace();
+            }
         }
 
     }
@@ -57,19 +60,17 @@ public class ServerSocket implements VirtualServer, Runnable {
         try {
             while (true) {
                 try {
-                    Object obj = inputStream.readObject();
-                    if (obj instanceof Action) {
-                        Action action = (Action) obj;
-                        if (action.getType().equals(ActionType.PING)) {
-                            sendAction(new PongAction("", null)); // Da sistemare
-                        }
-                        serverActionReceived.put(action);
-                    } else {
-                        System.err.println("Ricevuto un oggetto che non è un'Action: " + obj);
+                    Action action = null;
+                    try {
+                        action = (Action) inputStream.readObject();
+                        System.out.println("Messaggio arrivato " + action.getType());
+                    } catch (IOException | ClassNotFoundException e) {
+                        throw new RuntimeException(e);
                     }
-                } catch (ClassNotFoundException e) {
-                    System.err.println("ClassNotFoundException durante readObject: " + e.getMessage());
-                    e.printStackTrace();
+                    if (action.getType().equals(ActionType.PING)) {
+                        sendAction(new PongAction(""));
+                    }
+                    serverActionReceived.put(action);
                 } catch (InterruptedException e) {
                     System.err.println("InterruptedException durante put: " + e.getMessage());
                     e.printStackTrace();

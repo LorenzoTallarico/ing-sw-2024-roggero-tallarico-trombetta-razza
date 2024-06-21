@@ -38,6 +38,6 @@ public enum ActionType {
     PONG,
     WAIT,
 
-
+    ERROR,
     WINNERS
 }
