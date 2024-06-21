@@ -132,7 +132,6 @@ public class WebServer implements VirtualServer {
                         break;
                     case CHOSENDRAWCARD:
                         this.controller.drawCard(action.getAuthor(), ((ChosenDrawCardAction) action).getIndex());
-                        //newAction = new AskingPlaceAction();
                         break;
                     case START:
                         if (countOnlinePlayer() > 1 && countOnlinePlayer() < 5) {
@@ -172,7 +171,6 @@ public class WebServer implements VirtualServer {
                         break;
                     case RECONNECTEDPLAYER:
                         this.controller.reconnection(((ReconnectedPlayerAction) action).getNick(), ((ReconnectedPlayerAction) action).getOldVirtualView(), ((ReconnectedPlayerAction) action).getNewVirtualview());
-                        //offlineNumber--;
                         break;
                     default:
                         break;
@@ -251,10 +249,11 @@ public class WebServer implements VirtualServer {
                 c.setNickname(nick);
                 System.out.println("> Allowed RMI connection to a new client named \"" + nick + "\".");
                 clients.add(c);
+                /*
                 boolean startSend = false;
                 for (VirtualView v : this.clients) {
                     //manda solo al primo client AskingStartAction (se sono connessi almeno 2 client)
-                    if (v.getOnline() && v.getNickname() != null && !startSend && clients.size() >= 2) {
+                    if (v.getOnline() && v.getNickname() != null && !startSend && clients.size()>=2) {
                         startSend = true;
                         try {
                             clientActions.put(new AskingStartAction(v.getNickname(), countOnlinePlayer()));
