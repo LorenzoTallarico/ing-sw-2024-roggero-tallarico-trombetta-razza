@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
 import java.io.ObjectInputStream;
+import java.net.SocketException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -108,10 +109,16 @@ public class ClientSocket implements VirtualView, Runnable {
     public void showAction(Action act) throws IOException {
         //qui il server sta MANDANDO l'azione al client
         synchronized (outputStream) {
-            System.out.println("Sending action to client" + act.getType());
-            outputStream.writeObject(act);
-            outputStream.flush();
-            outputStream.reset();
+            try{
+                System.out.println("Sending action to client" + act.getType());
+                outputStream.writeObject(act);
+                outputStream.flush();
+                outputStream.reset();
+            } catch (SocketException e) {
+                System.err.println("Connection reset by peer");
+                closeResources();
+                //throw e;
+            }
         }
     }
 
@@ -125,10 +132,18 @@ public class ClientSocket implements VirtualView, Runnable {
                 try {
                     action = (Action) inputStream.readObject();
                     System.out.println("Messaggio Arrivato: " + action.getType());
+                } catch (SocketException e) {
+                    System.out.println("Connection reset by peer");
+                    // (VEDERE SE TOGLIERE)  questo break permette di uscire dal ciclo se c'è un problema di lettura del socket
+                    break;
+
                 } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
+                    // (VEDERE SE TOGLIERE)  questo break permette di uscire dal ciclo se c'è un problema di lettura del socket
+                    break;
+
                 }
-                try {
+                //try {
                     System.out.println("Stampo in ordine: nickname, online, ping" + nickname + online + ping);
 
 
@@ -252,14 +267,21 @@ public class ClientSocket implements VirtualView, Runnable {
 
                     }
 
-                } catch (IOException e) {           //eventualmente da aggiungere una eccezione
-                    e.printStackTrace();
-                }
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+//                } catch (IOException e) {           //eventualmente da aggiungere una eccezione
+//                    e.printStackTrace();
+//                }
 
+
+                }
+
+            //}
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            System.out.println("> Client disconnected: " + nickname);
+            closeResources();
+        }
     }
 
     //serve???
@@ -282,8 +304,9 @@ public class ClientSocket implements VirtualView, Runnable {
                 inputStream.close();
             if (outputStream != null)
                 outputStream.close();
-//            if (serSocket != null && !serSocket.isClosed())
-//                serSocket.close();
+            //da vedere se servono questa ultima
+            if (serSocket != null && !serSocket.isClosed())
+                serSocket.close();
         } catch (IOException e) {
             System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
         }
