@@ -199,6 +199,7 @@ public class LoginController {
 
     public void setNickname(String nick) {
         nameFld.setText(nick);
+        onNameBtnClick();
     }
 
     public void notifyJoiningPlayer(String nick, int curr, int size) {

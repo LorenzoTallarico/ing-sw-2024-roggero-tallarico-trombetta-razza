@@ -791,10 +791,18 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         if (((SetNicknameAction)act).getNickname()!= null /*|| ((SetNicknameAction)act).getNickname().equals("No size")*/) {
                             //nickname = ((SetNicknameAction)act).getNickname();
                             connected = true;
-                            System.out.println("Login successful " + nickname);
-                        }
-                        else{
-                            System.out.println("Login Error!");
+                            if(gui) {
+                                Platform.runLater(loginController::waitForOtherPlayers);
+                            } else {
+                                System.out.println("Login successful " + nickname);
+                            }
+                        } else{
+                            if(gui) {
+                                Platform.runLater(loginController::invalidNickname);
+                                Platform.exit();
+                            } else {
+                                System.out.println("Login Error!");
+                            }
                             System.exit(0);
                         }
                         break;
