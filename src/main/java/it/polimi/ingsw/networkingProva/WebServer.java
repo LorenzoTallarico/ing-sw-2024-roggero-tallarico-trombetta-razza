@@ -297,14 +297,12 @@ public class WebServer implements VirtualServer {
                 if (oldVirtualView != null && !oldVirtualView.getOnline()) {
                     try {
                         VirtualView cli = new ClientRmi(client);
+                        cli.setStarter(oldVirtualView.getStarter());
                         cli.setOnline(true);
                         cli.setPing(true);
                         cli.setNickname(nick);
-
-
                         //vedere se sul riferimento di Virtualviw client passato in ingresso gli va benen
                         int index = clients.indexOf(oldVirtualView);
-                        cli.setStarter(oldVirtualView.getStarter());
                         clients.remove(index);
                         clients.add(index, cli);
                         serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, cli));
@@ -525,24 +523,23 @@ public class WebServer implements VirtualServer {
             public void run() {
                 //NB: bisogna sincronizzare l'accesso a clients
                 try {
-                    synchronized (clients){
-                        if(clients.size() - countOnlinePlayer() == 0){
-                            //tutti i giocatori sono online (blocca countdown)
-                            timer.cancel();
+                    if(clients.size() - countOnlinePlayer() == 0){
+                        //tutti i giocatori sono online (blocca countdown)
+                        timer.cancel();
 
+                    } else {
+                        //almeno un player è disconnesso
+                        if (seconds > 0) {
+                            System.out.println("Seconds remaining before shutdown: " + seconds);
+                            seconds--;
                         } else {
-                            //almeno un player è disconnesso
-                            if (seconds > 0) {
-                                System.out.println("Seconds remaining before shutdown: " + seconds);
-                                seconds--;
-                            } else {
-                                //timer finito, butta giù tutto
-                                timer.cancel();
-                                //da fare eventualmente
-                                shutdown();
-                            }
+                            //timer finito, butta giù tutto
+                            timer.cancel();
+                            //da fare eventualmente
+                            shutdown();
                         }
                     }
+
                 } catch (RemoteException e) {
                     throw new RuntimeException(e);
                 }

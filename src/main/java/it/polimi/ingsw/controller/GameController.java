@@ -28,13 +28,6 @@ public class GameController {
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
 
-        int index = clients.indexOf(oldVirtualView);
-        newVirtualView.setStarter(oldVirtualView.getStarter());
-        clients.remove(index);
-        newVirtualView.setNickname(nickname);
-        newVirtualView.setOnline(true);
-        newVirtualView.setPing(true);
-        clients.add(index, newVirtualView);
         System.out.println("\n\nDentro reconnection in GameController, elenco delle virtualview:");
         System.out.println("oldvirtualview --> " + oldVirtualView);
         System.out.println("newvirtualview --> " + newVirtualView);
@@ -42,10 +35,6 @@ public class GameController {
         for(VirtualView v : clients){
             System.out.println(v);
         }
-        System.out.println("\n\n");
-        /*int index = clients.indexOf(oldVirtualView);
-        clients.remove(index);
-        clients.add(index, newVirtualView);*/
         model.reconnection(nickname, oldVirtualView, newVirtualView);
     }
 
@@ -97,10 +86,8 @@ public class GameController {
         //}
     }
     public void disconnection(String playerName) throws RemoteException {
-        synchronized (this.model) {
-            model.disconnection(playerName);
-            System.err.println("Dentro GameController disconnection");
-        }
+        model.disconnection(playerName);
+        System.err.println("Dentro GameController disconnection");
     }
     public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {
         ArrayList<AchievementCard> secretAch = new ArrayList<>();

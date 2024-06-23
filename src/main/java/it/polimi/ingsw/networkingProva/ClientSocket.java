@@ -236,38 +236,30 @@ public class ClientSocket implements VirtualView, Runnable {
                             nickname = ((SetNicknameAction) action).getNickname();
                             VirtualView oldVirtualView = null;
                             for (VirtualView c : clients) {
-                                if (c.getNickname().equals(nickname)) {
+                                if (c.getNickname().equalsIgnoreCase(nickname)) {
                                     oldVirtualView = c;
                                     break;
                                 }
                             }
+                            if (oldVirtualView != null && !oldVirtualView.getOnline()) {
+                                try {
 
-                            synchronized (outputStream) {
-                                if (oldVirtualView != null && !oldVirtualView.getOnline()) {
-                                    // il client si è già connesso in precedenza e deve recuperare i dati
-
-                                    // mando maction "reconnect" che manda nickname e la nuova virtualview
-                                    try {
-                                        serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    /*
-                                    //aggiornamento mappe
+                                    starter = oldVirtualView.getStarter();
+                                    online = true;
+                                    ping = true;
                                     int index = clients.indexOf(oldVirtualView);
                                     clients.remove(index);
                                     clients.add(index, this);
-                                    */
-                                    outputStream.writeObject(new SetNicknameAction(nickname, false));
-                                    outputStream.flush();
-                                    outputStream.reset();
+                                    showAction(new SetNicknameAction(nickname, false));
+                                    serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                                 } else {
-                                    outputStream.writeObject(new SetNicknameAction(null, false));
-                                    outputStream.flush();
-                                    outputStream.reset();
+                                    showAction(new SetNicknameAction(null, false));
                                     System.out.println("> User " + nickname + " already online or doesn't exist");
                                 }
-                            }
+
                         }
 
 

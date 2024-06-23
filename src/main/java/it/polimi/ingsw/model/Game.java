@@ -29,6 +29,8 @@ public class Game implements Serializable {
     private GameState gameState;
     private ArrayList<VirtualView> clients;
     private it.polimi.ingsw.listener.Listener bigListener;
+    private boolean wait;
+
 
 
 
@@ -40,21 +42,13 @@ public class Game implements Serializable {
         createResourceDeck();
         createStarterDeck();
         gameState = GameState.LOBBY;
+        wait = false;
     }
 
 
 
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
         //non servono sti due if qua sotto credo (e quindi nemmeno i parametri)
-        /*
-        int index = clients.indexOf(oldVirtualView);
-        newVirtualView.setStarter(oldVirtualView.getStarter());
-        clients.remove(index);
-        newVirtualView.setNickname(nickname);
-        newVirtualView.setOnline(true);
-        newVirtualView.setPing(true);
-        clients.add(index, newVirtualView);
-        */
 
         if(clients.contains(oldVirtualView)) {
             System.out.println("Vecchia virtual view c'è e siamo x(");
@@ -64,13 +58,20 @@ public class Game implements Serializable {
         }
         for(Player p : players) {
             if(nickname.equalsIgnoreCase(p.getName())) {
-                p.setOnline(true);
+                int index = clients.indexOf(oldVirtualView);
+                clients.remove(index);
+                clients.add(index, newVirtualView);
+                System.out.println("flagStarter: " + newVirtualView.getStarter());
                 if(!newVirtualView.getStarter()) {
                     ArrayList<Player> player = new ArrayList<>();
                     player.add(p);
                     bigListener.notifyStarterCard(player, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                 } else {
                     bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
+                    if(wait){
+                        wait = false;
+                        nextPlayer();
+                    }
                 }
             }
         }
@@ -81,6 +82,22 @@ public class Game implements Serializable {
             if (p.getName().equalsIgnoreCase(playerName)) {
                 System.err.println("dentro Game disconnection");
                 p.disconnection();
+                //p.setOnline(false);
+                for(VirtualView c: clients){
+                    if(c.getNickname().equalsIgnoreCase(playerName)) {
+                        c.setOnline(false);
+                    }
+                }
+                int countOnline = 0;
+                for(VirtualView c: clients){
+                    if(c.getOnline())
+                        countOnline++;
+                }
+                if(countOnline == 1)
+                    wait = true;
+                if(countOnline==0){
+                    System.exit(0); //
+                }
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
                     nextPlayer();
                 }
@@ -375,31 +392,34 @@ public class Game implements Serializable {
     //Methods
 
     public void nextPlayer() throws RemoteException {
-        currPlayer++;
-        if(currPlayer >= playersNumber) {
-            if(gameState == GameState.LASTROUND) {
-                setGameState(GameState.FINALSCORE);
-                return;
-            } else
-                currPlayer = 0;
-        }
-        if(!players.get(currPlayer).isOnline()) {   //player offline skips turn
-            //player offline skips turn
-            currPlayer++;
-            System.out.println(" ---------------------->>>>>>    nextplayer() dentro if offline");
-            if (currPlayer >= playersNumber)
-                currPlayer = 0;
-        }
+        String nickLastPlayer = players.get(currPlayer).getName();
+        if(!wait) {
+            do {   //player offline skips turn
+                //player offline skips turn
+                currPlayer++;
+                if (currPlayer >= playersNumber) {
+                    if (gameState == GameState.LASTROUND) {
+                        setGameState(GameState.FINALSCORE);
+                        return;
+                    } else
+                        currPlayer = 0;
+                }
+                System.out.println("onlineCurr: " + clients.get(currPlayer).getOnline() + " p: " + players.get(currPlayer).getName() + clients.get(currPlayer).getNickname());
 
-        bigListener.notifyToPlace(players.get(currPlayer));
+            } while (clients.get(currPlayer).getOnline() == false || players.get(currPlayer).getName().equals(nickLastPlayer));
+            bigListener.notifyToPlace(players.get(currPlayer));
+        }
     }
 
+
+
+
     //NB: SOLO PER TESTING!!!!
-    public void nextPlayer(boolean nextState) {
+    public void nextPlayer(boolean nextState) throws RemoteException {
         currPlayer++;
         if(currPlayer >= playersNumber) {
             currPlayer = 0;
-            if(!players.get(currPlayer).isOnline()) {
+            if(!clients.get(currPlayer).getOnline()) {
                 currPlayer++;
                 System.out.println(" ---------------------->>>>>>    nextplayer(nexstate) dentro if offline");
             }
