@@ -25,7 +25,6 @@ public class ClientApp {
         boolean nicknameOk = false;
         Scanner scan = new Scanner(System.in);
         String line;
-        StringTokenizer st;
         int connectionChoice = 0;
         int portChoice = 7171;
         String ipChoice = null;
@@ -40,8 +39,7 @@ public class ClientApp {
             try {
                 scan = new Scanner(System.in);
                 line = scan.nextLine();
-                st = new StringTokenizer(line);
-                guiChoice = Integer.parseInt(st.nextToken());
+                guiChoice = Integer.parseInt(line);
                 if (guiChoice == 1 || guiChoice == 2) {
                     checkChoice = true;
                 }
@@ -57,8 +55,7 @@ public class ClientApp {
             try {
                 scan = new Scanner(System.in);
                 line = scan.nextLine();
-                st = new StringTokenizer(line);
-                connectionChoice = Integer.parseInt(st.nextToken());
+                connectionChoice = Integer.parseInt(line);
                 if(connectionChoice == 1 || connectionChoice == 2) {
                     checkChoice = true;
                 }
@@ -73,8 +70,7 @@ public class ClientApp {
             try {
                 scan = new Scanner(System.in);
                 line = scan.nextLine();
-                st = new StringTokenizer(line);
-                portChoice = Integer.parseInt(st.nextToken());
+                portChoice = Integer.parseInt(line);
                 if (portChoice == 0) {
                     if (connectionChoice == 1) //RMI
                         portChoice = 6969;
@@ -92,12 +88,15 @@ public class ClientApp {
             try {
                 scan = new Scanner(System.in);
                 line = scan.nextLine();
-                st = new StringTokenizer(line);
-                ipChoice = st.nextToken();
+                ipChoice = line;
+                if(!ipChoice.contains("."))
+                    checkChoice = false;
+                else
+                    checkChoice = true;
                 if (ipChoice.equals("0")) {
                     ipChoice = "127.0.0.1";
+                    checkChoice = true;
                 }
-                checkChoice = true;
             } catch (NoSuchElementException | NumberFormatException ignored) { }
         } while(!checkChoice);
 
@@ -111,7 +110,6 @@ public class ClientApp {
                 checkChoice = !nickname.isEmpty();
             } catch (NoSuchElementException | NumberFormatException ignored) { }
         } while(!checkChoice);
-        System.out.println(nickname);
         Client c = new Client(connectionChoice, portChoice, ipChoice, (guiChoice != 1), nickname);
     }
 

@@ -28,6 +28,13 @@ public class GameController {
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
 
+        int index = clients.indexOf(oldVirtualView);
+        newVirtualView.setStarter(oldVirtualView.getStarter());
+        clients.remove(index);
+        newVirtualView.setNickname(nickname);
+        newVirtualView.setOnline(true);
+        newVirtualView.setPing(true);
+        clients.add(index, newVirtualView);
         System.out.println("\n\nDentro reconnection in GameController, elenco delle virtualview:");
         System.out.println("oldvirtualview --> " + oldVirtualView);
         System.out.println("newvirtualview --> " + newVirtualView);

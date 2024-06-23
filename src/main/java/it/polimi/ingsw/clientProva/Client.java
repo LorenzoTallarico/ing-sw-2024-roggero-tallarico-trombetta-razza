@@ -97,7 +97,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
         //connection
-        if(connectionChoice == 1){ //RMI
+        if(connectionChoice == 1) { //RMI
             // new RmiClient(server).init();
             final String serverName = "GameServer";
             try {
@@ -491,33 +491,55 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     public void clientUpdateThread() throws RemoteException, InterruptedException {
         while(connectionFlagServer) {
             Action act = serverActionsReceived.take();
-            if (connected) {
-                switch (act.getType()) {
+            if(connected) {
+                switch(act.getType()) {
                     case RECONNECTIONSUCCESS:
-                        if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)){
+                        if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)) {
                             this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
                             this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
                             this.commonResource = ((ReconnectionSuccessAction) act).getCommonResource();
                             this.resourceDeck = ((ReconnectionSuccessAction) act).getResourceDeck();
-                            this.allPlayers = ((ReconnectionSuccessAction) act).getPlayers();
                             this.achievements = ((ReconnectionSuccessAction) act).getCommonAchievement();
                             state = State.COMMANDS;
-                            for(Player player : allPlayers){
+                            for(Player player : ((ReconnectionSuccessAction) act).getPlayers()) {
                                 if(player.getName().equalsIgnoreCase(nickname)){
                                     p = player;
                                     starterCard = (StarterCard) p.getArea().getSpace(40, 40).getCard();
+                                } else {
+                                    refreshPlayers(player);
                                 }
                             }
                             //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
                             achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
-                        }
-                        else{
-                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
+                            if(gui) {
+                                Platform.runLater(() -> guiView.playScene(nickname));
+                                do {
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+                                    }
+                                } while (guiView.getPlayController() == null);
+                                playController = guiView.getPlayController();
+                                playController.setNickname(nickname);
+                                if (threadChatListener == null) {
+                                    threadChatListener = createThreadChatListener();
+                                    threadChatListener.start();
+                                }
+                                Platform.runLater(() -> playController.setupStartedGame(p, allPlayers, achievements, commonGold, goldDeck, commonResource, resourceDeck));
+                            }
+                            //da controllare se serve qui
+                            setOnline(true);
+                            setPing(true);
+                        } else {
+                            if(!gui) {
+                                System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
+                            }
                         }
                         break;
                     case WHOLECHAT:
-                        if (act.getRecipient().equalsIgnoreCase(nickname)) {
+                        if(act.getRecipient().equalsIgnoreCase(nickname)) {
                             ArrayList<Message> chat = ((WholeChatAction) act).getMessages();
                             if (chat.isEmpty()) {
                                 System.out.println(Print.ANSI_BOLD + ">>> " + "Public chat is empty" + Print.ANSI_BOLD_RESET);
@@ -750,7 +772,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         //System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         break;
                     case ERROR:
-                        System.out.println(">" + ((ErrorAction) act).getMessage());
+                        System.out.println("> " + ((ErrorAction) act).getMessage());
                         if(((ErrorAction) act).getEndConnection()){
                             System.out.println("> System Exit");
                             System.exit(0);
@@ -767,23 +789,47 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
                             this.commonResource = ((ReconnectionSuccessAction) act).getCommonResource();
                             this.resourceDeck = ((ReconnectionSuccessAction) act).getResourceDeck();
-                            this.allPlayers = ((ReconnectionSuccessAction) act).getPlayers();
                             state = State.COMMANDS;
-                            for(Player player : allPlayers){
-                                if(player.getName().equalsIgnoreCase(nickname)){
+                            for(Player player : ((ReconnectionSuccessAction) act).getPlayers()) {
+                                if(player.getName().equalsIgnoreCase(nickname)) {
                                     p = player;
                                     starterCard = (StarterCard) p.getArea().getSpace(40, 40).getCard();
+                                } else {
+                                    refreshPlayers(player);
                                 }
                             }
                             //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
                             achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
-                        }
-                        else{
-                            System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
-                            for(Player player : allPlayers){
+                            if(gui) {
+                                Platform.runLater(() -> guiView.playScene(nickname));
+                                do {
+                                    try {
+                                        Thread.sleep(200);
+                                    } catch (InterruptedException e) {
+                                        System.out.println("!!! ERROR SLEEP GETCONTROLLER !!!");
+                                    }
+                                } while (guiView.getPlayController() == null);
+                                playController = guiView.getPlayController();
+                                playController.setNickname(nickname);
+                                if (threadChatListener == null) {
+                                    threadChatListener = createThreadChatListener();
+                                    threadChatListener.start();
+                                }
+                                Platform.runLater(() -> playController.setupStartedGame(p, allPlayers, achievements, commonGold, goldDeck, commonResource, resourceDeck));
+                            }
+                            //da controllare se serve qui
+                            setOnline(true);
+                            setPing(true);
+                        } else {
+                            if(!gui)
+                                System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
+                            for(Player player : allPlayers) {
                                 if(player.getName().equalsIgnoreCase(nickname))
                                     refreshPlayers(player);
+                            }
+                            if(gui && playController != null) {
+                                playController.initializeChatOptions(allPlayers);
                             }
                         }
                         break;
@@ -810,7 +856,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         server.sendAction(new PongAction(nickname));
                         break;
                     case ERROR:
-                        System.out.println(">" + ((ErrorAction) act).getMessage());
+                        System.out.println("> " + ((ErrorAction) act).getMessage());
                         if(((ErrorAction) act).getEndConnection()){
                             System.out.println("> System Exit");
                             System.exit(0);
@@ -911,7 +957,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         try {
             if(actionFromServer.getType().equals(ActionType.PING)){
                 server.sendAction(new PongAction(nickname));
-                System.out.println("Inviato Pong!");
+                //System.out.println("Inviato Pong!");
             }
             else {
                 serverActionsReceived.put(actionFromServer);

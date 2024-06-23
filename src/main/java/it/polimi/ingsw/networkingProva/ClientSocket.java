@@ -186,7 +186,7 @@ public class ClientSocket implements VirtualView, Runnable {
                                 if (countOnlinePlayer() >= 4) {
                                     System.out.println("> Denied connection to a new client, max number of players already reached.");
                                     try {
-                                        showAction(new ErrorAction(nick, "Numero utenti massimo Raggiunto"));
+                                        showAction(new ErrorAction(nick, "Max amount of players reached."));
                                         showAction(new SetNicknameAction(null, false));
                                         return;
                                     } catch (Exception e) {
@@ -197,7 +197,7 @@ public class ClientSocket implements VirtualView, Runnable {
                             }
                             if (clients.size() == 1 && playersNumber == 0) {
                                 try {
-                                    showAction(new ErrorAction(nick, "GameSize non ancora settata dal primo utente, Impossibile accedere!"));
+                                    showAction(new ErrorAction(nick, "Another player has just started a game, they still haven't chosen the size of the game, wait some seconds before reconnecting."));
                                     showAction(new SetNicknameAction(null, false));
                                     return;
                                 } catch (Exception e) {

@@ -12,6 +12,7 @@ public class ErrorAction extends Action {
         this.message = message;
         endConnection = false;
     }
+
     public ErrorAction(String recipient, String message, boolean endConnection) {
         super(ActionType.ERROR, null, recipient);
         this.message = message;

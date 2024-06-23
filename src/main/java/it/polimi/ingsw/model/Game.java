@@ -46,24 +46,31 @@ public class Game implements Serializable {
 
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
         //non servono sti due if qua sotto credo (e quindi nemmeno i parametri)
+        /*
         int index = clients.indexOf(oldVirtualView);
         newVirtualView.setStarter(oldVirtualView.getStarter());
         clients.remove(index);
+        newVirtualView.setNickname(nickname);
+        newVirtualView.setOnline(true);
+        newVirtualView.setPing(true);
         clients.add(index, newVirtualView);
-        if(clients.contains(oldVirtualView)){
+        */
+
+        if(clients.contains(oldVirtualView)) {
             System.out.println("Vecchia virtual view c'è e siamo x(");
         }
-        if(clients.contains(newVirtualView)){
+        if(clients.contains(newVirtualView)) {
             System.out.println("Nuova virtual view c'è e siamo a cavallo");
         }
-        for(Player p :players){
+        for(Player p : players) {
             if(nickname.equalsIgnoreCase(p.getName())) {
                 p.setOnline(true);
-                bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
-                if (!newVirtualView.getStarter()) {
+                if(!newVirtualView.getStarter()) {
                     ArrayList<Player> player = new ArrayList<>();
                     player.add(p);
                     bigListener.notifyStarterCard(player, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
+                } else {
+                    bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                 }
             }
         }

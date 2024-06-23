@@ -95,7 +95,7 @@ public class WebServer implements VirtualServer {
                     Action a = clientActions.take();
                     synchronized (clients) {
                         for (VirtualView handler : clients) {
-                            if (handler.getOnline())
+                            if(handler.getOnline())
                                 handler.showAction(a);
                         }
                     }
@@ -233,16 +233,16 @@ public class WebServer implements VirtualServer {
                     if (countOnlinePlayer() >= 4) {
                         System.out.println("> Denied connection to a new client, max number of players already reached.");
                         try {
-                            client.showAction(new ErrorAction(nick, "Numero utenti massimo Raggiunto"));
+                            client.showAction(new ErrorAction(nick, "Max amount of players reached."));
                         }catch(Exception e){
                             e.printStackTrace();
                         }
                         return false;
                     }
                 }
-                if(clients.size()==1 && playersNumber==0){
+                if(clients.size() == 1 && playersNumber == 0){
                     try {
-                        client.showAction(new ErrorAction(nick, "GameSize non ancora settata dal primo utente, Impossibile accedere!"));
+                        client.showAction(new ErrorAction(nick, "Another player has just started a game, they still haven't chosen the size of the game, wait some seconds before reconnecting."));
                     }catch(Exception e){
                         e.printStackTrace();
                     }
@@ -296,7 +296,18 @@ public class WebServer implements VirtualServer {
                 }
                 if (oldVirtualView != null && !oldVirtualView.getOnline()) {
                     try {
-                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, new ClientRmi(client)));
+                        VirtualView cli = new ClientRmi(client);
+                        cli.setOnline(true);
+                        cli.setPing(true);
+                        cli.setNickname(nick);
+
+
+                        //vedere se sul riferimento di Virtualviw client passato in ingresso gli va benen
+                        int index = clients.indexOf(oldVirtualView);
+                        cli.setStarter(oldVirtualView.getStarter());
+                        clients.remove(index);
+                        clients.add(index, cli);
+                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, cli));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -310,10 +321,10 @@ public class WebServer implements VirtualServer {
                     clients.add(index, c);
                     */
                 } else {
-                    System.out.println("> User " + nick + " already online or doesn't exist");
+                    System.out.println("> User " + nick + " already online or doesn't exist.");
                     try {
-                        client.showAction(new ErrorAction(nick, "GameStarted, utente non trovato!"));
-                    }catch(Exception e){
+                        client.showAction(new ErrorAction(nick, "Game started, user not found."));
+                    } catch(Exception e){
                         e.printStackTrace();
                     }
                     return false;
@@ -449,7 +460,7 @@ public class WebServer implements VirtualServer {
                         for(VirtualView v: clients){
                             if(v.getNickname().equalsIgnoreCase(c)){
                                 if(!v.getStarter()){
-                                    waitingRoutineChoiceAchi();
+                                    //waitingRoutineChoiceAchi();
                                 }
                             }
                         }

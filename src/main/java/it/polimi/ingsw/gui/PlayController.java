@@ -1158,7 +1158,6 @@ public class PlayController {
                             for(int tCol = area.getWestBound() == 0 ? 0 : area.getWestBound() - 1 ; tCol <= (area.getEastBound() == 80 ? 80 : area.getEastBound() + 1); tCol++) {
                                 for(int tRow = area.getNorthBound() == 0 ? 0 : area.getNorthBound() - 1; tRow <= (area.getSouthBound() == 80 ? 80 : area.getSouthBound() + 1); tRow++) {
                                     if(gridpaneArray[tCol][tRow] != null && gridpaneArray[tCol][tRow].equals((ImageView) event.getSource())) {
-                                        System.out.println("--------GUI Place card_" + placeChoice + (myPlayer.getHand().get(placeChoice-1).isFront() ? "_front" : "_back") + " in row " + tRow + ", col " + tCol);
                                         placeAction = new PlacingCardAction(placeChoice-1, myPlayer.getHand().get(placeChoice-1).isFront(), tRow, tCol, myNickname);
                                         hasPlaced = true;
                                     }
@@ -1340,6 +1339,15 @@ public class PlayController {
             oldAlertLbl.setVisible(true);
         }
         alertLbl.setText("Draw a card!");
+        alertLbl.setVisible(true);
+    }
+
+    public void genericAlert(String str) {
+        if(alertLbl.isVisible()) {
+            oldAlertLbl.setText(alertLbl.getText());
+            oldAlertLbl.setVisible(true);
+        }
+        alertLbl.setText(str);
         alertLbl.setVisible(true);
     }
 
@@ -1541,6 +1549,19 @@ public class PlayController {
         } else
             return null;
     }
+
+    public void setupStartedGame(Player myPlayer, ArrayList<Player> otherPlayers, ArrayList<AchievementCard> achievements, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
+        cardChoicePane.setVisible(false);
+        scoreboardPane.setVisible(true);
+        this.otherPlayers = otherPlayers;
+        this.achievements = achievements;
+        initializeChatOptions(this.otherPlayers);
+        setPlayer(myPlayer);
+        updateTableCards(commonGold, goldDeck, commonResource, resourceDeck);
+        printPlayground();
+        updateAchievement();
+    }
+
 
     //getters and setters
     public void setNickname(String nick) {
