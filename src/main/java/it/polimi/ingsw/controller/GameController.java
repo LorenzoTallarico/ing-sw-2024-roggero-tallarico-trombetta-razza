@@ -27,7 +27,7 @@ public class GameController {
 
     //NB: TUTTI I METODI DEVONO ESSERE CORRETTAMENTE SINCRONIZZATI NEL CONTROLLER
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
-        int index = clients.indexOf(oldVirtualView);
+
         System.out.println("\n\nDentro reconnection in GameController, elenco delle virtualview:");
         System.out.println("oldvirtualview --> " + oldVirtualView);
         System.out.println("newvirtualview --> " + newVirtualView);
@@ -36,8 +36,9 @@ public class GameController {
             System.out.println(v);
         }
         System.out.println("\n\n");
+        /*int index = clients.indexOf(oldVirtualView);
         clients.remove(index);
-        clients.add(index, newVirtualView);
+        clients.add(index, newVirtualView);*/
         model.reconnection(nickname, oldVirtualView, newVirtualView);
     }
 
@@ -100,6 +101,13 @@ public class GameController {
         for(Player p : model.getPlayers()) {
             if(p.getName().equalsIgnoreCase(playerName)) {
                 p.setSecretAchievement(secretAch);
+                synchronized (clients) {
+                    for (VirtualView c : clients) {
+                        if (playerName.equalsIgnoreCase(c.getNickname())) {
+                            c.setStarter(true);
+                        }
+                    }
+                }
                 countdown();
                 return;
             }

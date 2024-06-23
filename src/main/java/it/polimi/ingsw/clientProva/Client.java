@@ -879,8 +879,17 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void setStarter(boolean b) throws RemoteException {
+    }
+
+    @Override
     public String getNicknameFirst() throws RemoteException {
         return nickname;
+    }
+
+    @Override
+    public boolean getStarter() throws RemoteException {
+        return false;
     }
 
     private void refreshPlayers(Player player) {

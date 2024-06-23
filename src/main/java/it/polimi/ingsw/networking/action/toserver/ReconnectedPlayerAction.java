@@ -10,11 +10,11 @@ public class ReconnectedPlayerAction extends Action {
     private VirtualView oldVirtualView;
     private VirtualView newVirtualview;
 
-    public ReconnectedPlayerAction(String nickname, VirtualView old, VirtualView neww){
+    public ReconnectedPlayerAction(String nickname, VirtualView old, VirtualView newClient){
         super(ActionType.RECONNECTEDPLAYER, nickname, null);
         this.nick = nickname;
         this.oldVirtualView = old;
-        this.newVirtualview = neww;
+        this.newVirtualview = newClient;
     }
 
 

@@ -2,21 +2,9 @@ package it.polimi.ingsw;
 
 
 import it.polimi.ingsw.clientProva.Client;
-import it.polimi.ingsw.networking.action.*;
-import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.networking.action.toclient.*;
-import it.polimi.ingsw.networking.action.toserver.*;
-import it.polimi.ingsw.networking.rmi.RmiClient;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.util.Print;
-import it.polimi.ingsw.networking.rmi.VirtualView;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 public class ClientApp {

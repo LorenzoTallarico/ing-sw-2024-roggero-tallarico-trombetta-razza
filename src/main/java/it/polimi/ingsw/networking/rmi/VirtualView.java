@@ -13,7 +13,9 @@ public interface VirtualView extends Remote {
     void showAction(Action act) throws IOException;
 
     String getNickname() throws RemoteException;
+
     boolean getOnline() throws RemoteException;
+
     boolean getGui() throws RemoteException;
 
     void setOnline(boolean b) throws RemoteException;
@@ -28,5 +30,9 @@ public interface VirtualView extends Remote {
 
     boolean getInTurn() throws RemoteException;
 
+    void setStarter(boolean b) throws RemoteException;
+
     String getNicknameFirst() throws RemoteException;
+
+    boolean getStarter()throws RemoteException;
 }

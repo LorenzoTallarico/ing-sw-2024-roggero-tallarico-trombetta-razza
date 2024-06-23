@@ -14,7 +14,7 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     private boolean ping = true;
     private boolean online;
     private boolean inTurn;
-
+    private boolean starter = false;
 
     public ClientRmi(VirtualView client) throws RemoteException{
         this.client = client;
@@ -30,6 +30,11 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public boolean getStarter() throws RemoteException {
+        return starter;
+    }
+
+    @Override
     public boolean getOnline() { //da aggiungere
         return online;
     }
@@ -41,6 +46,11 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
 
     public boolean getInTurn() {
         return inTurn;
+    }
+
+    @Override
+    public void setStarter(boolean starter) throws RemoteException {
+        this.starter = starter;
     }
 
     @Override

@@ -296,11 +296,11 @@ public class WebServer implements VirtualServer {
                 }
                 if (oldVirtualView != null && !oldVirtualView.getOnline()) {
                     try {
-                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, client));
+                        serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, new ClientRmi(client)));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-
+                    /*
                     int index = clients.indexOf(oldVirtualView);
                     clients.remove(index);
                     ClientRmi c= new ClientRmi(client);
@@ -308,6 +308,7 @@ public class WebServer implements VirtualServer {
                     c.setPing(true);
                     c.setNickname(nick);
                     clients.add(index, c);
+                    */
                 } else {
                     System.out.println("> User " + nick + " already online or doesn't exist");
                     try {
@@ -443,9 +444,16 @@ public class WebServer implements VirtualServer {
                     if(numStarter == clients.size()){
                         controller.disconnection(c);
                     }
-                    else {
+                    else{
                         //thread 60 sec
-                        waitingRoutineChoiceAchi();
+                        for(VirtualView v: clients){
+                            if(v.getNickname().equalsIgnoreCase(c)){
+                                if(!v.getStarter()){
+                                    waitingRoutineChoiceAchi();
+                                }
+                            }
+                        }
+
 
                     }
                 }

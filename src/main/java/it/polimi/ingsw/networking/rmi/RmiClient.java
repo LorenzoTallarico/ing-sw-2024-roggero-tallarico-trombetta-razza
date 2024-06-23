@@ -484,6 +484,11 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
         return nickname;
     }
 
+    @Override
+    public boolean getStarter() throws RemoteException {
+        return false;
+    }
+
 
     @Override
     public boolean getOnline() throws RemoteException  {
@@ -523,6 +528,10 @@ public class RmiClient extends UnicastRemoteObject implements VirtualView {
     @Override
     public boolean getInTurn() throws RemoteException {
         return false;
+    }
+
+    @Override
+    public void setStarter(boolean b) throws RemoteException {
     }
 
     private void refreshPlayers(Player player) {

@@ -36,6 +36,7 @@ public class ClientSocket implements VirtualView, Runnable {
     private String nickname = null;
     private boolean gameStarted;
     private int playersNumber;
+    private boolean starter= false;
 
     public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted, int playersNumber) throws IOException {
         this.serSocket = serSocket;
@@ -82,6 +83,11 @@ public class ClientSocket implements VirtualView, Runnable {
     @Override
     public String getNicknameFirst() throws RemoteException {
         return "";
+    }
+
+    @Override
+    public boolean getStarter() throws RemoteException {
+        return starter;
     }
 
     @Override
@@ -246,12 +252,12 @@ public class ClientSocket implements VirtualView, Runnable {
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-
+                                    /*
                                     //aggiornamento mappe
                                     int index = clients.indexOf(oldVirtualView);
                                     clients.remove(index);
                                     clients.add(index, this);
-
+                                    */
                                     outputStream.writeObject(new SetNicknameAction(nickname, false));
                                     outputStream.flush();
                                     outputStream.reset();
@@ -323,4 +329,7 @@ public class ClientSocket implements VirtualView, Runnable {
         return count;
     }
 
+    public void setStarter(boolean starter) {
+        this.starter = starter;
+    }
 }
