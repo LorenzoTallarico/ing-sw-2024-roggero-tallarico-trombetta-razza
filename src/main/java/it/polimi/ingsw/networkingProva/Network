@@ -4,7 +4,21 @@ altrimenti con socket crea il thread
 Web server ha connect che data la virtual view incapsula
 
 
-- metodo connect per Socket, askingNickname -> Client, sendNickname -> Server, VIrtualView da gestire per Socket
+- metodo connect per Socket, askingNickname -> Client, sendNickname -> Server, VirtualView da gestire per Socket
 
 -ClientApp
 -Client e relative ServerRmi e ServerSocket
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Ultima ToDo (speriamo)
+
+- ClientApp da gestire la scelta delle porte
+- Quando un socket si riconnette ha ping e online settati a false
+- Quando un client si riconnette rimane memorizzata una virtualview in più (come si può vedere nello scoreboard)
+- Se uno stesso client si disconnette (SOCKET O RMI) una seconda volta si rompe tutto (potrebbe essere legato al problema sopra, bisogna controllare la pulizia e il recupero di dati)
+- Disconnessione su socket dopo la Place da fare
+- Da verificare waiting routine quando rimane un solo client connesso
+- Gestione disconnessione starter card
+- Gestione di salto di più di un client disconnesso

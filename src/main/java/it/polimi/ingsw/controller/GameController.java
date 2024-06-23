@@ -70,7 +70,8 @@ public class GameController {
     }
 
     public boolean drawCard(String playerName, int index) throws RemoteException {
-        synchronized (this.model) {
+        //non si sincronizza
+        //synchronized (this.model) {
             if (model.getGameState().equals(GameState.GAME) || model.getGameState().equals(GameState.LASTROUND)) {
                 if(getPlayers().get(model.getCurrPlayer()).getHand().size() == 2) {
                     Card card = model.draw(playerName, index);
@@ -85,7 +86,7 @@ public class GameController {
                 System.out.println("> Player " + playerName + " can't draw a card, it's not the right state of the game.");
             }
             return false;
-        }
+        //}
     }
     public void disconnection(String playerName) throws RemoteException {
         synchronized (this.model) {

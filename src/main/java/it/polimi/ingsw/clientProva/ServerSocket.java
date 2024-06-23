@@ -69,8 +69,9 @@ public class ServerSocket implements VirtualServer, Runnable {
                     }
                     if (action.getType().equals(ActionType.PING)) {
                         sendAction(new PongAction(""));
+                    } else {
+                        serverActionReceived.put(action);
                     }
-                    serverActionReceived.put(action);
                 } catch (InterruptedException e) {
                     System.err.println("InterruptedException durante put: " + e.getMessage());
                     e.printStackTrace();
