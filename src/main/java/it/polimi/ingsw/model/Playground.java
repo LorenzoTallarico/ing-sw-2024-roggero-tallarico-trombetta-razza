@@ -1,10 +1,13 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.util.Print;///DA LEVAREEEEEEEEEEEEEEEEEEEEEEEEE
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+//da levare import sopra
 
 public class Playground implements Serializable {
 private final Space[][] table;
@@ -233,7 +236,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         boolean side = getSpace(row, column).getCard().isFront();       //true = front      false = back
         getSpace(row, column).setCard(null);     //controllare se inizializzati così gli space
         getSpace(row, column).setFree(true);
-        //getSpace(row, column).setChecked(?????);       //da gestire con un metodo apposito
 
         //Remove elements from items/resources maps
         int oldValue = 0;
@@ -347,7 +349,8 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         removeLastOrderedCoord();
 
         System.err.println("END OF METHOD INN PLAYGROUND ------------------------------------------------------------------");
-
+        System.out.println("Questo è il playground dopo le modifiche (siamo in Model: Playground");
+        Print.playgroundPrinter(this);
     }
 
     public void removeLastOrderedCoord() {

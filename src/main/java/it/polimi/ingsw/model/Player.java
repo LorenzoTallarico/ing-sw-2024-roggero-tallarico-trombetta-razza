@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.util.Print;
+
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -201,6 +203,7 @@ public class Player implements Serializable {
     public void disconnection(){
         this.online = false;
         System.err.println("Dentro Player disconnection");
+        System.out.println("Ultima carta piazzata: " + lastCardPlaced);
         if(lastCardPlaced != null){
             boolean find = false;
             for(int i=area.getWestBound(); i<=area.getEastBound() && !find; i++) {
@@ -211,6 +214,8 @@ public class Player implements Serializable {
                         area.setPlaygroundBeforePlace(i, j, lastCardPlaced);
                         hand.add(lastCardPlaced);
                         points -= pointsFromLastCard;
+                        System.out.println("\n\nQuesta invece è la stampa dentro Player: ");
+                        Print.playgroundPrinter(area);
                         lastCardPlaced = null;
                         pointsFromLastCard = 0;
 //                        //area.setSpace(null, i, j);

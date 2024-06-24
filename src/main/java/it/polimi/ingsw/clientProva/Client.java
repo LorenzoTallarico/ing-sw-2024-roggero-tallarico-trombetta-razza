@@ -343,10 +343,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             } catch (NoSuchElementException | NumberFormatException e) {
                                 continue;
                             }
-                            if(index >= 0 && index <= p.getHand().size())
+                            if (index >= 0 && index <= p.getHand().size())
                                 checkIndex = true;
-                            else
+                            else {
                                 System.out.println("> Index of the card not valid, enter a number between 1 and " + p.getHand().size() + ".");
+                                continue;
+                            }
                             if(side.equals("1") || side.equalsIgnoreCase("f") || side.equalsIgnoreCase("front")) {
                                 checkSide = true;
                                 chosenSide = true;
@@ -544,6 +546,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         } else {
                             if(!gui) {
                                 System.out.println("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!");
+                            } else {
+                                Platform.runLater(() -> playController.genericAlert("> User " + ((ReconnectionSuccessAction) act).getRecipient() + " reconnected!"));
                             }
                         }
                         break;
@@ -777,7 +781,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         server.sendAction(new PongAction(nickname));
                         break;
                     case DISCONNECTEDPLAYER:
-                        System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
+                        if(!gui)
+                            System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname());
+                        else
+                            Platform.runLater(() -> playController.genericAlert("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname()));
                         //System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         break;
                     case ERROR:

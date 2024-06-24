@@ -452,6 +452,8 @@ public class WebServer implements VirtualServer {
                     //System.out.println(c + ": ping --> " + c.getPing() + "         online --> " + c.getOnline());
                     if(numStarter == clients.size()){
                         controller.disconnection(c);
+                        // qui sarebbe da fare una refresh players
+
                         waitingRoutineOneUser();
                     }
                     else{
@@ -583,7 +585,7 @@ public class WebServer implements VirtualServer {
     }
     public void waitingRoutineOneUser() {
         Runnable task = new Runnable() {
-            int attempts = 5;
+            int attempts = 10;
 
             @Override
             public void run() {
