@@ -452,6 +452,7 @@ public class WebServer implements VirtualServer {
                     //System.out.println(c + ": ping --> " + c.getPing() + "         online --> " + c.getOnline());
                     if(numStarter == clients.size()){
                         controller.disconnection(c);
+                        waitingRoutineOneUser();
                     }
                     else{
                         //thread 60 sec
@@ -570,7 +571,32 @@ public class WebServer implements VirtualServer {
                         attempts--;
                         System.out.println("Tentativi rimanenti: " + attempts);
                     }
-                    shutdown();
+                    shutdown("Partita finita utente non ha fatto riconessione in fase starter");
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+    public void waitingRoutineOneUser() {
+        Runnable task = new Runnable() {
+            int attempts = 5;
+
+            @Override
+            public void run() {
+                try {
+                    // NB: bisogna sincronizzare l'accesso a clients
+                    while (attempts != 0) {
+                        Thread.sleep(5000);
+                        if(countOnlinePlayer()<=1) {
+                            attempts--;
+                        }
+                        System.out.println("Tentativi rimanenti: " + attempts);
+                    }
+                    shutdown("You Won, all Users disconnected");
                 } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
@@ -582,10 +608,10 @@ public class WebServer implements VirtualServer {
     }
 
     //butta giù clients e server
-    public void shutdown() throws IOException {
+    public void shutdown(String messaggio) throws IOException {
         synchronized (clients){
             for (VirtualView c : clients) {
-                c.showAction(new ErrorAction(c.getNickname(), "Partita finita utente non ha fatto riconessione in fase starter", true));
+                c.showAction(new ErrorAction(c.getNickname(), messaggio, true));
             }
         }
         System.exit(0);
