@@ -458,7 +458,7 @@ public class WebServer implements VirtualServer {
                         for(VirtualView v: clients){
                             if(v.getNickname().equalsIgnoreCase(c)){
                                 if(!v.getStarter()){
-                                    //waitingRoutineChoiceAchi();
+                                    waitingRoutineChoiceAchi(v.getNickname());
                                 }
                             }
                         }
@@ -514,7 +514,7 @@ public class WebServer implements VirtualServer {
     }
 
 
-    public void waitingRoutineChoiceAchi(){
+    /*public void waitingRoutineChoiceAchi(String nickname){
         Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             int seconds = 60;
@@ -548,12 +548,47 @@ public class WebServer implements VirtualServer {
         };
 
         timer.scheduleAtFixedRate(task, 0, 1000);
+    }*/
+
+    public void waitingRoutineChoiceAchi(String nickname) {
+        Runnable task = new Runnable() {
+            int attempts = 12;
+
+            @Override
+            public void run() {
+                try {
+                    // NB: bisogna sincronizzare l'accesso a clients
+                    while (attempts != 0) {
+                        Thread.sleep(5000);
+                        synchronized (clients) {
+                            for (VirtualView c : clients) {
+                                if (c.getNickname().equalsIgnoreCase(nickname) && c.getOnline()) {
+                                    return;
+                                }
+                            }
+                        }
+                        attempts--;
+                        System.out.println("Tentativi rimanenti: " + attempts);
+                    }
+                    shutdown();
+                } catch (InterruptedException | IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
     }
 
-
     //butta giù clients e server
-    public void shutdown(){
-
+    public void shutdown() throws IOException {
+        synchronized (clients){
+            for (VirtualView c : clients) {
+                c.showAction(new ErrorAction(c.getNickname(), "Partita finita utente non ha fatto riconessione in fase starter", true));
+            }
+        }
+        System.exit(0);
     }
 
 
