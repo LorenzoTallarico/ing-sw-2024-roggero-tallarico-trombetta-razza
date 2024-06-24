@@ -22,3 +22,7 @@ Ultima ToDo (speriamo)
 - Da verificare waiting routine quando rimane un solo client connesso
 - Gestione disconnessione starter card
 - Gestione di salto di più di un client disconnesso
+
+
+*************************************************************
+- Sparisce la carta starter dal playground del player dopo la riconnessione (RMI) ---> forse è un caso e non si vede per problemi della grafica

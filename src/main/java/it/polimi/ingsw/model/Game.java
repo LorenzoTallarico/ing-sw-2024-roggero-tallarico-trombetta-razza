@@ -62,6 +62,7 @@ public class Game implements Serializable {
                 clients.remove(index);
                 clients.add(index, newVirtualView);
                 System.out.println("flagStarter: " + newVirtualView.getStarter());
+                p.setOnline(true);
                 if(!newVirtualView.getStarter()) {
                     ArrayList<Player> player = new ArrayList<>();
                     player.add(p);
@@ -82,7 +83,7 @@ public class Game implements Serializable {
             if (p.getName().equalsIgnoreCase(playerName)) {
                 System.err.println("dentro Game disconnection");
                 p.disconnection();
-                //p.setOnline(false);
+                p.setOnline(false);
                 for(VirtualView c: clients){
                     if(c.getNickname().equalsIgnoreCase(playerName)) {
                         c.setOnline(false);
@@ -93,6 +94,7 @@ public class Game implements Serializable {
                     if(c.getOnline())
                         countOnline++;
                 }
+                System.out.println("*****(Dentro Game -> disconnection)********Il numero di giocatori online è: " + countOnline);
                 if(countOnline == 1)
                     wait = true;
                 if(countOnline==0){
@@ -393,9 +395,10 @@ public class Game implements Serializable {
 
     public void nextPlayer() throws RemoteException {
         String nickLastPlayer = players.get(currPlayer).getName();
+        boolean found = false;
+
         if(!wait) {
             do {   //player offline skips turn
-                //player offline skips turn
                 currPlayer++;
                 if (currPlayer >= playersNumber) {
                     if (gameState == GameState.LASTROUND) {
@@ -404,9 +407,13 @@ public class Game implements Serializable {
                     } else
                         currPlayer = 0;
                 }
+//                if (clients.get(currPlayer).getOnline())
+//                    found = true;
+                if (players.get(currPlayer).isOnline())
+                    found = true;
                 System.out.println("onlineCurr: " + clients.get(currPlayer).getOnline() + " p: " + players.get(currPlayer).getName() + clients.get(currPlayer).getNickname());
 
-            } while (clients.get(currPlayer).getOnline() == false || players.get(currPlayer).getName().equals(nickLastPlayer));
+            } while (/*clients.get(currPlayer).getOnline() == false ||*/ players.get(currPlayer).getName().equals(nickLastPlayer) || !found);
             bigListener.notifyToPlace(players.get(currPlayer));
         }
     }

@@ -42,8 +42,12 @@ public class ClientApp {
                 guiChoice = Integer.parseInt(line);
                 if (guiChoice == 1 || guiChoice == 2) {
                     checkChoice = true;
+                } else {
+                    System.out.println("> Please enter a valid number.");
                 }
-            } catch (NoSuchElementException | NumberFormatException ignored) {}
+            } catch (NoSuchElementException | NumberFormatException ignored) {
+                System.err.println("> Invalid input. Please enter a numeric value.");
+            }
         } while(!checkChoice);
 
         checkChoice = false;
@@ -58,13 +62,16 @@ public class ClientApp {
                 connectionChoice = Integer.parseInt(line);
                 if(connectionChoice == 1 || connectionChoice == 2) {
                     checkChoice = true;
+                } else {
+                    System.out.println("> Please enter a valid number.");
                 }
-            } catch (NoSuchElementException | NumberFormatException ignored) {}
+            } catch (NoSuchElementException | NumberFormatException ignored) {
+                System.err.println("> Invalid input. Please enter a numeric value.");
+            }
         } while(!checkChoice);
 
         checkChoice = false;
 
-        // SELEZIONE DELLA PORTA SUPERFLUA (DA RIMUOVERE!!!)
         do {
             System.out.println("> Select port (0 for default): ");
             try {
@@ -77,8 +84,14 @@ public class ClientApp {
                     else //Socket
                         portChoice = 7171;
                     checkChoice = true;
+                } else if (portChoice > 0 && portChoice <= 65535) {
+                    checkChoice = true;
+                } else {
+                    System.out.println("> Invalid port number. Please enter a value between 1 and 65535.");
                 }
-            } catch (NoSuchElementException | NumberFormatException ignored) {}
+            } catch (NoSuchElementException | NumberFormatException ignored) {
+                System.err.println("> Invalid input. Please enter a numeric value.");
+            }
         } while(!checkChoice);
 
         checkChoice = false;
@@ -97,7 +110,9 @@ public class ClientApp {
                     ipChoice = "127.0.0.1";
                     checkChoice = true;
                 }
-            } catch (NoSuchElementException | NumberFormatException ignored) { }
+            } catch (NoSuchElementException | NumberFormatException ignored) {
+                System.out.println("> Invalid port number. Please enter a value between 1 and 65535.");
+            }
         } while(!checkChoice);
 
         checkChoice = false;
@@ -110,6 +125,7 @@ public class ClientApp {
                 checkChoice = !nickname.isEmpty();
             } catch (NoSuchElementException | NumberFormatException ignored) { }
         } while(!checkChoice);
+
         Client c = new Client(connectionChoice, portChoice, ipChoice, (guiChoice != 1), nickname);
     }
 

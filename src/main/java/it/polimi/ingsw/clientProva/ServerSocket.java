@@ -36,7 +36,7 @@ public class ServerSocket implements VirtualServer, Runnable {
     public  void sendAction(Action action) throws RemoteException {
         synchronized (outputStream){
             try{
-                System.out.println("Invio messaggio: " + action.getType());
+                //System.out.println("Invio messaggio: " + action.getType());
                 outputStream.writeObject(action);
                 outputStream.flush();
                 outputStream.reset();
@@ -63,7 +63,7 @@ public class ServerSocket implements VirtualServer, Runnable {
                     Action action = null;
                     try {
                         action = (Action) inputStream.readObject();
-                        System.out.println("Messaggio arrivato " + action.getType());
+                        //System.out.println("Messaggio arrivato " + action.getType());
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }

@@ -25,6 +25,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
 import java.net.SocketOption;
+import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.UnknownHostException;
@@ -107,7 +108,11 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             } catch (UnknownHostException e) {
                 System.err.println("\nWrong ip address or port");
                 System.exit(0);
+            } catch (ConnectException e) {
+                System.err.println("\nConnection error, server might be down");
+                System.exit(0);
             }
+
         } else { //Socket
             try {
                 Socket socket = new Socket(ip, portChoice);
@@ -117,6 +122,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 serverSocketThread.start();
             } catch (java.net.UnknownHostException e) {
                 System.err.println("\nWrong ip address or port");
+                System.exit(0);
+            }  catch (java.net.ConnectException e) {
+                System.err.println("\nConnection error, server might be down");
                 System.exit(0);
             }
         }
@@ -191,7 +199,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             // connection / reconnection Socket
             Action act = new SetNicknameAction(nickname, gui);
             server.sendAction(act);
-            System.err.println("Ho appena chiamato server.sendAction(act)");
+            //System.err.println("Ho appena chiamato server.sendAction(act)");
         }
         if(!gui)
             runCommandLine();
@@ -251,6 +259,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             a = new ChosenPlayersNumberAction(playnum);
                             clientActionsToSend.put(a);
                             System.out.println("> Game's size set to " + playnum + ".");
+                            System.out.println("> Waiting for other players...");
                             state = Client.State.COMMANDS;
                         } catch (NoSuchElementException | NumberFormatException e) {
                             System.out.println("> Invalid command syntax.");
@@ -840,14 +849,14 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             if(gui) {
                                 Platform.runLater(loginController::waitForOtherPlayers);
                             } else {
-                                System.out.println("Login successful " + nickname);
+                                System.out.println("> Login successful " + nickname);
                             }
                         } else{
                             if(gui) {
                                 Platform.runLater(loginController::invalidNickname);
                                 Platform.exit();
                             } else {
-                                System.out.println("Login Error!");
+                                System.out.println("> Login Error!");
                             }
                             System.exit(0);
                         }
