@@ -85,8 +85,8 @@ public class GameController {
             return false;
         //}
     }
-    public void disconnection(String playerName) throws RemoteException {
-        model.disconnection(playerName);
+    public void disconnection(String playerName, int numOnlinePlayers) throws RemoteException {
+        model.disconnection(playerName, numOnlinePlayers);
         System.err.println("Dentro GameController disconnection");
     }
     public void setSecretAchievement(String playerName, AchievementCard achievement) throws RemoteException {

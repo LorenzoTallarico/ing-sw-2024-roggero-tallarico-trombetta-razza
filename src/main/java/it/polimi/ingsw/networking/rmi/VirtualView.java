@@ -30,6 +30,10 @@ public interface VirtualView extends Remote {
 
     boolean getInTurn() throws RemoteException;
 
+    void setStartRoutine(boolean b) throws RemoteException;
+
+    boolean getStartRoutine() throws RemoteException;
+
     void setStarter(boolean b) throws RemoteException;
 
     String getNicknameFirst() throws RemoteException;

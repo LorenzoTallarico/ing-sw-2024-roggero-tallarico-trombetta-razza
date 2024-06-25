@@ -81,6 +81,17 @@ public class ClientSocket implements VirtualView, Runnable {
     }
 
     @Override
+    public void setStartRoutine(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getStartRoutine() throws RemoteException {
+        System.out.println("Sto chiamando il metodo di ClientSocket************************************************************************************************");
+        return false;
+    }
+
+    @Override
     public String getNicknameFirst() throws RemoteException {
         return "";
     }

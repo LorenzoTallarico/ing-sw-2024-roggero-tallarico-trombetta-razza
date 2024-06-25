@@ -32,8 +32,9 @@ public class WebServer implements VirtualServer {
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
     private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
     private boolean gameStarted = false;
-    private int playersNumber=0;
+    private int playersNumber = 0;
     private int numStarter = 0;
+
     public WebServer(int[] ports) {
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
@@ -91,11 +92,11 @@ public class WebServer implements VirtualServer {
     public void clientsUpdateThread() throws InterruptedException, RemoteException {
         try {
             while (connectionFlagClient) {
-                if(!clientActions.isEmpty()) {
+                if (!clientActions.isEmpty()) {
                     Action a = clientActions.take();
                     synchronized (clients) {
                         for (VirtualView handler : clients) {
-                            if(handler.getOnline())
+                            if (handler.getOnline())
                                 handler.showAction(a);
                         }
                     }
@@ -217,14 +218,14 @@ public class WebServer implements VirtualServer {
             System.err.println("> Join request received.");
             String nick = client.getNicknameFirst();
             if (!gameStarted) { // connection to Lobby
-                boolean sizeRequest=false;
+                boolean sizeRequest = false;
                 if (!clients.isEmpty()) {
                     for (VirtualView v : this.clients) {
                         if (nick != null && v.getNickname().equalsIgnoreCase(nick)) {
                             System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
                             try {
                                 client.showAction(new ErrorAction(nick, "Denied connection to a new client, user \"" + nick + "\" already existing and now online."));
-                            }catch(Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             return false;
@@ -234,24 +235,24 @@ public class WebServer implements VirtualServer {
                         System.out.println("> Denied connection to a new client, max number of players already reached.");
                         try {
                             client.showAction(new ErrorAction(nick, "Max amount of players reached."));
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                         return false;
                     }
                 }
-                if(clients.size() == 1 && playersNumber == 0){
+                if (clients.size() == 1 && playersNumber == 0) {
                     try {
                         client.showAction(new ErrorAction(nick, "Another player has just started a game, they still haven't chosen the size of the game, wait some seconds before reconnecting."));
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return false;
                 }
-                if(clients.isEmpty()){
-                    sizeRequest=true;
+                if (clients.isEmpty()) {
+                    sizeRequest = true;
                 }
-                ClientRmi c= new ClientRmi(client);
+                ClientRmi c = new ClientRmi(client);
                 c.setOnline(true);
                 c.setPing(true);
                 c.setNickname(nick);
@@ -270,7 +271,7 @@ public class WebServer implements VirtualServer {
                         }
                     }
                 }*/
-                if(sizeRequest){
+                if (sizeRequest) {
                     try {
                         clientActions.put(new AskingPlayersNumberAction(nick));
                     } catch (InterruptedException e) {
@@ -278,7 +279,7 @@ public class WebServer implements VirtualServer {
                     }
                 }
                 try {
-                    if(clients.size()>1) {
+                    if (clients.size() > 1) {
                         clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer(), playersNumber));
                         serverActions.put(new StartAction(null));
                     }
@@ -322,7 +323,7 @@ public class WebServer implements VirtualServer {
                     System.out.println("> User " + nick + " already online or doesn't exist.");
                     try {
                         client.showAction(new ErrorAction(nick, "Game started, user not found."));
-                    } catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return false;
@@ -384,7 +385,7 @@ public class WebServer implements VirtualServer {
             boolean startActionRequired = false;
             synchronized (clients) {
                 for (VirtualView c : clients) {
-                    if (c.getOnline() && c.getNickname()!=null) {
+                    if (c.getOnline() && c.getNickname() != null) {
                         c.setPing(false);
                         try {
                             System.out.println("invio ping a " + c.getNickname());
@@ -401,7 +402,7 @@ public class WebServer implements VirtualServer {
             synchronized (clients) {
                 for (VirtualView c : clients) {
                     System.out.println("Client: " + c.getNickname() + " Online: " + c.getOnline() + " ping: " + c.getPing());
-                    if (!c.getPing() && c.getOnline()){
+                    if (!c.getPing() && c.getOnline()) {
                         System.err.println("Sono entrato in !c.getPing() && c.getOnline() ---> mi mette nella lista per disconnettere");
                         disconnectedClient.add(c.getNickname());
                         c.setOnline(false);
@@ -415,11 +416,12 @@ public class WebServer implements VirtualServer {
                 clientActions.put(new DisconnectedPlayerAction(c, countOnlinePlayer()));
                 //offlineNumber++;
                 System.err.println("appena fatta put di action Disconnected, ");
-               for (VirtualView v: clients){
-                   if(disconnectedClient.contains(v.getNickname())){
-                       v.setOnline(false);
-                   }
-               }
+                //qua sotto potrebbe essere superfluo perché il setOnline viene già fatto sopra
+                for (VirtualView v : clients) {
+                    if (disconnectedClient.contains(v.getNickname())) {
+                        v.setOnline(false);
+                    }
+                }
             }
 
             if (!gameStarted) {
@@ -429,7 +431,7 @@ public class WebServer implements VirtualServer {
                         clientsToRemove.add(c);
                 }
 
-                if (!disconnectedClient.isEmpty() ) {
+                if (!disconnectedClient.isEmpty()) {
                     synchronized (clients) {
                         clients.removeAll(clientsToRemove);
                         startActionRequired = true;
@@ -445,22 +447,50 @@ public class WebServer implements VirtualServer {
                         throw new RuntimeException(e);
                     }
                 }
-            }
-            else {
-                for(String c : disconnectedClient){
+            } else {
+                for (String c : disconnectedClient) {
                     System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
                     //System.out.println(c + ": ping --> " + c.getPing() + "         online --> " + c.getOnline());
-                    if(numStarter == clients.size()){
-                        controller.disconnection(c);
-                        // qui sarebbe da fare una refresh players
+                    if (numStarter == clients.size()) {
+                        //System.out.println("In web server, prima di passare controller.disconnection(c, countOnlinePlayer()) ------> countOnline() ="+countOnlinePlayer());
+                        controller.disconnection(c, countOnlinePlayer());
+                        //faccio ritornare da questa chiamata un boolean che mi indicherà se il client disconnesso era in turno o meno
+                        //questo boolean lo passerò alla wait action ---> fa tutto il giro
+                        //ritornando a client quando lo riceve
 
-                        waitingRoutineOneUser();
-                    }
-                    else{
+                        //in caso uso un leggero delay per sistemare
+                        //thread.sleep(200);
+
+                        // se è connesso solo un ultimo player parto con la routine
+                        if (countOnlinePlayer() <= 1) {
+                            System.out.println("Dentro webserver: se è connesso solo un ultimo player parto con la routine\n");
+                            String lastOnlineNick = null;
+                            for (VirtualView cli : clients) {
+                                if (cli.getOnline()) {
+                                    lastOnlineNick = cli.getNickname();
+                                    //Ho il nickname dell'ultimo player online, mando l'action per bloccare il client
+                                    Action act = new WaitAction(lastOnlineNick);
+                                    System.out.println("Sto per lanciare action che blocca il client");
+                                    cli.showAction(act);
+
+//                                    System.out.println("Ora in web server sto controllando se Startroutine è true: --> " + cli.getStartRoutine());
+//                                    if (cli.getStartRoutine())
+//                                        waitingRoutineOneUser();
+
+                                    break;
+                                }
+                            }
+
+
+                            //metto in wait l'ultimo client rimasto connesso
+                            // (memorizzare l'ultimo client connesso, sarà lui a ricevere AskingToPlace)
+                        }
+
+                    } else {
                         //thread 60 sec
-                        for(VirtualView v: clients){
-                            if(v.getNickname().equalsIgnoreCase(c)){
-                                if(!v.getStarter()){
+                        for (VirtualView v : clients) {
+                            if (v.getNickname().equalsIgnoreCase(c)) {
+                                if (!v.getStarter()) {
                                     waitingRoutineChoiceAchi(v.getNickname());
                                 }
                             }
@@ -571,9 +601,9 @@ public class WebServer implements VirtualServer {
                             }
                         }
                         attempts--;
-                        System.out.println("Tentativi rimanenti: " + attempts);
+                        System.out.println("Attempts remaining: " + attempts);
                     }
-                    shutdown("Partita finita utente non ha fatto riconessione in fase starter");
+                    shutdown("Game ended, user did not reconnected during starter card and achievement choice.");
                 } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
@@ -583,9 +613,58 @@ public class WebServer implements VirtualServer {
         Thread thread = new Thread(task);
         thread.start();
     }
+
+
+    //altra versione:
     public void waitingRoutineOneUser() {
         Runnable task = new Runnable() {
             int attempts = 10;
+            volatile boolean restart = false;
+
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        while (attempts != 0 && !restart) {
+                            Thread.sleep(5000);
+                            if (countOnlinePlayer() <= 1) {
+                                attempts--;
+                                System.out.println("Attempts remaining: " + attempts);
+                            } else {
+                                restart = true;
+                                System.out.println("More than one player is online, game can resume.");
+                            }
+                        }
+                        if (!restart) {
+                            shutdown("You Won, all Users disconnected");
+                            break;
+                        } else {
+                            // Riavvia il thread con i valori iniziali
+                            attempts = 10;
+                            restart = false;
+                        }
+                    } catch (InterruptedException | IOException e) {
+                        e.printStackTrace();
+                        break;
+                    }
+                }
+            }
+        };
+
+        Thread thread = new Thread(task);
+        thread.start();
+    }
+
+    /*
+
+    public void waitingRoutineOneUser() {
+        Runnable task = new Runnable() {
+            int attempts = 10;
+
+            boolean restart = false;
+
+
+            //*******finire di sistemare in modo che funzioni con il restart del valore (potrebbe essere utile usare una variabile 'volatile' esterna)
 
             @Override
             public void run() {
@@ -595,10 +674,17 @@ public class WebServer implements VirtualServer {
                         Thread.sleep(5000);
                         if(countOnlinePlayer()<=1) {
                             attempts--;
+                            restart = false;
+                            System.out.println("Attempts remaining: " + attempts);
+                        } else {
+                            restart = true;
+                            System.out.println("More than one player is online, game can resume.");
                         }
-                        System.out.println("Tentativi rimanenti: " + attempts);
                     }
-                    shutdown("You Won, all Users disconnected");
+                    if(!restart)
+                        shutdown("You Won, all Users disconnected");
+                    else
+                        return;
                 } catch (InterruptedException | IOException e) {
                     e.printStackTrace();
                 }
@@ -609,19 +695,26 @@ public class WebServer implements VirtualServer {
         thread.start();
     }
 
-    //butta giù clients e server
-    public void shutdown(String messaggio) throws IOException {
-        synchronized (clients){
-            for (VirtualView c : clients) {
-                c.showAction(new ErrorAction(c.getNickname(), messaggio, true));
-            }
-        }
-        System.exit(0);
-    }
 
+
+
+
+    */
+
+
+        //butta giù clients e server
+        public void shutdown (String messaggio) throws IOException {
+            synchronized (clients) {
+                for (VirtualView c : clients) {
+                    c.showAction(new ErrorAction(c.getNickname(), messaggio, true));
+                }
+            }
+            System.exit(0);
+        }
 
 
 }
+
     /*
     checkAliveThread()
         se il gameStarted == false => l'utente che non risulta connesso viene eliminato e invio messaggio notificaDisconnessione e askingStart

@@ -609,6 +609,16 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void setStartRoutine(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getStartRoutine() throws RemoteException {
+        return false;
+    }
+
+    @Override
     public void setStarter(boolean b) throws RemoteException {
     }
 

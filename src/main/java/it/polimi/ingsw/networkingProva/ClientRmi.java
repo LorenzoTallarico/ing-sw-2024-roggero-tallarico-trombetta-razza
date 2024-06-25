@@ -49,6 +49,18 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     }
 
     @Override
+    public void setStartRoutine(boolean b) throws RemoteException {
+
+    }
+
+    @Override
+    public boolean getStartRoutine() throws RemoteException {
+//        return client.getStartRoutine();
+        System.out.println("Sto chiamando il metodo di ClientRmi************************************************************************************************");
+        return false;
+    }
+
+    @Override
     public void setStarter(boolean starter) throws RemoteException {
         this.starter = starter;
     }

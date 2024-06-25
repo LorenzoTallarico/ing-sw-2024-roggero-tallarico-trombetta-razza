@@ -68,8 +68,10 @@ public class Game implements Serializable {
                     player.add(p);
                     bigListener.notifyStarterCard(player, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                 } else {
+                    //modificare la notify per togliere il wait a client (cercare di capire come memorizzare il currPLayer --> ultimo rimasto online)
                     bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                     if(wait){
+                        System.out.println("Dentro Game -> Reconnection -> if(wait)");
                         wait = false;
                         nextPlayer();
                     }
@@ -78,12 +80,13 @@ public class Game implements Serializable {
         }
     }
 
-    public void disconnection(String playerName) throws RemoteException {
+    public void disconnection(String playerName, int numOnlinePlayers) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
                 System.err.println("dentro Game disconnection");
-                p.disconnection();
                 p.setOnline(false);
+                p.disconnection();
+
                 for(VirtualView c: clients){
                     if(c.getNickname().equalsIgnoreCase(playerName)) {
                         c.setOnline(false);
@@ -95,19 +98,55 @@ public class Game implements Serializable {
                         countOnline++;
                 }
                 System.out.println("*****(Dentro Game -> disconnection)********Il numero di giocatori online è: " + countOnline);
-                if(countOnline == 1)
-                    wait = true;
+                //if(countOnline == 1)
+                  //  wait = true;
+                //scatta se sono in turno e lascio solo uno, oppure se non sono in turno e sono da solo
+
                 if(countOnline==0){
-                    System.exit(0); //
+                    //Manda listener con wait che indica il numero di player online è 0
+                    System.exit(0);
                 }
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
                     nextPlayer();
                 }
+
+                //Serve se è rimasto un solo giocatore connesso e non era il suo turno
+//                if(numOnlinePlayers == 1 && playerName.equalsIgnoreCase(players.get(currPlayer).getName()))
+//                    nextPlayer();
+
                 break;
             }
         }
     }
+    public void nextPlayer() throws RemoteException {
+        String nickLastPlayer = players.get(currPlayer).getName();
+        boolean found = false;
+        int index= currPlayer;
+        //if(!wait) {
+        do {   //player offline skips turn
+            currPlayer++;
+            if (currPlayer >= playersNumber) {
+                if (gameState == GameState.LASTROUND) {
+                    setGameState(GameState.FINALSCORE);
+                    return;
+                } else
+                    currPlayer = 0;
+            }
+//                if (clients.get(currPlayer).getOnline())
+//                    found = true;
+            if (players.get(currPlayer).isOnline())
+                found = true;
+            System.out.println("onlineCurr: " + clients.get(currPlayer).getOnline() + " p: " + players.get(currPlayer).getName() + clients.get(currPlayer).getNickname());
 
+        } while (index != currPlayer && !found);
+        System.out.println("Dentro Game--> nextPlayer(), stampo il current player a cui verrà mandata la notifyToPlace: " + players.get(currPlayer).getName());
+        if(players.get(currPlayer).isOnline() && index!=currPlayer) {
+            bigListener.notifyToPlace(players.get(currPlayer));
+        }
+        if(index == currPlayer)
+            wait = true;
+
+    }
 
 
 
@@ -393,30 +432,7 @@ public class Game implements Serializable {
 
     //Methods
 
-    public void nextPlayer() throws RemoteException {
-        String nickLastPlayer = players.get(currPlayer).getName();
-        boolean found = false;
 
-        if(!wait) {
-            do {   //player offline skips turn
-                currPlayer++;
-                if (currPlayer >= playersNumber) {
-                    if (gameState == GameState.LASTROUND) {
-                        setGameState(GameState.FINALSCORE);
-                        return;
-                    } else
-                        currPlayer = 0;
-                }
-//                if (clients.get(currPlayer).getOnline())
-//                    found = true;
-                if (players.get(currPlayer).isOnline())
-                    found = true;
-                System.out.println("onlineCurr: " + clients.get(currPlayer).getOnline() + " p: " + players.get(currPlayer).getName() + clients.get(currPlayer).getNickname());
-
-            } while (/*clients.get(currPlayer).getOnline() == false ||*/ players.get(currPlayer).getName().equals(nickLastPlayer) || !found);
-            bigListener.notifyToPlace(players.get(currPlayer));
-        }
-    }
 
 
 
