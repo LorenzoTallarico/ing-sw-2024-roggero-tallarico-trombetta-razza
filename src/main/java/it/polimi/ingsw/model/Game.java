@@ -180,7 +180,7 @@ public class Game implements Serializable {
         try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
             GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
             ArrayList<GoldCard> tempDeck = new ArrayList<>();
-            Collections.addAll(goldDeck, tempResource);
+            Collections.addAll(tempDeck, tempResource);
             return tempDeck;
         } catch (IOException e) {
             return null;
@@ -422,6 +422,11 @@ public class Game implements Serializable {
 
 
     //NB: SOLO PER TESTING!!!!
+
+    public void setCurrPlayer(Player p){
+        this.currPlayer = players.indexOf(p);
+    }
+
     public void nextPlayer(boolean nextState) throws RemoteException {
         currPlayer++;
         if(currPlayer >= playersNumber) {

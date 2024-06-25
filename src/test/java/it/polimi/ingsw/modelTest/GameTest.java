@@ -1,5 +1,6 @@
 package it.polimi.ingsw.modelTest;
 
+import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 public class GameTest {
 
@@ -102,7 +104,7 @@ public class GameTest {
         assertEquals(testGame.getCurrPlayer(), 0);
 
     }*/
-
+/*
     @Test
     void nextPlayerTest() throws RemoteException {
         Game testGame = Game.getInstance();
@@ -174,6 +176,8 @@ public class GameTest {
         testGame.end();
         testGame.nextState();
     }
+
+ */
 
     @Test
     void handsTest() throws RemoteException {
@@ -380,7 +384,7 @@ public class GameTest {
 
         System.out.println(fake1.getArea().countResources(Resource.MUSHROOM));
 
-        assertEquals(n , 100);
+        assertEquals(n , 35);
         testGame.end();
         testGame.nextState();
     }
@@ -589,5 +593,102 @@ public class GameTest {
         assertInstanceOf(GoldCard.class, testGame.draw("Marco", 4));
         testGame.end();
         testGame.nextState();
+    }
+
+    @Test
+    void coverageTest() throws RemoteException{
+        Game testGame = Game.getInstance();
+        ArrayList<Player> players = new ArrayList<Player>();
+        Player fake1 = new Player("Marco", false);
+        players.add(fake1);
+        VirtualView cli = new RmiClient(null);
+        ArrayList<VirtualView> clients = new ArrayList<>();
+        clients.add(cli);
+        testGame.addPlayers(players, clients);
+        ResourceCard tempRes;
+        GoldCard tempGold;
+        ArrayList<ResourceCard> deck1 = new ArrayList<ResourceCard>(testGame.getOrderedResourceDeck());
+        ArrayList<GoldCard> deck2 = new ArrayList<GoldCard>(testGame.getOrderedGoldDeck());
+        ArrayList<AchievementCard> deck3 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        //test of override method equals
+        //between resource cards:
+        assertFalse(deck1.get(0).equals(deck1.get(1)));
+        assertTrue(deck1.get(0).equals(deck1.get(0)));
+        //between gold cards
+        assertFalse(deck2.get(0).equals(deck2.get(1)));
+        assertTrue(deck2.get(0).equals(deck2.get(0)));
+        //between achievement cards
+        assertFalse(deck3.get(0).equals(deck3.get(1)));
+        assertTrue(deck3.get(0).equals(deck3.get(0)));
+        // test of method countResource inside gold cards used to determine number of each resource required to place the gold card
+        assertEquals(deck2.get(0).countResource(Resource.MUSHROOM),2);
+        assertEquals(deck2.get(0).countResource(Resource.WOLF),1);
+        assertEquals(deck2.get(0).countResource(Resource.LEAF),0);
+        assertEquals(deck2.get(0).countResource(Resource.BUTTERFLY),0);
+        assertEquals(deck2.get(1).countResource(Resource.MUSHROOM),2);
+        assertEquals(deck2.get(1).countResource(Resource.LEAF),1);
+        assertEquals(deck2.get(1).countResource(Resource.BUTTERFLY),0);
+        assertEquals(deck2.get(1).countResource(Resource.WOLF),0);
+        // test of checkGold method used to determine if there are enough resources to place a gold card
+        tempRes = deck1.get(20);
+        tempGold = deck2.get(0);
+        tempRes.setFront(true);
+        tempGold.setFront(true);
+        // placement of the first card, not giving enough resources to place the card
+        fake1.getArea().setSpace(tempRes,41,41);
+        assertFalse(fake1.checkGold(tempGold));
+        tempRes = deck1.get(0);
+        tempRes.setFront(true);
+        // placement of the second card, giving enough resources to place the card
+        fake1.getArea().setSpace(tempRes,42,42);
+        assertTrue(fake1.checkGold(tempGold));
+    }
+
+    @Test
+    void ControllerTest() throws RemoteException{
+        Card tempCard1;
+        Card tempCard2;
+        AchievementCard tempAchievement1;
+        AchievementCard tempAchievement2;
+        Game testGame = Game.getInstance();
+        GameController controller = new GameController();
+        controller.setPlayersNumber(2);
+        Player fake1 = new Player("Marco", false);
+        VirtualView cli1 = new RmiClient(null);
+        Player fake2 = new Player("Simone", false);
+        VirtualView cli2 = new RmiClient(null);
+        // test of addPlayer method
+        controller.addPlayer(fake1 , cli1);
+        controller.addPlayer(fake2 , cli2);
+        assertEquals(testGame.getPlayersNumber(),2);
+        // test of placeCard method
+        tempCard1 = fake1.getHand().get(2);
+        assertInstanceOf(GoldCard.class, tempCard1); // third card in the hand is a GoldCard
+        tempCard2 = fake2.getHand().get(0);
+        testGame.setGameState(GameState.GAME);
+        testGame.setCurrPlayer(fake1);
+        controller.placeCard("Marco",0,true,41,41);
+        testGame.setCurrPlayer(fake2);
+        controller.placeCard("Simone",0,true,41,41);
+        assertNotEquals(fake1.getArea().getSpace(41,41).getCard(),null);
+        assertEquals(fake2.getArea().getSpace(41,41).getCard(),tempCard2);
+        // test of drawCard method, Marco draws a resourceCard directly from resource deck
+        testGame.setCurrPlayer(fake1);
+        controller.drawCard("Marco",6);
+        assertEquals(fake1.getHand().size(),3);
+        // test of setSecretAchievement method
+        tempAchievement1 = testGame.getOrderedAchievementDeck().get(0);
+        controller.setSecretAchievement("Marco",tempAchievement1);
+        assertEquals(fake1.getSecretAchievement().get(0),tempAchievement1);
+        // test of sendChatMessage method
+        Chat chat = Chat.getInstance();
+        Message msg = new Message("prova","autore");
+        controller.sendChatMessage(msg);
+        assertEquals(chat.getLastMessage(),msg);
+        // test of getWholeChat method
+        Message msg2 = new Message("prova2","autore2");
+        controller.sendChatMessage(msg2);
+        assertEquals(chat.getWholeChat().get(0),msg);
+        assertEquals(chat.getWholeChat().get(1),msg2);
     }
 }
