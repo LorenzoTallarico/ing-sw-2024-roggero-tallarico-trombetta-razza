@@ -43,6 +43,7 @@ public class ServerSocket implements VirtualServer, Runnable {
                 //Thread.sleep(10); // Piccola pausa per sincronizzare il flusso
             }catch (IOException /*| /*InterruptedException */ e){
                 e.printStackTrace();
+                closeResources();
             }
         }
 
@@ -63,7 +64,6 @@ public class ServerSocket implements VirtualServer, Runnable {
                     Action action = null;
                     try {
                         action = (Action) inputStream.readObject();
-                        //System.out.println("Messaggio arrivato " + action.getType());
                     } catch (IOException | ClassNotFoundException e) {
                         throw new RuntimeException(e);
                     }
@@ -90,106 +90,16 @@ public class ServerSocket implements VirtualServer, Runnable {
             }
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    @Override
-//    public void run() {
-//        while (true) {
-//            try {
-//                Action action = (Action) inputStream.readObject();
-//                if (action.getType().equals(ActionType.PING)) {
-//                    sendAction(new PongAction("")); // da sistemare il nickname
-//                }
-//                serverActionReceived.put(action);
-//            } catch (IOException e) {
-//                System.err.println("IOException during readObject: " + e.getMessage());
-//                e.printStackTrace();
-//                break;
-//            } catch (ClassNotFoundException e) {
-//                System.err.println("ClassNotFoundException during readObject: " + e.getMessage());
-//                e.printStackTrace();
-//            } catch (InterruptedException e) {
-//                System.err.println("InterruptedException during put: " + e.getMessage());
-//                e.printStackTrace();
-//            }
-//        }
-//    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//        @Override
-//        public void run() {
-//            while(true) {
-//                Action action = null;
-//                try {
-//                    action = (Action) inputStream.readObject();
-//                } catch (IOException | ClassNotFoundException e) {
-//                    throw new RuntimeException(e);
-//                }
-//                try {
-//                    if(action.getType().equals(ActionType.PING)){
-//                        sendAction(new PongAction("")); //da Sistemare il nickname
-//
-//                    }
-//                    serverActionReceived.put(action);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                } catch (RemoteException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//
-//        }
-
-
-
-
-
-
-
-
+    private void closeResources() {
+        try {
+            if (inputStream != null)
+                inputStream.close();
+            if (outputStream != null)
+                outputStream.close();
+        } catch (IOException e) {
+            System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
+        }
+    }
 
 }
 

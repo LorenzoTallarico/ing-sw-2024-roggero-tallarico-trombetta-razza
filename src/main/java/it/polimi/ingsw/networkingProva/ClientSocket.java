@@ -3,7 +3,6 @@ package it.polimi.ingsw.networkingProva;
 
 import it.polimi.ingsw.networking.action.ActionType;
 import it.polimi.ingsw.networking.action.toclient.AskingPlayersNumberAction;
-import it.polimi.ingsw.networking.action.toclient.AskingStartAction;
 import it.polimi.ingsw.networking.action.toclient.ErrorAction;
 import it.polimi.ingsw.networking.action.toclient.JoiningPlayerAction;
 import it.polimi.ingsw.networking.action.toserver.ReconnectedPlayerAction;
@@ -23,23 +22,21 @@ import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
 public class ClientSocket implements VirtualView, Runnable {
-    private Socket serSocket;
     private final ObjectOutputStream outputStream;
     private final ObjectInputStream inputStream;
-    private BlockingQueue<Action> serverActions;
-    private BlockingQueue<Action> clientActions;
-    private ArrayList<VirtualView> clients;
+    private final BlockingQueue<Action> serverActions;
+    private final BlockingQueue<Action> clientActions;
+    private final ArrayList<VirtualView> clients;
     
-    private boolean gui;
+
     private boolean ping;
     private boolean online;
     private String nickname = null;
-    private boolean gameStarted;
-    private int playersNumber;
+    private final boolean gameStarted;
+    private final int playersNumber;
     private boolean starter= false;
 
     public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted, int playersNumber) throws IOException {
-        this.serSocket = serSocket;
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
         this.serverActions = serverActions;
@@ -60,10 +57,6 @@ public class ClientSocket implements VirtualView, Runnable {
         return online;
     }
 
-    @Override
-    public boolean getGui() {
-        return gui;
-    }
 
     @Override
     public boolean getPing() {
@@ -134,7 +127,6 @@ public class ClientSocket implements VirtualView, Runnable {
             } catch (SocketException e) {
                 System.err.println("Connection reset by peer");
                 closeResources();
-                //throw e;
             }
         }
     }
@@ -313,9 +305,6 @@ public class ClientSocket implements VirtualView, Runnable {
                 inputStream.close();
             if (outputStream != null)
                 outputStream.close();
-            //da vedere se servono questa ultima
-            if (serSocket != null && !serSocket.isClosed())
-                serSocket.close();
         } catch (IOException e) {
             System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
         }
