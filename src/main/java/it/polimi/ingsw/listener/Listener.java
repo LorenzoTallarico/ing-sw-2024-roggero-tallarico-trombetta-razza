@@ -87,9 +87,9 @@ public class Listener {
     }
 
 
-    public void notifyDrawCompleted(Player player, Card card) throws RemoteException {
+    public void notifyDrawCompleted(Player player, Card card,  ArrayList<GoldCard> commonGold, Resource goldDeck, ArrayList<ResourceCard> commonResource, Resource resourceDeck) throws RemoteException {
         System.out.println("> All clients notified by completed draw listener. <- " + player.getName());
-        Action action = new CardDrawnAction(player.getName(), player, card);
+        Action action = new CardDrawnAction(player.getName(), player, card, commonGold, goldDeck, commonResource, resourceDeck);
         for(VirtualView client : clients) {
             try {
                 client.showAction(action);

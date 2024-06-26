@@ -540,7 +540,8 @@ public class Game implements Serializable {
         tempPlayer.getHand().add(drawCard);
         tempPlayer.setLastCardPlaced(null);      //player terminated his turn, last card reset (disconnections)
         tempPlayer.setPointsFromLastCard(0);     //player terminated his turn, last card's points reset (disconnections)
-        bigListener.notifyDrawCompleted(tempPlayer, drawCard);
+        bigListener.notifyDrawCompleted(tempPlayer, drawCard, getCommonGold(), getGoldDeck().get(0).getResource(),
+                getCommonResource(), getResourceDeck().get(0).getResource());
         return drawCard;
     }
 

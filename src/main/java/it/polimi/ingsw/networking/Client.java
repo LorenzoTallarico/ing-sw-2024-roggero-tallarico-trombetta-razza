@@ -707,6 +707,10 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         break;
                     case CARDDRAWN:
+                        this.commonGold = ((CardDrawnAction) act).getCommonGold();
+                        this.goldDeck = ((CardDrawnAction) act).getGoldDeck();
+                        this.commonResource = ((CardDrawnAction) act).getCommonResource();
+                        this.resourceDeck = ((CardDrawnAction) act).getResourceDeck();
                         if (act.getRecipient().equalsIgnoreCase(nickname)) {
                             p = ((CardDrawnAction) act).getPlayer();
                             if(gui) {
@@ -727,6 +731,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         }
                         if(gui) {
                             Platform.runLater(() -> playController.displaySuccessfulDrawn(act.getRecipient(), ((CardDrawnAction)act).getCard()));
+                            Platform.runLater(() -> playController.updateTableCards(commonGold, goldDeck, commonResource, resourceDeck));
                         }
                         break;
                     case WINNERS:
