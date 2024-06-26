@@ -319,7 +319,7 @@ public class WebServer implements VirtualServer {
                 //synchronized (clients) {
                 for (VirtualView c : clients) {
                     if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
-                        System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
+                        //System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
                         c.setPing(true);
                     }
                 }
@@ -354,9 +354,9 @@ public class WebServer implements VirtualServer {
             disconnectedClient.clear();
             synchronized (clients) {
                 for (VirtualView c : clients) {
-                    System.out.println("Client: " + c.getNickname() + " Online: " + c.getOnline() + " ping: " + c.getPing());
+                    //System.out.println("Client: " + c.getNickname() + " Online: " + c.getOnline() + " ping: " + c.getPing());
                     if (!c.getPing() && c.getOnline()) {
-                        System.err.println("Sono entrato in !c.getPing() && c.getOnline() ---> mi mette nella lista per disconnettere");
+                        //System.err.println("Sono entrato in !c.getPing() && c.getOnline() ---> mi mette nella lista per disconnettere");
                         disconnectedClient.add(c.getNickname());
                         c.setOnline(false);
                     }
@@ -399,11 +399,11 @@ public class WebServer implements VirtualServer {
                 }
             } else {
                 for (String c : disconnectedClient) {
-                    System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
+                    //System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
                     if (numStarter == clients.size()) {
                         controller.disconnection(c, countOnlinePlayer());
                         if (countOnlinePlayer() <= 1) {
-                            System.out.println("Dentro webserver: se è connesso solo un ultimo player parto con la routine\n");
+                            //System.out.println("Dentro webserver: se è connesso solo un ultimo player parto con la routine\n");
                             String lastOnlineNick = null;
                             for (VirtualView cli : clients) {
                                 if (cli.getOnline()) {

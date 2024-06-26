@@ -203,10 +203,10 @@ public class Player implements Serializable {
             boolean find = false;
             for(int i=area.getWestBound(); i<=area.getEastBound() && !find; i++) {
                 for(int j=area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
-                    if(area.getSpace(i, j).getCard() != null && area.getSpace(i, j).getCard().equals(lastCardPlaced)){
+                    if(area.getSpace(j, i).getCard() != null && area.getSpace(j, i).getCard().equals(lastCardPlaced)){
                         find=true;
                         // Da qui bisogna ripulire bene lo space in cui è stata piazzata (oltre a tutti gli aspetti del playground)
-                        area.setPlaygroundBeforePlace(i, j, lastCardPlaced);
+                        area.setPlaygroundBeforePlace(j, i, lastCardPlaced);
                         hand.add(lastCardPlaced);
                         points -= pointsFromLastCard;
                         System.out.println("\n\nQuesta invece è la stampa dentro Player: ");

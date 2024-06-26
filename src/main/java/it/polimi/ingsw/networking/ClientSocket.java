@@ -116,7 +116,7 @@ public class ClientSocket implements VirtualView, Runnable {
                 //vedere se serve sincronizzare anche su inputStream
                 try {
                     action = (Action) inputStream.readObject();
-                    System.out.println("Messaggio Arrivato: " + action.getType());
+                    //System.out.println("Messaggio Arrivato: " + action.getType());
                 } catch (SocketException e) {
                     System.out.println("Connection reset by peer");
                     break;
@@ -128,7 +128,7 @@ public class ClientSocket implements VirtualView, Runnable {
                 if (nickname != null) {
                     if (action.getType().equals(ActionType.PONG)) {
                         this.ping = true;
-                        System.out.println("ho settato il ping a true di " + nickname);
+                        //System.out.println("ho settato il ping a true di " + nickname);
                     } else {
                         try {
                             serverActions.put(action);
@@ -247,14 +247,14 @@ public class ClientSocket implements VirtualView, Runnable {
     }
 
     private void closeResources() {
-        try {
+       /* try {
             if (inputStream != null)
                 inputStream.close();
             if (outputStream != null)
                 outputStream.close();
         } catch (IOException e) {
             System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
-        }
+        }*/
     }
 
     private int countOnlinePlayer() throws RemoteException {

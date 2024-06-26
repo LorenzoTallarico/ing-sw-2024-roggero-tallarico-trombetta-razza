@@ -508,6 +508,7 @@ public class Game implements Serializable {
      */
     public Card draw(String name, int index) throws RemoteException {
         Player tempPlayer = null;
+        //
         for(Player plyr : players) {
             if(plyr.getName().equalsIgnoreCase(name))
                 tempPlayer = plyr;
