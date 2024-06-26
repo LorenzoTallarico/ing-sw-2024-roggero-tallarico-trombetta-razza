@@ -332,6 +332,7 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
 
 
         //BOUNDS FIXING
+        /*
         if(row == northBound)
             northBound = row+1;
 
@@ -343,7 +344,7 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
 
         if(column == eastBound)
             eastBound = column-1;
-
+        */
 
         //removes last card placed from queue
         removeLastOrderedCoord();
