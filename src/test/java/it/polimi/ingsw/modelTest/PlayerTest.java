@@ -1,11 +1,8 @@
 package it.polimi.ingsw.modelTest;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.networking.rmi.RmiClient;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.util.Print;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

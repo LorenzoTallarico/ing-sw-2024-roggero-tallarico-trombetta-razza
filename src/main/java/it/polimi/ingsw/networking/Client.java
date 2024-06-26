@@ -1,17 +1,12 @@
 
-package it.polimi.ingsw.clientProva;
+package it.polimi.ingsw.networking;
 
-import it.polimi.ingsw.gui.*;
 import it.polimi.ingsw.model.*;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ActionType;
 import it.polimi.ingsw.networking.action.ChatMessageAction;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
-import it.polimi.ingsw.networking.rmi.RmiClient;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
-import it.polimi.ingsw.networkingProva.ClientRmi;
 import it.polimi.ingsw.util.Print;
 import it.polimi.ingsw.gui.GUIView;
 import it.polimi.ingsw.gui.PlayController;
@@ -20,11 +15,7 @@ import javafx.application.Platform;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.net.Socket;
-import java.net.SocketOption;
 import java.rmi.ConnectException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -48,7 +39,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         DRAW,
         PLACE,
         ACHIEVEMENTSCHOICE,
-        WAIT,   //QAUNDO RIMANE SOLO 1 CLIENT CONNESSO (DEVE PARTIRE UN TIMER???)
         END
     }
 
@@ -56,7 +46,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private Player p;
     private String nickname;
     private Client.State state;
-    private Client.State oldState;
     private VirtualServer server;
     private ArrayList<Player> allPlayers;
     private StarterCard starterCard;
@@ -69,7 +58,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     boolean repeatDraw;
     private BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
     private BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
-    private boolean gui;
+    private final boolean gui;
     private boolean connected = false;
     private boolean connectionFlagServer=true;
     private boolean connectionFlagClient=true; //da sistemare
@@ -80,33 +69,18 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private PlayController playController;
     private Thread threadChatListener, threadStartListener, threadAchievementListener, threadPlaceListener, threadRePlaceListener, threadDrawListener;
 
-
-
-    /*public Client(VirtualServer server) throws RemoteException {
-        this.server = server;
-        this.p = new Player();
-        this.nickname = "";
-        state = Client.State.COMMANDS;
-        this.allPlayers = new ArrayList<>();
-        achievements = new ArrayList<>();
-    }*/
-
     public Client (int connectionChoice, int portChoice, String ip, boolean gui, String nickname)  throws IOException, NotBoundException {
         this.p = new Player();
         this.nickname = nickname;
-        //check
         state = Client.State.COMMANDS;
-        oldState = null;
         this.allPlayers = new ArrayList<>();
         achievements = new ArrayList<>();
         //connection
         if(connectionChoice == 1) { //RMI
-            // new RmiClient(server).init();
             final String serverName = "GameServer";
             try {
                 Registry registry = LocateRegistry.getRegistry(ip, portChoice);
-                VirtualServer server = (VirtualServer) registry.lookup(serverName);
-                this.server = server;
+                this.server = (VirtualServer) registry.lookup(serverName);
             } catch (UnknownHostException e) {
                 System.err.println("\nWrong ip address or port");
                 System.exit(0);
@@ -199,32 +173,12 @@ public class Client extends UnicastRemoteObject implements VirtualView {
             }
         } else {
             // connection / reconnection Socket
-            Action act = new SetNicknameAction(nickname, gui);
+            Action act = new SetNicknameAction(nickname);
             server.sendAction(act);
-            //System.err.println("Ho appena chiamato server.sendAction(act)");
         }
         if(!gui)
             runCommandLine();
     }
-
-   /* public void init(int port, String nickname, boolean gui) throws RemoteException, NotBoundException {
-        final String serverName = "GameServer";
-        Registry registry = LocateRegistry.getRegistry("127.0.0.1", PORT);
-        VirtualServer server = (VirtualServer) registry.lookup(serverName);
-        new RmiClient(server).run();
-    }*/
-
-   /* private void run() throws RemoteException {
-        System.out.print("> Enter nickname: ");
-        Scanner scan = new Scanner(System.in);
-        nickname = scan.nextLine();
-        if(!this.server.connect(this)) { //si puo dividere le casistiche facendo tornare un int
-            System.err.println("> Connection failed, max number of players already reached or name already taken.");
-            System.exit(0);
-        }
-        p = new Player(nickname, false);
-        this.runCli();
-    }*/
 
 
     private void runCommandLine() throws RemoteException {
@@ -319,7 +273,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     Print.largeHandPrinter(p.getHand(), achievements);
                     break;
                 case "place":
-                    //qui quando si riconnette il client state si ha "this.state = null"
                     if(state.equals(Client.State.PLACE)) {
                         System.out.println("> This is your playground:");
                         Print.playgroundPrinter(p.getArea());
@@ -451,17 +404,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         } while(repeatDraw);
                         a = new ChosenDrawCardAction(nickname, drawChoice);
                         clientActionsToSend.put(a);
-//                        if(wait){
-//                            System.err.println("Al termine di draw: settato startRoutine = true;");
-//                            //se il client è l'ultimo connesso e ha finito il suo turno
-//                            startWaitRoutine = true;
-//                            //Startroutine va messa a false quando si riconnette un cristiano
-//                            waitingRoutineOneUser();
-//                            state = Client.State.WAIT;
-//                        }
-//                        else {
-                            state = Client.State.COMMANDS;
-//                        }
+                        state = Client.State.COMMANDS;
                     } else {
                         System.out.println(Print.ANSI_RED + "> Permission denied, you can't draw a card right now." + Print.ANSI_RESET);
                     }
@@ -524,22 +467,11 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             } else {
                                 Platform.runLater(() -> playController.genericAlert("> All the other players disconnected. After you finish your turn in 30s the game will end, if no client reconnects in the meantime."));
                             }
-
-//                            if(((WaitAction) act).getInTurn()){
-//
-//
-//                            }
-
                              wait = true;
-                            //mi serve questo boolean perché prima devo far finire il turno al player
-
-                            // state = State.WAIT; ( mettere in
-                            // il client prima deve finire il turno
                         }
                         break;
 
-                    case RECONNECTIONSUCCESS: //___> Da controllare sotto
-                        //se si è riconnesso ed è il player che interrompe la wait allora gli dovrà arrivare una askingplace
+                    case RECONNECTIONSUCCESS:
                         System.out.println("So quello sopra!");
                         if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)) {
                             this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
@@ -556,9 +488,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                                     refreshPlayers(player);
                                 }
                             }
-                            //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
-                            achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
+                            achievements.add(0, p.getSecretAchievement().get(0));
                             if(gui) {
                                 Platform.runLater(() -> guiView.playScene(nickname));
                                 do {
@@ -576,11 +507,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                                 }
                                 Platform.runLater(() -> playController.setupStartedGame(p, allPlayers, achievements, commonGold, goldDeck, commonResource, resourceDeck));
                             }
-                            //da controllare se serve qui
                             setOnline(true);
                             setPing(true);
                         } else {
-                            //qua sarebbe da fare il controllo di quando un client si è riconnesso (sulla wait)
                             if(wait) {
                                 wait = false;
                                 startWaitRoutine = false;
@@ -789,16 +718,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                                 System.out.println("> Your turn is over.");
                             }
                             if(wait){
-                                //System.err.println("Al termine di draw: settato startRoutine = true;");
-                                //se il client è l'ultimo connesso e ha finito il suo turno
                                 startWaitRoutine = true;
-                                //Startroutine va messa a false quando si riconnette un cristiano
                                 waitingRoutineOneUser();
-                                //state = Client.State.WAIT;
                             }
-//                            else {
-//                                state = Client.State.COMMANDS;
-//                            }
                         } else {
                             refreshPlayers(((CardDrawnAction) act).getPlayer());
                             if(!gui)
@@ -834,11 +756,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
                     case DISCONNECTEDPLAYER:
                         if(!gui)
-                            //da sistemareeeeeeee (online non serve forse)
                             System.out.println("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname() + "\n> Players Online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         else
                             Platform.runLater(() -> playController.genericAlert("> Disconnected Player: " + ((DisconnectedPlayerAction) act).getNickname()));
-                        //System.out.println("> Players online: " + ((DisconnectedPlayerAction) act).getNumberOnline());
                         break;
                     case ERROR:
                         System.out.println("> " + ((ErrorAction) act).getMessage());
@@ -854,7 +774,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 switch (act.getType()) {
                     //da capire se anche qua serve la parte per la start routine (teoricamente no)
                     case RECONNECTIONSUCCESS:
-                        System.out.println("So quello sotto!");
                         if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)){
                             this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
                             this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
@@ -869,9 +788,8 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                                     refreshPlayers(player);
                                 }
                             }
-                            //game.getGameState() firstRound, vedere la dashboard e secret per capire quale state mettere
                             starterCard = (StarterCard) p.getArea().getSpace(40,40).getCard();
-                            achievements.add(0, p.getSecretAchievement().get(0));   //controllare se è il primo settato
+                            achievements.add(0, p.getSecretAchievement().get(0));
                             if(gui) {
                                 Platform.runLater(() -> guiView.playScene(nickname));
                                 do {
@@ -889,7 +807,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                                 }
                                 Platform.runLater(() -> playController.setupStartedGame(p, allPlayers, achievements, commonGold, goldDeck, commonResource, resourceDeck));
                             }
-                            //da controllare se serve qui
                             setOnline(true);
                             setPing(true);
                         } else {
@@ -906,7 +823,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
                     case SETNICKNAME: //only for Socket
                         if (((SetNicknameAction)act).getNickname()!= null /*|| ((SetNicknameAction)act).getNickname().equals("No size")*/) {
-                            //nickname = ((SetNicknameAction)act).getNickname();
                             connected = true;
                             if(gui) {
                                 Platform.runLater(loginController::waitForOtherPlayers);
@@ -940,29 +856,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
         }
     }
 
-
-
-    // DA SISTEMARE
-    @Override
-    //non serve
-    public void setStartRoutine(boolean b){
-        this.startWaitRoutine = b;
-    }
-
-    @Override
-    //non serve
-    public boolean getStartRoutine(){
-        System.out.println("Ho settato la startRoutine di CLient***********************************************************************");
-        return this.startWaitRoutine;
-    }
-
-
-
-    @Override
-    public void reportError(String details) throws RemoteException {
-        System.out.println("\n[ERROR]= " + "\n> ");
-    }
-
     @Override
     public String getNickname() {
         return nickname;
@@ -971,11 +864,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     @Override
     public boolean getOnline() {
         return connected;
-    }
-
-    @Override
-    public boolean getGui() {
-        return gui;
     }
 
     @Override
@@ -995,16 +883,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public boolean getPing() {
-        return false;
-    }
-
-    @Override
-    public void setInTurn(boolean b) throws RemoteException {
-
-    }
-
-    @Override
-    public boolean getInTurn() throws RemoteException {
         return false;
     }
 
@@ -1047,27 +925,18 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                 serverActionsReceived.put(actionFromServer);
             }
         } catch (InterruptedException | NullPointerException e) {
-            //da controllare
-//            System.err.println("NULL POINTER EXCEPTION - Only player connected disconnected, terminating task...");
-//            System.exit(0);
             throw new RuntimeException(e);
         }
-// era così:
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
     }
 
     // Sending actions to server
     public void serverUpdateThread() throws InterruptedException, RemoteException {
-        // It sends all the actions in the queue to the server
         try {
             while (connectionFlagServer) {
                 Action a = clientActionsToSend.take();
                 server.sendAction(a);
             }
         } catch (InterruptedException | IOException e) {
-            // Gestione dell'eccezione
             connectionFlagServer = false;
             e.printStackTrace();
         }
@@ -1082,9 +951,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
             @Override
             public void run() {
-
                 stop = false;
-
                 while (!stop) {
                     try {
                         while (attempts != 0 && !restart) {
@@ -1105,8 +972,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                             }
                         }
                         if (!restart) {
-                            //da sistemare: o mando un azione che mi decreta vincitore oppure un altra che butta giù tutto
-                            //shutdown("You Won, all Users disconnected");
                             if(!gui)
                                 Print.resultAsciiArt(true, Print.ANSI_YELLOW);
                             else

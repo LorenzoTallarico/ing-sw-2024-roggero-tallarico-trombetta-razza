@@ -1,13 +1,13 @@
 package it.polimi.ingsw.gui;
 
 
-import it.polimi.ingsw.networking.action.*;
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.networking.VirtualServer;
+import it.polimi.ingsw.networking.VirtualView;
+import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.ChatMessageAction;
 import it.polimi.ingsw.networking.action.toclient.*;
 import it.polimi.ingsw.networking.action.toserver.*;
-import it.polimi.ingsw.networking.rmi.RmiServer;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
 import javafx.application.Platform;
 import javafx.stage.Stage;
@@ -558,10 +558,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
     }
 
 
-    @Override
-    public void reportError(String details) throws RemoteException {
-        System.out.println("\n[ERROR]= " + "\n> ");
-    }
 
     @Override
     public String getNickname() {
@@ -570,11 +566,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public boolean getOnline() throws RemoteException  {
-        return false;
-    }
-
-    @Override
-    public boolean getGui() throws RemoteException  {
         return false;
     }
 
@@ -595,26 +586,6 @@ public class RMItoGUI extends UnicastRemoteObject implements VirtualView {
 
     @Override
     public boolean getPing() {
-        return false;
-    }
-
-    @Override
-    public void setInTurn(boolean b) throws RemoteException {
-
-    }
-
-    @Override
-    public boolean getInTurn() throws RemoteException {
-        return false;
-    }
-
-    @Override
-    public void setStartRoutine(boolean b) throws RemoteException {
-
-    }
-
-    @Override
-    public boolean getStartRoutine() throws RemoteException {
         return false;
     }
 

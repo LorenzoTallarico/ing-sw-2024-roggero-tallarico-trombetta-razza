@@ -1,7 +1,7 @@
 package it.polimi.ingsw;
 
 
-import it.polimi.ingsw.clientProva.Client;
+import it.polimi.ingsw.networking.Client;
 
 import java.io.IOException;
 import java.rmi.NotBoundException;

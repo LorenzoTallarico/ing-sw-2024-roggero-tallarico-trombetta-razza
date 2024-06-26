@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import com.google.gson.*;
-import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.listener.Listener;
 
 

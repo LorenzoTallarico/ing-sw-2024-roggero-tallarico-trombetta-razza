@@ -10,9 +10,9 @@ module it.polimi.ingsw {
     exports it.polimi.ingsw;
     opens it.polimi.ingsw.model to com.google.gson;
     exports it.polimi.ingsw.model;
-    opens it.polimi.ingsw.networking.rmi to java.rmi;
     exports it.polimi.ingsw.gui;
     opens it.polimi.ingsw.gui to javafx.fxml;
-    exports it.polimi.ingsw.networking.rmi;
     exports it.polimi.ingsw.networking.action.toserver;
+    exports it.polimi.ingsw.networking;
+    opens it.polimi.ingsw.networking to java.rmi;
 }

@@ -5,16 +5,13 @@ import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import it.polimi.ingsw.networking.rmi.RmiClient;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networking.VirtualServer;
+import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.util.Print;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Objects;
 
 public class GameTest {
 

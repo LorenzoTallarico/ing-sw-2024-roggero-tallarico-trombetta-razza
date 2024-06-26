@@ -1,11 +1,8 @@
-package it.polimi.ingsw.clientProva;
+package it.polimi.ingsw.networking;
 
-import it.polimi.ingsw.model.Player;
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ActionType;
 import it.polimi.ingsw.networking.action.toserver.PongAction;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,7 +23,6 @@ public class ServerSocket implements VirtualServer, Runnable {
         this.serverActionReceived = serverActionReceived;
     }
 
-    //non serve
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         return false;
@@ -48,13 +44,6 @@ public class ServerSocket implements VirtualServer, Runnable {
         }
 
     }
-
-    @Override
-    public void addPlayer(Player p, VirtualView v) throws RemoteException {
-
-    }
-
-
 
     @Override
     public void run() {
@@ -90,6 +79,7 @@ public class ServerSocket implements VirtualServer, Runnable {
             }
         }
     }
+
     private void closeResources() {
         try {
             if (inputStream != null)

@@ -1,9 +1,9 @@
 package it.polimi.ingsw.listener;
 
 import it.polimi.ingsw.model.*;
-import it.polimi.ingsw.networking.action.*;
+import it.polimi.ingsw.networking.VirtualView;
+import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.toclient.*;
-import it.polimi.ingsw.networking.rmi.VirtualView;
 import it.polimi.ingsw.util.Print;
 
 import java.io.IOException;

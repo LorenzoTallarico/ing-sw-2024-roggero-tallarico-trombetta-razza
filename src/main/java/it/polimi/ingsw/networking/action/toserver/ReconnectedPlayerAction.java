@@ -2,7 +2,7 @@ package it.polimi.ingsw.networking.action.toserver;
 
 import it.polimi.ingsw.networking.action.Action;
 import it.polimi.ingsw.networking.action.ActionType;
-import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networking.VirtualView;
 
 public class ReconnectedPlayerAction extends Action {
 

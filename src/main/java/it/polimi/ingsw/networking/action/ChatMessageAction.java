@@ -1,8 +1,6 @@
 package it.polimi.ingsw.networking.action;
 
 import it.polimi.ingsw.model.Message;
-import it.polimi.ingsw.networking.action.Action;
-import it.polimi.ingsw.networking.action.ActionType;
 
 public class ChatMessageAction extends Action {
 

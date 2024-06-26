@@ -1,7 +1,6 @@
 
-package it.polimi.ingsw.networkingProva;
+package it.polimi.ingsw.networking;
 import it.polimi.ingsw.networking.action.Action;
-import it.polimi.ingsw.networking.rmi.VirtualView;
 
 
 import java.io.IOException;
@@ -13,12 +12,10 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     private String nickname = null;
     private boolean ping = true;
     private boolean online;
-    private boolean inTurn;
     private boolean starter = false;
 
     public ClientRmi(VirtualView client) throws RemoteException{
         this.client = client;
-        //sarebbero da inizializzare tutti
     }
 
     @Override
@@ -44,30 +41,9 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
         return ping;
     }
 
-    public boolean getInTurn() {
-        return inTurn;
-    }
-
-    @Override
-    public void setStartRoutine(boolean b) throws RemoteException {
-
-    }
-
-    @Override
-    public boolean getStartRoutine() throws RemoteException {
-//        return client.getStartRoutine();
-        System.out.println("Sto chiamando il metodo di ClientRmi************************************************************************************************");
-        return false;
-    }
-
     @Override
     public void setStarter(boolean starter) throws RemoteException {
         this.starter = starter;
-    }
-
-    @Override
-    public boolean getGui() throws RemoteException {
-        return client.getGui();
     }
 
     @Override
@@ -83,15 +59,6 @@ public class ClientRmi extends UnicastRemoteObject implements VirtualView {
     @Override
     public void setPing(boolean b) {
         ping = b;
-    }
-
-    public void setInTurn(boolean b) {
-        inTurn = b;
-    }
-
-    @Override
-    public void reportError(String details) throws RemoteException {
-
     }
 
     @Override

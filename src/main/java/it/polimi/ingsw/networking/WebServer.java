@@ -1,14 +1,13 @@
 
-package it.polimi.ingsw.networkingProva;
+package it.polimi.ingsw.networking;
 
-import it.polimi.ingsw.clientProva.Client;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.Player;
-import it.polimi.ingsw.networking.action.*;
-import it.polimi.ingsw.networking.action.toserver.*;
+import it.polimi.ingsw.networking.action.Action;
+import it.polimi.ingsw.networking.action.ActionType;
+import it.polimi.ingsw.networking.action.ChatMessageAction;
 import it.polimi.ingsw.networking.action.toclient.*;
-import it.polimi.ingsw.networking.rmi.VirtualServer;
-import it.polimi.ingsw.networking.rmi.VirtualView;
+import it.polimi.ingsw.networking.action.toserver.*;
 
 
 import java.io.IOException;
@@ -30,7 +29,7 @@ public class WebServer implements VirtualServer {
     private final ArrayList<VirtualView> clients = new ArrayList<>();
     private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
     private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
-    private boolean connectionFlagClient = true, connectionFlagServer = true; //se incontra un problema con l'invio ai client stoppa il servizio
+    private boolean connectionFlagClient = true, connectionFlagServer = true;
     private boolean gameStarted = false;
     private int playersNumber = 0;
     private int numStarter = 0;
@@ -132,8 +131,13 @@ public class WebServer implements VirtualServer {
                             controller.setPlayersNumber(playersNumber);
                             synchronized (clients) {
                                 for (VirtualView client : clients) {
-                                    if (client.getOnline())
-                                        addPlayer(new Player(client.getNickname(), client.getGui()), client);
+                                    if (client.getOnline()) {
+                                        synchronized (this.clients) {
+                                            this.controller.addPlayer(new Player(client.getNickname()), client);
+                                            //String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
+                                            //System.out.println(textUpdate);
+                                        }
+                                    }
                                 }
                             }
                             gameStarted = true;
@@ -305,15 +309,6 @@ public class WebServer implements VirtualServer {
             }
         }
         return count;
-    }
-
-    @Override
-    public void addPlayer(Player p, VirtualView c) throws RemoteException {
-        synchronized (this.clients) {
-            this.controller.addPlayer(p, c);
-            String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
-            System.out.println(textUpdate);
-        }
     }
 
     @Override

@@ -11,7 +11,6 @@ import java.util.Stack;
 
 public class Player implements Serializable {
     private final String name;
-    private final boolean gui = false;
     private boolean winner;
     private int points;
     private ArrayList<Card> hand;
@@ -21,7 +20,6 @@ public class Player implements Serializable {
     private ArrayList<AchievementCard> secretAchievement;
     private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
     private int pointsFromLastCard;
-    private boolean disconnectedBeforeDraw;
 
     public Player(){
         name = "";
@@ -33,7 +31,6 @@ public class Player implements Serializable {
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
-        disconnectedBeforeDraw = false;
     }
 
     /**
@@ -41,7 +38,7 @@ public class Player implements Serializable {
      * his status 'winner' to false, the 'area' and the 'points' to 0.
      * @param name String representing the name of the player
      */
-    public Player(String name, boolean gui) {
+    public Player(String name) {
         this.name = name;
         color = Color.NONE;
         online = true;
@@ -52,8 +49,6 @@ public class Player implements Serializable {
         secretAchievement = new ArrayList<>();
         lastCardPlaced = null;
         pointsFromLastCard = 0;
-        disconnectedBeforeDraw = false;
-        //this.gui=gui;
     }
 
     // GETTER
@@ -218,10 +213,6 @@ public class Player implements Serializable {
                         Print.playgroundPrinter(area);
                         lastCardPlaced = null;
                         pointsFromLastCard = 0;
-//                        //area.setSpace(null, i, j);
-//                        area.getSpace(i,j).setCard(null);
-//                        area.getSpace(i,j).setFree(true);
-//                        area.getSpace(i,j).setDead(false);
                     }
                 }
             }
