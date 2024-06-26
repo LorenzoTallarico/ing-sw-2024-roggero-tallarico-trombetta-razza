@@ -472,7 +472,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                         break;
 
                     case RECONNECTIONSUCCESS:
-                        System.out.println("So quello sopra!");
                         if(((ReconnectionSuccessAction) act).getRecipient().equalsIgnoreCase(nickname)) {
                             this.commonGold = ((ReconnectionSuccessAction) act).getCommonGold();
                             this.goldDeck = ((ReconnectionSuccessAction) act).getGoldDeck();
@@ -945,7 +944,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
 
     public void waitingRoutineOneUser() {
         Runnable task = new Runnable() {
-            int attempts = 5;
+            int attempts = 30;
             volatile boolean restart = false;
             boolean stop = false;
 
