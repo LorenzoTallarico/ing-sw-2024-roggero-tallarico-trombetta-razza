@@ -11,6 +11,7 @@ import it.polimi.ingsw.networking.action.toserver.StartAction;
 import it.polimi.ingsw.networking.action.Action;
 
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectOutputStream;
@@ -113,11 +114,9 @@ public class ClientSocket implements VirtualView, Runnable {
         try {
             while (true) {
                 Action action = null;
-                //vedere se serve sincronizzare anche su inputStream
                 try {
                     action = (Action) inputStream.readObject();
-                    //System.out.println("Messaggio Arrivato: " + action.getType());
-                } catch (SocketException e) {
+                } catch (SocketException | EOFException e) {
                     System.out.println("Connection reset by peer");
                     break;
                 } catch (IOException | ClassNotFoundException e) {
