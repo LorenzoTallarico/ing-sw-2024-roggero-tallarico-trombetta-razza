@@ -20,6 +20,7 @@ import javafx.scene.text.Font;
 
 import java.util.*;
 
+/** Controller for the actual game part of the graphical application*/
 public class PlayController {
 
     private String myNickname = "";
@@ -53,6 +54,7 @@ public class PlayController {
     private double cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
     private ImageView[][] gridpaneArray = null;
     private PlacingCardAction placeAction;
+    /** Coordinates representing the positions of the number in the scoreboard*/
     private final double[][] positions = {  {0.27935, 0.91866}, {0.5, 0.91866}, {0.72064, 0.91866},
                                             {0.83603, 0.81438}, {0.61133, 0.81438}, {0.39068, 0.81438}, {0.16801, 0.81438},
                                             {0.16801, 0.71011}, {0.39068, 0.71011}, {0.61133, 0.71011}, {0.83603, 0.71011},
@@ -103,13 +105,16 @@ public class PlayController {
     @FXML
     private Slider zoomSlider;
 
+
+    /**
+     * Initializes vital components after @FXML fields are populated.
+     * It sets up a listener for the zoom slider, the group of buttons to
+     * choose the cards to view (hand / table / achievements), the maps used
+     * to visualize the pawns on the scoreboard and the choicebox to select
+     * the playground
+     */
     @FXML
     public void initialize() {
-        /*Image backgroundImage = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/flower-pattern.png")));
-        BackgroundImage bgImg = new BackgroundImage(backgroundImage,
-                BackgroundRepeat.REPEAT, BackgroundRepeat.REPEAT, BackgroundPosition.DEFAULT,
-                new BackgroundSize(100, 100, false, false, false, false));
-        fatherPane.setBackground(new Background(bgImg));*/
         initializeGridpane();
         zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -131,7 +136,6 @@ public class PlayController {
                         if(ply.getName().equalsIgnoreCase(playgroundChoiceBox.getValue()))
                             printPlayground(ply);
                 }
-
             }
         });
         toggleGroup = new ToggleGroup();
@@ -156,6 +160,9 @@ public class PlayController {
 
 //---------------- PLAYGROUND FXML METHODS ---------------------
 
+    /**
+     * Switches from the current playground view to another
+     */
     @FXML
     protected void onChoiceBoxClick() {
         String targetPlayer = playgroundChoiceBox.getValue();
@@ -174,9 +181,12 @@ public class PlayController {
         }
     }
 
+    /**
+     * Resets the playground view to the middle of panel
+     */
     @FXML
     protected void onResetViewClick() {
-        /*
+        /* default values
         cellWidth = 105;
         cellHeight = 54;
         pch = 90;
@@ -187,6 +197,10 @@ public class PlayController {
     
 //---------------- SCOREBOARD FXML METHODS ---------------------
 
+    /**
+     * Enables the scoreboard view when the mouse hovers it, showing the players names and
+     * hiding the resources & items tables
+     */
     @FXML
     protected void onScoreboardImgIn() {
         Glow glow = new Glow();
@@ -199,6 +213,9 @@ public class PlayController {
         pawnPlayersGrid.setVisible(true);
     }
 
+    /**
+     * Disables the scoreboard view when the mouse exits its area
+     */
     @FXML
     protected void onScoreboardImgOut() {
         scoreboardImg.setEffect(null);
@@ -208,6 +225,10 @@ public class PlayController {
 
 //---------------- CHAT FXML METHODS ---------------------
 
+    /**
+     * Sends the message to the chat, assigning the string to a queue and displaying
+     * the message in the chat panel
+     */
     @FXML
     protected void onSendMessageButtonClick() {
         String s = chatFld.getText().trim();
@@ -222,12 +243,20 @@ public class PlayController {
         chatFld.clear();
     }
 
+    /**
+     * Sends the message to the chat when pressing the enter key while typing
+     * @param event the key pressed from the keyboard input
+     */
     @FXML
     protected void onEnterKeyPressedChatFld(KeyEvent event) {
         if(event.getCode().equals(KeyCode.ENTER))
             onSendMessageButtonClick();
     }
 
+    /**
+     * Switches the current recipient to the selected
+     * @param e the event used to locate the source and identify the desired recipient
+     */
     @FXML
     protected void onChatOptionsEvent(Event e){
         initializeChatOptions(otherPlayers);
@@ -263,6 +292,9 @@ public class PlayController {
 
 //---------------- SELECT STARTER & ACHIEVEMENT CARDS FXML METHODS ---------------------
 
+    /**
+     * Applies graphical effects to the starters / achievements cards when hovering the first one
+     */
     @FXML
     protected void onSelectCard1In() {
         selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() - 6);
@@ -274,6 +306,9 @@ public class PlayController {
         selectCard2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the starters / achievements cards
+     */
     @FXML
     protected void onSelectCard1Out() {
         selectCard1Img.setLayoutY(selectCard1Img.getLayoutY() + 6);
@@ -283,6 +318,9 @@ public class PlayController {
         selectCard2Img.setEffect(null);
     }
 
+    /**
+     * Applies graphical effects to the starters / achievements cards when hovering the second one
+     */
     @FXML
     protected void onSelectCard2In() {
         selectCard2Img.setLayoutY(selectCard2Img.getLayoutY() - 6);
@@ -294,6 +332,9 @@ public class PlayController {
         selectCard1Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the starters / achievements cards
+     */
     @FXML
     protected void onSelectCard2Out() {
         selectCard2Img.setLayoutY(selectCard2Img.getLayoutY() + 6);
@@ -303,6 +344,10 @@ public class PlayController {
         selectCard1Img.setEffect(null);
     }
 
+    /**
+     * Selects the first card, assigns the values to be retrieved from the client
+     * and initializes the scoreboard if the setup is completed
+     */
     @FXML
     protected void onSelectCard1Click() {
         if(selectCardLbl.getText().equals("Choose the side of your starter card")) {
@@ -327,6 +372,10 @@ public class PlayController {
         selectCard2Img.setDisable(true);
     }
 
+    /**
+     * Selects the second card, assigns the values to be retrieved from the client
+     * and initializes the scoreboard if the setup is completed
+     */
     @FXML
     protected void onSelectCard2Click() {
         if(selectCardLbl.getText().equals("Choose the side of your starter card")) {
@@ -353,6 +402,9 @@ public class PlayController {
 
 //---------------- HAND PANE METHODS ---------------------
 
+    /**
+     * Flips all the cards in the hand to view the other side
+     */
     @FXML
     protected void onFlipCardsClick() {
         if(myPlayer.getHand().isEmpty())
@@ -374,6 +426,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Selects the first card if the player is in the placing phase
+     */
     @FXML
     protected void onHandCard1Click() {
         if(canPlace) {
@@ -381,6 +436,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards in the hand when hovering the first one
+     */
     @FXML
     protected void onHandCard1In() {
         handCard1Img.setLayoutY(handCard1Img.getLayoutY() - 6);
@@ -395,6 +453,9 @@ public class PlayController {
             handCard3Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards in the hand
+     */
     @FXML
     protected void onHandCard1Out() {
         handCard1Img.setLayoutY(handCard1Img.getLayoutY() + 6);
@@ -407,12 +468,18 @@ public class PlayController {
             handCard3Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the first card in the hand when scrolling with the mouse
+     */
     @FXML
     protected void onHandCard1Scroll() {
         myPlayer.getHand().get(0).setFront(!myPlayer.getHand().get(0).isFront());
         handCard1Img.setImage(myPlayer.getHand().get(0).isFront() ? frontHand.get(0) : backHand.get(0));
     }
 
+    /**
+     * Selects the second card if the player is in the placing phase
+     */
     @FXML
     protected void onHandCard2Click() {
         if(canPlace) {
@@ -420,6 +487,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards in the hand when hovering the second one
+     */
     @FXML
     protected void onHandCard2In() {
         handCard2Img.setLayoutY(handCard2Img.getLayoutY() - 6);
@@ -433,6 +503,9 @@ public class PlayController {
             handCard3Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards in the hand
+     */
     @FXML
     protected void onHandCard2Out() {
         handCard2Img.setLayoutY(handCard2Img.getLayoutY() + 6);
@@ -444,12 +517,18 @@ public class PlayController {
             handCard3Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the second card in the hand when scrolling with the mouse
+     */
     @FXML
     protected void onHandCard2Scroll() {
         myPlayer.getHand().get(1).setFront(!myPlayer.getHand().get(1).isFront());
         handCard2Img.setImage(myPlayer.getHand().get(1).isFront() ? frontHand.get(1) : backHand.get(1));
     }
 
+    /**
+     * Selects the third card if the player is in the placing phase
+     */
     @FXML
     protected void onHandCard3Click() {
         if(canPlace) {
@@ -457,6 +536,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards in the hand when hovering the third one
+     */
     @FXML
     protected void onHandCard3In() {
         handCard3Img.setLayoutY(handCard3Img.getLayoutY() - 6);
@@ -469,6 +551,9 @@ public class PlayController {
         handCard2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards in the hand
+     */
     @FXML
     protected void onHandCard3Out() {
         handCard3Img.setLayoutY(handCard3Img.getLayoutY() + 6);
@@ -479,6 +564,9 @@ public class PlayController {
         handCard2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the third card in the hand when scrolling with the mouse
+     */
     @FXML
     protected void onHandCard3Scroll() {
         myPlayer.getHand().get(2).setFront(!myPlayer.getHand().get(2).isFront());
@@ -487,6 +575,9 @@ public class PlayController {
 
 //---------------- ACHIEVEMENTS PANE METHODS ---------------------
 
+    /**
+     * Flips all the achievement cards to view the other side
+     */
     @FXML
     protected void onFlipAchievementsClick() {
         if(achievements.isEmpty())
@@ -508,6 +599,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the achievement cards when hovering the first one
+     */
     @FXML
     protected void onAchievementCard1In() {
         achievementCard1Img.setLayoutY(achievementCard1Img.getLayoutY() - 6);
@@ -521,6 +615,9 @@ public class PlayController {
             achievementCard3Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the achievement cards
+     */
     @FXML
     protected void onAchievementCard1Out() {
         achievementCard1Img.setLayoutY(achievementCard1Img.getLayoutY() + 6);
@@ -532,12 +629,18 @@ public class PlayController {
             achievementCard3Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the first achievement card when scrolling with the mouse
+     */
     @FXML
     protected void onAchievementCard1Scroll() {
         achievements.get(0).setFront(!achievements.get(0).isFront());
         achievementCard1Img.setImage(achievements.get(0).isFront() ? frontAchievements.get(0) : backAchievement);
     }
 
+    /**
+     * Applies graphical effects to the achievement cards when hovering the second one
+     */
     @FXML
     protected void onAchievementCard2In() {
         achievementCard2Img.setLayoutY(achievementCard2Img.getLayoutY() - 6);
@@ -551,6 +654,9 @@ public class PlayController {
             achievementCard3Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the achievement cards
+     */
     @FXML
     protected void onAchievementCard2Out() {
         achievementCard2Img.setLayoutY(achievementCard2Img.getLayoutY() + 6);
@@ -562,12 +668,19 @@ public class PlayController {
             achievementCard3Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the second achievement card when scrolling with the mouse
+     */
+
     @FXML
     protected void onAchievementCard2Scroll() {
         achievements.get(1).setFront(!achievements.get(1).isFront());
         achievementCard2Img.setImage(achievements.get(1).isFront() ? frontAchievements.get(1) : backAchievement);
     }
 
+    /**
+     * Applies graphical effects to the achievement cards when hovering the third one
+     */
     @FXML
     protected void onAchievementCard3In() {
         achievementCard3Img.setLayoutY(achievementCard3Img.getLayoutY() - 6);
@@ -580,6 +693,9 @@ public class PlayController {
         achievementCard2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the achievement cards
+     */
     @FXML
     protected void onAchievementCard3Out() {
         achievementCard3Img.setLayoutY(achievementCard3Img.getLayoutY() + 6);
@@ -590,6 +706,9 @@ public class PlayController {
         achievementCard2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the third achievement card when scrolling with the mouse
+     */
     @FXML
     protected void onAchievementCard3Scroll() {
         achievements.get(2).setFront(!achievements.get(2).isFront());
@@ -598,6 +717,9 @@ public class PlayController {
 
 //---------------- PANEL CHOICE BUTTONS ---------------------
 
+    /**
+     * Switches the cards-view showing the table one and hiding the others
+     */
     @FXML
     protected void onTableButtonClick() {
         if(!handBtn.isSelected() && !achievementBtn.isSelected())
@@ -607,6 +729,9 @@ public class PlayController {
         achievementPane.setVisible(false);
     }
 
+    /**
+     * Switches the cards-view showing the hand one and hiding the others
+     */
     @FXML
     protected void onHandButtonClick() {
         if(!tableBtn.isSelected() && !achievementBtn.isSelected())
@@ -616,6 +741,9 @@ public class PlayController {
         achievementPane.setVisible(false);
     }
 
+    /**
+     * Switches the cards-view showing the achievement one and hiding the others
+     */
     @FXML
     protected void onAchievementButtonClick() {
         if(!tableBtn.isSelected() && !handBtn.isSelected())
@@ -627,6 +755,9 @@ public class PlayController {
 
 //---------------- TABLE CARD PANE METHODS ---------------------
 
+    /**
+     * Flips the cards on the table to view the other side
+     */
     @FXML
     protected void onFlipTableClick() {
         boolean tempSide;
@@ -650,6 +781,9 @@ public class PlayController {
             tableResource2Img.setImage(commonResource.get(1).isFront() ? frontCommonResource.get(1) : backCommonResource.get(1));
     }
 
+    /**
+     * Selects the first gold card on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableGold1Click() {
         if(canDraw) {
@@ -657,6 +791,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the first gold one
+     */
     @FXML
     protected void onTableGold1In() {
         tableGold1Img.setFitWidth(tableGold1Img.getFitWidth() + 12);
@@ -681,6 +818,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableGold1Out() {
         tableGold1Img.setFitWidth(tableGold1Img.getFitWidth() - 12);
@@ -703,12 +843,18 @@ public class PlayController {
             tableBackDeck2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the first gold card on the table when scrolling with the mouse
+     */
     @FXML
     protected void onTableGold1Scroll() {
         commonGold.get(0).setFront(!commonGold.get(0).isFront());
         tableGold1Img.setImage(commonGold.get(0).isFront() ? frontCommonGold.get(0) : backCommonGold.get(0));
     }
 
+    /**
+     * Selects the second gold card on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableGold2Click() {
         if(canDraw) {
@@ -716,6 +862,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the second gold one
+     */
     @FXML
     protected void onTableGold2In() {
         tableGold2Img.setFitWidth(tableGold2Img.getFitWidth() + 12);
@@ -740,6 +889,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableGold2Out() {
         tableGold2Img.setFitWidth(tableGold2Img.getFitWidth() - 12);
@@ -762,12 +914,18 @@ public class PlayController {
             tableBackDeck2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the second gold card on the table when scrolling with the mouse
+     */
     @FXML
     protected void onTableGold2Scroll() {
         commonGold.get(1).setFront(!commonGold.get(1).isFront());
         tableGold2Img.setImage(commonGold.get(1).isFront() ? frontCommonGold.get(1) : backCommonGold.get(1));
     }
 
+    /**
+     * Selects the first resource card on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableResource1Click() {
         if(canDraw) {
@@ -775,6 +933,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the first resource one
+     */
     @FXML
     protected void onTableResource1In() {
         tableResource1Img.setFitWidth(tableResource1Img.getFitWidth() + 12);
@@ -799,6 +960,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableResource1Out() {
         tableResource1Img.setFitWidth(tableResource1Img.getFitWidth() - 12);
@@ -821,12 +985,18 @@ public class PlayController {
             tableBackDeck2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the first resource card on the table when scrolling with the mouse
+     */
     @FXML
     protected void onTableResource1Scroll() {
         commonResource.get(0).setFront(!commonResource.get(0).isFront());
         tableResource1Img.setImage(commonResource.get(0).isFront() ? frontCommonResource.get(0) : backCommonResource.get(0));
     }
 
+    /**
+     * Selects the second resource card on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableResource2Click() {
         if(canDraw) {
@@ -834,6 +1004,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the second resource one
+     */
     @FXML
     protected void onTableResource2In() {
         tableResource2Img.setFitWidth(tableResource2Img.getFitWidth() + 12);
@@ -858,6 +1031,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableResource2Out() {
         tableResource2Img.setFitWidth(tableResource2Img.getFitWidth() - 12);
@@ -880,12 +1056,18 @@ public class PlayController {
             tableBackDeck2Img.setEffect(null);
     }
 
+    /**
+     * Flips the side of the second resource card on the table when scrolling with the mouse
+     */
     @FXML
     protected void onTableResource2Scroll() {
         commonResource.get(1).setFront(!commonResource.get(1).isFront());
         tableResource2Img.setImage(commonResource.get(1).isFront() ? frontCommonResource.get(1) : backCommonResource.get(1));
     }
 
+    /**
+     * Selects the card on top of the gold deck on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableGoldDeckClick() {
         if(canDraw) {
@@ -893,6 +1075,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the gold deck
+     */
     @FXML
     protected void onTableGoldDeckIn() {
         tableGoldDeckImg.setFitWidth(tableGoldDeckImg.getFitWidth() + 12);
@@ -919,6 +1104,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableGoldDeckOut() {
         tableGoldDeckImg.setFitWidth(tableGoldDeckImg.getFitWidth() - 12);
@@ -943,6 +1131,9 @@ public class PlayController {
             tableBackDeck2Img.setEffect(null);
     }
 
+    /**
+     * Selects the card on top of the gold deck on the table if the player is in the drawing phase
+     */
     @FXML
     protected void onTableResourceDeckClick() {
         if(canDraw) {
@@ -950,6 +1141,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Applies graphical effects to the cards on the table when hovering the gold deck
+     */
     @FXML
     protected void onTableResourceDeckIn() {
         tableResourceDeckImg.setFitWidth(tableResourceDeckImg.getFitWidth() + 12);
@@ -976,6 +1170,9 @@ public class PlayController {
             tableBackDeck1Img.setEffect(colorAdjust);
     }
 
+    /**
+     * Resets the graphical effects on the cards on the table
+     */
     @FXML
     protected void onTableResourceDeckOut() {
         tableResourceDeckImg.setFitWidth(tableResourceDeckImg.getFitWidth() - 12);
@@ -1002,6 +1199,9 @@ public class PlayController {
 
 //---------------- PRIVATE MISC METHODS ---------------------
 
+    /**
+     * Initializes the grid-pane of the playground setting up rows, columns and properties
+     */
     private void initializeGridpane() {
         ColumnConstraints colConst = new ColumnConstraints();
         colConst.setHalignment(HPos.CENTER);
@@ -1021,6 +1221,11 @@ public class PlayController {
         playgroundScrollPane.setVvalue(playgroundScrollPane.getVmax() / 2);
     }
 
+    /**
+     * Resets the playground, displays the cards of a given player and updates
+     * the resources and items table.
+     * @param playa the player of the desired playground
+     */
     private void printPlayground(Player playa) {
         Playground area = playa.getArea();
         playgroundGridPane.getChildren().clear();
@@ -1059,10 +1264,16 @@ public class PlayController {
         leafCountLbl.setText(""+area.countResources(Resource.LEAF));
     }
 
+    /**
+     * Displays the playground of the local player
+     */
     private void printPlayground() {
         printPlayground(myPlayer);
     }
 
+    /**
+     * Display and or updates the pawns on the scoreboard
+     */
     private void printScoreboard() {
         ImageView tempPawn = colorToPawns.get(myPlayer.getColor());
         tempPawn.setLayoutX(scoreboardImg.getFitWidth()*positions[Math.min(29, myPlayer.getPoints())][0] - 9);
@@ -1079,7 +1290,11 @@ public class PlayController {
             tempPawn.setVisible(true);
         }
     }
-    
+
+    /**
+     * Displays the cells where cards could be placed when in placing phase
+     * Sets up the listeners to display the selected card when hovering the playground
+     */
     private void placeablePlayground() {
         Playground area = myPlayer.getArea();
         ImageView cell;
@@ -1172,6 +1387,11 @@ public class PlayController {
         }
     }
 
+    /**
+     * Initializes the scoreboard and possibly hide the selection panel
+     * Sets up the players name for players table
+     * @param all boolean to hide other panels
+     */
     private void initializeScoreboard(boolean all) {
         if(all) {
             cardChoicePane.setVisible(false);
@@ -1197,10 +1417,17 @@ public class PlayController {
             tempLbl.setEffect(null);
         }
     }
+
+    /**
+     * Initializes the scoreboard with the boolean true, overloading
+     */
     private void initializeScoreboard() {
         initializeScoreboard(true);
     }
 
+    /**
+     * Updates the cards in the hand of the player
+     */
     private void updatePlayerRelated() {
         //hand cards
         handCard1Img.setVisible(false);
@@ -1237,6 +1464,9 @@ public class PlayController {
         }
     }
 
+    /**
+     * Updates the achievements of the player
+     */
     private void updateAchievement() {
         achievementBtn.setDisable(false);
         frontAchievements = new ArrayList<>();
@@ -1254,6 +1484,9 @@ public class PlayController {
 
 //---------------- PUBLIC MISC METHODS ---------------------
 
+    /**
+     * Displays the results (winnner / looser) when the game ends
+     */
     public void showResult() {
         boolean win = myPlayer.isWinner();
         Image rImg = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/" + (win ? "award" : "sad") + ".png")));
@@ -1265,6 +1498,10 @@ public class PlayController {
 
     }
 
+    /**
+     * Appends a message to the chat log in the chat panel
+     * @param m
+     */
     public void displayChatMessage(Message m) {
         String s = m.toString() + "\n";
         if(m.getRecipient().equalsIgnoreCase(myNickname))
@@ -1272,6 +1509,10 @@ public class PlayController {
         chatTextArea.appendText(s);
     }
 
+    /**
+     * Sets up the options to switch recipient in the chat
+     * @param players ArrayList of other players in the game
+     */
     public void initializeChatOptions(ArrayList<Player> players) {
         playgroundChoiceBox.getItems().clear();
         playgroundChoiceBox.getItems().add("You ");
@@ -1295,6 +1536,11 @@ public class PlayController {
         }
     }
 
+    /**
+     * Display a successful card placed message
+     * @param recipient name of the player who placed the card
+     * @param score integer representing the possible score obtained by the player
+     */
     public void displaySuccessfulPlace(String recipient, int score) {
         if(alertLbl.isVisible()) {
             oldAlertLbl.setText(alertLbl.getText());
@@ -1312,6 +1558,11 @@ public class PlayController {
         printScoreboard();
     }
 
+    /**
+     * Displays a successful card drawn message
+     * @param recipient name of the player who drew the card
+     * @param drawnCard card drawn
+     */
     public void displaySuccessfulDrawn(String recipient, Card drawnCard) {
         String drawText = " drew a " + (drawnCard.getClass() == GoldCard.class ? "gold" : "resource") + " card";
         if(alertLbl.isVisible()) {
@@ -1329,6 +1580,9 @@ public class PlayController {
         alertLbl.setVisible(true);
     }
 
+    /**
+     * Alerts the player to draw a card from the table
+     */
     public void alertToDraw() {
         drawChoice = 0;
         canDraw = true;
@@ -1342,6 +1596,9 @@ public class PlayController {
         alertLbl.setVisible(true);
     }
 
+    /**
+     * Displays a generic alert message for the player
+     */
     public void genericAlert(String str) {
         if(alertLbl.isVisible()) {
             oldAlertLbl.setText(alertLbl.getText());
@@ -1351,6 +1608,16 @@ public class PlayController {
         alertLbl.setVisible(true);
     }
 
+    /**
+     * Displays the two sides of the starter cards allowing the player to choose one,
+     * it also loads the images of cards in the hand and in the table
+     * @param str the starter card
+     * @param self the local player
+     * @param commonGold the two gold card cards on the table
+     * @param goldDeck the resource of the card on top of the gold deck
+     * @param commonResource the two resource card cards on the table
+     * @param resourceDeck the resource of the card on top of the resource deck
+     */
     public void passStarterCard(StarterCard str, Player self, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         resultImg.setVisible(false);
         resultLbl.setVisible(false);
@@ -1370,6 +1637,11 @@ public class PlayController {
         scoreboardPane.setVisible(false);
     }
 
+    /**
+     * Displays the two possible secrets achievements allowing the player to choose one
+     * @param ach the shared achievements
+     * @param achievements the two choosable achievements
+     */
     public void passAchievement(ArrayList<AchievementCard> ach, ArrayList<AchievementCard> achievements) {
         this.achievements = achievements;
         choosableAchievements = ach;
@@ -1385,6 +1657,13 @@ public class PlayController {
         scoreboardPane.setVisible(false);
     }
 
+    /**
+     * Updates the cards on the table
+     * @param commonGold the two gold card cards on the table
+     * @param goldDeck the resource of the card on top of the gold deck
+     * @param commonResource the two resource card cards on the table
+     * @param resourceDeck the resource of the card on top of the resource deck
+     */
     public void updateTableCards(ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         //updating values from client
         this.commonGold = commonGold;
@@ -1498,6 +1777,10 @@ public class PlayController {
         }
     }
 
+    /**
+     * Alerts the player to place a card on the playground and displays
+     * the cells where cards could be placed
+     */
     public void alertToPlace() {
         placeChoice = -1;
         canPlace = true;
@@ -1513,6 +1796,10 @@ public class PlayController {
         alertLbl.setVisible(true);
     }
 
+    /**
+     * Alerts the player to replace a card on the playground after an irregular
+     * placing and displays the cells where cards could be placed
+     */
     public void alertToRePlace() {
         placeChoice = -1;
         canPlace = true;
@@ -1528,6 +1815,11 @@ public class PlayController {
         alertLbl.setVisible(true);
     }
 
+    /**
+     * Retrieves possible existing action created when placing a card
+     * The client calls this method periodically after an alertToPlace
+     * @return placing card action containing the info on the card placed
+     */
     public PlacingCardAction discoverPlace() {
         if(hasPlaced) {
             PlacingCardAction a = placeAction;
@@ -1540,6 +1832,11 @@ public class PlayController {
             return null;
     }
 
+    /**
+     * Retrieves possible existing action created when drawing a card
+     * The client calls this method periodically after an alertToDraw
+     * @return placing card action containing the info on the card drawn
+     */
     public ChosenDrawCardAction discoverDraw() {
         if(canDraw && drawChoice != 0) {
             ChosenDrawCardAction a = new ChosenDrawCardAction(myNickname, drawChoice);
@@ -1550,6 +1847,17 @@ public class PlayController {
             return null;
     }
 
+    /**
+     * Sets all the panels of the graphical application on game already started
+     * Used by client after a reconnection
+     * @param myPlayer local player
+     * @param otherPlayers all other players in the game
+     * @param achievements achievements of the player, including the secret one
+     * @param commonGold the two gold card cards on the table
+     * @param goldDeck the resource of the card on top of the gold deck
+     * @param commonResource the two resource card cards on the table
+     * @param resourceDeck the resource of the card on top of the resource deck
+     */
     public void setupStartedGame(Player myPlayer, ArrayList<Player> otherPlayers, ArrayList<AchievementCard> achievements, ArrayList<GoldCard> commonGold, Resource goldDeck,  ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         cardChoicePane.setVisible(false);
         scoreboardPane.setVisible(true);
@@ -1562,12 +1870,20 @@ public class PlayController {
         updateAchievement();
     }
 
-
     //getters and setters
+
+    /**
+     * Sets the nickname of the local player
+     * @param nick name of the player
+     */
     public void setNickname(String nick) {
         myNickname = nick;
     }
 
+    /**
+     * Sets or updates the values of the local player
+     * @param myPlayer the local player
+     */
     public void setPlayer(Player myPlayer) {
         this.myPlayer = myPlayer;
         updatePlayerRelated();
@@ -1575,6 +1891,11 @@ public class PlayController {
         initializeScoreboard(false);
     }
 
+    /**
+     * Sets or updates the values of the other players in the game, reprints
+     * a playground if is currently visualized and updates the scoreboard
+     * @param otherPlayers
+     */
     public void setOtherPlayers(ArrayList<Player> otherPlayers) {
         this.otherPlayers = otherPlayers;
         for(Player playa : otherPlayers)
