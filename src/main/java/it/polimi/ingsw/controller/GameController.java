@@ -216,12 +216,23 @@ public class GameController {
         }
     }
 
+    /**
+     * Gets the list of players in the game.
+     *
+     * @return The list of players.
+     */
     public ArrayList<Player> getPlayers() {
         synchronized(this.players){
             return model.getPlayers();
         }
     }
 
+    /**
+     * Sends a chat message and returns the last message sent in the chat.
+     *
+     * @param msg The message to be sent.
+     * @return The last message sent in the chat.
+     */
     public Message sendChatMessage(Message msg) {
         synchronized (this.chat) {
             chat.sendMessage(msg);
@@ -229,12 +240,22 @@ public class GameController {
         }
     }
 
+    /**
+     * Gets the entire chat history.
+     *
+     * @return The list of all messages in the chat.
+     */
     public ArrayList<Message> getWholeChat() {
         synchronized (this.chat) {
             return chat.getWholeChat();
         }
     }
 
+    /**
+     * Sets the number of players for the game and initializes the start countdown.
+     *
+     * @param playersNumber The number of players to be set.
+     */
     public void setPlayersNumber(int playersNumber) {
         this.playersNumber = playersNumber;
         startCountdown = playersNumber;

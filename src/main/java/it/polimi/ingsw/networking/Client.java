@@ -55,7 +55,6 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private ArrayList<GoldCard> commonGold;
     private Resource goldDeck;
     private Resource resourceDeck;
-    boolean repeatDraw;
     private BlockingQueue<Action> serverActionsReceived = new LinkedBlockingQueue<>(); //Action arrivate da Server
     private BlockingQueue<Action> clientActionsToSend = new LinkedBlockingQueue<>(); //Action da mandare Server
     private final boolean gui;
@@ -63,7 +62,7 @@ public class Client extends UnicastRemoteObject implements VirtualView {
     private boolean connectionFlagServer=true;
     private boolean connectionFlagClient=true; //da sistemare
     private boolean wait = false;
-    private /*volatile*/ boolean startWaitRoutine = false;
+    private boolean startWaitRoutine = false;
     private GUIView guiView;
     private LoginController loginController;
     private PlayController playController;
@@ -366,8 +365,9 @@ public class Client extends UnicastRemoteObject implements VirtualView {
                     if(state.equals(Client.State.DRAW)) {
                         Print.drawChoicePrinter(commonGold, commonResource, goldDeck,resourceDeck);
                         int drawChoice = 0;
+                        boolean repeatDraw;
                         do {
-                            repeatDraw = false;
+                            repeatDraw= false;
                             try {
                                 if (goldDeck != null && resourceDeck != null) {
                                     System.out.print("> Enter 1, 2, 3, 4, 5 or 6 to draw your card: ");
