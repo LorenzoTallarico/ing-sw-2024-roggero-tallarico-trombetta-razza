@@ -27,7 +27,7 @@ public class GoldCard extends Card implements Serializable {
     /**
      * Default constructor for an empty gold card
      */
-    public GoldCard(){
+    public GoldCard() {
         reqResources = null;
         reqItem = null;
         reqPoints = null;

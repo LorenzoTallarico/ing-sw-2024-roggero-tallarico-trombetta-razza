@@ -8,20 +8,70 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Stack;
 
-
+/**
+ * User playing a game
+ */
 public class Player implements Serializable {
+
+    /**
+     * Name of the player
+     */
     private final String name;
+
+    /**
+     * Indicates if the player is a winner or not, used at the end of the game
+     */
     private boolean winner;
+
+    /**
+     * Current amount of points the player has
+     */
     private int points;
+
+    /**
+     * ArrayList of cards the player has in their hand (less or equal than 3)
+     */
     private ArrayList<Card> hand;
+
+    /**
+     * Playground where the player place their own cards
+     */
     private Playground area;
+
+    /**
+     * Color of the pawn of the player
+     */
     private Color color;
+
+    /**
+     * Indicates if a player is currently online or not,
+     * used to edit their values if they disconnect in specific
+     * phases of the gameplay
+     */
     private boolean online;
+
+    /**
+     * Secret achievements of the player, initially two,
+     * decreased to 1 after the choice
+     */
     private ArrayList<AchievementCard> secretAchievement;
-    private Card lastCardPlaced;            // attributo per memorizzare ultima carta piazzata (disconnessioni)
+
+    /**
+     * Last card placed by the player, used to reset their last valid values
+     * when they disconnect before drawing a card
+     */
+    private Card lastCardPlaced;
+
+    /**
+     * Last points the player obtained placing a card, used to reset
+     * their last valid values when they disconnect before drawing a card
+     */
     private int pointsFromLastCard;
 
-    public Player(){
+    /**
+     * Default constructor for an empty dummy player
+     */
+    public Player() {
         name = "";
         points = 0;
         hand = new ArrayList<>();
@@ -52,7 +102,6 @@ public class Player implements Serializable {
     }
 
     // GETTER
-
 
     /**
      * Method that returns the name of the player
@@ -120,10 +169,19 @@ public class Player implements Serializable {
 
 
     //SETTER
+
+    /**
+     * Flags the player as online or offline
+     * @param b boolean true for online, false for offline
+     */
     public void setOnline(boolean b){
         this.online = b;
     }
 
+    /**
+     * Associates a new playground to the player
+     * @param area the new playground
+     */
     public void setArea(Playground area) {
         this.area = area;
     }
@@ -136,14 +194,26 @@ public class Player implements Serializable {
         this.secretAchievement = secretAchievement;
     }
 
+    /**
+     * Sets a reference to the latest card placed by the player
+     * @param card Latest card placed by the player
+     */
     public void setLastCardPlaced(Card card){
         this.lastCardPlaced = card;
     }
 
+    /**
+     * Sets the amount of points obtained by the latest card placed by the player
+     * @param pointsFromLastCard Last points obtained
+     */
     public void setPointsFromLastCard(int pointsFromLastCard){
         this.pointsFromLastCard = pointsFromLastCard;
     }
 
+    /**
+     * Sets the color of the pawn of the player
+     * @param color Pawn's color: red, yellow, green, blue or black
+     */
     public void setColor(Color color) {
         this.color = color;
     }
@@ -181,22 +251,23 @@ public class Player implements Serializable {
         this.hand.add(card);
     }
 
-    public void disconnection(){
+    //METHODS
+
+    /**
+     * Resets the playground of the player and their points if they disconnect
+     * right after placing a card without drawing any other
+     */
+    public void disconnection() {
         this.online = false;
-        System.err.println("Dentro Player disconnection");
-        System.out.println("Ultima carta piazzata: " + lastCardPlaced);
         if(lastCardPlaced != null){
             boolean find = false;
-            for(int i=area.getWestBound(); i<=area.getEastBound() && !find; i++) {
-                for(int j=area.getNorthBound(); j<=area.getSouthBound() && !find; j++){
-                    if(area.getSpace(j, i).getCard() != null && area.getSpace(j, i).getCard().equals(lastCardPlaced)){
-                        find=true;
-                        // Da qui bisogna ripulire bene lo space in cui è stata piazzata (oltre a tutti gli aspetti del playground)
+            for(int i = area.getWestBound(); i <= area.getEastBound() && !find; i++) {
+                for(int j = area.getNorthBound(); j <= area.getSouthBound() && !find; j++) {
+                    if(area.getSpace(j, i).getCard() != null && area.getSpace(j, i).getCard().equals(lastCardPlaced)) {
+                        find = true;
                         area.setPlaygroundBeforePlace(j, i, lastCardPlaced);
                         hand.add(lastCardPlaced);
                         points -= pointsFromLastCard;
-                        System.out.println("\n\nQuesta invece è la stampa dentro Player: ");
-                        Print.playgroundPrinter(area);
                         lastCardPlaced = null;
                         pointsFromLastCard = 0;
                     }
@@ -204,14 +275,6 @@ public class Player implements Serializable {
             }
         }
     }
-
-
-
-
-
-
-
-
 
     /**
      * Method that places the card in the space indicated, if possible
@@ -244,7 +307,13 @@ public class Player implements Serializable {
         }
     }
 
-
+    /**
+     * Checks if a card can be placed in a specific position
+     * @param card the card to check
+     * @param row y of the position
+     * @param column x of the position
+     * @return true if it's possible to place the card, false otherwise
+     */
     public boolean placeable(Card card, int row, int column) {
         //collection in which we find the possible corners of the card that will cover another card
         Stack<Integer> corn = new Stack<>();
@@ -260,8 +329,6 @@ public class Player implements Serializable {
             else
                 return false;
         }
-
-
 
         //if space is out of bound (+1) card cannot be placed
         //if space is not free card cannot be placed
@@ -298,7 +365,6 @@ public class Player implements Serializable {
         if (!area.getSpace(row - 1, column - 1).isFree() && !area.getSpace(row - 1, column - 1).isDead()) {
             corn.push(3);
         }
-
 
         //Opposite corners:  0 <--> 2    ||    1 <---> 3
         //Corner of the card is still visibile, the adjacent card's corner must be covered
@@ -391,7 +457,6 @@ public class Player implements Serializable {
                             }
                         }
                         break;
-
                     default:
                         break;
                 }
@@ -407,7 +472,11 @@ public class Player implements Serializable {
         return stop;
     }
 
-    //checks if there are enough resources on the playground to place the gold card
+    /**
+     * Checks if the requirements to place a gold card are fulfilled
+     * @param card the gold card to check
+     * @return true if it's possible to place the gold card front-side, false otherwise
+     */
     public boolean checkGold(GoldCard card) {
         boolean result = true;
         if(card.countResource(Resource.LEAF) > area.countResources(Resource.LEAF) ||

@@ -5,16 +5,60 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Playground of a single player, where the cards are placed
+ */
 public class Playground implements Serializable {
-private final Space[][] table;
-private final Map<Resource, Integer> resources;
-private final Map<Item, Integer> items;
-private int northBound;
-private int eastBound;
-private int westBound;
-private int southBound;
-private final LinkedHashMap<Card, int[]> orderedCoords;
 
+    /**
+     * Matrix made of 81*81 spaces, big enough for all possible combinations of cards
+     * in a game with the smallest amount of players (2).
+     * (0,0) is the top left corner and (80,80) is the bottom right corner
+     */
+    private final Space[][] table;
+
+    /**
+     * Amount of every single resource currently available on the playground
+     */
+    private final Map<Resource, Integer> resources;
+
+    /**
+     * Amount of every single item currently available on the playground
+     */
+    private final Map<Item, Integer> items;
+
+    /**
+     * Lowest row where a card is placed / northernmost y
+     */
+    private int northBound;
+
+    /**
+     * Highest column where a card is placed / easternmost x
+     */
+    private int eastBound;
+
+    /**
+     * Lowest column where a card is placed / westernmost x
+     */
+    private int westBound;
+
+    /**
+     * Highest row where a card is placed / southernmost y
+     */
+    private int southBound;
+
+    /**
+     * Ordered map used to retrieve the coordinates of a placed card
+     * and the order they've been placed, used by the graphical application
+     */
+    private final LinkedHashMap<Card, int[]> orderedCoords;
+
+    /**
+     * Constructor of the playground
+     * Sets half of the cells as free and half as dead since the playground
+     * works as chessboard where you can only move on the white squares.
+     * It also initializes the attributes
+     */
     public Playground() {
         orderedCoords = new LinkedHashMap<>();
         table = new Space[81][81];
@@ -40,7 +84,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         this.westBound = 40;
         this.southBound = 40;
     }
-
 
     /**
      * Method that given a card and a position, places the card in the right space, covering adjacent corners
