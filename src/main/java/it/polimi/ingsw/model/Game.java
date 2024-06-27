@@ -185,7 +185,6 @@ public class Game implements Serializable {
     public void setGameState(GameState gs) throws RemoteException {
         gameState = gs;
         if(gameState.equals(GameState.GAME)) {
-            System.out.println("> Game started, first player is " + players.get(getCurrPlayer()).getName() + ".");
             bigListener.notifyToPlace(players.get(getCurrPlayer()));
         } else if(gameState.equals(GameState.FINALSCORE))
             calculateEndPoints();

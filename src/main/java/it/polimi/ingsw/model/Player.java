@@ -1,7 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.util.Print;
-
 import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
