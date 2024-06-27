@@ -94,8 +94,6 @@ public class GameController {
                 if (players.size() == playersNumber) {
                     model.addPlayers(players, clients);
                 }
-            } else {
-                System.out.println("> Controller couldn't add player " + p.getName());
             }
         }
     }
@@ -139,11 +137,7 @@ public class GameController {
                     model.nextPlayer();
                     return true;
                 }
-            } else {
-                System.out.println("> Player " + playerName + " has too many cards, they can't draw one.");
             }
-        } else {
-            System.out.println("> Player " + playerName + " can't draw a card, it's not the right state of the game.");
         }
         return false;
     }
