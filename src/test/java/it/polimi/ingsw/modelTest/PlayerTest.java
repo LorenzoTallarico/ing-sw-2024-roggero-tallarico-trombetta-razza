@@ -70,7 +70,7 @@ public class PlayerTest {
 
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
-        VirtualView cli = new ClientRmi(null);
+        VirtualView cli = null;
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(playersList, clients);

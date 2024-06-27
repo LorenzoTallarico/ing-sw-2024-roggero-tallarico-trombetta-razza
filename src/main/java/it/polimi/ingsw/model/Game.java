@@ -136,10 +136,8 @@ public class Game implements Serializable {
 //                    found = true;
             if (players.get(currPlayer).isOnline())
                 found = true;
-            System.out.println("onlineCurr: " + clients.get(currPlayer).getOnline() + " p: " + players.get(currPlayer).getName() + clients.get(currPlayer).getNickname());
-
         } while (index != currPlayer && !found);
-        System.out.println("Dentro Game--> nextPlayer(), stampo il current player a cui verrà mandata la notifyToPlace: " + players.get(currPlayer).getName());
+
         if(players.get(currPlayer).isOnline() && index!=currPlayer) {
             bigListener.notifyToPlace(players.get(currPlayer));
         }
