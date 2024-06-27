@@ -238,15 +238,12 @@ public class ClientSocket implements VirtualView, Runnable {
                 } catch (SocketException | EOFException e) {
                     System.out.println("Connection reset by peer");
                     break;
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                } catch (IOException | ClassNotFoundException ignored) {
                     break;
-
                 }
                 if (nickname != null) {
                     if (action.getType().equals(ActionType.PONG)) {
                         this.ping = true;
-                        //System.out.println("ho settato il ping a true di " + nickname);
                     } else {
                         try {
                             serverActions.put(action);
@@ -294,7 +291,6 @@ public class ClientSocket implements VirtualView, Runnable {
                         online = true;
                         ping = true;
                         nickname = nick;
-                        System.out.println("nickname: " + nickname);
                         System.out.println("> Allowed Socket connection to a new client named \"" + nick + "\".");
                         clients.add(this);
                         showAction(new SetNicknameAction(nickname));
@@ -361,7 +357,6 @@ public class ClientSocket implements VirtualView, Runnable {
                 outputStream.close();
         } catch (IOException e) {
             System.err.println("Error during socket resource closure: " + e.getMessage());
-            System.exit(0);
         }
     }
 
