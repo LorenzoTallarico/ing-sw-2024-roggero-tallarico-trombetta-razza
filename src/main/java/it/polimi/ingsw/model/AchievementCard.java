@@ -3,9 +3,25 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 public class AchievementCard extends Card implements Serializable {
+
+    /**
+     * The strategy associated with this achievement card.
+     */
     private final Strategy strategy;
+
+    /**
+     * The player associated with this achievement card.
+     */
     private Player player;
+
+    /**
+     * The item associated with this achievement card.
+     */
     private final Item item;
+
+    /**
+     * The type of strategy as a string.
+     */
     private String strategyType;
 
     /**
@@ -59,6 +75,12 @@ public class AchievementCard extends Card implements Serializable {
             return "087";
     }
 
+    /**
+     * Checks which achievement type the card corresponds to.
+     *
+     * @param ach The achievement card to compare with.
+     * @return True if the achievement's card corresponds to one of the achievements, false otherwise.
+     */
     public boolean equals(AchievementCard ach) {
         if(!this.strategyType.equals(ach.getStrategyType())){
             return false;
@@ -77,26 +99,57 @@ public class AchievementCard extends Card implements Serializable {
         return true;
     }
 
+    /**
+     * Sets the player for this achievement card.
+     *
+     * @param player The player to set.
+     */
     public void setPlayer(Player player) {
         this.player = player;
     }
 
+    /**
+     * Gets the strategy associated with this achievement card.
+     *
+     * @return The strategy.
+     */
     public Strategy getStrategy() {
         return strategy;
     }
 
+    /**
+     * Gets the item associated with this achievement card.
+     *
+     * @return The item.
+     */
     public Item getItem(){
         return item;
     }
 
+    /**
+     * Gets the strategy type as a string.
+     *
+     * @return The strategy type.
+     */
     public String getStrategyType() {
         return strategyType;
     }
 
+    /**
+     * Calculates the points for this achievement card based on its strategy.
+     *
+     * @return The points calculated.
+     */
     public int calculatePoints() {
         return strategy.execute(resource, player, item);
     }
 
+    /**
+     * Calculates the points for this achievement card for a specified player.
+     *
+     * @param p The player to calculate points for.
+     * @return The points calculated.
+     */
     public int calculatePoints(Player p) {
         return strategy.execute(resource, p, item);
     }
