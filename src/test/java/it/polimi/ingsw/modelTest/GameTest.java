@@ -101,7 +101,7 @@ public class GameTest {
             }
         }
         assertEquals(testGame.getGameState(), GameState.READY);
-        //To reset instance
+        //To Reset instance
         while (!testGame.getGameState().equals(GameState.END)) {
             testGame.nextState();
         }
