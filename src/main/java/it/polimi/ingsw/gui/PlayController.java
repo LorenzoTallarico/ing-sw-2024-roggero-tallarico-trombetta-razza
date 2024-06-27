@@ -23,38 +23,145 @@ import java.util.*;
 /** Controller for the actual game part of the graphical application*/
 public class PlayController {
 
+    /**
+     * Nickname of the local player
+     */
     private String myNickname = "";
+
+    /**
+     * Reference to the local player
+     */
     private Player myPlayer;
+
+    /**
+     * Current recipient for chat messages, default is all ""
+     */
     private String currentRecipient = "";
+
+    /**
+     * ArrayList containing all the other players in the game
+     */
     private ArrayList<Player> otherPlayers;
+
+    /**
+     * Integer representing the choice for the side of the starter card
+     */
     public int starterChoice = 0;
+
+    /**
+     * Integer representing the choice of the secret achievement
+     */
     public int achievementChoice = 0;
+
+    /**
+     * Integer representing the choice of the desired card to draw from the table
+     */
     public int drawChoice = 0;
+
+    /**
+     * Integer representing the choice for the desired card to place in the playground
+     */
     public int placeChoice = -1;
+
+    /**
+     * Reference to the starter card
+     */
     private StarterCard strCard;
+
+    /**
+     * Available achievements for the choice of the secret achievements
+     */
     private ArrayList<AchievementCard> choosableAchievements;
+
+    /**
+     * Common achievements and possibly also the secret one when chosen
+     */
     private ArrayList<AchievementCard> achievements;
+
+    /**
+     * Indicates if the player can place (placing phase)
+     */
     public boolean canPlace = false;
+
+    /**
+     * Indicates if the player placed a card (placing phase)
+     */
     public boolean hasPlaced = false;
+
+    /**
+     * Indicates if the player can draw (drawing phase)
+     */
     public boolean canDraw = false;
+
+    /**
+     * Queue of message sent by the player from the graphical application
+     * ready to be retrieved from the ClientApp
+     */
     public ArrayList<Message> messagesToSendQueue = new ArrayList<>();
+
+    /**
+     * Images for the chat options button
+     */
     private final Image singleUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/single-user.png")));
     private final Image multipleUsers = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/multiple-users.png")));
+
+    /**
+     * Images for cards in the hand
+     */
     private ArrayList<Image> frontHand, backHand;
+
+    /**
+     * Images for the achievements card (common + secret)
+     */
     private final Image backAchievement = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/cards/back/087.png")));
     private ArrayList<Image> frontAchievements;
+
+    /**
+     * Group of buttons to pick the desired card view (hand, table, achievements)
+     */
     private ToggleGroup toggleGroup;
+
+    /**
+     * Reference to the cards on the table
+     */
     private ArrayList<GoldCard> commonGold;
     private ArrayList<ResourceCard> commonResource;
+
+    /**
+     * Images for the cards on the table
+     */
     private ArrayList<Image> frontCommonGold, frontCommonResource, backCommonGold, backCommonResource;
     private Image backGoldDeck, backResourceDeck;
+
+    /**
+     * Images used in the playground to display empty cells or not chosen cards
+     */
     private final Image borderCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/border-card.png")));
     private final Image anonymousCard = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/misc/anonymous-card.png")));
+
+    /**
+     * Constants for the original sizes of the cards in the playground and of the rows and columns of the gridPane
+     */
     private final int constCellWidth = 105, constCellHeight = 54, constPch = 90, constPcw = 135;
+
+    /**
+     * Current sizes of the cards in the playground and of the rows and columns of the gridPane
+     */
     private double cellWidth = 105, cellHeight = 54, pch = 90, pcw = 135;
+
+    /**
+     * Array of imageview to display the cards in the cells of the playground gridPane
+     */
     private ImageView[][] gridpaneArray = null;
+
+    /**
+     * Action created by a listener when placing a card and needed by the ClientApp
+     */
     private PlacingCardAction placeAction;
-    /** Coordinates representing the positions of the number in the scoreboard*/
+
+    /**
+     * Coordinates representing the positions of the number in the scoreboard
+     */
     private final double[][] positions = {  {0.27935, 0.91866}, {0.5, 0.91866}, {0.72064, 0.91866},
                                             {0.83603, 0.81438}, {0.61133, 0.81438}, {0.39068, 0.81438}, {0.16801, 0.81438},
                                             {0.16801, 0.71011}, {0.39068, 0.71011}, {0.61133, 0.71011}, {0.83603, 0.71011},
@@ -66,42 +173,86 @@ public class PlayController {
                                             {0.29554, 0.10114}, {0.5, 0.08342}, {0.70647, 0.10114},
                                             {0.83603, 0.18873},
                                             {0.83603, 0.29301}, {0.5, 0.20959}};
+
+    /**
+     * Map linking a color to the image of a pawn
+     */
     private Map<it.polimi.ingsw.model.Color, ImageView> colorToPawns;
+
+    /**
+     * Map linking a color to the offset needed to avoid overlapping pawns in the scoreboard
+     */
     private Map<it.polimi.ingsw.model.Color, int[]> colorToOffset;
 
+    /**
+     * Images of pawns and scoreboard, used in the scoreboard pane
+     */
     @FXML
     private ImageView redPawnImg, greenPawnImg, yellowPawnImg, bluePawnImg, scoreboardImg;
 
+    /**
+     * Field used by the user to type their messages
+     */
     @FXML
     private TextField chatFld;
 
+    /**
+     * TextArea where chat messages are displayed
+     */
     @FXML
     private TextArea chatTextArea;
 
+    /**
+     * ImageViews for most of the images (options and cards)
+     */
     @FXML
     private ImageView chooseRecipientImg, selectCard1Img, selectCard2Img, handCard1Img, handCard2Img, handCard3Img, achievementCard1Img, achievementCard2Img, achievementCard3Img, tableGold1Img, tableGold2Img, tableResource1Img, tableResource2Img, tableGoldDeckImg, tableResourceDeckImg, tableBackDeck1Img, tableBackDeck2Img, resultImg;
 
+    /**
+     * MenuItems for the chat-recipient options
+     */
     @FXML
     private MenuItem everyoneItem, p1Item, p2Item, p3Item;
 
+    /**
+     * All the panes used by the graphical application (hand, table, chat, playground, ...)
+     */
     @FXML
     private AnchorPane fatherPane, cardChoicePane, scoreboardPane, handPane, achievementPane, tablePane;
 
+    /**
+     * All the gridpanes used by the graphical application (playground, scoreboard, ...)
+     */
     @FXML
     private GridPane playgroundGridPane, resourcesGrid, pawnPlayersGrid;
 
+    /**
+     * ScrollPane used to make the chat scrollable
+     */
     @FXML
     private ScrollPane playgroundScrollPane;
 
+    /**
+     * All the label used in the graphical application
+     */
     @FXML
     private Label selectCardLbl, alertLbl, oldAlertLbl, jarCountLbl, scrollCountLbl, plumeCountLbl, wolfCountLbl, mushroomCountLbl, leafCountLbl, butterflyCountLbl, resultLbl;
 
+    /**
+     * Buttons of the toggle group used by to pick a cards-view (table, hand, achievements)
+     */
     @FXML
     private ToggleButton tableBtn, handBtn, achievementBtn;
 
+    /**
+     * ChoiceBox to select a player and view their playground
+     */
     @FXML
     private ChoiceBox<String> playgroundChoiceBox;
 
+    /**
+     * Slider used to zoom in or zoom out the playground, increasing or decreasing the sizes of cards, rows and columns
+     */
     @FXML
     private Slider zoomSlider;
 

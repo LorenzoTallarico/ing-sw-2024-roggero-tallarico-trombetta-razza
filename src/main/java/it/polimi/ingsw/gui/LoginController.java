@@ -13,20 +13,48 @@ import java.util.Objects;
 /** Controller for the login part of the graphical application*/
 public class LoginController {
 
+    /**
+     * Boolean used to determine if the player has chosen the game size
+     */
     private boolean numberChoice = false;
+
+    /**
+     * Game size chosen by the player
+     */
     private int playersNumber = 0;
+
+    /**
+     * Nickname of the player
+     */
     private String nickname = "";
+
+    /**
+     * Images used in the application
+     */
     private Image check = null;
     private final Image plusUser = new Image(Objects.requireNonNull(GUIView.class.getResourceAsStream("img/icons/user-plus.png")));
 
+    /**
+     * Field where the player types in their own name
+     */
     @FXML
     private TextField nameFld;
 
+    /**
+     * Button to confirm the name
+     */
     @FXML
     private Button nameBtn;
+
+    /**
+     * Button to confirm the game size
+     */
     @FXML
     private Button confirmBtn;
 
+    /**
+     * Images used by the application
+     */
     @FXML
     private ImageView nameBtnImg;
     @FXML
@@ -44,9 +72,15 @@ public class LoginController {
     @FXML
     private ImageView join3Img;
 
+    /**
+     * Split Menu Button used to choose the number of the player
+     */
     @FXML
     private SplitMenuButton pnumSMB;
 
+    /**
+     * Labels to display joining messages and a possible error message
+     */
     @FXML
     private Label errorLbl;
     @FXML

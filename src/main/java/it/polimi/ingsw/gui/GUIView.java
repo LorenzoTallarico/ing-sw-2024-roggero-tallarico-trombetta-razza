@@ -13,9 +13,24 @@ import java.util.Objects;
 /** Main class for the GUI*/
 public class GUIView extends Application {
 
+    /**
+     * Controller of the login scene
+     */
     private LoginController loginController;
+
+    /**
+     * Controller of the game scene
+     */
     private PlayController playController;
+
+    /**
+     * Primary window of the graphical application
+     */
     private Stage stage;
+
+    /**
+     * Image of the logo used as icon for the graphical application
+     */
     private final Image logo;
 
     /**
