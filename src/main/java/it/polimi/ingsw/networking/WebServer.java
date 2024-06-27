@@ -425,8 +425,6 @@ public class WebServer implements VirtualServer {
                                 }
                             }
                         }
-
-
                     }
                 }
             }
