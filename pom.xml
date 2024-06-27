@@ -12,10 +12,8 @@
 
  <properties>
    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-   <!--JAVA FX BRESSI-->
    <javafx.version>21</javafx.version>
    <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
-   <!--END JAVA FX BRESSI-->
  </properties>
 
  <dependencies>
@@ -37,7 +35,6 @@
          <scope>test</scope>
      </dependency>
 
-   <!--JAVA FX BRESSI-->
      <dependency>
      <groupId>org.openjfx</groupId>
      <artifactId>javafx</artifactId>
@@ -54,82 +51,10 @@
      <artifactId>javafx-fxml</artifactId>
      <version>${javafx.version}</version>
    </dependency>
-   <!--END JAVA FX BRESSI-->
-
-   <!--JAVA FX | VALSECCHI>
-   <dependency>
-     <groupId>org.openjfx</groupId>
-     <artifactId>javafx-fxml</artifactId>
-     <version>19</version>
-   </dependency>
-   <dependency>
-     <groupId>org.openjfx</groupId>
-     <artifactId>javafx-controls</artifactId>
-     <version>19</version>
-   </dependency>
-   <dependency>
-     <groupId>org.openjfx</groupId>
-     <artifactId>javafx-web</artifactId>
-     <version>19</version>
-   </dependency>
-   <dependency>
-     <groupId>org.openjfx</groupId>
-     <artifactId>javafx-media</artifactId>
-     <version>19</version>
-   </dependency>
-   <dependency>
-     <groupId>org.controlsfx</groupId>
-     <artifactId>controlsfx</artifactId>
-     <version>11.1.2</version>
-   </dependency>
-   <dependency>
-     <groupId>com.dlsc.formsfx</groupId>
-     <artifactId>formsfx-core</artifactId>
-     <version>11.5.0</version>
-     <exclusions>
-       <exclusion>
-         <groupId>org.openjfx</groupId>
-         <artifactId>*</artifactId>
-       </exclusion>
-     </exclusions>
-   </dependency>
-   <dependency>
-     <groupId>net.synedra</groupId>
-     <artifactId>validatorfx</artifactId>
-     <version>0.4.0</version>
-     <exclusions>
-       <exclusion>
-         <groupId>org.openjfx</groupId>
-         <artifactId>*</artifactId>
-       </exclusion>
-     </exclusions>
-   </dependency>
-   <dependency>
-     <groupId>org.kordamp.ikonli</groupId>
-     <artifactId>ikonli-javafx</artifactId>
-     <version>12.3.1</version>
-   </dependency>
-   <dependency>
-     <groupId>org.kordamp.bootstrapfx</groupId>
-     <artifactId>bootstrapfx-core</artifactId>
-     <version>0.4.0</version>
-   </dependency>
-   <dependency>
-     <groupId>com.github.almasb</groupId>
-     <artifactId>fxgl</artifactId>
-     <version>17.2</version>
-     <exclusions>
-       <exclusion>
-         <groupId>org.openjfx</groupId>
-         <artifactId>*</artifactId>
-       </exclusion>
-     </exclusions>
-   </dependency><END JAVA FX VALSECCHI-->
  </dependencies>
  <build>
    <pluginManagement>
      <plugins>
-     <!--JAVA FX BRESSI-->
        <plugin>
           <groupId>org.openjfx</groupId>
           <artifactId>javafx-maven-plugin</artifactId>
@@ -140,12 +65,11 @@
           <!--Usage: mvn clean javafx:run -->
           <id>default-cli</id>
           <configuration>
-          <mainClass>it.polimi.ingsw.AFXtemp</mainClass>
+          <mainClass>it.polimi.ingsw.gui.GUIView</mainClass>
           </configuration>
           </execution>
           </executions>
           </plugin>
-       <!--END JAVA FX BRESSI-->
      </plugins>
    </pluginManagement>
      <plugins>
