@@ -8,18 +8,38 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.rmi.RemoteException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 public class PlayerTest {
 
+    //Method to get the last card placed
+    public Card getLastCardPlaced(Map<Card, int[]> orderedCoords) {
+        // Ottiene l'insieme delle chiavi (keySet)
+        Object[] keys = orderedCoords.keySet().toArray();
+        // Se la mappa è vuota, ritorna null
+        if (keys.length == 0) {
+            return null;
+        }
+        // Prende l'ultima chiave (Card)
+        return (Card) keys[keys.length - 1];
+    }
+
+
     @Test
     @DisplayName("Integrity Test")
     void integrityTest() throws RemoteException {
         Game testGame = Game.getInstance();
+        Player fake = new Player();
         Player p = new Player("gigi");
+        assertTrue(p.isOnline());
+        assertTrue(fake.isOnline());
+        fake.setArea(p.getArea());
+        assertEquals(p.getArea(), fake.getArea());
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
         VirtualView cli = new ClientRmi(null);
@@ -94,7 +114,8 @@ public class PlayerTest {
         Card card2 = new ResourceCard(2, Resource.WOLF, frontAng, backAng, "000");
         Card card3 = new ResourceCard(2, Resource.MUSHROOM, frontAng, backAng, "000");
         Card card4 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng, "000");
-        Card card5 = new ResourceCard(2, Resource.BUTTERFLY, frontAng, backAng, "000");
+        Card card5 = new ResourceCard(10, Resource.BUTTERFLY, frontAng, backAng, "000");
+        Card card6 = new ResourceCard(1, Resource.WOLF, frontAng, backAng, "000");
 
 
 
@@ -325,6 +346,7 @@ public class PlayerTest {
         p.addCard(card5);
         p.getHand().get(p.getHand().indexOf(card5)).setFront(true);
         assertTrue(p.place(p.getHand().indexOf(card5), true, 41, 41));
+        //assertEquals(18, p.getPoints());
         Print.cardPrinter(p.getArea().getSpace(41,41).getCard(), true);
         assertEquals(card5, p.getArea().getSpace(41,41).getCard());
         assertEquals(card5, p.getArea().getSpace(41,41).getCard());
@@ -334,9 +356,7 @@ public class PlayerTest {
         Print.playgroundPrinter(p.getArea());
 
 
-        //this should be the playground:
-
-/*    0 ......37.......38...........39...........40............41....................79
+        /*....37.......38...........39...........40............41....................79
       .
       .
       .
@@ -357,6 +377,60 @@ public class PlayerTest {
      79
 
 */
+
+
+
+
+        //REMOVES THE LAST CARD PLACED BY THE PLAYER (Card5)
+
+        //Print the 'lastCardPlaced'
+        System.out.println("L'ultima carta piazzata è questa: ");
+        Print.cardPrinter(p.getArea().getSpace(41,41).getCard());
+        System.out.println("E questa è quella che recupero dalla mappa del playground: ");
+        Print.cardPrinter(getLastCardPlaced(p.getArea().getOrderedCoords()), true);
+        assertEquals(getLastCardPlaced(p.getArea().getOrderedCoords()), p.getArea().getSpace(41,41).getCard());
+
+        Card lastCardPlacedBeforeDisconnection = getLastCardPlaced(p.getArea().getOrderedCoords());
+
+
+        //Remove the last card placed by the player from the playground and adds it to his hand
+        p.disconnection();
+        assertFalse(p.isOnline());
+        assertTrue(p.getHand().contains(lastCardPlacedBeforeDisconnection));
+        boolean cardFound = false;
+        for (int x = 0; x < 81; x++) {
+            for (int y = 0; y < 81; y++) {
+                if (p.getArea().getSpace(x, y).getCard() != null && p.getArea().getSpace(x, y).getCard().equals(lastCardPlacedBeforeDisconnection))
+                    cardFound = true;
+            }
+        }
+        //checks if the last is not in the player's playground
+        assertFalse(cardFound);
+
+
+
+                /*....37.......38...........39...........40............41....................79
+      .
+      .
+      .
+      .
+      .
+      39                           Card1                      Card2
+      .
+      40              Card3                    Starter
+      .
+      41     Card4
+      .
+      .
+      .
+      .
+      .
+      .
+      .
+     79
+
+*/
+
 
 
 

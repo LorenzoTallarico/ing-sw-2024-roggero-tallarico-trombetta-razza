@@ -48,20 +48,11 @@ public class Game implements Serializable {
 
 
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
-        //non servono sti due if qua sotto credo (e quindi nemmeno i parametri)
-
-        if(clients.contains(oldVirtualView)) {
-            System.out.println("Vecchia virtual view c'è e siamo x(");
-        }
-        if(clients.contains(newVirtualView)) {
-            System.out.println("Nuova virtual view c'è e siamo a cavallo");
-        }
         for(Player p : players) {
             if(nickname.equalsIgnoreCase(p.getName())) {
                 int index = clients.indexOf(oldVirtualView);
                 clients.remove(index);
                 clients.add(index, newVirtualView);
-                System.out.println("flagStarter: " + newVirtualView.getStarter());
                 p.setOnline(true);
                 if(!newVirtualView.getStarter()) {
                     ArrayList<Player> player = new ArrayList<>();
@@ -71,7 +62,6 @@ public class Game implements Serializable {
                     //modificare la notify per togliere il wait a client (cercare di capire come memorizzare il currPLayer --> ultimo rimasto online)
                     bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                     if(wait){
-                        System.out.println("Dentro Game -> Reconnection -> if(wait)");
                         wait = false;
                         nextPlayer();
                     }
@@ -80,10 +70,9 @@ public class Game implements Serializable {
         }
     }
 
-    public void disconnection(String playerName, int numOnlinePlayers) throws RemoteException {
+    public void disconnection(String playerName) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
-                System.err.println("dentro Game disconnection");
                 p.setOnline(false);
                 p.disconnection();
 
@@ -97,13 +86,8 @@ public class Game implements Serializable {
                     if(c.getOnline())
                         countOnline++;
                 }
-                System.out.println("*****(Dentro Game -> disconnection)********Il numero di giocatori online è: " + countOnline);
-                //if(countOnline == 1)
-                  //  wait = true;
-                //scatta se sono in turno e lascio solo uno, oppure se non sono in turno e sono da solo
 
                 if(countOnline==0){
-                    //Manda listener con wait che indica il numero di player online è 0
                     System.exit(0);
                 }
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
@@ -117,7 +101,7 @@ public class Game implements Serializable {
         String nickLastPlayer = players.get(currPlayer).getName();
         boolean found = false;
         int index= currPlayer;
-        do {   //player offline skips turn
+        do {
             currPlayer++;
             if (currPlayer >= playersNumber) {
                 if (gameState == GameState.LASTROUND) {
@@ -219,23 +203,19 @@ public class Game implements Serializable {
 
 //POP Method
     public AchievementCard popAchievementCard() {
-    AchievementCard achievement = null;
-    if(!achievementDeck.isEmpty()) {
-        achievement = achievementDeck.get(0);
-        achievementDeck.remove(0);
-    } else {
-        System.err.println("! achievement deck null or empty");
+        AchievementCard achievement = null;
+        if (!achievementDeck.isEmpty()) {
+            achievement = achievementDeck.get(0);
+            achievementDeck.remove(0);
+        }
+        return achievement;
     }
-    return achievement;
-}
 
     public GoldCard popGoldCard() {
         GoldCard card = null;
         if(!goldDeck.isEmpty()) {
             card = goldDeck.get(0);
             goldDeck.remove(0);
-        } else {
-            System.err.println("! gold deck null or empty");
         }
         return card;
     }
@@ -245,8 +225,6 @@ public class Game implements Serializable {
         if(!resourceDeck.isEmpty()) {
             card = resourceDeck.get(0);
             resourceDeck.remove(0);
-        } else {
-            System.err.println("! resource deck null or empty");
         }
         return card;
     }
@@ -256,8 +234,6 @@ public class Game implements Serializable {
         if(!starterDeck.isEmpty()) {
             starter = starterDeck.get(0);
             starterDeck.remove(0);
-        } else {
-            System.err.println("! starter deck null or empty");
         }
         return starter;
     }
@@ -271,9 +247,7 @@ public class Game implements Serializable {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
             goldDeck = new ArrayList<>();
             Collections.addAll(goldDeck, tempGold);
-        } catch (IOException e) {
-            System.err.println("> Error: JSON files not found.");
-        }
+        } catch (IOException ignored) { }
         Collections.shuffle(goldDeck);
         commonGold = new ArrayList<>();
         for(int i = 0; i < 2; i++)
@@ -286,9 +260,7 @@ public class Game implements Serializable {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
             resourceDeck = new ArrayList<>();
             Collections.addAll(resourceDeck, tempResource);
-        } catch (IOException e) {
-            System.err.println("> Error: JSON files not found.");
-        }
+        } catch (IOException ignored) { }
         Collections.shuffle(resourceDeck);
         commonResource = new ArrayList<>();
         for(int i = 0; i < 2; i++)
@@ -302,9 +274,7 @@ public class Game implements Serializable {
             achievementDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
                 achievementDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem(), achievementCard.getID()));
-        } catch (IOException e) {
-            System.err.println("> Error: JSON files not found.");
-        }
+        } catch (IOException ignored) { }
         Collections.shuffle(achievementDeck);
         commonAchievement = new ArrayList<>();
         for(int i = 0; i < 2; i++)
@@ -317,9 +287,7 @@ public class Game implements Serializable {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
             starterDeck = new ArrayList<>();
             Collections.addAll(starterDeck, tempStarter);
-        } catch (IOException e) {
-            System.err.println("> Error: JSON files not found.");
-        }
+        } catch (IOException ignored) { }
         Collections.shuffle(starterDeck);
     }
 
@@ -396,28 +364,6 @@ public class Game implements Serializable {
         this.currPlayer = players.indexOf(p);
     }
 
-    public void nextPlayer(boolean nextState) throws RemoteException {
-        currPlayer++;
-        if(currPlayer >= playersNumber) {
-            currPlayer = 0;
-            if(!clients.get(currPlayer).getOnline()) {
-                currPlayer++;
-                System.out.println(" ---------------------->>>>>>    nextplayer(nexstate) dentro if offline");
-            }
-            if(nextState) {
-                if(gameState == GameState.GAME) {
-                    for(Player p : players) {
-                        if(p.getPoints() >= 20) {
-                            nextState();
-                            return;
-                        }
-                    }
-                }
-                else
-                    nextState();
-            }
-        }
-    }
 
     public void nextState() {
         switch(gameState) {
@@ -579,24 +525,5 @@ public class Game implements Serializable {
         bigListener.notifyWinners(players);
     }
 
-
-
-
-
-
-
-
-
-    //**********  METODI PER TESTARE SOCKET (da togliere)  ***********
-    Integer state = 0;
-
-    public boolean add(Integer number) {
-        this.state += number;
-        return true;
-    }
-
-    public Integer get() {
-        return this.state;
-    }
 
 }

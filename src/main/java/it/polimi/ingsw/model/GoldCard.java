@@ -73,7 +73,7 @@ public class GoldCard extends Card implements Serializable {
     public String getSideID(boolean front) {
         if(front)
             return id;
-        String result;
+        String result = "";
         switch(this.resource) {
             case MUSHROOM:
                 result = "041";
@@ -86,9 +86,6 @@ public class GoldCard extends Card implements Serializable {
                 break;
             case BUTTERFLY:
                 result = "071";
-                break;
-            default:
-                result = "";
                 break;
         }
         return result;

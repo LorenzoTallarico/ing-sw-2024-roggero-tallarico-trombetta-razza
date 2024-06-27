@@ -61,9 +61,6 @@ public class GameController {
      * @throws RemoteException If a remote communication error occurs during the reconnection process.
      */
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
-        for(VirtualView v : clients){
-            System.out.println(v);
-        }
         model.reconnection(nickname, oldVirtualView, newVirtualView);
     }
 
@@ -94,8 +91,6 @@ public class GameController {
                 if (players.size() == playersNumber) {
                     model.addPlayers(players, clients);
                 }
-            } else {
-                System.out.println("> Controller couldn't add player " + p.getName());
             }
         }
     }
@@ -139,11 +134,7 @@ public class GameController {
                     model.nextPlayer();
                     return true;
                 }
-            } else {
-                System.out.println("> Player " + playerName + " has too many cards, they can't draw one.");
             }
-        } else {
-            System.out.println("> Player " + playerName + " can't draw a card, it's not the right state of the game.");
         }
         return false;
     }
@@ -152,11 +143,10 @@ public class GameController {
      * Handles the disconnection of a player from the game.
      *
      * @param playerName The name of the player who is disconnecting.
-     * @param numOnlinePlayers The number of players currently online.
      * @throws RemoteException If a remote communication error occurs during the disconnection process.
      */
-    public void disconnection(String playerName, int numOnlinePlayers) throws RemoteException {
-        model.disconnection(playerName, numOnlinePlayers);
+    public void disconnection(String playerName) throws RemoteException {
+        model.disconnection(playerName);
     }
 
     /**
@@ -216,12 +206,23 @@ public class GameController {
         }
     }
 
+    /**
+     * Gets the list of players in the game.
+     *
+     * @return The list of players.
+     */
     public ArrayList<Player> getPlayers() {
         synchronized(this.players){
             return model.getPlayers();
         }
     }
 
+    /**
+     * Sends a chat message and returns the last message sent in the chat.
+     *
+     * @param msg The message to be sent.
+     * @return The last message sent in the chat.
+     */
     public Message sendChatMessage(Message msg) {
         synchronized (this.chat) {
             chat.sendMessage(msg);
@@ -229,12 +230,22 @@ public class GameController {
         }
     }
 
+    /**
+     * Gets the entire chat history.
+     *
+     * @return The list of all messages in the chat.
+     */
     public ArrayList<Message> getWholeChat() {
         synchronized (this.chat) {
             return chat.getWholeChat();
         }
     }
 
+    /**
+     * Sets the number of players for the game and initializes the start countdown.
+     *
+     * @param playersNumber The number of players to be set.
+     */
     public void setPlayersNumber(int playersNumber) {
         this.playersNumber = playersNumber;
         startCountdown = playersNumber;
