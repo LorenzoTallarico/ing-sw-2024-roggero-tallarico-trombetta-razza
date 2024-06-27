@@ -2,12 +2,19 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 
+/**
+ * Concrete strategy implementation for calculating points based on a pattern that counts the resources in a player's area.
+ * Implements the Strategy interface.
+ */
 public class ConcreteStrategyResource implements Strategy, Serializable {
 
+    /**
+     * Default constructor for ConcreteStrategyResource.
+     */
     public ConcreteStrategyResource() {    }
 
     /**
-     *
+     * Executes the strategy to calculate points based on a pattern that counts the resources in a player's area.
      * @param resource this is the resource whose number is counted to determine number of points
      * @param player the player who owns the card
      * @param item it's useless

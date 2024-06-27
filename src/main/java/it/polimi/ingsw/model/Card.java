@@ -3,11 +3,35 @@ package it.polimi.ingsw.model;
 import java.io.Serializable;
 
 public abstract class Card implements Serializable {
+
+    /**
+     * Indicates whether the front side of the card is showing.
+     */
     protected boolean front;
+
+    /**
+     * The points associated with the card.
+     */
     protected int points;
+
+    /**
+     * The type of resource associated with the card.
+     */
     protected Resource resource;
+
+    /**
+     * The corners on the front side of the card.
+     */
     protected Corner[] frontCorners = new Corner[4];
+
+    /**
+     * The corners on the back side of the card.
+     */
     protected Corner[] backCorners = new Corner[4];
+
+    /**
+     * The ID of the card used for image identification.
+     */
     protected String id;
 
 //GETTER
