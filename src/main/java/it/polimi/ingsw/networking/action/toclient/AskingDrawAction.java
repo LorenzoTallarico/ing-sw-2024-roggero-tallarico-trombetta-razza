@@ -33,10 +33,10 @@ public class AskingDrawAction extends Action {
     /**
      * Constructor of the class, initializes a new AskingDrawAction
      * @param recipient player who have to draw the card
-     * @param commonGold
-     * @param goldDeck
+     * @param commonGold gold cards on the table
+     * @param goldDeck resource of the card on top of the gold deck
      * @param commonResource Resource cards on the table
-     * @param resourceDeck
+     * @param resourceDeck resource of the card on top of the resource deck
      */
     public AskingDrawAction(String recipient, ArrayList<GoldCard> commonGold, Resource goldDeck, ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         super(ActionType.ASKINGDRAW, null, recipient);
@@ -54,14 +54,26 @@ public class AskingDrawAction extends Action {
         return commonGold;
     }
 
+    /**
+     * gets resource of the card on top of the gold deck
+     * @return resource of the card
+     */
     public Resource getGoldDeck() {
         return goldDeck;
     }
 
+    /**
+     * Gets the resource cards on the table
+     * @return arraylist of resourceCards
+     */
     public ArrayList<ResourceCard> getCommonResource() {
         return commonResource;
     }
 
+    /**
+     * gets the resource of the card on top of the resource deck
+     * @return resource of the card
+     */
     public Resource getResourceDeck() {
         return resourceDeck;
     }
