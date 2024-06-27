@@ -401,7 +401,7 @@ public class WebServer implements VirtualServer {
                 for (String c : disconnectedClient) {
                     //System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
                     if (numStarter == clients.size()) {
-                        controller.disconnection(c, countOnlinePlayer());
+                        controller.disconnection(c);
                         if (countOnlinePlayer() <= 1) {
                             //System.out.println("Dentro webserver: se è connesso solo un ultimo player parto con la routine\n");
                             String lastOnlineNick = null;
