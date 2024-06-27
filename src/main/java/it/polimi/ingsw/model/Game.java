@@ -10,29 +10,93 @@ import com.google.gson.*;
 import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.listener.Listener;
 
-
+/**
+ * Represents the main game instance with its state and components.
+ * This class manages players, modifications, decks of cards, game state, and communication with clients.
+ */
 public class Game implements Serializable {
 
+    /**
+     * Singleton instance of the game.
+     */
     private static Game instance;
+
+    /**
+     * List of players in the game.
+     */
     private static ArrayList<Player> players;
+
+
+    /**
+     * Deck of resource cards.
+     */
     private ArrayList<ResourceCard> resourceDeck;
+
+    /**
+     * Deck of gold cards.
+     */
     private ArrayList<GoldCard> goldDeck;
+
+    /**
+     * Deck of achievement cards.
+     */
     private ArrayList<AchievementCard> achievementDeck;
+
+    /**
+     * Deck of starter cards.
+     */
     private ArrayList<StarterCard> starterDeck;
+
+    /**
+     * Index of the current player.
+     */
     private int currPlayer;
+
+    /**
+     * Common resource cards on the table.
+     */
     private ArrayList<ResourceCard> commonResource;
+
+    /**
+     * Common gold cards on the table.
+     */
     private ArrayList<GoldCard> commonGold;
+
+    /**
+     * Common achievements.
+     */
     private ArrayList<AchievementCard> commonAchievement;
+
+    /**
+     * Number of players in the game.
+     */
     private int playersNumber;
+
+    /**
+     * Current state of the game.
+     */
     private GameState gameState;
+
+    /**
+     * List of connected clients (virtual views).
+     */
     private ArrayList<VirtualView> clients;
+
+    /**
+     * Listener for game events.
+     */
     private it.polimi.ingsw.listener.Listener bigListener;
+
+    /**
+     * Flag indicating if the game is in a waiting state.
+     */
     private boolean wait;
 
 
 
-
-    //Constructor
+    /**
+     * Private constructor to enforce singleton pattern.
+     */
     private Game() {
         players = new ArrayList<>();
         createGoldDeck();
@@ -43,8 +107,15 @@ public class Game implements Serializable {
         wait = false;
     }
 
-
-
+    /**
+     * Handles the reconnection of a player with a new VirtualView instance.
+     * Updates the player's VirtualView and notifies listeners accordingly.
+     *
+     * @param nickname       The nickname of the player reconnecting.
+     * @param oldVirtualView The old VirtualView instance associated with the player.
+     * @param newVirtualView The new VirtualView instance to associate with the player.
+     * @throws RemoteException If a remote communication error occurs.
+     */
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
         for(Player p : players) {
             if(nickname.equalsIgnoreCase(p.getName())) {
@@ -57,7 +128,6 @@ public class Game implements Serializable {
                     player.add(p);
                     bigListener.notifyStarterCard(player, commonGold, commonResource, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                 } else {
-                    //modificare la notify per togliere il wait a client (cercare di capire come memorizzare il currPLayer --> ultimo rimasto online)
                     bigListener.notifyReconnection(nickname, players, commonGold, commonResource, commonAchievement, goldDeck.get(0).getResource(), resourceDeck.get(0).getResource());
                     if(wait){
                         wait = false;
