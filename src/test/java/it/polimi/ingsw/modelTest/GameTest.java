@@ -550,17 +550,17 @@ public class GameTest {
         testGame.addPlayers(players, clients);
         Card card;
         assertNull(testGame.draw("Marco", -1));
-        assertNull(testGame.draw("Marco", 6));
-        card = testGame.getResourceDeck().get(0);
+        assertNotNull(testGame.draw("Marco", 6));
+        card = testGame.getCommonGold().get(1);
         assertEquals(card, testGame.draw("Marco", 2));
-        assertInstanceOf(ResourceCard.class, card);
-        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 0));
-        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 1));
+        assertInstanceOf(GoldCard.class, card);
+        assertNull(testGame.draw("Marco", 0));
+        assertInstanceOf(GoldCard.class, testGame.draw("Marco", 1));
         card = testGame.getGoldDeck().get(0);
         assertEquals(card, testGame.draw("Marco", 5));
         assertInstanceOf(GoldCard.class, card);
-        assertInstanceOf(GoldCard.class, testGame.draw("Marco", 3));
-        assertInstanceOf(GoldCard.class, testGame.draw("Marco", 4));
+        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 3));
+        assertInstanceOf(ResourceCard.class, testGame.draw("Marco", 4));
         testGame.end();
         testGame.nextState();
     }
