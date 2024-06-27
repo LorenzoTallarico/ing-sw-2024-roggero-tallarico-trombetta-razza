@@ -53,7 +53,6 @@ public class PlayerTest {
         p.setSecretAchievement(achiList);
         assertEquals(achiList, p.getSecretAchievement());
 
-
         //to reset singleton
         testGame.end();
         testGame.nextState();
@@ -70,7 +69,7 @@ public class PlayerTest {
 
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
-        VirtualView cli = null;
+        VirtualView cli = new ClientRmi(null);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(playersList, clients);

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.modelTest;
 
+import com.google.gson.Gson;
 import it.polimi.ingsw.controller.GameController;
 import it.polimi.ingsw.model.*;
 
@@ -11,8 +12,12 @@ import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.util.Print;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class GameTest {
 
@@ -21,6 +26,47 @@ public class GameTest {
         testGame.end();
         testGame.nextState();
      */
+
+    public ArrayList<ResourceCard> getOrderedResourceDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+            ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
+            ArrayList<ResourceCard> tempDeck = new ArrayList<>();
+            Collections.addAll(tempDeck, tempResource);
+            return tempDeck;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public ArrayList<GoldCard> getOrderedGoldDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
+            GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
+            ArrayList<GoldCard> tempDeck = new ArrayList<>();
+            Collections.addAll(tempDeck, tempResource);
+            return tempDeck;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+    public ArrayList<AchievementCard> getOrderedAchievementDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+            AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
+            ArrayList<AchievementCard> tempDeck = new ArrayList<>();
+            for (AchievementCard achievementCard : tempAchievement)
+                tempDeck.add(new AchievementCard(achievementCard.getPoints(), achievementCard.getResource(), achievementCard.getStrategyType(), achievementCard.getItem(), achievementCard.getID()));
+            return tempDeck;
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
+
+
+
 
     @Test
     void IntegrityTest() throws RemoteException {
@@ -207,7 +253,7 @@ public class GameTest {
         clients.add(cli);
         testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -218,7 +264,7 @@ public class GameTest {
             tempCard = hand.get(0);
             hand.remove(0);
         }
-        fake1.getArea().setSpace(tempCard, 40, 40);
+        //fake1.getArea().setSpace(tempCard, 40, 40);
         tempCard = hand.get(0);
         hand.remove(0);
         while (tempCard.getResource() != Resource.MUSHROOM || tempCard.getFrontCorners()[0].getType() == CornerType.DEAD) {
@@ -283,8 +329,8 @@ public class GameTest {
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(players, clients);
-        ArrayList<Card> hand = new ArrayList<Card>(testGame.getOrderedResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<Card> hand = new ArrayList<Card>(getOrderedResourceDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         Card tempCard;
         AchievementCard tempAchievement;
         tempCard = hand.get(0);
@@ -370,7 +416,7 @@ public class GameTest {
         clients.add(cli);
         testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement, tempAchievement2;
@@ -438,7 +484,7 @@ public class GameTest {
         clients.add(cli);
         testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -472,7 +518,7 @@ public class GameTest {
         clients.add(cli);
         testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -505,7 +551,7 @@ public class GameTest {
 
         testGame.addPlayers(players, clients);
         ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
-        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
@@ -577,9 +623,9 @@ public class GameTest {
         testGame.addPlayers(players, clients);
         ResourceCard tempRes;
         GoldCard tempGold;
-        ArrayList<ResourceCard> deck1 = new ArrayList<ResourceCard>(testGame.getOrderedResourceDeck());
-        ArrayList<GoldCard> deck2 = new ArrayList<GoldCard>(testGame.getOrderedGoldDeck());
-        ArrayList<AchievementCard> deck3 = new ArrayList<AchievementCard>(testGame.getOrderedAchievementDeck());
+        ArrayList<ResourceCard> deck1 = new ArrayList<ResourceCard>(getOrderedResourceDeck());
+        ArrayList<GoldCard> deck2 = new ArrayList<GoldCard>(getOrderedGoldDeck());
+        ArrayList<AchievementCard> deck3 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         //test of override method equals
         //between resource cards:
         assertFalse(deck1.get(0).equals(deck1.get(1)));
@@ -652,7 +698,7 @@ public class GameTest {
         controller.drawCard("Marco",6);
         assertEquals(fake1.getHand().size(),3);
         // test of setSecretAchievement method
-        tempAchievement1 = testGame.getOrderedAchievementDeck().get(0);
+        tempAchievement1 = getOrderedAchievementDeck().get(0);
         controller.setSecretAchievement("Marco",tempAchievement1);
         assertEquals(fake1.getSecretAchievement().get(0),tempAchievement1);
         // test of sendChatMessage method
