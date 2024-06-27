@@ -32,9 +32,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class Client extends UnicastRemoteObject implements VirtualView {
 
+
     enum State {
         COMMANDS,
-        GAMESIZE,       //lo uso come stato quando si deve chiamare "startgame"
+        GAMESIZE,
         STARTERCARD,
         DRAW,
         PLACE,

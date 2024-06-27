@@ -21,19 +21,79 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * The ClientSocket class implements the VirtualView interface and handles the
+ * server socket communication with the client.
+ */
 public class ClientSocket implements VirtualView, Runnable {
-    private final ObjectOutputStream outputStream;
-    private final ObjectInputStream inputStream;
-    private final BlockingQueue<Action> serverActions;
-    private final BlockingQueue<Action> clientActions;
-    private final ArrayList<VirtualView> clients;
-    private boolean ping;
-    private boolean online;
-    private String nickname = null;
-    private final boolean gameStarted;
-    private final int playersNumber;
-    private boolean starter= false;
 
+    /**
+     * The output stream for sending actions to the server.
+     */
+    private final ObjectOutputStream outputStream;
+
+    /**
+     * The input stream for receiving actions from the server.
+     */
+    private final ObjectInputStream inputStream;
+
+
+    /**
+     * Queue for actions the receives from the clients
+     */
+    private final BlockingQueue<Action> serverActions;
+
+    /**
+     * Queue for actions the server sends to the client
+     */
+    private final BlockingQueue<Action> clientActions;
+
+    /**
+     * The list of connected clients.
+     */
+    private final ArrayList<VirtualView> clients;
+
+    /**
+     * The ping status of the client.
+     */
+    private boolean ping;
+
+    /**
+     * The online status of the client.
+     */
+    private boolean online;
+
+    /**
+     * The nickname of the client.
+     */
+    private String nickname = null;
+
+    /**
+     * The status of whether the game has started.
+     */
+    private final boolean gameStarted;
+
+    /**
+     * The number of players in the game.
+     */
+    private final int playersNumber;
+
+    /**
+     * The starter status of the client.
+     */
+    private boolean starter = false;
+
+    /**
+     * Constructs a ClientSocket instance.
+     *
+     * @param serSocket      the socket connected to the server.
+     * @param serverActions  the queue for actions server receives from the client.
+     * @param clientActions  the queue for actions server sends to the client.
+     * @param clients        the list of connected clients.
+     * @param gameStarted    the status of whether the game has started.
+     * @param playersNumber  the number of players in the game.
+     * @throws IOException if an I/O error occurs.
+     */
     public ClientSocket(Socket serSocket, BlockingQueue<Action> serverActions, BlockingQueue<Action> clientActions, ArrayList<VirtualView> clients, boolean gameStarted, int playersNumber) throws IOException {
         this.outputStream = new ObjectOutputStream(serSocket.getOutputStream());
         this.inputStream = new ObjectInputStream(serSocket.getInputStream());
@@ -45,53 +105,108 @@ public class ClientSocket implements VirtualView, Runnable {
     }
 
     //GETTER
+    /**
+     * Gets the nickname of the client.
+     *
+     * @return the nickname of the client.
+     */
     @Override
     public String getNickname() {
         return nickname;
     }
 
+    /**
+     * Gets the online status of the client.
+     *
+     * @return true if the client is online, false otherwise.
+     */
     @Override
     public boolean getOnline() {
         return online;
     }
 
-
+    /**
+     * Gets the ping status of the client.
+     *
+     * @return true if the client is responding to pings, false otherwise.
+     */
     @Override
     public boolean getPing() {
         return ping;
     }
 
+    /**
+     * Gets the nickname of the first client. This method is not implemented in this class.
+     *
+     * @return an empty string.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     @Override
     public String getNicknameFirst() throws RemoteException {
         return "";
     }
 
+    /**
+     * Gets the starter status of the client.
+     *
+     * @return true if the client is the starter, false otherwise.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     @Override
     public boolean getStarter() throws RemoteException {
         return starter;
     }
 
     //SETTER
+
+    /**
+     * Sets the nickname of the client.
+     *
+     * @param nickname the nickname of the client.
+     */
     @Override
     public void setNickname(String nickname){
         this.nickname = nickname;
     }
 
+    /**
+     * Sets the online status of the client.
+     *
+     * @param online true if the client is online, false otherwise.
+     */
     @Override
     public void setOnline(boolean online) {
         this.online = online;
     }
 
+    /**
+     * Sets the ping status of the client.
+     *
+     * @param b true if the client is responding to pings, false otherwise.
+     */
     @Override
     public void setPing(boolean b) {
         ping=b;
     }
 
+    /**
+     * Sets the starter status of the client.
+     *
+     * @param starter true if the client is the starter, false otherwise.
+     */
+    @Override
     public void setStarter(boolean starter) {
         this.starter = starter;
     }
 
     //METHODS
+
+    /**
+     * Sends an action to the client.
+     *
+     * @param act the action to be sent to the client.
+     * @throws IOException if an I/O error occurs.
+     */
     @Override
     public void showAction(Action act) throws IOException {
         //qui il server sta MANDANDO l'azione al client
@@ -108,7 +223,11 @@ public class ClientSocket implements VirtualView, Runnable {
         }
     }
 
-
+    /**
+     *
+     * Thread that receives actions from client, and put the in the corresponding queue
+     * Used for creating the first connection client server and possible reconnections
+     */
     @Override
     public void run() {
         try {
@@ -149,9 +268,7 @@ public class ClientSocket implements VirtualView, Runnable {
                                         showAction(new ErrorAction(nick, "Denied connection to a new client, user \"" + nick + "\" already existing and now online."));
                                         showAction(new SetNicknameAction(null));
                                         return;
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                    } catch (Exception ignored) { }
                                 }
                             }
                             if (countOnlinePlayer() >= 4) {
@@ -160,9 +277,7 @@ public class ClientSocket implements VirtualView, Runnable {
                                     showAction(new ErrorAction(nick, "Max amount of players reached."));
                                     showAction(new SetNicknameAction(null));
                                     return;
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                                } catch (Exception ignored) {}
 
                             }
                         }
@@ -171,9 +286,7 @@ public class ClientSocket implements VirtualView, Runnable {
                                 showAction(new ErrorAction(nick, "Another player has just started a game, they still haven't chosen the size of the game, wait some seconds before reconnecting."));
                                 showAction(new SetNicknameAction(null));
                                 return;
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            } catch (Exception ignored) {}
                         }
                         if (clients.isEmpty()) {
                             sizeRequest = true;
@@ -188,22 +301,16 @@ public class ClientSocket implements VirtualView, Runnable {
                         if (sizeRequest) {
                             try {
                                 clientActions.put(new AskingPlayersNumberAction(nick));
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            } catch (InterruptedException ignored) {}
                         }
                         try {
                             if (clients.size() > 1) {
                                 clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer(), playersNumber));
                                 serverActions.put(new StartAction(null));
                             }
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        //return;
+                        } catch (InterruptedException ignored) {}
                     } else {
-                        //Reconnect
-                        //Ricerca VirtualView Vecchia
+                        //Reconnect (search for old virtualview)
                         nickname = ((SetNicknameAction) action).getNickname();
                         VirtualView oldVirtualView = null;
                         for (VirtualView c : clients) {
@@ -223,9 +330,7 @@ public class ClientSocket implements VirtualView, Runnable {
                                 clients.add(index, this);
                                 showAction(new SetNicknameAction(nickname));
                                 serverActions.put(new ReconnectedPlayerAction(nickname, oldVirtualView, this));
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                            } catch (InterruptedException ignored) {}
                         } else {
                             showAction(new SetNicknameAction(null));
                             System.out.println("> User " + nickname + " already online or doesn't exist");
@@ -237,25 +342,35 @@ public class ClientSocket implements VirtualView, Runnable {
                 }
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        } catch (Exception ignored) {}
+
+        finally {
             System.out.println("> Client disconnected: " + nickname);
             closeResources();
         }
     }
 
+    /**
+     * Closes the input and output streams.
+     */
     private void closeResources() {
-       /* try {
+        try {
             if (inputStream != null)
                 inputStream.close();
             if (outputStream != null)
                 outputStream.close();
         } catch (IOException e) {
-            System.err.println("Errore durante la chiusura delle risorse: " + e.getMessage());
-        }*/
+            System.err.println("Error during socket resource closure: " + e.getMessage());
+            System.exit(0);
+        }
     }
 
+    /**
+     * Counts the number of online players.
+     *
+     * @return the number of online players.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     private int countOnlinePlayer() throws RemoteException {
         int count = 0;
         synchronized (clients) {
