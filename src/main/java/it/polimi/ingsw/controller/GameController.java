@@ -147,12 +147,12 @@ public class GameController {
 */
 
     public int getCurrPlayersNumber() {
-        synchronized(this.players) {
+          synchronized(this.players) {
             if (!players.isEmpty())
                 return players.size();
             else
                 return 0;
-        }
+          }
     }
 
     public int getMaxPlayersNumber() {

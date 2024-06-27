@@ -1,6 +1,7 @@
 package it.polimi.ingsw.modelTest;
 
 import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.networking.ClientRmi;
 import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.util.Print;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +19,10 @@ public class PlayerTest {
     @DisplayName("Integrity Test")
     void integrityTest() throws RemoteException {
         Game testGame = Game.getInstance();
-        Player p = new Player("gigi", false);
+        Player p = new Player("gigi");
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
-        VirtualView cli = new RmiClient(null);
+        VirtualView cli = new ClientRmi(null);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(playersList, clients);
@@ -65,11 +66,11 @@ public class PlayerTest {
     void placementTest() throws RemoteException {
 
         Game testGame = Game.getInstance();
-        Player p = new Player("gigi", false);
+        Player p = new Player("gigi");
 
         ArrayList<Player> playersList = new ArrayList<>();
         playersList.add(p);
-        VirtualView cli = new RmiClient(null);
+        VirtualView cli = new ClientRmi(null);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(playersList, clients);

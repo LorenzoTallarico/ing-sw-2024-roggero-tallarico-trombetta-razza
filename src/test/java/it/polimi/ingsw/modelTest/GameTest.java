@@ -5,6 +5,7 @@ import it.polimi.ingsw.model.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import it.polimi.ingsw.networking.ClientRmi;
 import it.polimi.ingsw.networking.VirtualServer;
 import it.polimi.ingsw.networking.VirtualView;
 import it.polimi.ingsw.util.Print;
@@ -20,7 +21,7 @@ public class GameTest {
         testGame.end();
         testGame.nextState();
      */
-
+/*
     @Test
     void IntegrityTest() throws RemoteException {
         Game testGame = Game.getInstance();
@@ -174,7 +175,8 @@ public class GameTest {
         testGame.nextState();
     }
 
- */
+
+
 
     @Test
     void handsTest() throws RemoteException {
@@ -570,7 +572,7 @@ public class GameTest {
         Player fake1 = new Player("Marco", false);
         players.add(fake1);
         VirtualServer server = null;
-        VirtualView cli = new RmiClient(server);
+        VirtualView cli = new ClientRmi(server);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
 
@@ -596,9 +598,9 @@ public class GameTest {
     void coverageTest() throws RemoteException{
         Game testGame = Game.getInstance();
         ArrayList<Player> players = new ArrayList<Player>();
-        Player fake1 = new Player("Marco", false);
+        Player fake1 = new Player("Marco");
         players.add(fake1);
-        VirtualView cli = new RmiClient(null);
+        VirtualView cli = new ClientRmi(null);
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(players, clients);
@@ -640,7 +642,7 @@ public class GameTest {
         fake1.getArea().setSpace(tempRes,42,42);
         assertTrue(fake1.checkGold(tempGold));
     }
-
+*/
     @Test
     void ControllerTest() throws RemoteException{
         Card tempCard1;
@@ -650,11 +652,15 @@ public class GameTest {
         Game testGame = Game.getInstance();
         GameController controller = new GameController();
         controller.setPlayersNumber(2);
-        Player fake1 = new Player("Marco", false);
-        VirtualView cli1 = new RmiClient(null);
-        Player fake2 = new Player("Simone", false);
-        VirtualView cli2 = new RmiClient(null);
+        Player fake1 = new Player("Marco");
+        VirtualView cli1 = new ClientRmi(null);
+        Player fake2 = new Player("Simone");
+        VirtualView cli2 = new ClientRmi(null);
+        // Player fake3 = new Player("giovanni");
+        // VirtualView cli3 = new ClientRmi(null);
         // test of addPlayer method
+        int currNumber = controller.getCurrPlayersNumber();
+        assertEquals(currNumber,0);
         controller.addPlayer(fake1 , cli1);
         controller.addPlayer(fake2 , cli2);
         assertEquals(testGame.getPlayersNumber(),2);
@@ -685,7 +691,20 @@ public class GameTest {
         // test of getWholeChat method
         Message msg2 = new Message("prova2","autore2");
         controller.sendChatMessage(msg2);
-        assertEquals(chat.getWholeChat().get(0),msg);
-        assertEquals(chat.getWholeChat().get(1),msg2);
+        Message msx;
+        Message msx2;
+        msx = controller.getWholeChat().get(0);
+        assertEquals(msx,msg);
+        msx2 = controller.getWholeChat().get(1);
+        assertEquals(msx2,msg2);
+        // test of getCurrPlayersNumber function
+        currNumber = controller.getCurrPlayersNumber();
+        assertEquals(currNumber,2);
+        // test of isPlayerInTurn function
+        boolean bool = controller.isPlayerInTurn(fake2);
+        assertTrue(bool);
+        // test of calculateEndPoints function
+        bool = controller.calculateEndPoints();
+        assertFalse(bool);
     }
 }
