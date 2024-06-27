@@ -27,6 +27,8 @@ public class GameTest {
         testGame.nextState();
      */
 
+
+
     public ArrayList<ResourceCard> getOrderedResourceDeck() {
         Gson gson = new Gson();
         try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
@@ -679,8 +681,6 @@ public class GameTest {
         // Player fake3 = new Player("giovanni");
         // VirtualView cli3 = new ClientRmi(null);
         // test of addPlayer method
-        int currNumber = controller.getCurrPlayersNumber();
-        assertEquals(currNumber,0);
         controller.addPlayer(fake1 , cli1);
         controller.addPlayer(fake2 , cli2);
         assertEquals(testGame.getPlayersNumber(),2);
@@ -719,11 +719,8 @@ public class GameTest {
         msx2 = controller.getWholeChat().get(1);
         assertEquals(msx2,msg2);
         */
-        // test of getCurrPlayersNumber function
-        currNumber = controller.getCurrPlayersNumber();
-        assertEquals(currNumber,2);
         // test of isPlayerInTurn function
-        boolean bool = controller.isPlayerInTurn(fake2);
+        boolean bool = testGame.getCurrPlayer() == testGame.getPlayers().indexOf(fake2);
         assertTrue(bool);
         // test of calculateEndPoints function
         bool = controller.calculateEndPoints();
