@@ -361,7 +361,6 @@ public class ClientSocket implements VirtualView, Runnable {
                 outputStream.close();
         } catch (IOException e) {
             System.err.println("Error during socket resource closure: " + e.getMessage());
-            System.exit(0);
         }
     }
 
