@@ -7,8 +7,22 @@ import java.io.IOException;
 import java.rmi.NotBoundException;
 import java.util.*;
 
+/**
+ * ClientApp is the entry point for starting the client application.
+ * It allows the user to choose the interface (TUI or GUI), connection method (RMI or Socket),
+ * specify the server port and IP address, and enter a nickname to connect to the game server.
+ */
 public class ClientApp {
 
+    /**
+     * The main method to start the client application.
+     * It prompts the user to choose interface type (TUI or GUI), connection method (RMI or Socket),
+     * specify server port and IP address, and enter a nickname.
+     *
+     * @param args command-line arguments (not used in this application)
+     * @throws NotBoundException if RMI registry binding fails
+     * @throws IOException if an I/O error occurs
+     */
     public static void main(String[] args) throws NotBoundException, IOException {
         String AsciiArt =
                 "  ______                   __                            __    __              __                                   __  __            \n"+
@@ -21,8 +35,6 @@ public class ClientApp {
                 "$$    $$/ $$    $$/ $$    $$ |$$       |/$$/ $$  |      $$ | $$$ |$$    $$ |  $$  $$/ $$    $$/ $$ |     $$    $$ |$$ |$$ |/     $$/  \n"+
                 " $$$$$$/   $$$$$$/   $$$$$$$/  $$$$$$$/ $$/   $$/       $$/   $$/  $$$$$$$/    $$$$/   $$$$$$/  $$/       $$$$$$$/ $$/ $$/ $$$$$$$/   \n";
         boolean checkChoice = false;
-        boolean portFlag = false;
-        boolean nicknameOk = false;
         Scanner scan = new Scanner(System.in);
         String line;
         int connectionChoice = 0;

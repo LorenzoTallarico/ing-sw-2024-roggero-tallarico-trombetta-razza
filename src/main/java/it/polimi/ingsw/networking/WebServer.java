@@ -21,19 +21,74 @@ import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-//Ricezione info in webServer e gestione di tali info, invece invio al client tutto in VirtualView
+/**
+ * WebServer is responsible for managing the network communication between the clients and the server.
+ * It supports both RMI and socket-based communication mechanisms. Here all the information between clients
+ * and server are exchanged through actions, each one is handled differently.
+ * Webserver also manages the possible client disconnections.
+ */
 public class WebServer implements VirtualServer {
+
+    /**
+     * Default port number for the RMI server.
+     */
     private static int PORT_RMI = 6969;
+
+    /**
+     * Default port number for the socket server.
+     */
     private static int PORT_SOCKET = 7171;
+
+    /**
+     * The GameController instance to manage the game logic.
+     */
     private GameController controller = null;
+
+    /**
+     * List of clients.
+     */
     private final ArrayList<VirtualView> clients = new ArrayList<>();
-    private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>(); //Action arrivate da Client
-    private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>(); //Action da mandare a Client
-    private boolean connectionFlagClient = true, connectionFlagServer = true;
+
+    /**
+     * Actions received from clients.
+     */
+    private final BlockingQueue<Action> serverActions = new LinkedBlockingQueue<>();
+
+    /**
+     * Actions to be sent to clients.
+     */
+    private final BlockingQueue<Action> clientActions = new LinkedBlockingQueue<>();
+
+    /**
+     * Flag checking the thread that handles the actions to be sent to client.
+     */
+    private boolean connectionFlagClient = true;
+
+    /**
+     * Flag checking the thread that handles the action received form clients.
+     */
+    private boolean connectionFlagServer = true;
+
+    /**
+     * Indicates if the game has started.
+     */
     private boolean gameStarted = false;
-    private int playersNumber = 0;
+
+    /**
+     * Number of connected players.
+     */
     private int numStarter = 0;
 
+    /**
+     * Number of initial players (used to control initial connections).
+     */
+    private int playersNumber = 0;
+
+    /**
+     * Constructs a WebServer with specified ports for RMI and socket communication.
+     *
+     * @param ports an array of integers where ports[0] is the RMI port and ports[1] is the socket port
+     */
     public WebServer(int[] ports) {
         PORT_RMI = ports[0];
         PORT_SOCKET = ports[1];
@@ -46,6 +101,10 @@ public class WebServer implements VirtualServer {
         PORT_SOCKET = ports[1];
     }
 
+    /**
+     * Starts the RMI server.
+     * Binds the server to the specified RMI port and registers the server name "GameServer".
+     */
     public void startRmiServer() {
         try {
             final String serverName = "GameServer";
@@ -59,6 +118,10 @@ public class WebServer implements VirtualServer {
         }
     }
 
+    /**
+     * Starts the socket server.
+     * Listens on the specified socket port and accepts client connections, each handled in a separate thread.
+     */
     public void startSocketServer() {
         try (ServerSocket serverSocket = new ServerSocket(PORT_SOCKET)) {
             System.out.println("Server Socket ready.");
@@ -69,10 +132,17 @@ public class WebServer implements VirtualServer {
                 clientSocketThread.start();
             }
         } catch (IOException e) {
-            System.err.println("Errore durante l'avvio del server Socket: " + e.getMessage());
+            System.err.println("Error during the start of the Socket server: " + e.getMessage());
         }
     }
 
+    /**
+     * Updates clients with actions from the clientActions queue.
+     * This method continuously runs while the connectionFlagClient is true.
+     *
+     * @throws InterruptedException if the thread is interrupted while waiting
+     * @throws RemoteException      if there is an RMI-related issue
+     */
     public void clientsUpdateThread() throws InterruptedException, RemoteException {
         try {
             while (connectionFlagClient) {
@@ -88,10 +158,18 @@ public class WebServer implements VirtualServer {
             }
         } catch (InterruptedException | IOException e) {
             connectionFlagClient = false;
-            e.printStackTrace();
+            System.err.println("Error encountered during the handling of an action taken form the clients update thread: " + e.getMessage());
         }
     }
 
+    /**
+     * Processes actions from the serverActions queue.
+     * This method continuously runs while the connectionFlagServer is true.
+     * Each action is handled according to his type
+     *
+     * @throws InterruptedException if the thread is interrupted while waiting
+     * @throws RemoteException      if there is an RMI-related issue
+     */
     public void serverUpdateThread() throws InterruptedException, RemoteException {
         while (connectionFlagServer) {
             try {
@@ -134,8 +212,7 @@ public class WebServer implements VirtualServer {
                                     if (client.getOnline()) {
                                         synchronized (this.clients) {
                                             this.controller.addPlayer(new Player(client.getNickname()), client);
-                                            //String textUpdate = "> Player " + p.getName() + " joined the game. " + this.controller.getCurrPlayersNumber() + "/" + (this.controller.getMaxPlayersNumber() == 0 ? "?" : this.controller.getMaxPlayersNumber());
-                                            //System.out.println(textUpdate);
+
                                         }
                                     }
                                 }
@@ -152,14 +229,18 @@ public class WebServer implements VirtualServer {
                 }
             } catch (InterruptedException e) {
                 connectionFlagServer = false;
+                System.err.println("Error encountered during the handling of an action taken form the server update thread: " + e.getMessage());
             }
         }
     }
 
+    /**
+     * Starts the WebServer by initializing and running the RMI and socket servers.
+     * Also starts threads to handle client updates and server requests.
+     */
     public static void start() {
         int[] ports = {PORT_RMI, PORT_SOCKET};
         WebServer webServer = new WebServer(new GameController(), ports);
-        //listener and accepter start up
         Thread rmiThread = new Thread(webServer::startRmiServer);
         Thread socketThread = new Thread(webServer::startSocketServer);
         rmiThread.start();
@@ -169,10 +250,7 @@ public class WebServer implements VirtualServer {
         Runnable clientsUpdateRunnable = () -> {
             try {
                 webServer.clientsUpdateThread();
-            } catch (InterruptedException | RemoteException e) {
-                // Gestione dell'eccezione
-                e.printStackTrace();
-            }
+            } catch (InterruptedException | RemoteException ignored) {}
         };
         Thread clientsUpdateThread = new Thread(clientsUpdateRunnable);
         clientsUpdateThread.start();
@@ -181,25 +259,30 @@ public class WebServer implements VirtualServer {
         Runnable serverUpdateRunnable = () -> {
             try {
                 webServer.serverUpdateThread();
-            } catch (InterruptedException | RemoteException e) {
-                // Gestione dell'eccezione
-                e.printStackTrace();
-            }
+            } catch (InterruptedException | RemoteException ignored) {}
         };
         Thread serverUpdateThread = new Thread(serverUpdateRunnable);
         serverUpdateThread.start();
+
+        //Thread to check clients responsivity
         Runnable checkAliveRunnable = () -> {
             try {
                 webServer.checkAliveThread();
-            } catch (InterruptedException | IOException e) {
-                // Gestione dell'eccezione
-                e.printStackTrace();
-            }
+            } catch (InterruptedException | IOException ignored) {}
         };
         Thread checkAliveThread = new Thread(checkAliveRunnable);
         checkAliveThread.start();
     }
 
+    /**
+     * Handles the connection request from an RMI client.
+     * If the game hasn't started, it handles the connection to the lobby.
+     * If the game has started, it attempts to reconnect the client.
+     *
+     * @param client the VirtualView instance representing the client
+     * @return true if the connection is successful, false otherwise
+     * @throws RemoteException if there is an RMI-related issue
+     */
     @Override
     public boolean connect(VirtualView client) throws RemoteException {
         synchronized (this.clients) {
@@ -213,9 +296,7 @@ public class WebServer implements VirtualServer {
                             System.out.println("> Denied connection to a new client, user \"" + nick + "\" already existing and now online.");
                             try {
                                 client.showAction(new ErrorAction(nick, "Denied connection to a new client, user \"" + nick + "\" already existing and now online."));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            } catch (Exception ignored) {}
                             return false;
                         }
                     }
@@ -223,18 +304,14 @@ public class WebServer implements VirtualServer {
                         System.out.println("> Denied connection to a new client, max number of players already reached.");
                         try {
                             client.showAction(new ErrorAction(nick, "Max amount of players reached."));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception ignored) {}
                         return false;
                     }
                 }
                 if (clients.size() == 1 && playersNumber == 0) {
                     try {
                         client.showAction(new ErrorAction(nick, "Another player has just started a game, they still haven't chosen the size of the game, wait some seconds before reconnecting."));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    } catch (Exception ignored) {}
                     return false;
                 }
                 if (clients.isEmpty()) {
@@ -249,20 +326,17 @@ public class WebServer implements VirtualServer {
                 if (sizeRequest) {
                     try {
                         clientActions.put(new AskingPlayersNumberAction(nick));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (InterruptedException ignored) {}
                 }
                 try {
                     if (clients.size() > 1) {
                         clientActions.put(new JoiningPlayerAction(nick, countOnlinePlayer(), playersNumber));
                         serverActions.put(new StartAction(null));
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                } catch (InterruptedException ignored) {}
                 return true;
-            } else { // Reconnect
+
+            } else { // Reconnection
                 VirtualView oldVirtualView = null;
                 for (VirtualView c : clients) {
                     if (c.getNickname().equalsIgnoreCase(nick)) {
@@ -277,21 +351,16 @@ public class WebServer implements VirtualServer {
                         cli.setOnline(true);
                         cli.setPing(true);
                         cli.setNickname(nick);
-                        //vedere se sul riferimento di Virtualviw client passato in ingresso gli va benen
                         int index = clients.indexOf(oldVirtualView);
                         clients.remove(index);
                         clients.add(index, cli);
                         serverActions.put(new ReconnectedPlayerAction(nick, oldVirtualView, cli));
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (InterruptedException ignored) {}
                 } else {
                     System.out.println("> User " + nick + " already online or doesn't exist.");
                     try {
                         client.showAction(new ErrorAction(nick, "Game started, user not found."));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    } catch (Exception ignored) {}
                     return false;
                 }
                 return true;
@@ -299,7 +368,12 @@ public class WebServer implements VirtualServer {
         }
     }
 
-    //NB: controllare la sincronizzazione qui su "this"
+    /**
+     * Counts the number of currently online players.
+     *
+     * @return the number of online players
+     * @throws RemoteException if there is an RMI-related issue
+     */
     private int countOnlinePlayer() throws RemoteException {
         int count = 0;
         synchronized (clients) {
@@ -311,15 +385,20 @@ public class WebServer implements VirtualServer {
         return count;
     }
 
+    /**
+     * Receives an action form a client (that sent a command) and processes it.
+     * If the action is a PONG type, it sets the client's ping status to true.
+     * Otherwise, it puts the action into the server actions queue.
+     *
+     * @param action the action received from the client
+     * @throws RemoteException if there is any networking related issue
+     */
     @Override
     public void sendAction(Action action) throws RemoteException {
         try {
-            System.out.println("> Received action, type \"" + action.getType().toString() + "\".");
             if (action.getType().equals(ActionType.PONG)) {
-                //synchronized (clients) {
                 for (VirtualView c : clients) {
                     if (c.getNickname().equalsIgnoreCase(action.getAuthor())) {
-                        //System.out.println("sostituito il boolean di " + action.getAuthor() + "trovato c :" + c.getNickname());
                         c.setPing(true);
                     }
                 }
@@ -332,6 +411,14 @@ public class WebServer implements VirtualServer {
         }
     }
 
+    /**
+     * Periodically checks the connection status of clients.
+     * Sends ping actions to clients and marks them as disconnected if they do not respond.
+     * Handles disconnection of clients and manages game start conditions.
+     *
+     * @throws InterruptedException if the thread is interrupted
+     * @throws IOException if there is an I/O-related issue
+     */
     public void checkAliveThread() throws InterruptedException, IOException {
         ArrayList<String> disconnectedClient = new ArrayList<>();
         while (true) {
@@ -341,11 +428,8 @@ public class WebServer implements VirtualServer {
                     if (c.getOnline() && c.getNickname() != null) {
                         c.setPing(false);
                         try {
-                            System.out.println("invio ping a " + c.getNickname());
                             c.showAction(new PingAction());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        } catch (Exception ignored) {}
                     }
                 }
             }
@@ -354,19 +438,16 @@ public class WebServer implements VirtualServer {
             disconnectedClient.clear();
             synchronized (clients) {
                 for (VirtualView c : clients) {
-                    //System.out.println("Client: " + c.getNickname() + " Online: " + c.getOnline() + " ping: " + c.getPing());
                     if (!c.getPing() && c.getOnline()) {
-                        //System.err.println("Sono entrato in !c.getPing() && c.getOnline() ---> mi mette nella lista per disconnettere");
                         disconnectedClient.add(c.getNickname());
                         c.setOnline(false);
                     }
 
                 }
             }
-
+            //adds disconnection action to queue
             for (String c : disconnectedClient) {
                 clientActions.put(new DisconnectedPlayerAction(c, countOnlinePlayer()));
-                System.err.println("appena fatta put di action Disconnected, ");
                 for (VirtualView v : clients) {
                     if (disconnectedClient.contains(v.getNickname())) {
                         v.setOnline(false);
@@ -375,12 +456,14 @@ public class WebServer implements VirtualServer {
             }
 
             if (!gameStarted) {
+                //client offline will be eliminated
                 ArrayList<VirtualView> clientsToRemove = new ArrayList<>();
                 for (VirtualView c : clients) {
                     if (disconnectedClient.contains(c.getNickname()))
                         clientsToRemove.add(c);
                 }
 
+                //removes disconnected clients
                 if (!disconnectedClient.isEmpty()) {
                     synchronized (clients) {
                         clients.removeAll(clientsToRemove);
@@ -390,34 +473,29 @@ public class WebServer implements VirtualServer {
                 if (countOnlinePlayer() > 1 && startActionRequired) {
                     try {
                         clients.get(0).showAction(new AskingStartAction(clients.get(0).getNickname(), countOnlinePlayer()));
-                        System.out.println("Invio AskingStart");
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
+                    } catch (RemoteException ignored) {}
+                    catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
-            } else {
+            } else {  //game not started
+                //disconnected clients will be set offline
                 for (String c : disconnectedClient) {
-                    //System.err.println("Dentro for Virtualview nell'else di !gamestarted, elenco dei client:");
-                    if (numStarter == clients.size()) {
+                    if (numStarter == clients.size()) { //every player chose the starter card and the achievement
                         controller.disconnection(c);
                         if (countOnlinePlayer() <= 1) {
-                            //System.out.println("Dentro webserver: se è connesso solo un ultimo player parto con la routine\n");
                             String lastOnlineNick = null;
                             for (VirtualView cli : clients) {
                                 if (cli.getOnline()) {
                                     lastOnlineNick = cli.getNickname();
-                                    //Ho il nickname dell'ultimo player online, mando l'action per bloccare il client
                                     Action act = new WaitAction(lastOnlineNick);
-                                    System.out.println("Sto per lanciare action che blocca il client");
                                     cli.showAction(act);
                                     break;
                                 }
                             }
                         }
 
-                    } else {
+                    } else {  //if still in the starter card / achievement choice phase
                         for (VirtualView v : clients) {
                             if (v.getNickname().equalsIgnoreCase(c)) {
                                 if (!v.getStarter()) {
@@ -431,6 +509,14 @@ public class WebServer implements VirtualServer {
         }
     }
 
+    /**
+     * Starts a routine to wait for a player to reconnect during the starter card and achievement choice phase,
+     * this will start only when one last player is connected to the game.
+     * The routine checks every second for up to 30 seconds if the player has reconnected.
+     * If the player does not reconnect within the time limit, the game is shut down.
+     *
+     * @param nickname the nickname of the player who needs to reconnect
+     */
     public void waitingRoutineChoiceAchi(String nickname) {
         Runnable task = new Runnable() {
             int attempts = 30;
@@ -438,7 +524,6 @@ public class WebServer implements VirtualServer {
             @Override
             public void run() {
                 try {
-                    // NB: bisogna sincronizzare l'accesso a clients
                     while (attempts != 0) {
                         Thread.sleep(1000);
                         synchronized (clients) {
@@ -452,9 +537,7 @@ public class WebServer implements VirtualServer {
                         System.out.println("Seconds remaining: " + attempts);
                     }
                     shutdown("Game ended, user did not reconnected during starter card and achievement choice.");
-                } catch (InterruptedException | IOException e) {
-                    e.printStackTrace();
-                }
+                } catch (InterruptedException | IOException ignore) {}
             }
         };
 
@@ -462,11 +545,16 @@ public class WebServer implements VirtualServer {
         thread.start();
     }
 
-        //butta giù clients e server
-    public void shutdown (String messaggio) throws IOException {
+    /**
+     * Shuts down the server and disconnects all clients, sending them an error message.
+     *
+     * @param message the message to send to clients before shutting down
+     * @throws IOException if an I/O error occurs while sending the error message to clients
+     */
+    public void shutdown (String message) throws IOException {
         synchronized (clients) {
             for (VirtualView c : clients) {
-                c.showAction(new ErrorAction(c.getNickname(), messaggio, true));
+                c.showAction(new ErrorAction(c.getNickname(), message, true));
             }
         }
         System.exit(0);
@@ -475,14 +563,6 @@ public class WebServer implements VirtualServer {
 
 }
 
-    /*
-    checkAliveThread()
-        se il gameStarted == false => l'utente che non risulta connesso viene eliminato e invio messaggio notificaDisconnessione e askingStart
-        se il gameStarted == true => setto solo il boolean connected == false e sarà da gestire la ricezione e invio e salto turno
-        per riconessione => modifica connection se gameStarted == true allora verra creata nuova VirtualView che verrà rimpiazzata e inviati tutti i dati della partita tramite un action
-        il thread sarà strutturato come:
-        invia Ping a tutti, aspetta tot ms e verifica quanti hanno risposto, magari con un campo check nella virtualView e riparte dopo aver gestito cancellazione client o set connected = false;
-     */
 
 
 

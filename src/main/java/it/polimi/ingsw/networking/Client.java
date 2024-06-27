@@ -33,6 +33,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class Client extends UnicastRemoteObject implements VirtualView {
 
 
+    /**
+     *
+     */
     enum State {
         COMMANDS,
         GAMESIZE,
