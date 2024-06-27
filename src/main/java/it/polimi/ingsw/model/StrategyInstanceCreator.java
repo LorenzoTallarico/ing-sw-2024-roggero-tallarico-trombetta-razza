@@ -24,7 +24,8 @@ public class StrategyInstanceCreator implements InstanceCreator<Strategy> {
             case "ConcreteStrategyResource":
                 return new ConcreteStrategyResource();
             default:
-                throw new IllegalArgumentException("Strategy type not supported: " + strategyType);
+                //Strategy type not supported
+                return null;
         }
     }
 

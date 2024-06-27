@@ -35,4 +35,8 @@ public class Chat implements Serializable {
         return tempArr;
     }
 
+    public void dispose() {
+        chat.clear();
+    }
+
 }

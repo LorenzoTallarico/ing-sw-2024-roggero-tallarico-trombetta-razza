@@ -477,4 +477,16 @@ public class PlaygroundTest {
         assertEquals(2, table3.countItems(Item.SCROLL));
     }
 
+    @Test
+    void spaceTest() {
+        Space space = new Space();
+        assertNull(space.getCard());
+        space.setDead(true);
+        assertTrue(space.isDead());
+        space.setDead(false);
+        assertFalse(space.isDead());
+    }
+
+
+
 }

@@ -186,13 +186,7 @@ public class Player implements Serializable {
      * @param card Card added to the player hand
      */
     public void addCard(Card card) {
-        //probabilmente è stato sistemato e non serve il try catch
-        try{
-            this.hand.add(card);
-        } catch (NullPointerException e){
-            //da gestire meglio
-            System.out.println("Cannot add card because Player's hand is null");
-        }
+        this.hand.add(card);
     }
 
     public void disconnection(){

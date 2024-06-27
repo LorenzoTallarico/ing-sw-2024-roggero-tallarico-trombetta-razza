@@ -10,8 +10,19 @@ import org.junit.jupiter.api.Test;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 
 public class CardTest {
+
+    public AchievementCard[] getOrderedAchievementDeck() {
+        Gson gson = new Gson();
+        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+            AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
+            return tempAchievement;
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     private ResourceCard[] getOrderedResourceDeck() {
         Gson gson = new Gson();
@@ -121,6 +132,35 @@ public class CardTest {
         assertEquals(Item.JAR, g.getItem());
         assertEquals(ReqPoint.ITEM, g.getPointsType());
         assertEquals("", g.getID());
+    }
+
+    @Test
+    void achievementCardTest() {
+        AchievementCard[] achievements = getOrderedAchievementDeck();
+        for(int i = 0; i < achievements.length; i++) {
+            achievements[i].setFront(false);
+            assertEquals("087", achievements[i].getSideID());
+            assertEquals(((i+87) < 100 ? "0" : "") + (i+87), achievements[i].getSideID(true));
+        }
+    }
+
+    @Test
+    void achievementCardStrategyTest() {
+        StrategyInstanceCreator strategy = new StrategyInstanceCreator("invalid");
+        assertNull(strategy.createInstance(null));
+
+        AchievementCard ach1 = new AchievementCard(2, Resource.BUTTERFLY, "", Item.PLUME, "invalid");
+        AchievementCard ach2 = new AchievementCard(2, Resource.BUTTERFLY, "", Item.PLUME, "invalid");
+        AchievementCard ach3 = new AchievementCard(2, Resource.BUTTERFLY, "ConcreteStrategyMixed", Item.PLUME, "");
+        AchievementCard ach4 = new AchievementCard(2, Resource.BUTTERFLY, "ConcreteStrategyMixed", Item.PLUME, "");
+
+        assertEquals(strategy.createInstance(null), ach1.getStrategy());
+        assertTrue(ach1.equals(ach2));
+        assertTrue(ach3.equals(ach4));
+
+        AchievementCard ach5 = new AchievementCard(2, Resource.BUTTERFLY, "ConcreteStrategyItem", Item.PLUME, "");
+        AchievementCard ach6 = new AchievementCard(2, Resource.MUSHROOM, "ConcreteStrategyItem", Item.PLUME, "");
+
     }
     
 }

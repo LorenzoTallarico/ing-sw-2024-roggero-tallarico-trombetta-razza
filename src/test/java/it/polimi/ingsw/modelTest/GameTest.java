@@ -678,7 +678,6 @@ public class GameTest {
         controller.setSecretAchievement("Marco",tempAchievement1);
         assertEquals(fake1.getSecretAchievement().get(0),tempAchievement1);
         // test of sendChatMessage method
-        /*
         Chat chat = Chat.getInstance();
         Message msg = new Message("prova","autore");
         controller.sendChatMessage(msg);
@@ -692,7 +691,6 @@ public class GameTest {
         assertEquals(msx,msg);
         msx2 = controller.getWholeChat().get(1);
         assertEquals(msx2,msg2);
-        */
         // test of isPlayerInTurn function
         boolean bool = testGame.getCurrPlayer() == testGame.getPlayers().indexOf(fake2);
         assertTrue(bool);
@@ -705,4 +703,5 @@ public class GameTest {
         testGame.end();
         testGame.nextState();
     }
+
 }
