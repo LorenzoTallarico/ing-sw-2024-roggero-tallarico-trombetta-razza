@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 
+/**
+ * card representing mainly a resource, containing resources and also items
+ */
 public class ResourceCard extends Card implements Serializable {
 
     /**
@@ -72,6 +75,11 @@ public class ResourceCard extends Card implements Serializable {
         return result;
     }
 
+    /**
+     * method to compare two resource cards
+     * @param res the resource card we are comparing the first resource card with
+     * @return true if the two cards are equal to each other, false if not
+     */
     public boolean equals(ResourceCard res){
         if(this.points != res.getPoints() || this.resource != res.getResource()){
             return false;

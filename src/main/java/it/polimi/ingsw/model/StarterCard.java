@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 
+/**
+ * kind of card which is first placed by all the players at the center of the board, who can only decide whether to place it on the front or back side
+ */
 public class StarterCard extends Card implements Serializable {
 
     private final Resource secondResource;

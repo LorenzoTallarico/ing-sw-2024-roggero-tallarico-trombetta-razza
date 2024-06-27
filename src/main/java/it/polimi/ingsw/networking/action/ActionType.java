@@ -1,5 +1,8 @@
 package it.polimi.ingsw.networking.action;
 
+/**
+ * enumerative class that lists all the different types of action
+ */
 public enum ActionType {
     CONNECTION,
     SETNICKNAME,
