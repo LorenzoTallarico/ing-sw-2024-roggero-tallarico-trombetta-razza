@@ -579,24 +579,4 @@ public class Game implements Serializable {
         bigListener.notifyWinners(players);
     }
 
-
-
-
-
-
-
-
-
-    //**********  METODI PER TESTARE SOCKET (da togliere)  ***********
-    Integer state = 0;
-
-    public boolean add(Integer number) {
-        this.state += number;
-        return true;
-    }
-
-    public Integer get() {
-        return this.state;
-    }
-
 }
