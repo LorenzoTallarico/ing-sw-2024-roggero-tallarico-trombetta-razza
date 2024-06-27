@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 public class GameController {
-    //Attributi ridondanti, da vedere se utili o togliere
+    //attributi ridondanti, da vedere se utili o togliere
     private Player currentPlayer;
     private int playersNumber;
     private int position, index;

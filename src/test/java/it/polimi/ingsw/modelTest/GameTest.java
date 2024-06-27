@@ -688,7 +688,7 @@ public class GameTest {
         Message msg = new Message("prova","autore");
         controller.sendChatMessage(msg);
         assertEquals(chat.getLastMessage(),msg);
-        // test of getWholeChat method
+        // test of getWholeChat() method
         Message msg2 = new Message("prova2","autore2");
         controller.sendChatMessage(msg2);
         Message msx;

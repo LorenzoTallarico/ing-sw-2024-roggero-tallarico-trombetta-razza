@@ -128,7 +128,7 @@ public class PlayerTest {
 
 
 
-        //Creation starter card #81
+        //creation starter card #81
         Corner[] frontAngS = new Corner[4];
         Corner c0s = new Corner(CornerType.RESOURCE, Resource.LEAF, null);
         Corner c1s = new Corner(CornerType.FREE, null, null);
