@@ -266,13 +266,6 @@ public class GameTest {
             tempCard = hand.get(0);
             hand.remove(0);
         }
-        //fake1.getArea().setSpace(tempCard, 40, 40);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        while (tempCard.getResource() != Resource.MUSHROOM || tempCard.getFrontCorners()[0].getType() == CornerType.DEAD) {
-            tempCard = hand.get(0);
-            hand.remove(0);
-        }
         fake1.getArea().setSpace(tempCard, 39, 41);
         tempCard = hand.get(0);
         hand.remove(0);
@@ -281,6 +274,13 @@ public class GameTest {
             hand.remove(0);
         }
         fake1.getArea().setSpace(tempCard, 38, 42);
+        tempCard = hand.get(0);
+        hand.remove(0);
+        while (tempCard.getResource() != Resource.MUSHROOM || tempCard.getFrontCorners()[0].getType() == CornerType.DEAD) {
+            tempCard = hand.get(0);
+            hand.remove(0);
+        }
+        fake1.getArea().setSpace(tempCard, 37, 43);
         // assegno a tempAchievement la carta achievement relativa alla diagonale di mushroom
         tempAchievement = hand2.get(0);
         hand2.remove(0);
@@ -295,13 +295,6 @@ public class GameTest {
             tempCard = hand.get(0);
             hand.remove(0);
         }
-        fake1.getArea().setSpace(tempCard, 37, 43);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        while (tempCard.getResource() != Resource.MUSHROOM || tempCard.getFrontCorners()[0].getType() == CornerType.DEAD) {
-            tempCard = hand.get(0);
-            hand.remove(0);
-        }
         fake1.getArea().setSpace(tempCard, 36, 44);
         tempCard = hand.get(0);
         hand.remove(0);
@@ -310,12 +303,17 @@ public class GameTest {
             hand.remove(0);
         }
         fake1.getArea().setSpace(tempCard, 35, 45);
+        tempCard = hand.get(0);
+        hand.remove(0);
+        while (tempCard.getResource() != Resource.MUSHROOM || tempCard.getFrontCorners()[0].getType() == CornerType.DEAD) {
+            tempCard = hand.get(0);
+            hand.remove(0);
+        }
+        fake1.getArea().setSpace(tempCard, 34, 46);
         fake1.addPoints(tempAchievement.calculatePoints());
         Print.playgroundPrinter(fake1.getArea());
         // verifico che dopo aver posizionato 6 carte mushroom in diagonale, siano stati ottenuti 4 punti
 
-
-        //era così ma non lo passava:   assertEquals(fake1.getPoints()-2, 4);
         assertEquals(fake1.getPoints(), 4);
         testGame.end();
         testGame.nextState();
@@ -417,60 +415,36 @@ public class GameTest {
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(players, clients);
-        ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
+        ArrayList<Card> hand = new ArrayList<Card>(getOrderedResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
-        AchievementCard tempAchievement, tempAchievement2;
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,40,40);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,41,39);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,42,40);
-        while(tempCard.getResource() != Resource.LEAF){
-            tempCard = hand.get(0);
-            hand.remove(0);
-        }
-        fake1.getArea().setSpace(tempCard,43,41);
-        //fake1.addPoints(tempAchievement.calculatePoints());
-        //assertEquals(fake1.getPoints(),3);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,44,40);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,45,41);
-        tempCard = hand.get(0);
-        hand.remove(0);
-        fake1.getArea().setSpace(tempCard,46,40);
-        while(tempCard.getResource() != Resource.BUTTERFLY){
-            tempCard = hand.get(0);
-            hand.remove(0);
-        }
-        fake1.getArea().setSpace(tempCard,47,39);
-        tempAchievement = hand2.get(0);
-        hand2.remove(0);
-        while(!tempAchievement.getStrategyType().equals("ConcreteStrategyLshape")){
-            tempAchievement = hand2.get(0);
-            hand2.remove(0);
-        }
+        AchievementCard tempAchievement,tempAchievement2;
+        tempCard = hand.get(1);
+        fake1.getArea().setSpace(tempCard,39,41);
+        tempCard = hand.get(2);
+        fake1.getArea().setSpace(tempCard,40,42);
+        tempCard = hand.get(3);
+        fake1.getArea().setSpace(tempCard,41,41);
+        tempCard = hand.get(11);
+        fake1.getArea().setSpace(tempCard,42,42);
+        tempCard = hand.get(23);
+        fake1.getArea().setSpace(tempCard,43,43);
+        tempCard = hand.get(22);
+        fake1.getArea().setSpace(tempCard,44,44);
+        tempCard = hand.get(21);
+        fake1.getArea().setSpace(tempCard,45,43);
+        tempCard = hand.get(4);
+        fake1.getArea().setSpace(tempCard,42,44);
+        tempAchievement = hand2.get(4);
+        tempAchievement2 = hand2.get(6);
         tempAchievement.setPlayer(fake1);
         fake1.addPoints(tempAchievement.calculatePoints());
-        tempAchievement2 = hand2.get(0);
-        hand2.remove(0);
-        while(!tempAchievement2.getStrategyType().equals("ConcreteStrategyLshape")){
-            tempAchievement2 = hand2.get(0);
-            hand2.remove(0);
-        }
+        assertEquals(fake1.getPoints(),3);
         tempAchievement2.setPlayer(fake1);
-        Print.playgroundPrinter(fake1.getArea());
         fake1.addPoints(tempAchievement2.calculatePoints());
-        assertEquals(fake1.getPoints()-6,6);
-        //assertEquals(fake1.getPoints(),6);
+        assertEquals(fake1.getPoints(),6);
+        Print.playgroundPrinter(fake1.getArea());
         testGame.end();
         testGame.nextState();
     }
@@ -485,27 +459,27 @@ public class GameTest {
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(players, clients);
-        ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
+        ArrayList<Card> hand = new ArrayList<Card>(getOrderedResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
         tempCard = hand.get(4);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,40);
+        fake1.getArea().setSpace(tempCard,41,41);
         tempCard = hand.get(14);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,41,41);
+        fake1.getArea().setSpace(tempCard,42,42);
         tempCard = hand.get(26);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,42,42);
+        fake1.getArea().setSpace(tempCard,43,43);
         tempCard = hand.get(34);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,43,43);
+        fake1.getArea().setSpace(tempCard,44,44);
         tempAchievement = hand2.get(15);
         tempAchievement.setPlayer(fake1);
         fake1.addPoints(tempAchievement.calculatePoints());
-        assertEquals(fake1.getPoints()-2,4);
+        assertEquals(fake1.getPoints(),4);
         testGame.end();
         testGame.nextState();
     }
@@ -519,24 +493,24 @@ public class GameTest {
         ArrayList<VirtualView> clients = new ArrayList<>();
         clients.add(cli);
         testGame.addPlayers(players, clients);
-        ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
+        ArrayList<Card> hand = new ArrayList<Card>(getOrderedResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
         tempCard = hand.get(0);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,40);
+        fake1.getArea().setSpace(tempCard,39,41);
         tempCard = hand.get(1);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,39,41);
+        fake1.getArea().setSpace(tempCard,38,42);
         tempCard = hand.get(2);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,42);
+        fake1.getArea().setSpace(tempCard,39,43);
         tempAchievement = hand2.get(8);
         tempAchievement.setPlayer(fake1);
         fake1.addPoints(tempAchievement.calculatePoints());
-        assertEquals(fake1.getPoints()-2,4);
+        assertEquals(fake1.getPoints(),4);
         testGame.end();
         testGame.nextState();
     }
@@ -552,33 +526,33 @@ public class GameTest {
         clients.add(cli);
 
         testGame.addPlayers(players, clients);
-        ArrayList<Card> hand = new ArrayList<Card>(testGame.getResourceDeck());
+        ArrayList<Card> hand = new ArrayList<Card>(getOrderedResourceDeck());
         ArrayList<AchievementCard> hand2 = new ArrayList<AchievementCard>(getOrderedAchievementDeck());
         fake1.setHand(hand);
         Card tempCard;
         AchievementCard tempAchievement;
         tempCard = hand.get(4);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,40);
+        fake1.getArea().setSpace(tempCard,41,41);
         tempCard = hand.get(5);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,41,41);
+        fake1.getArea().setSpace(tempCard,42,42);
         tempCard = hand.get(6);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,42);
+        fake1.getArea().setSpace(tempCard,43,43);
         tempCard = hand.get(14);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,41,43);
+        fake1.getArea().setSpace(tempCard,42,44);
         tempCard = hand.get(15);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,40,44);
+        fake1.getArea().setSpace(tempCard,41,45);
         tempCard = hand.get(16);
         tempCard.setFront(true);
-        fake1.getArea().setSpace(tempCard,39,45);
+        fake1.getArea().setSpace(tempCard,40,46);
         tempAchievement = hand2.get(12);
         tempAchievement.setPlayer(fake1);
         fake1.addPoints(tempAchievement.calculatePoints());
-        assertEquals(fake1.getPoints()-3,6);
+        assertEquals(fake1.getPoints(),6);
         testGame.end();
         testGame.nextState();
     }
