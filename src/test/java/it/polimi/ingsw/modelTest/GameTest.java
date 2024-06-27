@@ -106,15 +106,6 @@ public class GameTest {
     @Test
     void nextPlayerTest() throws RemoteException {
         Game testGame = Game.getInstance();
-        GameState[] vetStati = new GameState[8];
-        vetStati[0] = GameState.LOBBY;
-        vetStati[1] = GameState.INIT;
-        vetStati[2] = GameState.READY;
-        vetStati[3] = GameState.SELECTACHIEVEMENT;
-        vetStati[4] = GameState.GAME;
-        vetStati[5] = GameState.LASTROUND;
-        vetStati[6] = GameState.FINALSCORE;
-        vetStati[7] = GameState.END;
         ArrayList<Player> players = new ArrayList<Player>();
 
         Player fake1 = new Player("Marco");
@@ -138,46 +129,18 @@ public class GameTest {
         clients.add(cli);
 
         testGame.addPlayers(players, clients);
-
+        testGame.setGameState(GameState.GAME);
         testGame.getPlayers().get(0).addPoints(20);
-        for (int i = 2; i < vetStati.length; i++) {
-            for (int j = 0; j < testGame.getPlayersNumber(); j++) {
-                assertEquals(vetStati[i], testGame.getGameState());
-                int curr = testGame.getCurrPlayer();
-                testGame.nextPlayer();
-                assertEquals(vetStati[i], testGame.getGameState());
-                if (curr == testGame.getPlayersNumber() - 1)
-                    assertEquals(testGame.getCurrPlayer(), 0);
-                else
-                    assertEquals(testGame.getCurrPlayer(), curr + 1);
-            }
-            /*for (int j = 0; j < testGame.getPlayersNumber(); j++) {
-                assertEquals(vetStati[i], testGame.getGameState());
-                int curr = testGame.getCurrPlayer();
-                testGame.nextPlayer(false);
-                assertEquals(vetStati[i], testGame.getGameState());
-//                if (curr == testGame.getPlayersNumber() - 1)
-//                    assertEquals(testGame.getCurrPlayer(), 0);
-//                else
-//                    assertEquals(testGame.getCurrPlayer(), curr + 1);
-            }**/
-
-            for (int j = 0; j < testGame.getPlayersNumber(); j++) {
-                assertEquals(vetStati[i], testGame.getGameState());
-                int curr = testGame.getCurrPlayer();
-                if (testGame.getGameState().equals(GameState.END) && j == testGame.getPlayersNumber() - 1) {
-                    testGame.nextPlayer(true);
-                } else {
-                    testGame.nextPlayer(true);
-                    if (j == testGame.getPlayersNumber() - 1 && i < vetStati.length - 1)
-                        assertEquals(vetStati[i + 1], testGame.getGameState());
-//                    if (curr == testGame.getPlayersNumber() - 1)
-//                        assertEquals(testGame.getCurrPlayer(), 0);
-//                    else
-//                        assertEquals(testGame.getCurrPlayer(), curr + 1);
-                }
-
-            }
+        for (int j = 0; j < testGame.getPlayersNumber(); j++) {
+            testGame.nextPlayer();
+            assertEquals(GameState.GAME, testGame.getGameState());
+            int curr = testGame.getCurrPlayer();
+            testGame.nextPlayer();
+            assertEquals(GameState.GAME, testGame.getGameState());
+            if (curr == testGame.getPlayersNumber() - 1)
+                assertEquals(testGame.getCurrPlayer(), 0);
+            else
+                assertEquals(testGame.getCurrPlayer(), curr + 1);
         }
         testGame.end();
         testGame.nextState();

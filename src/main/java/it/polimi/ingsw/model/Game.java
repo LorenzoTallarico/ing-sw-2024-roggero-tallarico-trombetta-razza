@@ -109,11 +109,6 @@ public class Game implements Serializable {
                 if(playerName.equalsIgnoreCase(players.get(currPlayer).getName())){
                     nextPlayer();
                 }
-
-                //Serve se è rimasto un solo giocatore connesso e non era il suo turno
-//                if(numOnlinePlayers == 1 && playerName.equalsIgnoreCase(players.get(currPlayer).getName()))
-//                    nextPlayer();
-
                 break;
             }
         }
@@ -122,7 +117,6 @@ public class Game implements Serializable {
         String nickLastPlayer = players.get(currPlayer).getName();
         boolean found = false;
         int index= currPlayer;
-        //if(!wait) {
         do {   //player offline skips turn
             currPlayer++;
             if (currPlayer >= playersNumber) {
@@ -132,8 +126,6 @@ public class Game implements Serializable {
                 } else
                     currPlayer = 0;
             }
-//                if (clients.get(currPlayer).getOnline())
-//                    found = true;
             if (players.get(currPlayer).isOnline())
                 found = true;
         } while (index != currPlayer && !found);
