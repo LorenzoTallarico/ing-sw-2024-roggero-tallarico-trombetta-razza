@@ -4,7 +4,6 @@ import it.polimi.ingsw.model.Chat;
 import it.polimi.ingsw.model.Message;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -61,9 +61,6 @@ public class GameController {
      * @throws RemoteException If a remote communication error occurs during the reconnection process.
      */
     public void reconnection(String nickname, VirtualView oldVirtualView, VirtualView newVirtualView) throws RemoteException {
-        for(VirtualView v : clients){
-            System.out.println(v);
-        }
         model.reconnection(nickname, oldVirtualView, newVirtualView);
     }
 
@@ -146,11 +143,10 @@ public class GameController {
      * Handles the disconnection of a player from the game.
      *
      * @param playerName The name of the player who is disconnecting.
-     * @param numOnlinePlayers The number of players currently online.
      * @throws RemoteException If a remote communication error occurs during the disconnection process.
      */
-    public void disconnection(String playerName, int numOnlinePlayers) throws RemoteException {
-        model.disconnection(playerName, numOnlinePlayers);
+    public void disconnection(String playerName) throws RemoteException {
+        model.disconnection(playerName);
     }
 
     /**
