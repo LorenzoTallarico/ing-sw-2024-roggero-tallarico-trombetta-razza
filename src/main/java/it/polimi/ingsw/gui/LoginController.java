@@ -10,7 +10,7 @@ import javafx.scene.text.Font;
 
 import java.util.Objects;
 
-
+/** Controller for the login part of the graphical application*/
 public class LoginController {
 
     private boolean numberChoice = false;
@@ -56,7 +56,10 @@ public class LoginController {
     @FXML
     private Label join3Lbl;
 
-
+    /**
+     * When the check button next to the name field is clicked, this method disables the field and
+     * the button, and assigns the string to the name attribute.
+     */
     @FXML
     protected void onNameBtnClick() {
         String name = nameFld.getText().trim();
@@ -73,12 +76,20 @@ public class LoginController {
         }
     }
 
+    /**
+     * it calls the onNameBtnClick method when pressing enter key while typing in the name field
+     * @param ke key pressed from the keyboard
+     */
     @FXML
     protected void onNameFldEnter(KeyEvent ke) {
         if (ke.getCode().equals(KeyCode.ENTER))
             onNameBtnClick();
     }
 
+    /**
+     * Shows an image with a different number of player for each option when choosing the game's size
+     * @param e event of the MenuItem clicked, needed to know which option is currently selected
+     */
     @FXML
     protected void showConfirm(Event e) {
         if(!confirmBtn.isVisible())
@@ -112,6 +123,10 @@ public class LoginController {
         }
     }
 
+    /**
+     * Assigns the number of player chosen to the right attribute and disables the menu.
+     * @param e event of the MenuItem clicked, needed to know which option is currently selected
+     */
     @FXML
     protected void onConfirmBtnClick(Event e) {
         if(playersNumber != 0) {
@@ -121,6 +136,9 @@ public class LoginController {
         }
     }
 
+    /**
+     * Changes appearance of the error label when the mouse hovers it
+     */
     @FXML
     protected void onMouseEnteredError() {
         if(errorLbl.isVisible()) {
@@ -128,6 +146,9 @@ public class LoginController {
         }
     }
 
+    /**
+     * Changes appearance of the error label when the mouse exits its area
+     */
     @FXML
     protected void onMouseExitedError() {
         if (errorLbl.isVisible()) {
@@ -135,6 +156,9 @@ public class LoginController {
         }
     }
 
+    /**
+     * Changes appearance of the first join label when the mouse hovers it
+     */
     @FXML
     protected void onJoin1MouseIn() {
         Font font = join1Lbl.getFont();
@@ -145,6 +169,9 @@ public class LoginController {
         join1Img.setLayoutX(join1Img.getLayoutX() - 1);
     }
 
+    /**
+     * Changes appearance of the first join label when the mouse exits its area
+     */
     @FXML
     protected void onJoin1MouseOut() {
         Font font = join1Lbl.getFont();
@@ -155,6 +182,9 @@ public class LoginController {
         join1Img.setLayoutX(join1Img.getLayoutX() + 1);
     }
 
+    /**
+     * Changes appearance of the second join label when the mouse hovers it
+     */
     @FXML
     protected void onJoin2MouseIn() {
         Font font = join2Lbl.getFont();
@@ -164,7 +194,9 @@ public class LoginController {
         join2Img.setFitWidth(join2Img.getFitWidth() + 2);
         join2Img.setLayoutX(join2Img.getLayoutX() - 1);
     }
-
+    /**
+     * Changes appearance of the second join label when the mouse exits its area
+     */
     @FXML
     protected void onJoin2MouseOut() {
         Font font = join2Lbl.getFont();
@@ -175,6 +207,9 @@ public class LoginController {
         join2Img.setLayoutX(join2Img.getLayoutX() + 1);
     }
 
+    /**
+     * Changes appearance of the third join label when the mouse hovers it
+     */
     @FXML
     protected void onJoin3MouseIn() {
         Font font = join3Lbl.getFont();
@@ -185,6 +220,9 @@ public class LoginController {
         join3Img.setLayoutX(join3Img.getLayoutX() - 1);
     }
 
+    /**
+     * Changes appearance of the third join label when the mouse exits its area
+     */
     @FXML
     protected void onJoin3MouseOut() {
         Font font = join3Lbl.getFont();
@@ -197,11 +235,21 @@ public class LoginController {
     
     //public methods
 
+    /**
+     * Sets the nickname when done outside the graphical application
+     * @param nick Name of the player
+     */
     public void setNickname(String nick) {
         nameFld.setText(nick);
         onNameBtnClick();
     }
 
+    /**
+     * Shows a message when a player joins the lobby
+     * @param nick name of the player
+     * @param curr current size of the game
+     * @param size maximal and desired size of the game
+     */
     public void notifyJoiningPlayer(String nick, int curr, int size) {
         String line;
         if(size > 0)
@@ -224,6 +272,10 @@ public class LoginController {
 
     }
 
+    /**
+     * Shows an error message when the name is not available
+     * and enables name field and check button
+     */
     public void invalidNickname() {
         nickname = "";
         nameFld.clear();
@@ -234,12 +286,18 @@ public class LoginController {
         errorLbl.setVisible(true);
     }
 
+    /**
+     * Displays the menu to choose the players number
+     */
     public void showPlayersNumberMenu() {
         pnumSMB.setVisible(true);
         errorLbl.setVisible(false);
         loadingImg.setVisible(false);
     }
 
+    /**
+     * Shows a message when the players number is chosen
+     */
     public void waitForOtherPlayers() {
         errorLbl.setText("Waiting for other players");
         errorLbl.setTextFill(Color.GREEN);
@@ -250,6 +308,10 @@ public class LoginController {
 
     //getters
 
+    /**
+     * Getter for the chosen player numbers
+     * @return integer representing the desired game size
+     */
     public int getPlayersNumber() {
         if(numberChoice)
             return playersNumber;
@@ -257,6 +319,10 @@ public class LoginController {
             return 0;
     }
 
+    /**
+     * Getter for the chosen name of the local player
+     * @return String representing nickname chosen by the player
+     */
     public String getNickname() {
         return nickname;
     }
