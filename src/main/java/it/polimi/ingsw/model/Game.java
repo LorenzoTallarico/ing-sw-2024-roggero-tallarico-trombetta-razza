@@ -1,12 +1,10 @@
 package it.polimi.ingsw.model;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Serializable;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 
 import com.google.gson.*;
 import it.polimi.ingsw.networking.VirtualView;
@@ -243,7 +241,7 @@ public class Game implements Serializable {
 
     private void createGoldDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("GoldCards.json")));) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
             goldDeck = new ArrayList<>();
             Collections.addAll(goldDeck, tempGold);
@@ -256,7 +254,7 @@ public class Game implements Serializable {
 
     private void createResourceDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("ResourceCards.json")));) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
             resourceDeck = new ArrayList<>();
             Collections.addAll(resourceDeck, tempResource);
@@ -269,7 +267,7 @@ public class Game implements Serializable {
 
     private void createAchievementDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("AchievementCards.json")));) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             achievementDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
@@ -283,7 +281,7 @@ public class Game implements Serializable {
 
     private void createStarterDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
+        try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("StarterCards.json")));) {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
             starterDeck = new ArrayList<>();
             Collections.addAll(starterDeck, tempStarter);
