@@ -57,6 +57,7 @@ public class CardTest {
     @Test
     void resourceCardTest() {
         ResourceCard[] rsr = getOrderedResourceDeck();
+        assert rsr != null;
         String result = "";
         for(int i = 0; i < rsr.length; i++) {
             switch (rsr[i].getResource()) {
@@ -160,7 +161,7 @@ public class CardTest {
 
         AchievementCard ach5 = new AchievementCard(2, Resource.BUTTERFLY, "ConcreteStrategyItem", Item.PLUME, "");
         AchievementCard ach6 = new AchievementCard(2, Resource.MUSHROOM, "ConcreteStrategyItem", Item.PLUME, "");
-
+        assertTrue(ach5.equals(ach6));
     }
     
 }

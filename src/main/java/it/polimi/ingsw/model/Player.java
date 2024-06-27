@@ -118,14 +118,6 @@ public class Player implements Serializable {
         return online;
     }
 
-    public Card getLastCardPlaced() {
-        return lastCardPlaced;
-    }
-
-    public int getPointsFromLastCard() {
-        return pointsFromLastCard;
-    }
-
 
     //SETTER
     public void setOnline(boolean b){

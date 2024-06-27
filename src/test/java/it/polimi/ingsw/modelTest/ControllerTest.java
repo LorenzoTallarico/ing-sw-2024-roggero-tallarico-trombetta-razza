@@ -102,4 +102,31 @@ public class ControllerTest {
         testGame.nextState();
     }
 
+    @Test
+    void starterCardTest() throws RemoteException {
+        Game testGame = Game.getInstance();
+        GameController controller = new GameController();
+        controller.setPlayersNumber(2);
+        Player fake1 = new Player("Marco");
+        VirtualView cli1 = new ClientRmi(null);
+        Player fake2 = new Player("Simone");
+        VirtualView cli2 = new ClientRmi(null);
+        controller.addPlayer(fake1 , cli1);
+        controller.addPlayer(fake2 , cli2);
+
+        controller.setStarterCardSide(fake1.getName(), true);
+        controller.setStarterCardSide(fake2.getName(), false);
+        for(Player p : testGame.getPlayers()){
+            if(p.getName().equalsIgnoreCase(fake1.getName()))
+                assertTrue(p.getArea().getSpace(40,40).getCard().isFront());
+            else if(p.getName().equalsIgnoreCase(fake2.getName()))
+                assertFalse(p.getArea().getSpace(40,40).getCard().isFront());
+        }
+        controller.disconnection("");
+        controller.reconnection("", null, null);
+
+        testGame.end();
+        testGame.nextState();
+    }
+
 }
