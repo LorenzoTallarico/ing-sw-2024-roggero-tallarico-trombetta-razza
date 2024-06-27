@@ -14,7 +14,7 @@ public class ChatMessageAction extends Action {
      * Constructs a new ChatMessageAction with the specified author, recipient, and message content.
      *
      * @param author the author of the message (sender)
-     * @param recipient the recipient of the message (receiver), can be null for broadcast
+     * @param recipient the recipient of the message (receiver)
      * @param message the message content being sent
      */
     public ChatMessageAction(String author, String recipient, Message message) {

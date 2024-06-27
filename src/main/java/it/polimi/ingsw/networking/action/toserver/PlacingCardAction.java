@@ -22,15 +22,15 @@ public class PlacingCardAction extends Action {
     private final int column;
     /**
      * The side of the card being placed:
-     * - true for side A
-     * - false for side B
+     * - true for front side
+     * - false for back side
      */
     private final boolean side;
     /**
      * Constructs a new PlacingCardAction with the specified details of the card placement.
      *
      * @param cardIndex the index of the card being placed
-     * @param side the side of the card being placed (true for side A, false for side B)
+     * @param side the side of the card being placed (true for front side, false for back side)
      * @param row the row on the game board where the card is being placed
      * @param column the column on the game board where the card is being placed
      * @param author the author of the action (the player who is placing the card)

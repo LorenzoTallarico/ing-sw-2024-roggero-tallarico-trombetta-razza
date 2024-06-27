@@ -50,7 +50,7 @@ public class Action implements Serializable {
     /**
      * Gets the recipient of the action.
      *
-     * @return the recipient of the action, if applicable
+     * @return the recipient of the action
      */
     public String getAuthor() {
         return author;
@@ -58,7 +58,7 @@ public class Action implements Serializable {
     /**
      * Gets the recipient of the action.
      *
-     * @return the recipient of the action, if applicable
+     * @return the recipient of the action
      */
     public String getRecipient() {
         return recipient;

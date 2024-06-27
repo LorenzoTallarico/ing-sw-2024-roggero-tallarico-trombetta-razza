@@ -17,7 +17,7 @@ public class ChosenSideStarterCardAction extends Action {
      * Constructs a new ChosenSideStarterCardAction with the specified author and chosen side.
      *
      * @param author the author of the action (the player who chose the side)
-     * @param side the chosen side for the starter card (true for side A, false for side B)
+     * @param side the chosen side for the starter card (true for front side, false for back side)
      */
     public ChosenSideStarterCardAction(String author, boolean side) {
         super(ActionType.CHOSENSIDESTARTERCARD, author, null);
