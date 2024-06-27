@@ -70,6 +70,9 @@ public class Chat implements Serializable {
         return tempArr;
     }
 
+    /**
+     * Clears the chat log if needed since it's a singleton
+     */
     public void dispose() {
         chat.clear();
     }

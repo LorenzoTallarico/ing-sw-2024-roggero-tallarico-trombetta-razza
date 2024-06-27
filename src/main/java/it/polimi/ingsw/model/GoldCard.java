@@ -4,10 +4,24 @@ import java.io.Serializable;
 import  java.util.Map;
 import  java.util.HashMap;
 
+/**
+ * GoldCard, card with requirements that can generate points for the player
+ */
 public class GoldCard extends Card implements Serializable {
 
+    /**
+     * Resource requirements to place the card
+     */
     private Map<Resource, Integer> reqResources;
+
+    /**
+     * Possible item needed to generate points
+     */
     private Item reqItem;
+
+    /**
+     * Type of requirements to generate points
+     */
     private ReqPoint reqPoints;
 
     /**
@@ -91,6 +105,11 @@ public class GoldCard extends Card implements Serializable {
         return result;
     }
 
+    /**
+     * Checks if two GoldCards have the same basic attributes
+     * @param gol GoldCard to compare
+     * @return true if the attributes are the same, false otherwise
+     */
     public boolean equals(GoldCard gol){
         if(this.points != gol.getPoints() || this.resource != gol.getResource()){
             return false;
@@ -103,14 +122,28 @@ public class GoldCard extends Card implements Serializable {
         return true;
     }
 
+    /**
+     * Returns the number of a specific resource you need to have on the playground
+     * to place a card
+     * @param res The resource is desired to check
+     * @return The number of that resource needed on the playground
+     */
     public int countResource(Resource res){
         return reqResources.get(res);
     }
 
+    /**
+     * Returns the type of requirement needed to obtain points
+     * @return type of requirement (simple / corners / item)
+     */
     public ReqPoint getPointsType() {
         return reqPoints;
     }
 
+    /**
+     * Return the possible item needed by to obtain points
+     * @return The item needed or null if the reqPoints is not Item
+     */
     public Item getItem(){
         return reqItem;
     }

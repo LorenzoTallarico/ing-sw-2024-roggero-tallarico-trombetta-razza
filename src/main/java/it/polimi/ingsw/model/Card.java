@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 
+/**
+ * Abstract class representing a generic card
+ */
 public abstract class Card implements Serializable {
 
     /**

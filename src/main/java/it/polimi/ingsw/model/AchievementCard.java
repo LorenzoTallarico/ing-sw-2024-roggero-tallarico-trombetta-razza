@@ -2,6 +2,9 @@ package it.polimi.ingsw.model;
 
 import java.io.Serializable;
 
+/**
+ * Card representing an achievement to fulfill in game
+ */
 public class AchievementCard extends Card implements Serializable {
 
     /**

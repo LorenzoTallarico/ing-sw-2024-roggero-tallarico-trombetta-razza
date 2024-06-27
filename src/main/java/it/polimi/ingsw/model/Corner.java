@@ -4,12 +4,30 @@ import java.io.Serializable;
 
 public class Corner implements Serializable {
 
+    /**
+     * Type of the corner
+     */
     private final CornerType type;
+
+    /**
+     * Resource on the corner if any
+     */
     private final Resource resource;
+
+    /**
+     * Item on the corner if any
+     */
     private final Item item;
+
+    /**
+     * Indicates if the corner is visible or hidden by another card
+     */
     private boolean visible;
 
-    public Corner(){
+    /**
+     * Dummy constructor of the class, initializes a generic corner with dummy values
+     */
+    public Corner() {
         type = null;
         resource = null;
         item = null;

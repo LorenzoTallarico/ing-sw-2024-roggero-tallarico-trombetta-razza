@@ -8,6 +8,9 @@ import java.io.Serializable;
  */
 public class ConcreteStrategyLshape implements Strategy, Serializable {
 
+    /**
+     * Points obtained executing the card achievement strategy
+     */
     private int cardPoints = 0;
 
     /**
