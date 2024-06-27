@@ -8,14 +8,36 @@ import it.polimi.ingsw.networking.action.ActionType;
 
 import java.util.ArrayList;
 
+/**
+ * Notifies the player to draw a card
+ */
 public class AskingDrawAction extends Action {
 
+    /**
+     * Gold cards on the table
+     */
     private final  ArrayList<GoldCard> commonGold;
+    /**
+     * Resource of the card on top of the gold deck
+     */
     private final Resource goldDeck;
+    /**
+     * Resource cards on the table
+     */
     private final  ArrayList<ResourceCard> commonResource;
+    /**
+     * Resource of the card on top of the resource deck
+     */
     private final Resource resourceDeck;
 
-
+    /**
+     * Constructor of the class, initializes a new AskingDrawAction
+     * @param recipient player who have to draw the card
+     * @param commonGold
+     * @param goldDeck
+     * @param commonResource Resource cards on the table
+     * @param resourceDeck
+     */
     public AskingDrawAction(String recipient, ArrayList<GoldCard> commonGold, Resource goldDeck, ArrayList<ResourceCard> commonResource, Resource resourceDeck) {
         super(ActionType.ASKINGDRAW, null, recipient);
         this.commonGold = commonGold;
@@ -24,6 +46,10 @@ public class AskingDrawAction extends Action {
         this.resourceDeck = resourceDeck;
     }
 
+    /**
+     * Gets the gold cards on the table
+     * @return arraylist of goldCards
+     */
     public ArrayList<GoldCard> getCommonGold() {
         return commonGold;
     }
