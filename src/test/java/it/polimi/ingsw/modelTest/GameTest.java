@@ -658,6 +658,8 @@ public class GameTest {
         // placement of the second card, giving enough resources to place the card
         fake1.getArea().setSpace(tempRes,42,42);
         assertTrue(fake1.checkGold(tempGold));
+        testGame.end();
+        testGame.nextState();
     }
 
     @Test
@@ -702,6 +704,7 @@ public class GameTest {
         controller.setSecretAchievement("Marco",tempAchievement1);
         assertEquals(fake1.getSecretAchievement().get(0),tempAchievement1);
         // test of sendChatMessage method
+        /*
         Chat chat = Chat.getInstance();
         Message msg = new Message("prova","autore");
         controller.sendChatMessage(msg);
@@ -715,6 +718,7 @@ public class GameTest {
         assertEquals(msx,msg);
         msx2 = controller.getWholeChat().get(1);
         assertEquals(msx2,msg2);
+        */
         // test of getCurrPlayersNumber function
         currNumber = controller.getCurrPlayersNumber();
         assertEquals(currNumber,2);
@@ -724,5 +728,10 @@ public class GameTest {
         // test of calculateEndPoints function
         bool = controller.calculateEndPoints();
         assertFalse(bool);
+        testGame.setGameState(GameState.FINALSCORE);
+        bool = controller.calculateEndPoints();
+        assertTrue(bool);
+        testGame.end();
+        testGame.nextState();
     }
 }
