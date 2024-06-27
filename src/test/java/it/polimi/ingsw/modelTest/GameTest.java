@@ -31,7 +31,7 @@ public class GameTest {
 
     public ArrayList<ResourceCard> getOrderedResourceDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
             ArrayList<ResourceCard> tempDeck = new ArrayList<>();
             Collections.addAll(tempDeck, tempResource);
@@ -43,7 +43,7 @@ public class GameTest {
 
     public ArrayList<GoldCard> getOrderedGoldDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/GoldCards.json")) {
             GoldCard[] tempResource = gson.fromJson(reader, GoldCard[].class);
             ArrayList<GoldCard> tempDeck = new ArrayList<>();
             Collections.addAll(tempDeck, tempResource);
@@ -55,7 +55,7 @@ public class GameTest {
 
     public ArrayList<AchievementCard> getOrderedAchievementDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             ArrayList<AchievementCard> tempDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)

@@ -16,7 +16,7 @@ public class CardTest {
 
     public AchievementCard[] getOrderedAchievementDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             return tempAchievement;
         } catch (IOException e) {
@@ -26,7 +26,7 @@ public class CardTest {
 
     private ResourceCard[] getOrderedResourceDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/ResourceCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/ResourceCards.json")) {
             ResourceCard[] tempResource = gson.fromJson(reader, ResourceCard[].class);
             return tempResource;
         } catch (IOException e) {
@@ -36,7 +36,7 @@ public class CardTest {
 
     private GoldCard[] getOrderedGoldDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/GoldCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/GoldCards.json")) {
             GoldCard[] tempGold = gson.fromJson(reader, GoldCard[].class);
             return tempGold;
         } catch (IOException e) {
@@ -46,7 +46,7 @@ public class CardTest {
 
     private StarterCard[] getOrderedStarterDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/StarterCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/StarterCards.json")) {
             StarterCard[] tempStarter = gson.fromJson(reader, StarterCard[].class);
             return tempStarter;
         } catch (IOException e) {

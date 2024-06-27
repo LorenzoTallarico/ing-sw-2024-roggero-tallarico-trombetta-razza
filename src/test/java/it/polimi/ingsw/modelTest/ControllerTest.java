@@ -20,7 +20,7 @@ public class ControllerTest {
 
     public ArrayList<AchievementCard> getOrderedAchievementDeck() {
         Gson gson = new Gson();
-        try (Reader reader = new FileReader("src/main/resources/AchievementCards.json")) {
+        try (Reader reader = new FileReader("src/main/resources/it/polimi/ingsw/model/AchievementCards.json")) {
             AchievementCard[] tempAchievement = gson.fromJson(reader, AchievementCard[].class);
             ArrayList<AchievementCard> tempDeck = new ArrayList<>();
             for (AchievementCard achievementCard : tempAchievement)
