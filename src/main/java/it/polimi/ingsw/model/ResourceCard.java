@@ -54,7 +54,7 @@ public class ResourceCard extends Card implements Serializable {
     public String getSideID(boolean front) {
         if(front)
             return id;
-        String result;
+        String result = "";
         switch(this.resource) {
             case MUSHROOM:
                 result = "001";
@@ -67,9 +67,6 @@ public class ResourceCard extends Card implements Serializable {
                 break;
             case BUTTERFLY:
                 result = "031";
-                break;
-            default:
-                result = "";
                 break;
         }
         return result;

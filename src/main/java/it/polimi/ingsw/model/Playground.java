@@ -1,13 +1,9 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.util.Print;///DA LEVAREEEEEEEEEEEEEEEEEEEEEEEEE
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-//da levare import sopra
 
 public class Playground implements Serializable {
 private final Space[][] table;
@@ -18,8 +14,6 @@ private int eastBound;
 private int westBound;
 private int southBound;
 private final LinkedHashMap<Card, int[]> orderedCoords;
-
-
 
     public Playground() {
         orderedCoords = new LinkedHashMap<>();
@@ -47,7 +41,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         this.southBound = 40;
     }
 
-//GETTER AND SETTERS
 
     /**
      * Method that given a card and a position, places the card in the right space, covering adjacent corners
@@ -226,13 +219,18 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
         }
         if(card.getClass() == ResourceCard.class && card.getPoints() == 1 && card.isFront())
             points = 1;
+
         orderedCoords.put(card, new int[]{row, column});
         return points;
     }
 
-
+    /**
+     * Removes a card from the playground updating the values of adjacent cards and items and resources counter
+     * @param row The integer representing the row index
+     * @param column The integer representing the column index
+     * @param card The card to remove
+     */
     public void setPlaygroundBeforePlace(int row, int column, Card card) {
-        System.err.println("INSIDE setPlaygroundBeforePlace ***************************************************************************************");
         boolean side = getSpace(row, column).getCard().isFront();       //true = front      false = back
         getSpace(row, column).setCard(null);     //controllare se inizializzati così gli space
         getSpace(row, column).setFree(true);
@@ -275,7 +273,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
             }
         }
 
-
         //top-right
         if(!getSpace(row-1, column+1).isFree() && !getSpace(row-1, column+1).isDead()){
             if(getSpace(row-1, column+1).getCard().isFront()){
@@ -292,7 +289,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
                 getSpace(row-1, column+1).getCard().getBackCorners()[2].uncover();
             }
         }
-
 
         //bottom-left
         if(!getSpace(row+1, column-1).isFree() && !getSpace(row+1, column-1).isDead()){
@@ -311,8 +307,6 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
             }
         }
 
-
-
         //bottom-right
         if(!getSpace(row+1, column+1).isFree() && !getSpace(row+1, column+1).isDead()){
             if(getSpace(row+1, column+1).getCard().isFront()){
@@ -330,32 +324,13 @@ private final LinkedHashMap<Card, int[]> orderedCoords;
             }
         }
 
-
-        //BOUNDS FIXING
-        /*
-        if(row == northBound)
-            northBound = row+1;
-
-        if(row == southBound)
-            southBound = row-1;
-
-        if(column == westBound)
-            westBound = column+1;
-
-        if(column == eastBound)
-            eastBound = column-1;
-        */
-
-        //removes last card placed from queue
         removeLastOrderedCoord();
-
-        System.err.println("END OF METHOD INN PLAYGROUND ------------------------------------------------------------------");
-        System.out.println("Questo è il playground dopo le modifiche (siamo in Model: Playground");
-        Print.playgroundPrinter(this);
     }
 
+    /**
+     * Removes last card placed from the linked hash map, used when the player disconnects before drawing a card
+     */
     public void removeLastOrderedCoord() {
-        System.err.println("INSIDE REMOVE LAST COORD *********************************************");
         if (!orderedCoords.isEmpty()) {
             Card lastKey = null;
             for (Card key : orderedCoords.keySet()) {
