@@ -29,4 +29,4 @@ java -jar GC06_ClientApp.jar
 java -jar GC06_ServerApp.jar
 ```
 # Note
-La documentazione autogenerata dai JavaDoc non dentro deliveries, ma in documentations per problemi di refactoring
+La documentazione autogenerata dai JavaDoc non è presente dentro deliveries, ma in documentations per problemi di refactoring
