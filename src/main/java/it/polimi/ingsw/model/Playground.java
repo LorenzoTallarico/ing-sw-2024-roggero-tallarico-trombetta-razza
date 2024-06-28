@@ -275,7 +275,7 @@ public class Playground implements Serializable {
      */
     public void setPlaygroundBeforePlace(int row, int column, Card card) {
         boolean side = getSpace(row, column).getCard().isFront();       //true = front      false = back
-        getSpace(row, column).setCard(null);     //controllare se inizializzati così gli space
+        getSpace(row, column).setCard(null);
         getSpace(row, column).setFree(true);
 
         //Remove elements from items/resources maps
