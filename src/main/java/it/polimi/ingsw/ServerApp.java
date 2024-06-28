@@ -23,7 +23,7 @@ public class ServerApp {
      * It reads command-line arguments to set the ports for socket and RMI connections.
      * If the arguments are not correctly provided, it uses the default port values.
      *
-     * @param args the command-line arguments for specifying ports. The expected format is "--p <socketPort> <rmiPort>".
+     * @param args the command-line arguments for specifying ports.
      */
     public static void main(String[] args) {
         int numParameters = args.length;

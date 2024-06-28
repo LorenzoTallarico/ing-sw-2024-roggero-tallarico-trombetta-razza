@@ -72,7 +72,7 @@ public class GoldCard extends Card implements Serializable {
     /**
      * Method that returns the ID of the current side of the card
      * used to identify the corresponding image
-     * @return the string representing the current card&side ID
+     * @return the string representing the current card and side ID
      */
     public String getSideID() {
         return getSideID(this.front);
@@ -82,7 +82,7 @@ public class GoldCard extends Card implements Serializable {
      * Overloading of the previous method, it returns the ID of a
      * specific side of the card, used to identify the corresponding image
      * @param front boolean representing the side, true = front, false = back
-     * @return the string representing the wanted card&side ID
+     * @return the string representing the wanted carda and side ID
      */
     public String getSideID(boolean front) {
         if(front)

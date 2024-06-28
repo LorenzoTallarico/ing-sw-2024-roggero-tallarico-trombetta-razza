@@ -350,7 +350,7 @@ public class PlayController {
 
     /**
      * Enables the scoreboard view when the mouse hovers it, showing the players names and
-     * hiding the resources & items tables
+     * hiding the resources and items tables
      */
     @FXML
     protected void onScoreboardImgIn() {
