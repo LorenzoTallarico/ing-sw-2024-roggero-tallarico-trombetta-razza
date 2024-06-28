@@ -30,7 +30,7 @@ java -jar GC06_ServerApp.jar
 ```
 # Guida alla documentazione e ai deliverables
 Nella cartella [deliveries](./deliveries/) sono presenti tutti i file richiesti per requisiti elencati nel secondo paragrafo <br>
-- I vari UML sono locati nella cartella [UML Images](./deliveries/FinalDeliveries/UML%Images/) in formato png o nella cartella [UML Drawio](./deliveries/FinalDeliveries/UML%Drawio/)
+- I vari UML sono locati nella cartella [UML Images](<./deliveries/FinalDeliveries/UML Images/>) in formato png o nella cartella [UML Drawio](<./deliveries/FinalDeliveries/UML Drawio/>)
 - I Sequence Diagrams per le connessioni [Socket](./deliveries/FinalDeliveries/ConnectionSocket.png) e [RMI](./deliveries/FinalDeliveries/ConnectionRMI.png) sono presenti nella cartella [FinalDeliveries](./deliveries/FinalDeliveries/)
 - Lo [screenshot del coverage](./deliveries/FinalDeliveries/Coverage.png) è presente nella cartella [FinalDeliveries](./deliveries/FinalDeliveries/). Il coverage raggiunto dai nostri test è il 100% delle classi e dei metodi che compongono il Model e il Controller. Per quanto riguarda il codice effettivo invece sono state coperte il 93% e 89% delle righe di Model e Controller, le uniche linee non coperte sono quelle che erano troppo invischiate alla funzionalità di resilienza alle connessioni.
 - Le cartelle delle peer review, [1](./deliveries/peer-review-1) e [2](./deliveries/peer-review-2), si trovano in [deliveries](./deliveries) e contengono sia i file che noi abbiamo mandato per essere revisionati, sia i file che abbiamo ricevuto e la relativa revisione che abbiamo redatto.
