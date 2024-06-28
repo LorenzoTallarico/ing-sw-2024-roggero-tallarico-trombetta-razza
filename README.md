@@ -28,5 +28,11 @@ Eseguire da linea di comando prima l'applicazione del server e successivamente q
 java -jar GC06_ClientApp.jar
 java -jar GC06_ServerApp.jar
 ```
-# Note
-La documentazione autogenerata dai JavaDoc non è presente dentro deliveries, ma in documentations per problemi di refactoring
+# Guida alla documentazione e ai deliverables
+Nella cartella [Deliveries](./deliveries/) sono presenti tutti i file richiesti per requisiti elencati nel secondo paragrafo <br>
+- I vari UML sono locati nella cartella [UML Images](./deliveries/FinalDeliveries/UML%Images/) in formato png o nella cartella [UML Drawio](./deliveries/FinalDeliveries/UML%Drawio/)
+- I Sequence Diagrams per le connessioni [Socket](./deliveries/FinalDeliveries/ConnectionSocket.png) e [RMI](./deliveries/FinalDeliveries/ConnectionRMI.png) sono presenti nella cartella [FinalDeliveries](./deliveries/FinalDeliveries/)
+- Lo [screenshot del coverage](./deliveries/FinalDeliveries/Coverage.png) è presente nella cartella [FinalDeliveries](./deliveries/FinalDeliveries/). Il coverage raggiunto dai nostri test è il 100% delle classi e dei metodi che compongono il Model e il Controller. Per quanto riguarda il codice effettivo invece sono state coperte il 93% e 89% delle righe di Model e Controller, le uniche linee non coperte sono quelle che erano troppo invischiate alla funzionalità di resilienza alle connessioni.
+- Le cartelle delle peer review [1](./deliveries/FinalDeliveries/peer-review-1) e [2](./deliveries/FinalDeliveries/peer-review-2) si trovano in [FinalDeliveries](./deliveries/FinalDeliveries/) e contengono sia i file che noi abbiamo mandato per essere revisionati, sia i file che abbiamo ricevuto e la relativa revisione che abbiamo redatto.
+- I jar eseguibili da liena di comando dell'applicazione, [ClientApp](./deliveries/FinalDeliveries/out/artifacts/GC06_ClientApp_jar/GC06_ClientApp.jar) e [ServerApp](./deliveries/FinalDeliveries/out/artifacts/GC06_ServerApp_jar/GC06_ServerApp.jar), sono presenti nella cartella [artifacts](./deliveries/FinalDeliveries/out/artifacts/).
+- Nella cartella [labDeliveries](./deliveries/FinalDeliveries/labDeliveries/) sono presenti alcuni file che ci sono stati richiesti durante i primissimi laboratori.
