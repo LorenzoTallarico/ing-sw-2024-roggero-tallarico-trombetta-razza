@@ -1,9 +1,13 @@
-<mxGraphModel dx="0" dy="0" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" background="none" math="0" shadow="0">
-  <root>
-    <mxCell id="0" />
-    <mxCell id="1" parent="0" />
-    <mxCell id="node0" parent="1" vertex="1" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;GameController&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ GameController(): &lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;- players: ArrayList&amp;lt;Player&amp;gt;&lt;br/&gt;- playersNumber: int&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sendChatMessage(Message): Message&lt;br/&gt;+ placeCard(String, int, boolean, int, int): boolean&lt;br/&gt;+ addPlayer(Player, VirtualView): void&lt;br/&gt;+ drawCard(String, int): boolean&lt;br/&gt;+ setStarterCardSide(String, boolean): void&lt;br/&gt;+ disconnection(String): void&lt;br/&gt;+ setSecretAchievement(String, AchievementCard): void&lt;br/&gt;+ calculateEndPoints(): boolean&lt;br/&gt;- countdown(): void&lt;br/&gt;+ reconnection(String, VirtualView, VirtualView): void&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; players: ArrayList&amp;lt;Player&amp;gt;&lt;br/&gt; wholeChat: ArrayList&amp;lt;Message&amp;gt;&lt;br/&gt; playersNumber: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;">
-      <mxGeometry x="-85" y="-14" width="381" height="426" as="geometry" />
-    </mxCell>
-  </root>
-</mxGraphModel>
+<mxfile host="Electron" modified="2024-06-28T00:03:47.715Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/23.1.5 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" version="23.1.5" etag="HQoYmxzufkbB_S5OA6SR" type="device">
+  <diagram id="05wCD2t-LFCqwMQEy1_X" name="Page-1">
+    <mxGraphModel dx="2074" dy="1356" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="850" pageHeight="1100" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node0" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;GameController&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ GameController(): &lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;- players: ArrayList&amp;lt;Player&amp;gt;&lt;br/&gt;- playersNumber: int&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt;+ sendChatMessage(Message): Message&lt;br/&gt;+ placeCard(String, int, boolean, int, int): boolean&lt;br/&gt;+ addPlayer(Player, VirtualView): void&lt;br/&gt;+ drawCard(String, int): boolean&lt;br/&gt;+ setStarterCardSide(String, boolean): void&lt;br/&gt;+ disconnection(String): void&lt;br/&gt;+ setSecretAchievement(String, AchievementCard): void&lt;br/&gt;+ calculateEndPoints(): boolean&lt;br/&gt;- countdown(): void&lt;br/&gt;+ reconnection(String, VirtualView, VirtualView): void&lt;/p&gt;&lt;hr size=&quot;1&quot;/&gt;&lt;p style=&quot;margin:0 0 0 4px;line-height:1.6;&quot;&gt; players: ArrayList&amp;lt;Player&amp;gt;&lt;br/&gt; wholeChat: ArrayList&amp;lt;Message&amp;gt;&lt;br/&gt; playersNumber: int&lt;/p&gt;" style="verticalAlign=top;align=left;overflow=fill;fontSize=14;fontFamily=Helvetica;html=1;rounded=0;shadow=0;comic=0;labelBackgroundColor=none;strokeWidth=1;" parent="1" vertex="1">
+          <mxGeometry x="-85" y="-14" width="381" height="454" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
