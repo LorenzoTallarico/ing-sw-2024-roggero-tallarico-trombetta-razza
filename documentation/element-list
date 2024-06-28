@@ -1,0 +1,11 @@
+module:it.polimi.ingsw
+it.polimi.ingsw
+it.polimi.ingsw.controller
+it.polimi.ingsw.gui
+it.polimi.ingsw.listener
+it.polimi.ingsw.model
+it.polimi.ingsw.networking
+it.polimi.ingsw.networking.action
+it.polimi.ingsw.networking.action.toclient
+it.polimi.ingsw.networking.action.toserver
+it.polimi.ingsw.util
