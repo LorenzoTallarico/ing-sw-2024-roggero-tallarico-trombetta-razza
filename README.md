@@ -28,3 +28,5 @@ Eseguire da linea di comando prima l'applicazione del server e successivamente q
 java -jar GC06_ClientApp.jar
 java -jar GC06_ServerApp.jar
 ```
+# Note
+La documentazione autogenerata dai JavaDoc non dentro deliveries, ma in documentations per problemi di refactoring
