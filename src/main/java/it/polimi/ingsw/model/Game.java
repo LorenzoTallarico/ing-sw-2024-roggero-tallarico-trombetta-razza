@@ -138,6 +138,15 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Handles the disconnection of a player.
+     * This method sets the player's online status to false, informs the player and the associated
+     * virtual view of the disconnection, and checks the count of online players. If no players is online,
+     * the system exits. If the disconnected player is the current player, it proceeds to the next player.
+     *
+     * @param playerName the name of the player who is disconnecting.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void disconnection(String playerName) throws RemoteException {
         for(Player p: players) {
             if (p.getName().equalsIgnoreCase(playerName)) {
@@ -165,6 +174,16 @@ public class Game implements Serializable {
             }
         }
     }
+
+    /**
+     * Advances to the next player in the game.
+     * This method increments the current player index to point to the next player. If the current
+     * player index exceeds the number of players, it checks the game state. If the game state is
+     * LASTROUND, it sets the game state to FINALSCORE. If the next player is online, it notifies
+     * the listener to place the next player. If no other player is found online, it sets the wait flag.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void nextPlayer() throws RemoteException {
         String nickLastPlayer = players.get(currPlayer).getName();
         boolean found = false;
@@ -195,8 +214,11 @@ public class Game implements Serializable {
 
 //Singleton Methods
     /**
+     * Returns the singleton instance of the Game class.
+     * This method ensures that only one instance of the Game class is created (singleton pattern).
+     * If the instance does not exist, it creates a new one.
      *
-     * @return Game.instance
+     * @return the singleton instance of the Game class.
      */
     public static Game getInstance() {
         if(instance == null) {
@@ -205,6 +227,11 @@ public class Game implements Serializable {
         return instance;
     }
 
+    /**
+     * Disposes of the current Game instance.
+     * This method resets the singleton instance of the Game class to null and reinitializes
+     * various game components.
+     */
     private void dispose(){
         instance = null;
         currPlayer = 0;
@@ -220,38 +247,78 @@ public class Game implements Serializable {
 
 //GET
 
-//    public ArrayList<AchievementCard> getCommonAchievement() {
-//        return commonAchievement;
-//    }
-
+    /**
+     * Gets the list of common gold cards.
+     *
+     * @return an ArrayList of GoldCard objects representing the common gold cards.
+     */
     public ArrayList<GoldCard> getCommonGold(){
         return this.commonGold;
     }
 
+    /**
+     * Gets the list of common resource cards.
+     *
+     * @return an ArrayList of ResourceCard objects representing the common resource cards.
+     */
     public ArrayList<ResourceCard> getCommonResource(){
         return this.commonResource;
     }
 
+    /**
+     * Gets the listener for the game.
+     *
+     * @return the Listener object used in the game.
+     */
     public Listener getListener(){
         return this.bigListener;
     }
 
+    /**
+     * Gets the deck of gold cards.
+     *
+     * @return an ArrayList of GoldCard objects representing the gold deck.
+     */
     public ArrayList<GoldCard> getGoldDeck() {
         return goldDeck;
     }
 
+
+    /**
+     * Gets the deck of resource cards.
+     *
+     * @return an ArrayList of ResourceCard objects representing the resource deck.
+     */
     public ArrayList<ResourceCard> getResourceDeck() {
         return resourceDeck;
     }
 
+    /**
+     * Gets the list of players.
+     *
+     * @return an ArrayList of Player objects representing the players in the game.
+     */
     public ArrayList<Player> getPlayers() {
         return players;
     }
 
+    /**
+     * Gets the current state of the game.
+     *
+     * @return the GameState object representing the current state of the game.
+     */
     public GameState getGameState() {
         return gameState;
     }
 
+    /**
+     * Sets the current state of the game.
+     * If the game state is set to GAME, it notifies the listener to place the current player.
+     * If the game state is set to FINALSCORE, it calculates the end points.
+     *
+     * @param gs the new GameState to set.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void setGameState(GameState gs) throws RemoteException {
         gameState = gs;
         if(gameState.equals(GameState.GAME)) {
@@ -260,15 +327,34 @@ public class Game implements Serializable {
             calculateEndPoints();
     }
 
+
+    /**
+     * Gets the index of the current player.
+     *
+     * @return an integer representing the index of the current player.
+     */
     public int getCurrPlayer() {
         return currPlayer;
     }
 
+    /**
+     * Gets the number of players in the game.
+     *
+     * @return an integer representing the number of players.
+     */
     public int getPlayersNumber() {
         return playersNumber;
     }
 
-//POP Method
+//POP Methods
+
+    /**
+     * Pops an achievement card from the achievement deck.
+     * This method removes and returns the top card from the achievement deck.
+     * If the deck is empty, it returns null.
+     *
+     * @return the AchievementCard object from the top of the deck, or null if the deck is empty.
+     */
     public AchievementCard popAchievementCard() {
         AchievementCard achievement = null;
         if (!achievementDeck.isEmpty()) {
@@ -278,6 +364,13 @@ public class Game implements Serializable {
         return achievement;
     }
 
+    /**
+     * Pops a gold card from the gold deck.
+     * This method removes and returns the top card from the gold deck.
+     * If the deck is empty, it returns null.
+     *
+     * @return the GoldCard object from the top of the deck, or null if the deck is empty.
+     */
     public GoldCard popGoldCard() {
         GoldCard card = null;
         if(!goldDeck.isEmpty()) {
@@ -287,6 +380,13 @@ public class Game implements Serializable {
         return card;
     }
 
+    /**
+     * Pops a resource card from the resource deck.
+     * This method removes and returns the top card from the resource deck.
+     * If the deck is empty, it returns null.
+     *
+     * @return the ResourceCard object from the top of the deck, or null if the deck is empty.
+     */
     public ResourceCard popResourceCard() {
         ResourceCard card = null;
         if(!resourceDeck.isEmpty()) {
@@ -296,6 +396,13 @@ public class Game implements Serializable {
         return card;
     }
 
+    /**
+     * Pops a starter card from the starter deck.
+     * This method removes and returns the top card from the starter deck.
+     * If the deck is empty, it returns null.
+     *
+     * @return the StarterCard object from the top of the deck, or null if the deck is empty.
+     */
     public StarterCard popStarterCard() {
         StarterCard starter = null;
         if(!starterDeck.isEmpty()) {
@@ -308,6 +415,12 @@ public class Game implements Serializable {
 
     //INIT GAME Methods
 
+    /**
+     * Creates and initializes the gold deck.
+     * This method reads gold card data from a JSON file, creates GoldCard objects,
+     * and adds them to the gold deck. It then shuffles the deck and initializes the
+     * common gold cards by drawing two cards from the deck.
+     */
     private void createGoldDeck() {
         Gson gson = new Gson();
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("GoldCards.json")));) {
@@ -321,6 +434,12 @@ public class Game implements Serializable {
             commonGold.add(popGoldCard());
     }
 
+    /**
+     * Creates and initializes the resource deck.
+     * This method reads resource card data from a JSON file, creates ResourceCard objects,
+     * and adds them to the resource deck. It then shuffles the deck and initializes the
+     * common resource cards by drawing two cards from the deck.
+     */
     private void createResourceDeck() {
         Gson gson = new Gson();
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("ResourceCards.json")));) {
@@ -334,6 +453,12 @@ public class Game implements Serializable {
             commonResource.add(popResourceCard());
     }
 
+    /**
+     * Creates and initializes the achievement deck.
+     * This method reads achievement card data from a JSON file, creates AchievementCard objects,
+     * and adds them to the achievement deck. It then shuffles the deck and initializes the
+     * common achievement cards by drawing two cards from the deck.
+     */
     private void createAchievementDeck() {
         Gson gson = new Gson();
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("AchievementCards.json")));) {
@@ -348,6 +473,11 @@ public class Game implements Serializable {
             commonAchievement.add(popAchievementCard());
     }
 
+    /**
+     * Creates and initializes the starter deck.
+     * This method reads starter card data from a JSON file, creates StarterCard objects,
+     * and adds them to the starter deck. It then shuffles the deck.
+     */
     private void createStarterDeck() {
         Gson gson = new Gson();
         try (Reader reader = new InputStreamReader(Objects.requireNonNull(Game.class.getResourceAsStream("StarterCards.json")));) {
@@ -374,6 +504,13 @@ public class Game implements Serializable {
         init();
     }
 
+    /**
+     * Initializes the game state and sets up the game environment.
+     * This method sets the game state to INIT, initializes the listener with the list of clients,
+     * creates player hands, sets the current player index to 0, and then sets the game state to READY.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     private void init() throws RemoteException {
         gameState = GameState.INIT;
         bigListener = new Listener(clients);
@@ -382,7 +519,16 @@ public class Game implements Serializable {
         gameState = GameState.READY;
     }
 
-
+    /**
+     * Sets the starter card for a specific player.
+     * This method finds the player by name, retrieves their starter card, sets the card's front side
+     * based on the provided boolean, and resets the player's playground area with the updated starter card.
+     * It also notifies the listener of the achievement choice for the player.
+     *
+     * @param playerName the name of the player whose starter card is to be set.
+     * @param front a boolean indicating whether the front side of the starter card should be set.
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void setStarterCard(String playerName, boolean front) throws RemoteException {
         for(Player player : players) {
             if(player.getName().equalsIgnoreCase(playerName)) {
@@ -395,12 +541,16 @@ public class Game implements Serializable {
         }
     }
 
+
     /**
-     *{@summary this function creates an array list named hand with
-     * a pseudo-pop and add the new hand to player, for each player in game
-     * use it only after create and shuffle gold and resource decks}
-     * 2 resource and 1 gold in hand + 2 secretAchievement;
-     **/
+     * Creates and assigns initial hands and secret achievements to each player.
+     * This method initializes the hand and secret achievement cards for each player in the game.
+     * Each player receives a hand consisting of two resource cards and one gold card.
+     * Additionally, each player is assigned two secret achievement cards. The player's area is set
+     * with a starter card. Finally, it notifies the listener about the starter cards and common resources.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     private void createHands() throws RemoteException {
         for(int i = 0; i < playersNumber; i++) {
             ArrayList<Card> hand = new ArrayList<>();
@@ -418,20 +568,26 @@ public class Game implements Serializable {
     }
 
 
-    //Methods
 
 
-
-
-
-
-    //NB: SOLO PER TESTING!!!!
-
+    /**
+     * Sets the current player to the specified player.
+     * This method sets the current player index to the index of the specified player in the players list.
+     * It is intended for testing purposes.
+     *
+     * @param p the Player object to set as the current player.
+     */
     public void setCurrPlayer(Player p){
         this.currPlayer = players.indexOf(p);
     }
 
-
+    /**
+     * Advances the game state to the next state.
+     * This method transitions the game state to the next phase in the game flow.
+     * The transitions are as follows:
+     * LOBBY -> INIT -> READY -> SELECTACHIEVEMENT -> GAME -> LASTROUND -> FINALSCORE -> END.
+     * When the game reaches the END state, it calls the dispose method to clean up.
+     */
     public void nextState() {
         switch(gameState) {
             case LOBBY:
@@ -461,7 +617,13 @@ public class Game implements Serializable {
         }
     }
 
-    //only for testing, useful for launching the dispose method
+    /**
+     * Ends the game immediately.
+     * Method intended for testing purposes and should only be used
+     * to force the game into the END state.
+     * Sets the game state to END, triggering the dispose method
+     * to clean up and terminate the game.
+     */
     public void end() {
         gameState = GameState.END;
     }
@@ -566,6 +728,16 @@ public class Game implements Serializable {
         }
     }
 
+    /**
+     * Calculates the end game points and determines the winners.
+     * This method calculates the final points for each player based on their secret achievements,
+     * common achievements, and total points. It then determines the maximum points and checks for ties
+     * among players. If there is a tie in total points, it further checks the points from the highest
+     * scoring player's achievements to determine the winners. Finally, it notifies the listener about
+     * the winners.
+     *
+     * @throws RemoteException if a remote communication error occurs.
+     */
     public void calculateEndPoints() throws RemoteException {
         int[] points = new int[players.size()];
         int max = 0, totalMax = 0;
