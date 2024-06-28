@@ -24,3 +24,7 @@ Studenti: Pietro Roggero, Lorenzo Tallarico, Matteo Trombetta, Tommaso Razza <br
 ❌Partite multiple  <br>
 # Indicazioni per l'avvio dell'applicazione
 Eseguire da linea di comando prima l'applicazione del server e successivamente quelle dei client mentre si è sotto la stessa rete wifi.
+```
+java -jar GC06_ClientApp.jar
+java -jar GC06_ServerApp.jar
+```
